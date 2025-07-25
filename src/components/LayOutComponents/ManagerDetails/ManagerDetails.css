@@ -1,0 +1,63 @@
+
+.manager-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 20px;
+  color: #34495e;
+  font-weight: 600;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+
+.card {
+  background-color: #f9f9f9;
+  border-left: 4px solid #3498db;
+  padding: 15px 20px;
+  border-radius: 6px;
+}
+
+.card p {
+  margin: 6px 0;
+  color: #333;
+}
+
+.manager-list {
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.manager-list li {
+  margin-bottom: 8px;
+  color: #2d3436;
+  font-size: 15px;
+}
+
+.only-manager-message {
+  color: #7f8c8d;
+  font-style: italic;
+  margin-top: 10px;
+}

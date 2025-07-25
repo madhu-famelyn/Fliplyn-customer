@@ -1,0 +1,81 @@
+.manager-login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f7f7f5;
+  font-family: 'Inter', sans-serif;
+}
+
+.manager-login-card {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 400px;
+}
+
+.manager-login-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #333;
+}
+
+.manager-login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.manager-login-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.manager-login-field label {
+  margin-bottom: 6px;
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.manager-login-field input {
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+  background-color: #f0f5ff;
+  transition: border-color 0.3s;
+}
+
+.manager-login-field input:focus {
+  outline: none;
+  border-color: #009999;
+  background-color: #ffffff;
+}
+
+.manager-login-button {
+  padding: 12px 0;
+  background-color: #007d80;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.manager-login-button:hover {
+  background-color: #006a6b;
+}
+
+.manager-login-error {
+  color: #cc0000;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 12px;
+}

@@ -1,0 +1,141 @@
+.locations-container {
+  padding: 40px;
+  background-color: #f7f7f5;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.locations-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.locations-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #333333;
+}
+
+.add-location-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #007d80;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 125, 128, 0.2);
+}
+
+.add-location-btn:hover {
+  background-color: #006a6b;
+}
+
+.locations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.location-card {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.location-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-header h3 {
+  font-size: 1.3rem;
+  color: #333333;
+  margin: 0;
+}
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.icon {
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.edit-icon {
+  color: #007d80;
+}
+
+.edit-icon:hover {
+  color: #006a6b;
+}
+
+.delete-icon {
+  color: #cc0000;
+}
+
+.delete-icon:hover {
+  color: #a80000;
+}
+
+.location-card p {
+  font-size: 0.95rem;
+  color: #333333;
+  margin: 4px 0;
+}
+
+.manager-section {
+  margin-top: 12px;
+  background: #f0f5ff;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+.manager-section strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #333333;
+}
+
+.manager-section ul {
+  padding-left: 16px;
+  margin: 0;
+}
+
+.manager-section li {
+  font-size: 0.9rem;
+  color: #555555;
+  margin: 2px 0;
+}
+
+@media (max-width: 768px) {
+  .locations-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .add-location-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

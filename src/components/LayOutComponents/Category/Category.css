@@ -1,0 +1,160 @@
+/* Container */
+.category-form-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 30px 20px;
+  background: #ffffff; /* White background */
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Form Section */
+.category-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.category-form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333333; /* Dark gray text */
+}
+
+.category-form input[type="text"],
+.category-form input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d4d4d4; /* Light gray border */
+  background-color: #f0f5ff; /* Light blue background */
+  font-size: 16px;
+  color: #333333;
+  transition: border-color 0.3s ease;
+}
+
+.category-form input[type="text"]:focus,
+.category-form input[type="file"]:focus {
+  outline: none;
+  border-color: #009999; /* Teal border on focus */
+  background-color: #ffffff; /* White on focus */
+}
+
+.category-form button {
+  margin-top: 15px;
+  padding: 10px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background-color: #007d80; /* Teal */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.category-form button:hover {
+  background-color: #006a6b; /* Dark teal */
+}
+
+.category-form button:disabled {
+  background-color: #d4d4d4;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Info */
+.category-info {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #333333;
+}
+
+/* List Section */
+.category-list {
+  margin-top: 40px;
+}
+
+.category-list h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  border-bottom: 2px solid #f0f5ff;
+  padding-bottom: 10px;
+  color: #333333;
+}
+
+/* Cards Grid */
+.category-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+/* Single Card */
+.category-card {
+  background: #f7f7f5; /* Background */
+  border-radius: 12px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.category-card img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.category-card h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333333;
+}
+
+/* Header */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Create Button */
+.create-category-btn {
+  padding: 8px 12px;
+  background-color: #007d80; /* Teal */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.create-category-btn:hover {
+  background-color: #006a6b; /* Dark teal */
+}
+
+/* Success & Error Texts */
+.success-message {
+  color: #008000; /* Green */
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.error-message {
+  color: #cc0000; /* Red */
+  font-weight: 500;
+  margin-top: 10px;
+}

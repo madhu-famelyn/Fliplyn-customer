@@ -1,0 +1,178 @@
+.stall-container {
+  padding: 24px;
+  max-width: 1000px;
+  margin: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7f7f5;
+  border-radius: 16px;
+}
+
+.stall-heading {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: #333333;
+  text-align: center;
+}
+
+.toggle-button {
+  background-color: #007d80;
+  color: #ffffff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  margin-bottom: 24px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  transition: background 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #006a6b;
+}
+
+.stall-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 30px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #d4d4d4;
+}
+
+.stall-form input,
+.stall-form textarea,
+.stall-form select {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d4d4d4;
+  background-color: #f0f5ff;
+  font-size: 15px;
+  color: #333333;
+}
+
+.stall-form input:focus,
+.stall-form textarea:focus,
+.stall-form select:focus {
+  outline: none;
+  border: 1px solid #009999;
+  background-color: #ffffff;
+}
+
+.stall-form button {
+  background-color: #007d80;
+  color: #ffffff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.stall-form button:disabled {
+  background-color: #d4d4d4;
+  cursor: not-allowed;
+}
+
+.stall-list {
+  margin-top: 28px;
+}
+
+.building-block {
+  margin-bottom: 40px;
+}
+
+.building-block h2 {
+  font-size: 20px;
+  margin-bottom: 14px;
+  color: #333333;
+  border-left: 5px solid #007d80;
+  padding-left: 12px;
+}
+
+.stalls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px; /* Added spacing to avoid card overlap */
+}
+
+.stall-card {
+  border: 1px solid #d4d4d4;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+.stall-card:hover {
+  transform: translateY(-4px);
+}
+
+.stall-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.stall-info {
+  padding: 14px;
+}
+
+.stall-info h3 {
+  font-size: 17px;
+  margin: 0 0 6px;
+  color: #333333;
+}
+
+.stall-info p {
+  font-size: 14px;
+  color: #333333;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .stall-heading {
+    font-size: 22px;
+  }
+
+  .stall-form {
+    padding: 16px;
+  }
+
+  .stall-form input,
+  .stall-form textarea,
+  .stall-form select {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .toggle-button {
+    font-size: 14px;
+    padding: 9px 14px;
+  }
+
+  .stalls-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stall-image {
+    height: 120px;
+  }
+
+  .stall-info h3 {
+    font-size: 16px;
+  }
+
+  .stall-info p {
+    font-size: 13px;
+  }
+}

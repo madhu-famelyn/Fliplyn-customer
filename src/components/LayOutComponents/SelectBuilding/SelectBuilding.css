@@ -1,0 +1,54 @@
+.create-building-container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 40px;
+  background-color: #ffffff; /* White */
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.create-building-container h2 {
+  margin-bottom: 30px;
+  font-size: 28px;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  background-color: #f0f5ff; /* Light blue background */
+  border: 1px solid #d4d4d4; /* Light gray border */
+  border-radius: 10px;
+  font-size: 16px;
+  color: #333333; /* Input text */
+  transition: border-color 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: #009999; /* Teal focus */
+  outline: none;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007d80; /* Teal button */
+  color: #ffffff;
+  font-size: 17px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #006a6b; /* Darker teal */
+}
+
+.submit-btn:disabled {
+  background-color: #d4d4d4;
+  cursor: not-allowed;
+}

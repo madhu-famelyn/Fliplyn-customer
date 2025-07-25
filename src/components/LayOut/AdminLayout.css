@@ -1,0 +1,155 @@
+/* Layout wrapper */
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f7f7f5; /* replaced #f8f9fc */
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #007d80; /* replaced #2d79f3 */
+  color: white;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar .logo {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.sidebar .logo span {
+  font-size: 14px;
+  color: #f0f5ff; /* replaced #cddbf8 */
+}
+
+.nav-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-menu ul li {
+  margin: 10px 0;
+}
+
+.nav-menu ul li a,
+.nav-menu ul li button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  color: white;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+
+
+/* Admin info */
+.admin-info {
+  margin-top: auto;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: white;
+  color: #007d80; /* replaced #2d79f3 */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.logout-btn {
+  background-color: #cc0000; /* replaced #f44336 */
+  color: white !important;
+  margin: 15px 20px 0;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 16px;
+  border: none;
+  width: calc(100% - 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Mobile hamburger */
+.hamburger {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 999;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #007d80; /* replaced #2d79f3 */
+  display: none;
+  cursor: pointer;
+}
+
+/* Mobile sidebar */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    z-index: 998;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .main-content {
+    padding-top: 60px;
+  }
+}
+
+/* Divider */
+.menu-separator {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+  margin: 10px 0;
+}
+
+
