@@ -27,14 +27,15 @@
 
 .signup-unique-form input {
   width: 100%;
-  padding: 12px 14px;
+  padding: 12px;
   margin-top: 6px;
   margin-bottom: 20px;
   border: 1px solid #d4d4d4;
   border-radius: 8px;
   background-color: #f0f5ff;
   font-size: 15px;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, background-color 0.3s;
+  box-sizing: border-box;
 }
 
 .signup-unique-form input:focus {
@@ -50,7 +51,7 @@
 .signup-unique-toggle-icon {
   position: absolute;
   top: 50%;
-  right: 12px;
+  right: 14px;
   transform: translateY(-50%);
   cursor: pointer;
 }

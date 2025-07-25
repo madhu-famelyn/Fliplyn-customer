@@ -5,13 +5,14 @@
   height: 100vh;
   background-color: #f7f7f5;
   font-family: 'Inter', sans-serif;
+  padding: 20px;
 }
 
 .signin-card {
   background: white;
   padding: 40px 30px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   border-radius: 12px;
   box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
 }
@@ -35,6 +36,7 @@
   background-color: #f0f5ff;
   font-size: 15px;
   transition: border-color 0.3s;
+  box-sizing: border-box;
 }
 
 .signin-form input:focus {
