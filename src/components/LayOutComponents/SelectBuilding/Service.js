@@ -16,7 +16,7 @@ export const createBuilding = async (payload, token) => {
 
 
 export const deleteBuildingById = async (buildingId, token) => {
-  const res = await fetch(`http://localhost:8000/buildings/${buildingId}`, {
+  const res = await fetch(`https://fliplyn.onrender.com/buildings/${buildingId}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`
@@ -27,7 +27,7 @@ export const deleteBuildingById = async (buildingId, token) => {
 };
 
 export const fetchBuildings = async (cityId, token) => {
-  const res = await fetch(`http://localhost:8000/buildings?city_id=${cityId}`, {
+  const res = await fetch(`https://fliplyn.onrender.com/buildings?city_id=${cityId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
