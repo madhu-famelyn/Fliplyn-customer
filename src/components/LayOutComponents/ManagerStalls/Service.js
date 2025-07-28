@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://fliplyn.onrender.com';
+const BASE_URL = 'http://localhost:8000';
 
 /**
  * 🔍 Get Manager by ID

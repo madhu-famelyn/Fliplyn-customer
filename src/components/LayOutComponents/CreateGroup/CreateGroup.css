@@ -1,0 +1,82 @@
+.create-group-container {
+  background-color: #f7f7f5;
+  padding: 32px;
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+}
+
+.create-group-heading {
+  font-size: 24px;
+  color: #007d80;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.create-group-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.group-label {
+  font-weight: 600;
+  color: #333333;
+}
+
+.group-input,
+.group-select {
+  padding: 10px 14px;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.phone-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-phone-btn,
+.remove-phone-btn,
+.create-group-submit {
+  padding: 10px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-phone-btn {
+  background-color: #009999;
+  color: #ffffff;
+}
+
+.add-phone-btn:hover {
+  background-color: #006a6b;
+}
+
+.remove-phone-btn {
+  background-color: #cc0000;
+  color: #ffffff;
+}
+
+.remove-phone-btn:hover {
+  opacity: 0.85;
+}
+
+.create-group-submit {
+  background-color: #007d80;
+  color: #ffffff;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.create-group-submit:hover {
+  background-color: #006a6b;
+}

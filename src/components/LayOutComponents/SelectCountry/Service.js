@@ -1,7 +1,7 @@
 // src/services/countryService.js
 import axios from 'axios';
 
-const API_BASE_URL = 'https://fliplyn.onrender.com';
+const API_BASE_URL = 'http://localhost:8000';
 
 export const createCountrySelection = async (adminId, selectedCountry, token) => {
   const response = await axios.post(

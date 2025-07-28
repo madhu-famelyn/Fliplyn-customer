@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_BASE_URL || 'https://fliplyn.onrender.com'; // fallback if undefined
+const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:8000'; // fallback if undefined
 
 export const createBuilding = async (payload, token) => {
   const res = await fetch(`${BASE_URL}/buildings`, {
@@ -16,7 +16,7 @@ export const createBuilding = async (payload, token) => {
 
 
 export const deleteBuildingById = async (buildingId, token) => {
-  const res = await fetch(`https://fliplyn.onrender.com/buildings/${buildingId}`, {
+  const res = await fetch(`http://localhost:8000/buildings/${buildingId}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`
@@ -27,7 +27,7 @@ export const deleteBuildingById = async (buildingId, token) => {
 };
 
 export const fetchBuildings = async (cityId, token) => {
-  const res = await fetch(`https://fliplyn.onrender.com/buildings?city_id=${cityId}`, {
+  const res = await fetch(`http://localhost:8000/buildings?city_id=${cityId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

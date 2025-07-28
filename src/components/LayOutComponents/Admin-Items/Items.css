@@ -1,0 +1,53 @@
+.admin-items-container {
+  background-color: #f7f7f5;
+  padding: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333333;
+}
+
+.admin-items-title {
+  font-size: 24px;
+  color: #007d80;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.building-card {
+  background-color: #ffffff;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.building-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #006a6b;
+  margin-bottom: 8px;
+}
+
+.stall-item {
+  background-color: #f0f5ff;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.stall-name {
+  font-weight: 600;
+  color: #009999;
+  margin-bottom: 6px;
+}
+
+.item {
+  padding-left: 16px;
+  color: #333333;
+  line-height: 1.6;
+}
+
+.empty-message {
+  color: #cc0000;
+  font-weight: 500;
+}

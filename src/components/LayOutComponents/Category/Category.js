@@ -122,7 +122,7 @@ export default function AddCategory() {
                   style={{ cursor: 'pointer' }}
                 >
                   <img
-                    src={`https://fliplyn.onrender.com/${cat.image_url}`}
+                    src={`http://localhost:8000/${cat.image_url}`}
                     alt={cat.name}
                     style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '8px' }}
                     onError={(e) => {

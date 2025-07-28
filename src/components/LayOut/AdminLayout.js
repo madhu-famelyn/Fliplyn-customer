@@ -28,6 +28,7 @@ export default function AdminLayout({ children }) {
             <li><Link to="/stalls" onClick={toggleSidebar}><FaStore /> Stalls</Link></li>
             <li><Link to="/manager-stalls" onClick={toggleSidebar}><FaUtensils /> Manegar stalls</Link></li>
             <li><Link to="/add-money" onClick={toggleSidebar}><FaShoppingCart /> Add wallets</Link></li>
+            <li><Link to="/create-group" onClick={toggleSidebar}><FaShoppingCart /> Add wallets in Group</Link></li>
             <li><Link to="/manager-details" onClick={toggleSidebar}><FaChartBar /> Manager Details</Link></li>
             <li><Link to="/user" onClick={toggleSidebar}><FaUsers /> Users</Link></li>
 

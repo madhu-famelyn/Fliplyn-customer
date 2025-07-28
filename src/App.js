@@ -18,6 +18,7 @@ import ManagerDetails from './components/LayOutComponents/ManagerDetails/Manager
 import ItemDetails from './components/LayOutComponents/ManagerItems/Items';
 import AddMoney from './components/LayOutComponents/Wallet/Wallet';
 import AdminItems from './components/LayOutComponents/Admin-Items/Items';
+import CreateGroup from './components/LayOutComponents/CreateGroup/CreateGroup';
 
 const PrivateRoute = ({ element }) => {
   const { token } = useAuth();
@@ -45,6 +46,7 @@ function App() {
         <Route path="/manager-items" element={<ItemDetails />} />
         <Route path="/add-money" element={<AddMoney />} />
         <Route path="/items-admin" element={<AdminItems/>}/>
+        <Route path="/create-group" element = {<CreateGroup/>}></Route>
         
         {/* Private Routes */}
 

@@ -14,7 +14,7 @@ export const fetchCitiesByCountryState = async (country, state) => {
 // src/pages/Service.js
 
 export const createCity = async (cityData, token) => {
-  const response = await axios.post('https://fliplyn.onrender.com/cities/', cityData, {
+  const response = await axios.post('http://localhost:8000/cities/', cityData, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',

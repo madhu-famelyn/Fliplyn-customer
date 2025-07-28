@@ -84,7 +84,7 @@ export default function ItemDetails() {
               className="border rounded p-4 shadow hover:shadow-lg transition"
             >
               <img
-                src={`https://fliplyn.onrender.com/${item.image_url}`}
+                src={`http://localhost:8000/${item.image_url}`}
                 alt={item.name}
                 className="w-full h-48 object-cover rounded mb-3"
               />

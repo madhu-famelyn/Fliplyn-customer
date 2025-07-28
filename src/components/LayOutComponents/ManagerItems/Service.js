@@ -1,4 +1,4 @@
-const BASE_URL = 'https://fliplyn.onrender.com'; // Replace if different
+const BASE_URL = 'http://localhost:8000'; // Replace if different
 
 export const fetchManagerById = async (managerId, token) => {
   const res = await fetch(`${BASE_URL}/managers/${managerId}`, {

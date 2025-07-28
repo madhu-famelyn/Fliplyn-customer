@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import AdminLayout from '../../LayOut/AdminLayout';
 import {
   fetchBuildingsByAdminId,
   fetchStallsByBuildingId,
   fetchItemsByStallId,
 } from './Service';
 import { useAuth } from '../../AuthContex/ContextAPI';
+import './Items.css';
 
 const AdminItems = () => {
   const { userId, role } = useAuth();
@@ -19,7 +21,6 @@ const AdminItems = () => {
 
           const buildingPromises = buildings.map(async (building) => {
             const stalls = await fetchStallsByBuildingId(building.id);
-
             const stallPromises = stalls.map(async (stall) => {
               const items = await fetchItemsByStallId(stall.id);
               return { ...stall, items };
@@ -42,45 +43,43 @@ const AdminItems = () => {
     loadBuildingsStallsItems();
   }, [userId, role]);
 
-  if (loading) return <p>Loading buildings, stalls, and items...</p>;
-
   return (
-    <div>
-      <h2>Your Buildings, Stalls, and Items</h2>
-      {buildingsWithStalls.length === 0 ? (
-        <p>No buildings found.</p>
-      ) : (
-        <ul>
-          {buildingsWithStalls.map((building) => (
-            <li key={building.id} style={{ marginBottom: '20px' }}>
-              <strong>{building.building_name}</strong> - {building.city_name}, {building.state_name}
-              <ul style={{ marginLeft: '20px' }}>
-                {building.stalls.length > 0 ? (
-                  building.stalls.map((stall) => (
-                    <li key={stall.id} style={{ marginTop: '10px' }}>
-                      🏪 <strong>{stall.name}</strong>
-                      <ul style={{ marginLeft: '20px' }}>
-                        {stall.items && stall.items.length > 0 ? (
-                          stall.items.map((item) => (
-                            <li key={item.id}>
-                              🍽️ {item.name} - ₹{item.price}
-                            </li>
-                          ))
-                        ) : (
-                          <li>No items in this stall.</li>
-                        )}
-                      </ul>
-                    </li>
-                  ))
-                ) : (
-                  <li>No stalls in this building.</li>
-                )}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <AdminLayout>
+      <div className="admin-items-container">
+        <h2 className="admin-items-title">Your Buildings, Stalls, and Items</h2>
+        {loading ? (
+          <p className="empty-message">Loading buildings, stalls, and items...</p>
+        ) : buildingsWithStalls.length === 0 ? (
+          <p className="empty-message">No buildings found.</p>
+        ) : (
+          buildingsWithStalls.map((building) => (
+            <div key={building.id} className="building-card">
+              <div className="building-name">
+                {building.building_name} – {building.city_name}, {building.state_name}
+              </div>
+              {building.stalls.length > 0 ? (
+                building.stalls.map((stall) => (
+                  <div key={stall.id} className="stall-item">
+                    <div className="stall-name">🏪 {stall.name}</div>
+                    {stall.items && stall.items.length > 0 ? (
+                      stall.items.map((item) => (
+                        <div key={item.id} className="item">
+                          🍽️ {item.name} – ₹{item.price}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="empty-message">No items in this stall.</div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="empty-message">No stalls in this building.</div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+    </AdminLayout>
   );
 };
 

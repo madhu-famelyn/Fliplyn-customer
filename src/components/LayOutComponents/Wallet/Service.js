@@ -1,7 +1,7 @@
 // src/services/walletService.js
 import axios from 'axios';
 
-const BASE_URL = 'https://fliplyn.onrender.com'; // Update this to your API URL
+const BASE_URL = 'http://localhost:8000'; // Update this to your API URL
 
 export const addMoneyToWallet = async (payload, token) => {
   const response = await axios.post(`${BASE_URL}/wallets/add-money`, payload, {
@@ -13,41 +13,46 @@ export const addMoneyToWallet = async (payload, token) => {
 };
 
 
+export const fetchBuildingByAdminId = async (adminId, token) => {
+  try {
+    const response = await fetch(`http://localhost:8000/buildings/buildings/by-admin/${adminId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-export const fetchBuildings = async (adminId, token) => {
-  console.log("📡 Calling fetchBuildings with adminId:", adminId);
-  const res = await fetch(`https://fliplyn.onrender.com/buildings/buildings/by-admin/${adminId}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+    if (!response.ok) {
+      throw new Error("Failed to fetch building data.");
+    }
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error('❌ Backend responded with error:', errorText);
-    throw new Error('Failed to fetch buildings');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
   }
-
-  return res.json();
 };
 
 
-// Add this in Service.js
-export async function fetchWalletsByBuilding(buildingId, token) {
-  const response = await fetch(`https://fliplyn.onrender.com/wallets/by-building/${buildingId}`, {
+export const fetchWalletsByBuildingId = async (buildingId, token) => {
+  const res = await fetch(`http://127.0.0.1:8000/wallets/by-building/${buildingId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  });
+  if (!res.ok) throw new Error('Failed to fetch wallets');
+  return await res.json();
+};
+
+
+export const fetchUserById = async (userId, token) => {
+  const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch wallets');
+    throw new Error('Failed to fetch user details');
   }
   return await response.json();
-}
-
-export const fetchUserDetails = async (userId, token) => {
-  const response = await axios.get(`/user/${userId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
 };

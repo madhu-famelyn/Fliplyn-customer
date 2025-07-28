@@ -2,7 +2,7 @@
 
 // Service.js
 export async function signUp(data) {
-  const response = await fetch('https://fliplyn.onrender.com/admin/', {
+  const response = await fetch('http://localhost:8000/admin/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
