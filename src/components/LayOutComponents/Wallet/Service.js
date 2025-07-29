@@ -15,7 +15,7 @@ export const addMoneyToWallet = async (payload, token) => {
 
 export const fetchBuildingByAdminId = async (adminId, token) => {
   try {
-    const response = await fetch(`https://fliplyn.onrender.com/buildings/buildings/by-admin/${adminId}`, {
+    const response = await fetch(`http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
