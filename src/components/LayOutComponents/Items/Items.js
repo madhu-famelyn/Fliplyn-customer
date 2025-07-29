@@ -209,11 +209,11 @@ const fetchItems = async (catId) => {
                 {items.map((item) => (
 <div key={`${item.id}-${item.is_available}`} className="item-card animate-move">
   <img
-    src={`https://fliplyn-api.onrender.com/${item.image_url}`}
+    src={`https://fliplyn.onrender.com/${item.image_url}`}
     alt={item.name}
     className="item-img"
     onClick={() =>
-      window.open(`https://fliplyn-api.onrender.com/${item.image_url}`, '_blank')
+      window.open(`https://fliplyn.onrender.com/${item.image_url}`, '_blank')
     }
   />
 

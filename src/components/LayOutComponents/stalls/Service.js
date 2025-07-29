@@ -3,7 +3,7 @@
 // Service.js
 export const fetchBuildings = async (adminId, token) => {
   console.log("📡 Calling fetchBuildings with adminId:", adminId);
-  const res = await fetch(`https://fliplyn-api.onrender.com/buildings/buildings/by-admin/${adminId}`, {
+  const res = await fetch(`https://fliplyn.onrender.com/buildings/buildings/by-admin/${adminId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
 
@@ -28,7 +28,7 @@ export const createStall = async (stallData, token) => {
   formData.append('admin_id', stallData.user_id); // ✅ always admin_id for now
   formData.append('file', stallData.file);
 
-  const res = await fetch(`https://fliplyn-api.onrender.com/stalls/`, {
+  const res = await fetch(`https://fliplyn.onrender.com/stalls/`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`
@@ -49,7 +49,7 @@ export const createStall = async (stallData, token) => {
 
 
 export const fetchStallsByBuilding = async (buildingId, token) => {
-  const res = await fetch(`https://fliplyn-api.onrender.com/stalls/building/${buildingId}`, {
+  const res = await fetch(`https://fliplyn.onrender.com/stalls/building/${buildingId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
 

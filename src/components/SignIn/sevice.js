@@ -3,7 +3,7 @@ export async function login(email, password) {
   formData.append('username', email); // ← FastAPI expects 'username' field!
   formData.append('password', password);
 
-  const response = await fetch('https://fliplyn-api.onrender.com/admin/auth/login', {
+  const response = await fetch('https://fliplyn.onrender.com/admin/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
