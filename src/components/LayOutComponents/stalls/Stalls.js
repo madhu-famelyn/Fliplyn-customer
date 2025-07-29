@@ -173,7 +173,7 @@ export default function CreateStallForm({ onStallCreated }) {
                       style={{ cursor: 'pointer' }}
                     >
                       <img
-                        src={`http://127.0.0.1:8000/${stall.image_url}`}
+                        src={`https://fliplyn-api.onrender.com/${stall.image_url}`}
                         alt={stall.name}
                         className="stall-image"
                       />

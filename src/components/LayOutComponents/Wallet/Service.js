@@ -15,7 +15,7 @@ export const addMoneyToWallet = async (payload, token) => {
 
 export const fetchBuildingByAdminId = async (adminId, token) => {
   try {
-    const response = await fetch(`http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`, {
+    const response = await fetch(`https://fliplyn-api.onrender.com/buildings/buildings/by-admin/${adminId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -35,7 +35,7 @@ export const fetchBuildingByAdminId = async (adminId, token) => {
 
 
 export const fetchWalletsByBuildingId = async (buildingId, token) => {
-  const res = await fetch(`http://127.0.0.1:8000/wallets/by-building/${buildingId}`, {
+  const res = await fetch(`https://fliplyn-api.onrender.com/wallets/by-building/${buildingId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

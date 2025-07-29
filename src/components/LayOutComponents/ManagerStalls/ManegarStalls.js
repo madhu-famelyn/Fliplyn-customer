@@ -143,7 +143,7 @@ export default function ManagerStalls() {
               {stalls.map((stall) => (
                 <div key={stall.id} className="stall-card">
                   <img
-                    src={`http://127.0.0.1:8000/${stall.image_url}`}
+                    src={`https://fliplyn-api.onrender.com/${stall.image_url}`}
                     alt={stall.name}
                     className="stall-image"
                   />

@@ -46,7 +46,7 @@ export default function SignUp() {
       setSuccess('Registration successful!');
       setFormData({ name: '', email: '', phone_number: '', password: '' });
 
-      setTimeout(() => navigate('/signin'), 1500);
+      setTimeout(() => navigate('/'), 1500);
     } catch (err) {
       setError(err.message || 'Something went wrong.');
     }
@@ -110,7 +110,7 @@ export default function SignUp() {
         </form>
 
         <div className="signup-unique-links">
-          Already have an account? <Link to="/signin">Sign In</Link>
+          Already have an account? <Link to="/">Sign In</Link>
         </div>
       </div>
     </div>
