@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:8000'; // fallback if undefined
+const BASE_URL = process.env.REACT_APP_BASE_URL || 'https://fliplyn.onrender.com'; // fallback if undefined
 
 export const createBuilding = async (payload, token) => {
   const res = await fetch(`${BASE_URL}/buildings`, {

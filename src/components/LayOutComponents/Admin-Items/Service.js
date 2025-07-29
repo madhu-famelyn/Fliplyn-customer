@@ -1,7 +1,7 @@
 // src/services/buildingService.js
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000'; // 🔁 Replace with your actual backend URL
+const API_BASE_URL = 'https://fliplyn.onrender.com'; // 🔁 Replace with your actual backend URL
 
 export const fetchBuildingsByAdminId = async (adminId) => {
   try {

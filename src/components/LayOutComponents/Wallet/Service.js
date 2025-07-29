@@ -1,7 +1,7 @@
 // src/services/walletService.js
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000'; // Update this to your API URL
+const BASE_URL = 'https://fliplyn.onrender.com'; // Update this to your API URL
 
 export const addMoneyToWallet = async (payload, token) => {
   const response = await axios.post(`${BASE_URL}/wallets/add-money`, payload, {
