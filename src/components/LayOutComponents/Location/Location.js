@@ -19,10 +19,10 @@ export default function Locations() {
     const fetchData = async () => {
       try {
         const [buildingsRes, countriesRes] = await Promise.all([
-          fetch(`https://fliplyn.onrender.com/buildings/buildings/by-admin/${userId}`, {
+          fetch(`https://127.0.0.1:8000/buildings/buildings/by-admin/${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`https://fliplyn.onrender.com/locations/countries`, {
+          fetch(`https://127.0.0.1:8000/locations/countries`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -52,7 +52,7 @@ export default function Locations() {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`https://fliplyn.onrender.com/buildings/${buildingId}`, {
+      const res = await fetch(`https://127.0.0.1:8000/buildings/${buildingId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

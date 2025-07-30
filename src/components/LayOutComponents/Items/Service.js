@@ -1,7 +1,7 @@
    // Service.js
 import axios from 'axios';
 
-const BASE_URL = 'https://fliplyn.onrender.com'; // Update if your FastAPI server is on a different port
+const BASE_URL = 'https://127.0.0.1:8000'; // Update if your FastAPI server is on a different port
 
 // Create a new item
 export const createItem = async (formData) => {

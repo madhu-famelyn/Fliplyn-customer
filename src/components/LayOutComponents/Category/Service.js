@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://fliplyn.onrender.com';
+const BASE_URL = 'https://127.0.0.1:8000';
 
 export const createCategory = async (formData) => {
   const response = await axios.post(`${BASE_URL}/categories/`, formData, {
