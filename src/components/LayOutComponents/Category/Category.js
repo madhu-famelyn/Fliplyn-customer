@@ -121,14 +121,16 @@ export default function AddCategory() {
                   onClick={() => handleCardClick(cat.id)}
                   style={{ cursor: 'pointer' }}
                 >
-                  <img
-                    src={`https://fliplyn.onrender.com/${cat.image_url}`}
-                    alt={cat.name}
-                    style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '8px' }}
-                    onError={(e) => {
-                      e.target.src = '/fallback.png';
-                    }}
-                  />
+                    <img
+                src={`https://fliplyn-api.onrender.com/${cat.image_url}`} // ✅ Corrected API domain
+                alt={cat.name}
+                style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '8px' }}
+                onError={(e) => {
+                  e.target.onerror = null; // Prevents infinite fallback loop
+                  e.target.src = '/fallback.png'; // ✅ Fallback image if loading fails
+                }}
+              />
+
                   <h4>{cat.name}</h4>
                 </div>
               ))}

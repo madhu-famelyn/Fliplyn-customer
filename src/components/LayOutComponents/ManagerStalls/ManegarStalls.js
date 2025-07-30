@@ -142,11 +142,16 @@ export default function ManagerStalls() {
             <div className="stalls-grid">
               {stalls.map((stall) => (
                 <div key={stall.id} className="stall-card">
-                  <img
-                    src={`https://fliplyn.onrender.com/${stall.image_url}`}
-                    alt={stall.name}
-                    className="stall-image"
-                  />
+                <img
+                  src={`https://fliplyn-api.onrender.com/${stall.image_url}`}  // ✅ Correct Render API domain
+                  alt={stall.name}
+                  className="stall-image"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/fallback.png';  // ✅ Local fallback image if fetch fails
+                  }}
+                />
+
                   <div className="stall-info">
                     <h3>{stall.name}</h3>
                     <p><strong>Description:</strong> {stall.description}</p>

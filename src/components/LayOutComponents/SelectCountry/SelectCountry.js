@@ -64,7 +64,7 @@ const handleSelectCountry = async (countryId) => {
                 onClick={() => handleSelectCountry(country.id)}
               >
                 {isoCode && (
-                  <img
+                 <img
                     src={`https://flagcdn.com/w40/${isoCode}.png`}
                     alt={`${country.name} flag`}
                     className="flag-icon"

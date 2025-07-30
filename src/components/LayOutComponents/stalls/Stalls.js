@@ -144,12 +144,13 @@ export default function CreateStallForm({ onStallCreated }) {
                 </option>
               ))}
             </select>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              required
-            />
+           <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            required
+          />
+
             <button type="submit" disabled={loading}>
               {loading ? 'Creating...' : 'Create Stall'}
             </button>
@@ -172,8 +173,8 @@ export default function CreateStallForm({ onStallCreated }) {
                       onClick={() => handleCardClick(stall.id, building.id)}
                       style={{ cursor: 'pointer' }}
                     >
-                      <img
-                        src={`https://fliplyn.onrender.com/${stall.image_url}`}
+                     <img
+                        src={`https://fliplyn.onrender.com${stall.image_url}`}   // ✅ correct
                         alt={stall.name}
                         className="stall-image"
                       />

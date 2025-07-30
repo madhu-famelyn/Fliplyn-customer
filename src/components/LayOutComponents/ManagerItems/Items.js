@@ -83,11 +83,16 @@ export default function ItemDetails() {
               key={item.id}
               className="border rounded p-4 shadow hover:shadow-lg transition"
             >
-              <img
-                src={`https://fliplyn.onrender.com/${item.image_url}`}
-                alt={item.name}
-                className="w-full h-48 object-cover rounded mb-3"
-              />
+            <img
+              src={`https://fliplyn-api.onrender.com/${item.image_url}`} // ✅ Correct backend
+              alt={item.name}
+              className="w-full h-48 object-cover rounded mb-3"
+              onError={(e) => {
+                e.target.onerror = null; // Prevents infinite fallback loop
+                e.target.src = '/fallback.png'; // ✅ Local fallback image
+              }}
+            />
+
               <h3 className="text-lg font-semibold">{item.name}</h3>
               <p className="text-sm text-gray-600">{item.description}</p>
               <p className="mt-2 text-green-700 font-bold">₹ {item.final_price}</p>
