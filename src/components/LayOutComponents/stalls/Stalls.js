@@ -174,14 +174,11 @@ export default function CreateStallForm({ onStallCreated }) {
                       style={{ cursor: 'pointer' }}
                     >
 <img
-  src={`https://fliplyn.onrender.com${stall.image_url.split('uploaded_images').pop()?.replace(/\\/g, '/') ? '/uploaded_images' + stall.image_url.split('uploaded_images').pop()?.replace(/\\/g, '/') : ''}`}
+  src={`https://fliplyn.onrender.com/uploaded_images${stall.image_url.split('uploaded_images')[1] || ''}`}
   alt={stall.name}
   className="stall-image"
-  onError={(e) => {
-    e.target.onerror = null;
-    e.target.src = '/fallback.png';
-  }}
 />
+
 
                       <div className="stall-info">
                         <h3>{stall.name}</h3>
