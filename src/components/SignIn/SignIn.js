@@ -10,12 +10,14 @@ export default function SignInPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { loginUser } = useAuth();
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
     try {
       const response = await login(email, password);
       const userId = response.user?.id;
@@ -23,6 +25,8 @@ export default function SignInPage() {
       navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Invalid credentials.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +60,9 @@ export default function SignInPage() {
             </span>
           </div>
 
-          <button type="submit" className="signin-button">Sign In</button>
+          <button type="submit" className="signin-button" disabled={loading}>
+            {loading ? 'Signing In...' : 'Sign In'}
+          </button>
           {error && <p className="signin-error">{error}</p>}
         </form>
 
@@ -67,6 +73,16 @@ export default function SignInPage() {
           </p>
         </div>
       </div>
+
+      {/* ✅ Loader Overlay */}
+      {loading && (
+        <div className="signin-loader-overlay">
+          <div className="signin-loader-box">
+            <div className="spinner" />
+            <p className="signin-loader-text">Please wait, logging you in...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
