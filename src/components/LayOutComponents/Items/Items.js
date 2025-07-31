@@ -208,18 +208,22 @@ const fetchItems = async (catId) => {
               <div className="item-grid">
                 {items.map((item) => (
 <div key={`${item.id}-${item.is_available}`} className="item-card animate-move">
- <img
-  src={`https://fliplyn-api.onrender.com/${item.image_url}`} // ✅ Updated backend domain
+
+
+  
+<img
+  src={`https://fliplyn.onrender.com/${item.image_url}`}
   alt={item.name}
   className="item-img"
   onClick={() =>
-    window.open(`https://fliplyn-api.onrender.com/${item.image_url}`, '_blank') // ✅ Matches updated src
+    window.open(`https://fliplyn.onrender.com/${item.image_url}`, '_blank')
   }
   onError={(e) => {
-    e.target.onerror = null; // ✅ Prevents infinite fallback loop
-    e.target.src = '/fallback.png'; // ✅ Local fallback image
+    e.target.onerror = null;
+    e.target.src = '/fallback.png';
   }}
 />
+
 
 
   <div className="item-info">

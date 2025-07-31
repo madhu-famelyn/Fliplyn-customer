@@ -16,7 +16,7 @@ export default function CreateGroup() {
     const fetchBuildings = async () => {
       try {
         const res = await axios.get(
-          `https://127.0.0.1:8000/buildings/buildings/by-admin/${userId}`,
+          `https://fliplyn.onrender.com/buildings/buildings/by-admin/${userId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -56,7 +56,7 @@ export default function CreateGroup() {
     };
 
     try {
-      await axios.post('https://127.0.0.1:8000/group/create', payload, {
+      await axios.post('https://fliplyn.onrender.com/group/create', payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

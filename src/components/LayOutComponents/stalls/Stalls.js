@@ -173,11 +173,16 @@ export default function CreateStallForm({ onStallCreated }) {
                       onClick={() => handleCardClick(stall.id, building.id)}
                       style={{ cursor: 'pointer' }}
                     >
-                       <img
-                        src={`https://fliplyn.onrender.com${stall.image_url}`}   // ✅ correct
-                        alt={stall.name}
-                        className="stall-image"
-                      />
+<img
+  src={`https://fliplyn.onrender.com${stall.image_url.split('uploaded_images').pop()?.replace(/\\/g, '/') ? '/uploaded_images' + stall.image_url.split('uploaded_images').pop()?.replace(/\\/g, '/') : ''}`}
+  alt={stall.name}
+  className="stall-image"
+  onError={(e) => {
+    e.target.onerror = null;
+    e.target.src = '/fallback.png';
+  }}
+/>
+
                       <div className="stall-info">
                         <h3>{stall.name}</h3>
                         <p><strong>Description:</strong> {stall.description}</p>

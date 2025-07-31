@@ -1,3 +1,4 @@
+// src/pages/Service.js
 import axios from 'axios';
 
 export const fetchCitiesByCountryState = async (country, state) => {
@@ -11,14 +12,14 @@ export const fetchCitiesByCountryState = async (country, state) => {
   return data.data || [];
 };
 
-// src/pages/Service.js
+const BASE_URL = 'https://fliplyn.onrender.com'; // ✅ Add your backend URL
 
 export const createCity = async (cityData, token) => {
-  const response = await axios.post('127.0.0.1:8000/cities/', cityData, {
+  const response = await axios.post(`${BASE_URL}/cities/`, cityData, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
   });
-  return response.data; // includes: city_id, id, etc.
+  return response.data;
 };
