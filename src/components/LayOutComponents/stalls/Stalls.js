@@ -1,17 +1,20 @@
+// src/pages/stalls/stall.js
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../AuthContex/ContextAPI';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../../LayOut/AdminLayout';
-
+import { FaEdit } from 'react-icons/fa';
 import './Stalls.css';
 import {
   createStall,
   fetchStallsByBuilding,
   fetchBuildings,
-} from '../stalls/Service';
+  updateStall,
+} from './Service';
 
-export default function CreateStallForm({ onStallCreated }) {
-  const { userId: adminId, token } = useAuth(); // ✅ Admin only
+export default function CreateStallForm() {
+  const { userId: adminId, token } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -21,10 +24,13 @@ export default function CreateStallForm({ onStallCreated }) {
     file: null,
   });
 
+  const [editMode, setEditMode] = useState(false);
+  const [editingStallId, setEditingStallId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [buildings, setBuildings] = useState([]);
   const [allStalls, setAllStalls] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     if (adminId && token) {
@@ -32,8 +38,7 @@ export default function CreateStallForm({ onStallCreated }) {
         .then((data) => {
           setBuildings(data);
           if (data.length > 0) {
-            const firstBuildingId = data[0].id;
-            setForm((prev) => ({ ...prev, building_id: firstBuildingId }));
+            setForm((prev) => ({ ...prev, building_id: data[0].id }));
             fetchAllStalls(data, token);
           }
         })
@@ -68,40 +73,49 @@ export default function CreateStallForm({ onStallCreated }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.description || !form.building_id || !form.file) {
-      return alert('⚠️ Please fill all fields and upload an image.');
+    if (!form.name || !form.description || !form.building_id || (!form.file && !editMode)) {
+      return alert('⚠️ Please fill all fields.');
     }
 
     setLoading(true);
     try {
-      const result = await createStall({ ...form, user_id: adminId }, token);
-      alert('✅ Stall created successfully!');
-      setForm({
-        name: '',
-        description: '',
-        building_id: form.building_id,
-        file: null,
-      });
-      if (onStallCreated) {
-        const updatedStalls = await fetchStallsByBuilding(result.building_id, token);
-        onStallCreated(result.building_id, updatedStalls);
+      if (editMode) {
+        await updateStall(editingStallId, { ...form, admin_id: adminId }, token);
+        alert('✅ Stall updated successfully!');
+      } else {
+        await createStall({ ...form, user_id: adminId }, token);
+        alert('✅ Stall created successfully!');
       }
+
+      setForm({ name: '', description: '', building_id: form.building_id, file: null });
+      setShowForm(false);
+      setEditMode(false);
+      setEditingStallId(null);
+      setShowPopup(false);
       fetchAllStalls(buildings, token);
-      setShowForm(false); // ✅ Hide form after successful creation
     } catch (err) {
-      console.error('❌ Stall creation failed:', err);
-      alert('Error creating stall');
+      console.error('❌ Operation failed:', err);
+      alert('Operation failed');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleEditClick = (stall) => {
+    setForm({
+      name: stall.name,
+      description: stall.description,
+      building_id: stall.building_id,
+      file: null,
+    });
+    setEditingStallId(stall.id);
+    setEditMode(true);
+    setShowPopup(true);
+  };
+
   const handleCardClick = (stallId, buildingId) => {
     navigate(`/add-category/${stallId}`, {
-      state: {
-        buildingId,
-        adminId,
-      },
+      state: { buildingId, adminId },
     });
   };
 
@@ -110,7 +124,11 @@ export default function CreateStallForm({ onStallCreated }) {
       <div className="stall-container">
         <h1 className="stall-heading">Stall Management</h1>
 
-        <button className="toggle-button" onClick={() => setShowForm(!showForm)}>
+        <button className="toggle-button" onClick={() => {
+          setShowForm(!showForm);
+          setEditMode(false);
+          setForm({ name: '', description: '', building_id: buildings[0]?.id || '', file: null });
+        }}>
           {showForm ? '✖ Close Form' : '➕ Add Stall'}
         </button>
 
@@ -144,20 +162,13 @@ export default function CreateStallForm({ onStallCreated }) {
                 </option>
               ))}
             </select>
-           <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            required
-          />
-
+            <input type="file" accept="image/*" onChange={handleFileChange} />
             <button type="submit" disabled={loading}>
-              {loading ? 'Creating...' : 'Create Stall'}
+              {loading ? (editMode ? 'Updating...' : 'Creating...') : editMode ? 'Update Stall' : 'Create Stall'}
             </button>
           </form>
         )}
 
-        {/* ✅ Show all stalls grouped by building */}
         <div className="stall-list">
           {allStalls.map(({ building, stalls }) => (
             <div key={building.id} className="building-block">
@@ -167,23 +178,22 @@ export default function CreateStallForm({ onStallCreated }) {
               ) : (
                 <div className="stalls-grid">
                   {stalls.map((stall) => (
-                    <div
-                      key={stall.id}
-                      className="stall-card"
-                      onClick={() => handleCardClick(stall.id, building.id)}
-                      style={{ cursor: 'pointer' }}
-                    >
-<img
-  src={`https://fliplyn.onrender.com/uploaded_images${stall.image_url.split('uploaded_images')[1] || ''}`}
-  alt={stall.name}
-  className="stall-image"
-/>
-
-
+                    <div key={stall.id} className="stall-card">
+                      <img
+                        src={`https://fliplyn.onrender.com/uploaded_images${stall.image_url?.split('uploaded_images')[1] || ''}`}
+                        alt={stall.name}
+                        className="stall-image"
+                        onClick={() => handleCardClick(stall.id, building.id)}
+                      />
                       <div className="stall-info">
                         <h3>{stall.name}</h3>
                         <p><strong>Description:</strong> {stall.description}</p>
                       </div>
+                      <FaEdit
+                        className="edit-icon"
+                        onClick={() => handleEditClick(stall)}
+                        title="Edit Stall"
+                      />
                     </div>
                   ))}
                 </div>
@@ -191,6 +201,53 @@ export default function CreateStallForm({ onStallCreated }) {
             </div>
           ))}
         </div>
+
+        {showPopup && (
+          <div className="popup-overlay">
+            <div className="popup-form">
+              <h2>Edit Stall</h2>
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Stall Name"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
+                />
+                <textarea
+                  name="description"
+                  placeholder="Description"
+                  value={form.description}
+                  onChange={handleChange}
+                  required
+                />
+                <select
+                  name="building_id"
+                  value={form.building_id}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">-- Select Building --</option>
+                  {buildings.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.building_name || b.name || 'Unnamed'}
+                    </option>
+                  ))}
+                </select>
+                <input type="file" accept="image/*" onChange={handleFileChange} />
+                <div className="popup-buttons">
+                  <button type="button" onClick={() => setShowPopup(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={loading}>
+                    {loading ? 'Updating...' : 'Update'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );
