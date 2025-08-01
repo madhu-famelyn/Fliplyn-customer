@@ -56,3 +56,29 @@ export const fetchStallsByBuilding = async (buildingId, token) => {
   if (!res.ok) throw new Error('Failed to fetch stalls');
   return res.json();
 };
+
+
+
+export const updateStall = async (stallId, stallData, token) => {
+  const formData = new FormData();
+  if (stallData.name) formData.append('name', stallData.name);
+  if (stallData.description) formData.append('description', stallData.description);
+  if (stallData.file) formData.append('file', stallData.file);
+  if (stallData.admin_id) formData.append('admin_id', stallData.admin_id);
+
+  const res = await fetch(`https://fliplyn.onrender.com/stalls/${stallId}`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    body: formData
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('❌ Stall update failed:', errorText);
+    throw new Error('Failed to update stall');
+  }
+
+  return res.json();
+};
