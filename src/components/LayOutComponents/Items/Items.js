@@ -5,7 +5,7 @@ import {
   createItem,
   getItemsByCategoryId,
   updateItemAvailability,
-  deleteItemById, // ✅ import delete function
+  deleteItemById,
 } from './Service';
 import { useAuth } from '../../AuthContex/ContextAPI';
 import AdminLayout from '../../LayOut/AdminLayout';
@@ -47,22 +47,18 @@ const Item = () => {
     }
   }, [buildingId, stallId, categoryId, adminId]);
 
-const fetchItems = async (catId) => {
-  try {
-    const data = await getItemsByCategoryId(catId);
-    console.log('Fetched Items:', data);
-
-    const sorted = Array.isArray(data)
-      ? data.sort((a, b) => (b.is_available === true) - (a.is_available === true))
-      : [];
-
-    setItems(sorted);
-  } catch (err) {
-    console.error('Failed to fetch items:', err);
-    setItems([]);
-  }
-};
-
+  const fetchItems = async (catId) => {
+    try {
+      const data = await getItemsByCategoryId(catId);
+      const sorted = Array.isArray(data)
+        ? data.sort((a, b) => (b.is_available === true) - (a.is_available === true))
+        : [];
+      setItems(sorted);
+    } catch (err) {
+      console.error('Failed to fetch items:', err);
+      setItems([]);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -112,8 +108,8 @@ const fetchItems = async (catId) => {
   };
 
   const handleDelete = async (itemId) => {
-    const confirm = window.confirm('Are you sure you want to delete this item?');
-    if (!confirm) return;
+    const confirmDelete = window.confirm('Are you sure you want to delete this item?');
+    if (!confirmDelete) return;
 
     try {
       await deleteItemById(itemId);
@@ -207,54 +203,44 @@ const fetchItems = async (catId) => {
             ) : (
               <div className="item-grid">
                 {items.map((item) => (
-<div key={`${item.id}-${item.is_available}`} className="item-card animate-move">
+                  <div key={`${item.id}-${item.is_available}`} className="item-card animate-move">
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className="item-img"
+                      onClick={() => window.open(item.image_url, '_blank')}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/fallback.png';
+                      }}
+                    />
 
+                    <div className="item-info">
+                      <div className="item-header">
+                        <h4>{item.name}</h4>
+                        <p className="item-price"><b>₹ {item.final_price}</b></p>
+                      </div>
 
-  
-<img
-  src={`https://fliplyn.onrender.com/${item.image_url}`}
-  alt={item.name}
-  className="item-img"
-  onClick={() =>
-    window.open(`https://fliplyn.onrender.com/${item.image_url}`, '_blank')
-  }
-  onError={(e) => {
-    e.target.onerror = null;
-    e.target.src = '/fallback.png';
-  }}
-/>
+                      <div className="item-bottom">
+                        <label className="toggle-label">
+                          <input
+                            type="checkbox"
+                            checked={item.is_available}
+                            onChange={() => handleToggleAvailability(item.id, item.is_available)}
+                          />
+                          <span>{item.is_available ? 'Available' : 'Unavailable'}</span>
+                        </label>
 
-
-
-  <div className="item-info">
-    <div className="item-header">
-      <div>
-        <h4>{item.name}</h4>
-      </div>
-      <p className="item-price"><b>₹ {item.final_price}</b></p>
-    </div>
-
-    <div className="item-bottom">
-      <label className="toggle-label">
-        <input
-          type="checkbox"
-          checked={item.is_available}
-          onChange={() => handleToggleAvailability(item.id, item.is_available)}
-        />
-        <span>{item.is_available ? 'Available' : 'Unavailable'}</span>
-      </label>
-
-      <button
-        className="delete-btn"
-        onClick={() => handleDelete(item.id)}
-        title="Delete Item"
-      >
-        🗑
-      </button>
-    </div>
-  </div>
-</div>
-
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDelete(item.id)}
+                          title="Delete Item"
+                        >
+                          🗑
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             )

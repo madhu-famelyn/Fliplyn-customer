@@ -180,11 +180,12 @@ export default function CreateStallForm() {
                   {stalls.map((stall) => (
                     <div key={stall.id} className="stall-card">
                       <img
-                        src={`https://fliplyn.onrender.com/uploaded_images${stall.image_url?.split('uploaded_images')[1] || ''}`}
-                        alt={stall.name}
-                        className="stall-image"
-                        onClick={() => handleCardClick(stall.id, building.id)}
-                      />
+  src={stall.image_url}
+  alt={stall.name}
+  className="stall-image"
+  onClick={() => handleCardClick(stall.id, building.id)}
+/>
+
                       <div className="stall-info">
                         <h3>{stall.name}</h3>
                         <p><strong>Description:</strong> {stall.description}</p>

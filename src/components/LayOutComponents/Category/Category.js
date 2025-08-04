@@ -121,17 +121,20 @@ export default function AddCategory() {
                   onClick={() => handleCardClick(cat.id)}
                   style={{ cursor: 'pointer' }}
                 >
-                <img
-                  src={`https://fliplyn.onrender.com/${cat.image_url}`}
-                  alt={cat.name}
-                  style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '8px' }}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = '/fallback.png';
-                  }}
-                />
-
-
+                  <img
+                    src={cat.image_url}
+                    alt={cat.name}
+                    style={{
+                      width: '100%',
+                      height: '140px',
+                      objectFit: 'cover',
+                      borderRadius: '8px',
+                    }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/fallback.png'; // fallback image if S3 fails
+                    }}
+                  />
                   <h4>{cat.name}</h4>
                 </div>
               ))}
