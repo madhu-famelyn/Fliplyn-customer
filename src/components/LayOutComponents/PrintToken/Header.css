@@ -1,0 +1,28 @@
+.app-header {
+  position: fixed;       /* Fixes the header to the top */
+  top: 0;                /* Sticks it to the very top */
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #d0d0d0; /* as per spec */
+  z-index: 1000;         /* keeps it above other content */
+}
+
+.header-container {
+  max-width: 1440px;      /* max width but still responsive */
+  margin: 0 auto;
+  padding: 24px 30px;     /* top/bottom 24px, left/right 30px */
+  display: flex;
+  align-items: center;
+  height: 65px;           /* fixed height from design */
+  box-sizing: border-box;
+}
+
+.header-logo {
+  font-family: "SF Pro Display", sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 100%;
+  color: #000000;
+  margin: 0;
+}

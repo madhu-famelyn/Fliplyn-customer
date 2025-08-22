@@ -1,49 +1,68 @@
-
-
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
+// src/AuthContex/ContextAPI.js
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [role, setRole] = useState(null); // 👈 track admin or manager
+  const [userId, setUserId] = useState(null); // vendor_id
+  const [role, setRole] = useState(null);
+  const [phone, setPhone] = useState(null);
+  const [stallId, setStallId] = useState(null);
+  const [vendorName, setVendorName] = useState(null);
 
-  // 🔁 Restore from localStorage on first render
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedEmail = localStorage.getItem('email');
-    const storedUserId = localStorage.getItem('userId');
-    const storedRole = localStorage.getItem('role');
+    const storedToken = localStorage.getItem("token");
+    const storedUserId = localStorage.getItem("userId");
+    const storedRole = localStorage.getItem("role");
+    const storedPhone = localStorage.getItem("phone");
+    const storedStallId = localStorage.getItem("stallId");
+    const storedVendorName = localStorage.getItem("vendorName");
 
-    if (storedToken && storedUserId && storedEmail && storedRole) {
+    if (storedToken && storedUserId && storedRole) {
       setToken(storedToken);
-      setEmail(storedEmail);
       setUserId(storedUserId);
       setRole(storedRole);
+
+      if (storedPhone) setPhone(storedPhone);
+      if (storedStallId) setStallId(storedStallId);
+      if (storedVendorName) setVendorName(storedVendorName);
     }
   }, []);
 
-  const loginUser = (jwt, userEmail, id, userRole) => {
+  // ✅ Adjusted to handle vendorId, phone, stallId, vendorName
+  const loginUser = (jwt, id, userRole, userPhone = null, userStallId = null, name = null) => {
     setToken(jwt);
-    setEmail(userEmail);
     setUserId(id);
     setRole(userRole);
 
-    localStorage.setItem('token', jwt);
-    localStorage.setItem('email', userEmail);
-    localStorage.setItem('userId', id);
-    localStorage.setItem('role', userRole);
+    if (userPhone) {
+      setPhone(userPhone);
+      localStorage.setItem("phone", userPhone);
+    }
+
+    if (userStallId) {
+      setStallId(userStallId);
+      localStorage.setItem("stallId", userStallId);
+    }
+
+    if (name) {
+      setVendorName(name);
+      localStorage.setItem("vendorName", name);
+    }
+
+    localStorage.setItem("token", jwt);
+    localStorage.setItem("userId", id);
+    localStorage.setItem("role", userRole);
   };
 
   const logoutUser = () => {
     setToken(null);
-    setEmail(null);
     setUserId(null);
     setRole(null);
-
+    setPhone(null);
+    setStallId(null);
+    setVendorName(null);
     localStorage.clear();
   };
 
@@ -51,11 +70,13 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         token,
-        email,
-        userId,
+        userId,      // vendor_id
         role,
+        phone,
+        stallId,
+        vendorName,
         loginUser,
-        logoutUser
+        logoutUser,
       }}
     >
       {children}
@@ -64,3 +85,109 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // src/AuthContex/ContextAPI.js
+
+// import React, { createContext, useContext, useState, useEffect } from "react";
+
+// const AuthContext = createContext();
+
+// export const AuthProvider = ({ children }) => {
+//   const [token, setToken] = useState(null);
+//   const [email, setEmail] = useState(null);
+//   const [userId, setUserId] = useState(null);
+//   const [role, setRole] = useState(null); // admin or vendor
+//   const [phone, setPhone] = useState(null); // vendor specific
+
+//   useEffect(() => {
+//     const storedToken = localStorage.getItem("token");
+//     const storedEmail = localStorage.getItem("email");
+//     const storedUserId = localStorage.getItem("userId");
+//     const storedRole = localStorage.getItem("role");
+//     const storedPhone = localStorage.getItem("phone");
+
+//     if (storedToken && storedUserId && storedRole) {
+//       setToken(storedToken);
+//       setUserId(storedUserId);
+//       setRole(storedRole);
+
+//       if (storedEmail) setEmail(storedEmail);
+//       if (storedPhone) setPhone(storedPhone);
+//     }
+//   }, []);
+
+//   // Handles both admin & vendor
+//   const loginUser = (jwt, userEmail, id, userRole, userPhone = null) => {
+//     setToken(jwt);
+//     setUserId(id);
+//     setRole(userRole);
+
+//     if (userEmail) {
+//       setEmail(userEmail);
+//       localStorage.setItem("email", userEmail);
+//     }
+
+//     if (userPhone) {
+//       setPhone(userPhone);
+//       localStorage.setItem("phone", userPhone);
+//     }
+
+//     localStorage.setItem("token", jwt);
+//     localStorage.setItem("userId", id);
+//     localStorage.setItem("role", userRole);
+//   };
+
+//   const logoutUser = () => {
+//     setToken(null);
+//     setEmail(null);
+//     setUserId(null);
+//     setRole(null);
+//     setPhone(null);
+
+//     localStorage.clear();
+//   };
+
+//   return (
+//     <AuthContext.Provider
+//       value={{
+//         token,
+//         email,
+//         userId,
+//         role,
+//         phone,
+//         loginUser,
+//         logoutUser,
+//       }}
+//     >
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// export const useAuth = () => useContext(AuthContext);

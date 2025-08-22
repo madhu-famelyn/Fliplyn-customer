@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './SignIn.css';
 import { login } from './sevice';
-import { useAuth } from '../AuthContex/ContextAPI';
+import { useAuth } from '../AuthContex/AdminContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -69,7 +69,7 @@ export default function SignInPage() {
         <div className="signin-links">
           <p>Don’t have an account? <Link to="/signup">Sign Up</Link></p>
           <p className="signin-manager-link">
-            Want to login as manager? <Link to="/manager-login">Login as Manager</Link>
+            {/* Want to login as manager? <Link to="/manager-login">Login as Manager</Link> */}
           </p>
         </div>
       </div>

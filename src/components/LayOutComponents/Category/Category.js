@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from '../../LayOut/AdminLayout';
 import './Category.css';
-import { createCategory, fetchCategoriesByStall } from './Service';
+import { createCategory, fetchCategoriesByStall, updateCategory } from './Service';
+import { FaEdit } from 'react-icons/fa';
 
 export default function AddCategory() {
   const { stallId } = useParams();
@@ -17,6 +18,13 @@ export default function AddCategory() {
   const [showForm, setShowForm] = useState(false);
   const fileInputRef = useRef(null);
 
+  // Update popup state
+  const [showUpdatePopup, setShowUpdatePopup] = useState(false);
+  const [updateCategoryId, setUpdateCategoryId] = useState(null);
+  const [updateName, setUpdateName] = useState('');
+  const [updateFile, setUpdateFile] = useState(null);
+  const updateFileRef = useRef(null);
+
   useEffect(() => {
     if (stallId) {
       fetchCategoriesByStall(stallId)
@@ -27,6 +35,11 @@ export default function AddCategory() {
         });
     }
   }, [stallId]);
+
+  const refreshCategories = async () => {
+    const refreshed = await fetchCategoriesByStall(stallId);
+    setCategories(refreshed);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,9 +62,7 @@ export default function AddCategory() {
       setName('');
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
-
-      const refreshed = await fetchCategoriesByStall(stallId);
-      setCategories(refreshed);
+      await refreshCategories();
       setShowForm(false);
     } catch (err) {
       console.error(err);
@@ -63,15 +74,47 @@ export default function AddCategory() {
 
   const handleCardClick = (categoryId) => {
     const localAdminId = localStorage.getItem('admin_id');
-
     navigate('/item', {
-      state: {
-        buildingId,
-        stallId,
-        categoryId,
-        adminId: localAdminId,
-      },
+      state: { buildingId, stallId, categoryId, adminId: localAdminId },
     });
+  };
+
+  // Handle update popup open
+  const handleEditClick = (cat) => {
+    setUpdateCategoryId(cat.id);
+    setUpdateName(cat.name);
+    setUpdateFile(null);
+    if (updateFileRef.current) updateFileRef.current.value = '';
+    setShowUpdatePopup(true);
+  };
+
+  // Handle update submit
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    if (!updateName) {
+      alert('Please enter category name');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', updateName);
+    formData.append('building_id', buildingId);
+    formData.append('stall_id', stallId);
+    formData.append('admin_id', adminId);
+    if (updateFile) formData.append('file', updateFile);
+
+    try {
+      setLoading(true);
+      await updateCategory(updateCategoryId, formData);
+      alert('Category updated successfully!');
+      setShowUpdatePopup(false);
+      await refreshCategories();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update category');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -115,27 +158,43 @@ export default function AddCategory() {
           {categories.length > 0 ? (
             <div className="category-cards">
               {categories.map((cat) => (
-                <div
-                  key={cat.id}
-                  className="category-card"
-                  onClick={() => handleCardClick(cat.id)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <img
-                    src={cat.image_url}
-                    alt={cat.name}
+                <div key={cat.id} className="category-card">
+                  <div
+                    style={{ position: 'relative', cursor: 'pointer' }}
+                    onClick={() => handleCardClick(cat.id)}
+                  >
+                    <img
+                      src={cat.image_url}
+                      alt={cat.name}
+                      style={{
+                        width: '100%',
+                        height: '140px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                      }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/fallback.png';
+                      }}
+                    />
+                  </div>
+                  <h4>{cat.name}</h4>
+                  <FaEdit
                     style={{
-                      width: '100%',
-                      height: '140px',
-                      objectFit: 'cover',
-                      borderRadius: '8px',
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      color: '#007d80',
+                      background: '#f7f7f5',
+                      borderRadius: '50%',
+                      padding: '4px',
+                      cursor: 'pointer',
                     }}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = '/fallback.png'; // fallback image if S3 fails
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditClick(cat);
                     }}
                   />
-                  <h4>{cat.name}</h4>
                 </div>
               ))}
             </div>
@@ -144,6 +203,45 @@ export default function AddCategory() {
           )}
         </div>
       </div>
+
+      {/* Update Popup Modal */}
+      {showUpdatePopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h2>Update Category</h2>
+            <form onSubmit={handleUpdateSubmit}>
+              <label>Category Name</label>
+              <input
+                type="text"
+                value={updateName}
+                onChange={(e) => setUpdateName(e.target.value)}
+                required
+              />
+
+              <label>Upload New Image (optional)</label>
+              <input
+                type="file"
+                accept="image/*"
+                ref={updateFileRef}
+                onChange={(e) => setUpdateFile(e.target.files[0])}
+              />
+
+              <div className="popup-buttons">
+                <button type="submit" disabled={loading}>
+                  {loading ? 'Updating...' : 'Update'}
+                </button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowUpdatePopup(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

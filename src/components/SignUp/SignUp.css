@@ -2,9 +2,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh; /* Allows content to grow */
   background-color: #f7f7f5;
   font-family: 'Inter', sans-serif;
+  padding: 20px;
+  /* overflow-y: auto;  */
+  flex-direction: column; /* Optional: allows vertical stacking */
 }
 
 .signup-unique-card {

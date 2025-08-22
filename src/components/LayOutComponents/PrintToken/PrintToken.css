@@ -1,0 +1,363 @@
+/* Center everything */
+.token-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  background-color: #f9fafb;
+}
+
+.token-card {
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 49px;
+  width: 90%;               /* make it fluid */
+  max-width: 598px;         /* cap for large screens */
+  min-height: 394px;
+  margin: 20px auto;
+  text-align: center;
+
+  /* Layered shadows */
+  box-shadow:
+    2.97px 2.97px 21px -2.97px rgba(87, 87, 87, 0.10),
+    0.68px 0.68px 4.81px -1.98px rgba(87, 87, 87, 0.14),
+    0.18px 0.18px 1.26px -0.99px rgba(87, 87, 87, 0.15);
+}
+
+/* Tablets (<=1024px) */
+@media (max-width: 1024px) {
+  .token-card {
+    padding: 40px;
+    max-width: 500px;
+    min-height: auto;  /* allow it to shrink */
+  }
+}
+
+/* Small laptops (<=768px) */
+@media (max-width: 768px) {
+  .token-card {
+    padding: 30px;
+    max-width: 420px;
+  }
+}
+
+/* Mobile (<=480px) */
+@media (max-width: 480px) {
+  .token-card {
+    padding: 20px;
+    max-width: 95%;   /* almost full width */
+    border-radius: 6px;
+  }
+}
+
+
+.token-title {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 100%;
+  color: #000000;
+  margin-bottom: 16px; /* give a little breathing space */
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .token-title {
+    font-size: 22px; /* shrink for tablets/laptops */
+  }
+}
+
+@media (max-width: 480px) {
+  .token-title {
+    font-size: 20px; /* smaller for mobile */
+  }
+}
+
+
+.token-subtitle {
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14.26px; /* as per Figma */
+  color: #979797;
+  margin-bottom: 25px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .token-subtitle {
+    font-size: 11px;
+    line-height: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .token-subtitle {
+    font-size: 10px;
+    line-height: 12px;
+  }
+}
+
+
+.token-form {
+  width: 400.93px;
+  height: 212.95px;
+  padding: 19.8px;
+  display: flex;
+  flex-direction: column;
+  gap: 26.73px;
+  opacity: 1;
+
+  margin: 0 auto;       /* ✅ centers horizontally */
+}
+
+
+.token-label {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #262626;
+  display: block;       /* keeps it above input */
+  margin-bottom: -10px;   /* spacing between label and input */
+  text-align: left;     /* ensures text is aligned left */
+}
+
+
+
+.token-input {
+  width: 366.32px;             /* from your spec */
+  height: 40px;                /* from your spec */
+  padding: 12px 14px;
+  border-radius: 10px;         /* ✅ matches spec */
+  border: 1px solid #E4E4E4;   /* ✅ border color */
+  background: #BBBBBB26;       /* ✅ light gray background */
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.token-input:focus {
+  border-color: #f97316;       /* highlight on focus */
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+}
+
+
+.token-button {
+  width: 366.32px;                       
+  height: 38.61px;                       
+  padding: 0 36px;              /* remove top/bottom padding */
+  gap: 8px;
+  border: 1px solid #FFA455;             
+  border-radius: 8px;                    
+  background: #F17F1C;                   
+  box-shadow: 0px 8px 24px 0px #F17F1C4D;
+
+  /* Center text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Typography */
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: 0%;
+  color: #FAFAFA;
+  
+  cursor: pointer;
+  opacity: 1;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.token-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0px 10px 28px 0px #F17F1C66;
+}
+
+.token-button:active {
+  transform: translateY(0);
+  box-shadow: 0px 4px 12px 0px #F17F1C33;
+}
+
+/* Remove number input arrows (Chrome, Safari, Edge) */
+.token-input::-webkit-outer-spin-button,
+.token-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove number input arrows (Firefox) */
+.token-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* PrintToken.css */
+/* Page wrapper */
+.token-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 16px;
+  background: #fafafa;
+  margin-top: 10vh;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Receipt container */
+.receipt {
+  background: #ffffff; 
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow:
+    2px 2px 18px rgba(0, 0, 0, 0.05),
+    0px 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Store name */
+.receipt h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #111827;
+}
+
+/* Token info */
+.token-info {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+/* Date */
+.date {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 8px 0;
+}
+
+/* Table */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table th,
+table td {
+  border-bottom: 1px dashed #000; /* dark dashed line */
+  padding: 6px 8px;
+  font-size: 13px;
+  color: #262626;
+}
+
+/* Column alignment */
+table th:first-child,
+table td:first-child {
+  text-align: left; /* Item name */
+}
+
+table th:nth-child(2),
+table td:nth-child(2) {
+  text-align: center; /* Qty */
+  width: 50px;
+}
+
+table th:nth-child(3),
+table td:nth-child(3) {
+  text-align: right; /* Price */
+  width: 80px;
+}
+
+/* Bold rows */
+.receipt td strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Remove border for CGST + SGST */
+table tr.cgst-row td,
+table tr.sgst-row td {
+  border-bottom: none;
+}
+
+/* Thank you note */
+.receipt h4 {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Print Button */
+.print-btn {
+  margin-top: 16px;
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #FFA455;
+  background: #F17F1C;
+  box-shadow: 0px 8px 24px 0px #F17F1C4D;
+  color: #FAFAFA;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.print-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0px 10px 28px 0px #F17F1C66;
+}
+
+.print-btn:active {
+  transform: translateY(0);
+  box-shadow: 0px 4px 12px 0px #F17F1C33;
+}
+
+/* Print mode */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-area, #print-area * {
+    visibility: visible;
+  }
+  #print-area {
+    margin: 0 auto;
+    border: none;
+    box-shadow: none;
+    width: 100%;
+  }
+  .print-btn {
+    display: none;
+  }
+}

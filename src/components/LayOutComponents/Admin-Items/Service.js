@@ -1,8 +1,9 @@
 // src/services/buildingService.js
 import axios from 'axios';
 
-const API_BASE_URL = 'https://fliplyn.onrender.com'; // 🔁 Replace with your actual backend URL
+const API_BASE_URL = 'http://127.0.0.1:8000'; // ✅ Use this consistently
 
+// ✅ Fetch buildings by admin ID
 export const fetchBuildingsByAdminId = async (adminId) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/buildings/buildings/by-admin/${adminId}`);
@@ -13,7 +14,7 @@ export const fetchBuildingsByAdminId = async (adminId) => {
   }
 };
 
-// ✅ NEW: Fetch stalls by building ID
+// ✅ Fetch stalls by building ID
 export const fetchStallsByBuildingId = async (buildingId) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/stalls/building/${buildingId}`);
@@ -24,13 +25,51 @@ export const fetchStallsByBuildingId = async (buildingId) => {
   }
 };
 
-
+// ✅ Fetch items by stall ID
 export const fetchItemsByStallId = async (stallId) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/items/stall/${stallId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching items by stall ID:', error);
+    throw error.response?.data || error;
+  }
+};
+
+// ✅ Update item availability (PATCH)
+export const updateItemAvailability = async (itemId, isAvailable) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/items/items/${itemId}/availability`,
+      { is_available: isAvailable }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error updating item availability:', error);
+    throw error.response?.data || error;
+  }
+};
+
+// ✅ Update item (PUT)
+export const updateItem = async (itemId, data) => {
+  try {
+    const response = await axios.put(`${API_BASE_URL}/items/${itemId}`, data, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating item:', error);
+    throw error.response?.data || error;
+  }
+};
+
+// ✅ Delete item (DELETE)
+export const deleteItemById = async (itemId) => {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/items/${itemId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting item:', error);
     throw error.response?.data || error;
   }
 };

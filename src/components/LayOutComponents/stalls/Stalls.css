@@ -3,7 +3,7 @@
   max-width: 1000px;
   margin: auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f7f5;
+  /* background-color: #f7f7f5; */
   border-radius: 16px;
 }
 
@@ -105,7 +105,7 @@
 .stall-card {
   border: 1px solid #d4d4d4;
   border-radius: 12px;
-  overflow: hidden;
+  /* overflow: hidden; */
   background: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease;
@@ -247,4 +247,69 @@
 
 .popup-buttons button:first-child {
   background-color: #aaa;
+}
+
+
+
+
+
+
+
+
+
+/* Toggle Switch */
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-input {
+  display: none;
+}
+
+.toggle-label {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  margin-bottom: 2vh;
+  cursor: pointer;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background-color: #ccc;
+  border-radius: 26px;
+  transition: 0.3s;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+
+}
+
+/* When checked */
+.toggle-input:checked + .toggle-label .toggle-slider {
+  background-color: #4caf50; /* green */
+}
+
+.toggle-input:checked + .toggle-label .toggle-slider::before {
+  transform: translateX(24px);
+}
+
+.toggle-text {
+  font-size: 14px;
+  font-weight: 500;
 }

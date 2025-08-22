@@ -2,9 +2,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FaMapMarkerAlt, FaBuilding, FaStore, FaUtensils, FaShoppingCart,
+  FaMapMarkerAlt, FaBuilding, FaStore, FaShoppingCart,
   FaChartBar, FaUsers, FaCog, FaSignOutAlt, FaBars, FaTimes
 } from 'react-icons/fa';
+import { GiToken } from 'react-icons/gi';  
 import { MdDashboard } from 'react-icons/md';
 import './AdminLayout.css';
 
@@ -26,11 +27,12 @@ export default function AdminLayout({ children }) {
             <li><Link to="/locations" onClick={toggleSidebar}><FaMapMarkerAlt /> Locations</Link></li>
             <li><Link to="/items-admin" onClick={toggleSidebar}><FaBuilding /> Items</Link></li>
             <li><Link to="/stalls" onClick={toggleSidebar}><FaStore /> Stalls</Link></li>
-            <li><Link to="/manager-stalls" onClick={toggleSidebar}><FaUtensils /> Manegar stalls</Link></li>
+            {/* <li><Link to="/manager-stalls" onClick={toggleSidebar}><FaUtensils /> Manegar stalls</Link></li> */}
             <li><Link to="/add-money" onClick={toggleSidebar}><FaShoppingCart /> Add wallets</Link></li>
             <li><Link to="/create-group" onClick={toggleSidebar}><FaShoppingCart /> Add wallets in Group</Link></li>
             <li><Link to="/manager-details" onClick={toggleSidebar}><FaChartBar /> Manager Details</Link></li>
             <li><Link to="/user" onClick={toggleSidebar}><FaUsers /> Users</Link></li>
+            <li><Link to="/token" onClick={toggleSidebar}><GiToken/>Token</Link></li>
 
             <li className="menu-separator"></li>
 

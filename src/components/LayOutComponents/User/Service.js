@@ -1,5 +1,5 @@
 export const getUserDetails = async (userId, token) => {
-  const res = await fetch(`https://fliplyn.onrender.com/admin/${userId}`, {
+  const res = await fetch(`http://127.0.0.1:8000/admin/${userId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   if (!res.ok) throw new Error('Failed to fetch user');
@@ -7,7 +7,7 @@ export const getUserDetails = async (userId, token) => {
 };
 
 export const fetchBuildings = async (adminId, token) => {
-  const res = await fetch(`https://fliplyn.onrender.com/buildings/buildings/by-admin/${adminId}`, {
+  const res = await fetch(`http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   if (!res.ok) throw new Error('Failed to fetch buildings');
@@ -16,7 +16,7 @@ export const fetchBuildings = async (adminId, token) => {
 
 export const createManager = async (data, token) => {
   try {
-    const res = await fetch('https://fliplyn.onrender.com/managers/', {
+    const res = await fetch('http://127.0.0.1:8000/managers/', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -40,7 +40,7 @@ export const createManager = async (data, token) => {
 
 
 export const fetchManagersByBuilding = async (buildingId, token) => {
-  const res = await fetch(`https://fliplyn.onrender.com/managers/building/${buildingId}`, {
+  const res = await fetch(`http://127.0.0.1:8000/managers/building/${buildingId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   if (!res.ok) throw new Error('Failed to fetch managers');
@@ -48,7 +48,7 @@ export const fetchManagersByBuilding = async (buildingId, token) => {
 };
 
 export const deleteManager = async (managerId, token) => {
-  const res = await fetch(`https://fliplyn.onrender.com/managers/${managerId}`, {
+  const res = await fetch(`http://127.0.0.1:8000/managers/${managerId}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` }
   });

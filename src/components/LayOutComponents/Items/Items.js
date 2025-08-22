@@ -9,6 +9,8 @@ import {
 } from './Service';
 import { useAuth } from '../../AuthContex/ContextAPI';
 import AdminLayout from '../../LayOut/AdminLayout';
+import ItemForm from './ItemForm';
+import ItemList from './ItemList';
 import './Items.css';
 
 const Item = () => {
@@ -62,10 +64,20 @@ const Item = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+
+    if (name === 'tax_included') {
+      const isChecked = checked;
+      setFormData((prev) => ({
+        ...prev,
+        tax_included: isChecked,
+        Gst_precentage: isChecked ? '' : prev.Gst_precentage,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -131,123 +143,21 @@ const Item = () => {
         </button>
 
         {showForm && (
-          <form onSubmit={handleSubmit} className="item-form">
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="description"
-              placeholder="Description"
-              value={formData.description}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="price"
-              placeholder="Price"
-              value={formData.price}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="number"
-              name="Gst_precentage"
-              placeholder="GST %"
-              value={formData.Gst_precentage}
-              onChange={handleChange}
-            />
-
-            <label>
-              <input
-                type="checkbox"
-                name="tax_included"
-                checked={formData.tax_included}
-                onChange={handleChange}
-              />
-              Tax Included
-            </label>
-
-            <label>
-              <input
-                type="checkbox"
-                name="is_available"
-                checked={formData.is_available}
-                onChange={handleChange}
-              />
-              Is Available
-            </label>
-
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files[0])}
-              required
-            />
-            <button type="submit">Submit</button>
-          </form>
+          <ItemForm
+            formData={formData}
+            file={file}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            setFile={setFile}
+            message={message}
+          />
         )}
 
-        {message && <p className="item-message">{message}</p>}
-
-        <div className="item-list">
-          <h3>Items in this Category</h3>
-          {Array.isArray(items) ? (
-            items.length === 0 ? (
-              <p>No items found.</p>
-            ) : (
-              <div className="item-grid">
-                {items.map((item) => (
-                  <div key={`${item.id}-${item.is_available}`} className="item-card animate-move">
-                    <img
-                      src={item.image_url}
-                      alt={item.name}
-                      className="item-img"
-                      onClick={() => window.open(item.image_url, '_blank')}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = '/fallback.png';
-                      }}
-                    />
-
-                    <div className="item-info">
-                      <div className="item-header">
-                        <h4>{item.name}</h4>
-                        <p className="item-price"><b>₹ {item.final_price}</b></p>
-                      </div>
-
-                      <div className="item-bottom">
-                        <label className="toggle-label">
-                          <input
-                            type="checkbox"
-                            checked={item.is_available}
-                            onChange={() => handleToggleAvailability(item.id, item.is_available)}
-                          />
-                          <span>{item.is_available ? 'Available' : 'Unavailable'}</span>
-                        </label>
-
-                        <button
-                          className="delete-btn"
-                          onClick={() => handleDelete(item.id)}
-                          title="Delete Item"
-                        >
-                          🗑
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )
-          ) : (
-            <p>Loading items...</p>
-          )}
-        </div>
+        <ItemList
+          items={items}
+          handleToggleAvailability={handleToggleAvailability}
+          handleDelete={handleDelete}
+        />
       </div>
     </AdminLayout>
   );

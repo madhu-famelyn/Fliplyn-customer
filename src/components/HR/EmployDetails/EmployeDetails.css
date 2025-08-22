@@ -1,0 +1,136 @@
+/* Container */
+.employees-page-container {
+  padding: 20px;
+  font-family: "Inter", sans-serif;
+  color: #222;
+}
+
+/* Group Name */
+.employees-page-group-name {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Wallet Info */
+.employees-page-wallet-info {
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+.employees-page-wallet-info p {
+  margin: 5px 0;
+}
+.employee-tick {
+  color: green;
+  font-size: 18px;
+}
+.employee-cross {
+  color: red;
+  font-size: 18px;
+}
+
+/* Header Row */
+.employees-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.employees-page-header-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+.employees-page-header-buttons button {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  padding: 6px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+.btn-upload {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+.btn-add {
+  background-color: #fde6d5;
+  color: black;
+}
+.btn-icon {
+  margin-right: 5px;
+}
+
+/* Employees Table */
+.employees-page-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.employees-page-table th,
+.employees-page-table td {
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  text-align: left;
+}
+.employees-page-table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+/* No Employees */
+.employees-page-no-employees {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 10px;
+}
+
+
+
+/* ---------- Table Row Hover ---------- */
+
+
+/* ---------- Button Hover ---------- */
+.employees-page-header-buttons .btn-upload:hover {
+  background-color: #f97316;
+  color: white;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.employees-page-header-buttons .btn-add:hover {
+  background-color: #f97316;
+  color: white;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+
+
+/* Delete Button */
+.buttons-deletes {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #cc0000; /* red */
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.buttons-deletes:hover {
+  background-color: #a54a00; /* darker red */
+  transform: translateY(-1px);
+}
+
+.buttons-deletes:active {
+  background-color: #8b3c00; /* even darker on click */
+  transform: translateY(0);
+}
+

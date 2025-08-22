@@ -1,0 +1,80 @@
+/* Overlay and modal */
+.orders-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.orders-modal {
+  background: #fff;
+  padding: 20px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90%;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #cc4e00;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Table styling */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.orders-table th,
+.orders-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.orders-table th {
+  background-color: #f0f0f0;
+  font-weight: 600;
+}
+
+.orders-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.orders-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Items inside table cell */
+.items-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.items-list li {
+  margin-bottom: 4px;
+  font-size: 13px;
+}

@@ -1,0 +1,110 @@
+/* LogIn.css */
+
+/* Page container */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #fff;
+  font-family: "Inter", sans-serif;
+}
+
+/* Card */
+.login-card {
+  background: #fff;
+  padding: 40px 50px;
+  border-radius: 10px;
+  width: 380px;
+  text-align: left;
+  border: 1px solid #DCDCDC;
+
+  /* Multiple layered shadows for depth */
+  box-shadow: 
+    2.97px 2.97px 21px -2.97px #5757571A,
+    0.68px 0.68px 4.81px -1.98px #57575723,
+    0.18px 0.18px 1.26px -0.99px #57575726;
+}
+
+
+/* Title */
+.login-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #000;
+}
+
+/* Form groups */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input::placeholder {
+  color: #9ca3af;
+}
+
+.form-group input:focus {
+  border-color: #3b82f6; /* subtle blue */
+}
+
+/* Button */
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #C6C6C6;
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:disabled {
+  background: #d1d5db; /* gray disabled state */
+  cursor: not-allowed;
+}
+
+.btn:not(:disabled):hover {
+  background: #9b9b9b;
+}
+
+/* Error message */
+.error-text {
+  color: #dc2626;
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Success box */
+.success-box {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: 14px;
+}

@@ -1,5 +1,5 @@
 // src/api/Service.js
-const BASE_URL = 'https://fliplyn.onrender.com'; // 🔒 Hardcoded, no .env fallback
+const BASE_URL = 'http://127.0.0.1:8000'; // 🔒 Hardcoded, no .env fallback
 
 // ✅ Create Building
 export const createBuilding = async (payload, token) => {

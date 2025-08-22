@@ -1,6 +1,6 @@
 // src/services/managerService.js
 
-const BASE_URL = 'https://fliplyn.onrender.com'; // Replace with your backend URL
+const BASE_URL = 'http://127.0.0.1:8000'; // Replace with your backend URL
 
 export const fetchManagerById = async (managerId, token) => {
   const response = await fetch(`${BASE_URL}/managers/${managerId}`, {

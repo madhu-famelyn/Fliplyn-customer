@@ -2,10 +2,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh; /* Allows content to grow taller */
   background-color: #f7f7f5;
   font-family: 'Inter', sans-serif;
   padding: 20px;
+  /* overflow-y: auto; Enables vertical scrolling */
+  flex-direction: column; /* Stack content vertically if needed */
 }
 
 .signin-card {

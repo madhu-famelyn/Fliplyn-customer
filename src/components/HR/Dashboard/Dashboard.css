@@ -1,0 +1,141 @@
+/* Dashboard.css */
+
+.dashboard-container {
+  padding: 20px;
+  font-family: "Inter", sans-serif;
+  color: #222;
+}
+
+/* ---------- Header ---------- */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.dashboard-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.company-info {
+  text-align: right;
+}
+
+.company-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  margin: 0;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.company-role {
+  font-size: 12px;
+  color: #777;
+  margin: 0;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #ffffff;
+  margin-bottom: 25px;
+}
+
+.dashboard-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2d3748;
+  border-left: 4px solid #e58346; /* ✅ Accent line */
+  padding-left: 10px;
+}
+
+.company-info {
+  text-align: right;
+}
+
+.company-info .name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.company-info .company-role {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+
+
+
+
+
+
+
+
+
+/* Wallet Section */
+.wallet-section {
+  margin-top: 20px;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 15px;
+}
+
+/* Cards container */
+.wallet-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+/* Individual card */
+.wallet-card {
+  background: #ffffff;
+  padding: 18px;
+  border: 1px solid #d1d5db; /* light gray outline */
+  border-radius: 6px;          /* optional: rounded corners */
+}
+
+
+.wallet-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* Group name */
+.wallet-card .group-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+/* Users count badge */
+.wallet-card .users-count {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* No wallets text */
+.no-wallets {
+  text-align: center;
+  font-size: 1rem;
+  color: #888;
+  margin-top: 10px;
+}

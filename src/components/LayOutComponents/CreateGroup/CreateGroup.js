@@ -1,140 +1,207 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth } from '../../AuthContex/ContextAPI';
-import AdminLayout from '../../LayOut/AdminLayout';
-import './CreateGroup.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import * as XLSX from "xlsx"; // Import the xlsx library for Excel export
+import "./CreateGroup.css";
 
-export default function CreateGroup() {
-  const { userId, token } = useAuth();
-  const [groupName, setGroupName] = useState('');
-  const [phoneNumbers, setPhoneNumbers] = useState(['']);
+export default function CreateGroup({ onGroupCreated }) {
+  const [formData, setFormData] = useState({
+    building_id: "",
+    wallet_amount: "",
+    group_name: "",
+    carry_forward: false,
+    exclude_weekend: false,
+    daily_wallet: false,
+    days_count: 1,
+  });
+
+  const [file, setFile] = useState(null);
+  const [message, setMessage] = useState("");
   const [buildings, setBuildings] = useState([]);
-  const [selectedBuildingId, setSelectedBuildingId] = useState('');
+  const [missingUsers, setMissingUsers] = useState([]); // Track missing users
 
-  // Fetch buildings
+  const adminId = localStorage.getItem("userId") || localStorage.getItem("admin_id");
+  const token = localStorage.getItem("token") || localStorage.getItem("access_token");
+
   useEffect(() => {
     const fetchBuildings = async () => {
+      if (!adminId) return;
+
       try {
         const res = await axios.get(
-          `https://fliplyn.onrender.com/buildings/buildings/by-admin/${userId}`,
+          `http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         setBuildings(res.data);
-        if (res.data.length > 0) {
-          setSelectedBuildingId(res.data[0].id);
-        }
       } catch (err) {
-        console.error('Failed to fetch buildings:', err);
+        console.error("Failed to fetch buildings:", err);
       }
     };
 
-    fetchBuildings();
-  }, [userId, token]);
+    if (adminId && token) {
+      fetchBuildings();
+    }
+  }, [adminId, token]);
 
-  // Handle phone number changes
-  const handlePhoneChange = (index, value) => {
-    const updated = [...phoneNumbers];
-    updated[index] = value;
-    setPhoneNumbers(updated);
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  const addPhoneField = () => setPhoneNumbers([...phoneNumbers, '']);
-  const removePhoneField = (index) => {
-    if (phoneNumbers.length > 1) {
-      setPhoneNumbers(phoneNumbers.filter((_, i) => i !== index));
-    }
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = {
-      group_name: groupName,
-      building_id: selectedBuildingId,
-      user_phone_numbers: phoneNumbers.filter((num) => num.trim() !== ''),
-    };
+
+    if (!file) {
+      alert("Please upload an Excel file");
+      return;
+    }
+
+    const form = new FormData();
+    for (const key in formData) {
+      form.append(key, formData[key]);
+    }
+    form.append("file", file);
 
     try {
-      await axios.post('https://fliplyn.onrender.com/group/create', payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      alert('Group created successfully!');
-      setGroupName('');
-      setPhoneNumbers(['']);
-    } catch (err) {
-      console.error('Error creating group:', err);
-      alert('Failed to create group.');
+      const response = await axios.post(
+        "http://localhost:8000/wallet-group/upload-excel/",
+        form,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setMessage(response.data.message || "Group created successfully.");
+      onGroupCreated(); // reload groups after creation
+    } catch (error) {
+      const errMsg = error.response?.data?.detail || "Upload failed.";
+      setMessage(`Error: ${errMsg}`);
+
+      // If users are not found, we capture them here
+      if (error.response?.data?.detail.includes("User with email")) {
+        const missingUserEmail = error.response?.data?.detail.split(' ')[4]; // Extract email
+        setMissingUsers((prev) => [...prev, { email: missingUserEmail }]);
+      }
     }
   };
 
+  // Download missing users as an Excel file
+  const downloadMissingUsers = () => {
+    if (missingUsers.length === 0) return;
+
+    const ws = XLSX.utils.json_to_sheet(missingUsers);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Missing Users");
+
+    // Export file with "Missing_Users" name
+    XLSX.writeFile(wb, "Missing_Users.xlsx");
+  };
+
   return (
-    <AdminLayout>
-      <div className="create-group-container">
-        <h2 className="create-group-heading">Create New Group</h2>
-        <form onSubmit={handleSubmit} className="create-group-form">
-          <label className="group-label">Group Name:</label>
-          <input
-            type="text"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            className="group-input"
-            required
-          />
-
-          <label className="group-label">Select Building:</label>
+    <div className="create-group-container">
+      <h1>Create Wallet Group</h1>
+      <form className="create-group-form" onSubmit={handleSubmit}>
+        <label>
+          Select Building:
           <select
-            value={selectedBuildingId}
-            onChange={(e) => setSelectedBuildingId(e.target.value)}
-            className="group-select"
+            name="building_id"
+            value={formData.building_id}
+            onChange={handleChange}
             required
           >
-            {buildings.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.building_name}
-              </option>
-            ))}
+            <option value="" disabled>
+              Select Building
+            </option>
+           {buildings.map((building) => (
+  <option key={building.id} value={building.id}>
+    {building.building_name || "Unnamed Building"}  {/* Update this to building.building_name */}
+  </option>
+))}
+
           </select>
+        </label>
 
-          <label className="group-label">User Phone Numbers:</label>
-          {phoneNumbers.map((num, index) => (
-            <div key={index} className="phone-field">
-              <input
-                type="text"
-                value={num}
-                onChange={(e) => handlePhoneChange(index, e.target.value)}
-                placeholder="Enter phone number"
-                className="group-input"
-                required
-              />
-              {phoneNumbers.length > 1 && (
-                <button
-                  type="button"
-                  className="remove-phone-btn"
-                  onClick={() => removePhoneField(index)}
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          ))}
+        <input
+          type="text"
+          name="group_name"
+          placeholder="Group Name"
+          value={formData.group_name}
+          onChange={handleChange}
+          required
+        />
 
-          <button
-            type="button"
-            className="add-phone-btn"
-            onClick={addPhoneField}
-          >
-            + Add Phone Number
+        <input
+          type="number"
+          name="wallet_amount"
+          placeholder="Wallet Amount"
+          value={formData.wallet_amount}
+          onChange={handleChange}
+          required
+        />
+
+        <label>
+          <input
+            type="checkbox"
+            name="carry_forward"
+            checked={formData.carry_forward}
+            onChange={handleChange}
+          />
+          Carry Forward
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="exclude_weekend"
+            checked={formData.exclude_weekend}
+            onChange={handleChange}
+          />
+          Exclude Weekend
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="daily_wallet"
+            checked={formData.daily_wallet}
+            onChange={handleChange}
+          />
+          Daily Wallet
+        </label>
+
+        <input
+          type="file"
+          accept=".xlsx,.xls"
+          onChange={handleFileChange}
+          required
+        />
+
+        <button type="submit">Create Group</button>
+      </form>
+
+      {message && (
+        <p className={`message ${message.startsWith("Error") ? "error" : "success"}`}>
+          {message}
+        </p>
+      )}
+
+      {missingUsers.length > 0 && (
+        <div>
+          <button onClick={downloadMissingUsers}>
+            Download Missing Users
           </button>
-
-          <button type="submit" className="create-group-submit">
-            Create Group
-          </button>
-        </form>
-      </div>
-    </AdminLayout>
+        </div>
+      )}
+    </div>
   );
 }

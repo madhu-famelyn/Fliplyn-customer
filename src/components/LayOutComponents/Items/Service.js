@@ -1,7 +1,7 @@
    // Service.js
 import axios from 'axios';
 
-const BASE_URL = 'https://fliplyn.onrender.com'; // Update if your FastAPI server is on a different port
+const BASE_URL = 'http://127.0.0.1:8000'; // Update if your FastAPI server is on a different port
 
 // Create a new item
 export const createItem = async (formData) => {
@@ -48,6 +48,30 @@ export const deleteItemById = async (itemId) => {
     return response.data;
   } catch (error) {
     console.error('Error deleting item:', error);
+    throw error;
+  }
+};
+
+
+
+
+// Service.js
+
+export const updateItemById = async (itemId, formData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/items/${itemId}`, {
+      method: 'PUT',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update item');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error updating item:', error);
     throw error;
   }
 };

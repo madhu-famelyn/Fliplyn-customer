@@ -1,82 +1,522 @@
-.create-group-container {
-  background-color: #f7f7f5;
-  padding: 32px;
-  max-width: 600px;
-  margin: 0 auto;
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+/* CreateGroup.css */
+
+/* Import Poppins font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Apply Poppins font globally */
+*,
+*::before,
+*::after {
+  font-family: 'Poppins', sans-serif;
 }
 
-.create-group-heading {
-  font-size: 24px;
-  color: #007d80;
-  margin-bottom: 20px;
+/* Create Group Container */
+.create-group-container {
+  background-color: #f0f5ff;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.create-group-container h1 {
+  color: #333333;
   text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .create-group-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
-.group-label {
-  font-weight: 600;
-  color: #333333;
-}
-
-.group-input,
-.group-select {
-  padding: 10px 14px;
+.create-group-form input[type="text"],
+.create-group-form input[type="number"],
+.create-group-form select,
+.create-group-form input[type="file"] {
+  padding: 0.6rem;
   border: 1px solid #d4d4d4;
-  border-radius: 6px;
-  font-size: 16px;
+  border-radius: 4px;
   background-color: #ffffff;
   color: #333333;
+  font-size: 1rem;
 }
 
-.phone-field {
+.create-group-form label {
+  color: #333333;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
-.add-phone-btn,
-.remove-phone-btn,
-.create-group-submit {
-  padding: 10px 16px;
+.create-group-form input[type="checkbox"] {
+  accent-color: #006a6b;
+}
+
+.create-group-form button {
+  background-color: #009999;
+  color: #ffffff;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.create-group-form button:hover {
+  background-color: #007d80;
+}
+
+.message {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.message.success {
+  color: #008000;
+}
+
+.message.error {
+  color: #cc0000;
+}
+
+
+/* Group Page Container */
+.group-page-container {
+  padding: 20px;
+}
+
+.group-page-container h2 {
+  margin-bottom: 20px;
+}
+
+.building-selector {
+  margin-bottom: 20px;
+}
+
+.building-selector label {
+  margin-right: 10px;
+}
+
+.building-selector select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+
+.group-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.group-item {
+  position: relative;
+  padding: 12px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.edit-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  color: #007d80;
+  font-size: 16px;
+}
+
+.group-name {
+  font-size: 16px;
+  color: #007d80;
+}
+
+.group-item p {
+  margin: 5px 0;
+}
+
+.created-date {
+  font-size: 12px;
+  color: #555;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===== Modal Overlay ===== */
+/* ===== Modal Box ===== */
+.modal-details {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  width: 95%;              /* Increased from 90% */
+  max-width: 900px;        /* Increased from 600px */
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+
+/* ===== Modal Box ===== */
+.modal {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* ===== Close Button ===== */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #ff4d4f;
+}
+
+/* ===== Heading ===== */
+.modal h3 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.modal h4 {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #444;
+}
+
+/* ===== Table Styling ===== */
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
   font-size: 14px;
+}
+
+.details-table th,
+.details-table td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.details-table th {
+  background-color: #f7f7f7;
+  font-weight: 600;
+}
+
+.details-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.details-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* ===== Download Button ===== */
+.download-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 16px;
+  background-color: #007d80;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.download-btn:hover {
+  background-color: #014d4e;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* UpdateGroupModal CSS */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 400px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.message {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007d80;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #005d5d;
+}
+
+button + button {
+  margin-left: 10px;
+}
+
+
+
+
+
+
+
+
+:root {
+  --sidebar-width: 250px; /* matches your .sidebar width */
+}
+
+/* === Modal Overlay === */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width); /* start after sidebar */
+  width: calc(100% - var(--sidebar-width)); /* cover only content area */
+  height: 100%;
+  background-color: rgba(51, 51, 51, 0.6); /* semi-transparent dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* === Modal Container === */
+.modal-details {
+  background-color: #ffffff; /* White background */
+  border-radius: 12px;
+  padding: 20px 25px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 105, 107, 0.2); /* Subtle shadow */
+  animation: fadeInScale 0.3s ease-out;
+}
+
+/* Smooth fade-in animation */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* === Close Button === */
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  color: #cc0000; /* Red for close */
+  cursor: pointer;
+  float: right;
+  transition: color 0.2s ease;
+}
+.close-btn:hover {
+  color: #ff3333;
+}
+
+/* === Headings === */
+.modal-details h3,
+.modal-details h4 {
+  color: #006a6b;
+  margin-top: 0;
+}
+
+/* === Tables === */
+.details-table,
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  background-color: #f7f7f5;
+}
+
+.details-table th,
+.orders-table th {
+  background-color: #f0f5ff;
+  color: #333333;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid #d4d4d4;
+}
+
+.details-table td,
+.orders-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #d4d4d4;
+  color: #333333;
+}
+
+.details-table tr:hover,
+.orders-table tr:hover {
+  background-color: #f0f5ff;
+}
+
+/* === Buttons === */
+button.download-btn,
+button.view-orders-btn {
+  background-color: #009999;
+  color: #ffffff;
   border: none;
   border-radius: 6px;
+  padding: 8px 14px;
+  margin-top: 10px;
+  margin-right: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.add-phone-btn {
-  background-color: #009999;
-  color: #ffffff;
-}
-
-.add-phone-btn:hover {
-  background-color: #006a6b;
-}
-
-.remove-phone-btn {
-  background-color: #cc0000;
-  color: #ffffff;
-}
-
-.remove-phone-btn:hover {
-  opacity: 0.85;
-}
-
-.create-group-submit {
+button.download-btn:hover,
+button.view-orders-btn:hover {
   background-color: #007d80;
-  color: #ffffff;
-  margin-top: 20px;
-  font-weight: bold;
 }
 
-.create-group-submit:hover {
-  background-color: #006a6b;
+button.download-btn:disabled,
+button.view-orders-btn:disabled {
+  background-color: #d4d4d4;
+  cursor: not-allowed;
+}
+
+/* === Date Filters === */
+.date-filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+
+.date-filters label {
+  font-size: 14px;
+  color: #333333;
+}
+
+.date-filters input,
+.date-filters select {
+  padding: 5px 8px;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  outline: none;
+}
+
+.date-filters input:focus,
+.date-filters select:focus {
+  border-color: #009999;
+  box-shadow: 0 0 3px rgba(0, 153, 153, 0.4);
 }
