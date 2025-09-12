@@ -9,7 +9,6 @@ import {
   createStall,
   fetchStallsByBuilding,
   fetchBuildings,
-  updateStall,
   deleteStall,
 } from './Service';
 

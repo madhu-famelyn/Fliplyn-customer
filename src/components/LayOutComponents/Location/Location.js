@@ -9,7 +9,7 @@ import { IoMdAdd } from 'react-icons/io';
 export default function Locations() {
   const { userId, token } = useAuth();
   const [buildings, setBuildings] = useState([]);
-  const [setCountries] = useState([]);
+  const [countries, setCountries] = useState([]); // ✅ fixed
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -40,16 +40,18 @@ export default function Locations() {
     };
 
     fetchData();
-  }, [userId, token]);
-  const handleCardClick = (buildingId) => {
-  console.log('Clicked building:', buildingId);
-  // Example: navigate(`/locations/${buildingId}`);
-};
+  }, [userId, token]); // ✅ no ESLint warning now
 
+  const handleCardClick = (buildingId) => {
+    console.log('Clicked building:', buildingId);
+    // Example: navigate(`/locations/${buildingId}`);
+  };
 
   const handleDelete = async (buildingId) => {
-    const confirm = window.confirm("Are you sure you want to delete this building?");
-    if (!confirm) return;
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this building?'
+    );
+    if (!confirmDelete) return;
 
     try {
       const res = await fetch(`http://127.0.0.1:8000/buildings/${buildingId}`, {
@@ -74,7 +76,10 @@ export default function Locations() {
       <div className="locations-container">
         <div className="locations-header">
           <h1>Locations</h1>
-          <button className="add-location-btn" onClick={() => navigate('/select-country')}>
+          <button
+            className="add-location-btn"
+            onClick={() => navigate('/select-country')}
+          >
             <IoMdAdd size={18} />
             Add Location
           </button>
@@ -103,11 +108,22 @@ export default function Locations() {
                     />
                   </div>
                 </div>
-                <p><strong>Country:</strong> {b.country_name}</p>
-                <p><strong>State:</strong> {b.state_name || 'N/A'}</p>
-                <p><strong>City:</strong> {b.city_name || 'N/A'}</p>
-                <p><strong>Floor Access:</strong> {b.user_access?.floor_access?.join(', ') || 'N/A'}</p>
-                <p><strong>Managers Count:</strong> {b.managers?.length || 0}</p>
+                <p>
+                  <strong>Country:</strong> {b.country_name}
+                </p>
+                <p>
+                  <strong>State:</strong> {b.state_name || 'N/A'}
+                </p>
+                <p>
+                  <strong>City:</strong> {b.city_name || 'N/A'}
+                </p>
+                <p>
+                  <strong>Floor Access:</strong>{' '}
+                  {b.user_access?.floor_access?.join(', ') || 'N/A'}
+                </p>
+                <p>
+                  <strong>Managers Count:</strong> {b.managers?.length || 0}
+                </p>
 
                 {b.managers?.length > 0 && (
                   <div className="manager-section">

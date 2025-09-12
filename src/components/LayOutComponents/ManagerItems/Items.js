@@ -10,7 +10,8 @@ import './Items.css';
 export default function ItemDetails() {
   const { userId, token, role } = useAuth();
 
-  const [ setManager] = useState(null);
+  // ✅ Proper state declaration (no ESLint error now)
+  const [manager, setManager] = useState(null);
   const [stalls, setStalls] = useState([]);
   const [selectedStallId, setSelectedStallId] = useState('');
   const [items, setItems] = useState([]);
@@ -24,6 +25,7 @@ export default function ItemDetails() {
         })
         .then((stallList) => {
           setStalls(stallList);
+
           // fetch all items from all stalls initially
           return Promise.all(
             stallList.map((stall) => fetchItemsByStallId(stall.id, token))
@@ -35,7 +37,7 @@ export default function ItemDetails() {
         })
         .catch((err) => console.error('Error fetching data:', err));
     }
-  }, [userId, token, role]);
+  }, [userId, token, role]); // ✅ no need to add setManager anymore
 
   const handleStallChange = async (e) => {
     const selectedId = e.target.value;
@@ -55,7 +57,9 @@ export default function ItemDetails() {
 
   return (
     <div className="max-w-5xl mx-auto mt-8 p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-semibold mb-4 text-indigo-700">Item Listings</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-indigo-700">
+        Item Listings
+      </h2>
 
       {stalls.length > 0 && (
         <div className="mb-6">
@@ -82,21 +86,24 @@ export default function ItemDetails() {
               key={item.id}
               className="border rounded p-4 shadow hover:shadow-lg transition"
             >
-            <img
-              src={`http://127.0.0.1:8000/${item.image_url}`} // ✅ Correct backend
-              alt={item.name}
-              className="w-full h-48 object-cover rounded mb-3"
-              onError={(e) => {
-                e.target.onerror = null; // Prevents infinite fallback loop
-                e.target.src = '/fallback.png'; // ✅ Local fallback image
-              }}
-            />
+              <img
+                src={`http://127.0.0.1:8000/${item.image_url}`} // ✅ Correct backend
+                alt={item.name}
+                className="w-full h-48 object-cover rounded mb-3"
+                onError={(e) => {
+                  e.target.onerror = null; // Prevent infinite loop
+                  e.target.src = '/fallback.png'; // ✅ Local fallback
+                }}
+              />
 
               <h3 className="text-lg font-semibold">{item.name}</h3>
               <p className="text-sm text-gray-600">{item.description}</p>
-              <p className="mt-2 text-green-700 font-bold">₹ {item.final_price}</p>
+              <p className="mt-2 text-green-700 font-bold">
+                ₹ {item.final_price}
+              </p>
               <p className="text-xs text-gray-500">
-                Tax Included: {item.tax_included ? 'Yes' : 'No'} | GST: {item.Gst_precentage}%
+                Tax Included: {item.tax_included ? 'Yes' : 'No'} | GST:{' '}
+                {item.Gst_precentage}%
               </p>
             </div>
           ))}
