@@ -1,18 +1,21 @@
-// src/pages/vendor/VendorItems.js
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../AuthContex/ContextAPI";
 import axios from "axios";
 import TokenHeader from "../../LayOutComponents/PrintToken/Header";
+import { useParams } from "react-router-dom";
 import "./Items.css";
 
 const VendorItems = () => {
-  const { stallId, token, userId } = useAuth();
+  const { id } = useParams(); // ✅ read stallId from URL
+  const { stallId: contextStallId, token, userId } = useAuth();
+  const stallId = id || contextStallId; // ✅ URL first, then context
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stallAvailable, setStallAvailable] = useState(false);
   const [stallName, setStallName] = useState("");
 
-  // ✅ Fetch stall info
+  // Fetch stall info
   useEffect(() => {
     if (!stallId) return;
 
@@ -27,17 +30,14 @@ const VendorItems = () => {
           setStallAvailable(response.data.is_available);
         }
       } catch (error) {
-        console.error(
-          "❌ Error fetching stall info:",
-          error.response?.data || error.message
-        );
+        console.error("❌ Error fetching stall info:", error.response?.data || error.message);
       }
     };
 
     fetchStall();
   }, [stallId, token]);
 
-  // ✅ Fetch items
+  // Fetch items
   useEffect(() => {
     if (!stallId) {
       setLoading(false);
@@ -52,16 +52,11 @@ const VendorItems = () => {
         );
         if (Array.isArray(response.data)) {
           setItems(response.data);
-
-          // ✅ Stall should be ON only if all items are ON
           const allAvailable = response.data.every((item) => item.is_available);
           setStallAvailable(allAvailable);
         }
       } catch (error) {
-        console.error(
-          "❌ Error fetching items:",
-          error.response?.data || error.message
-        );
+        console.error("❌ Error fetching items:", error.response?.data || error.message);
       } finally {
         setLoading(false);
       }
@@ -70,128 +65,64 @@ const VendorItems = () => {
     fetchItems();
   }, [stallId, token]);
 
-  // ✅ Toggle single item
-  const toggleAvailability = async (itemId, currentStatus) => {
-    try {
-      const newStatus = !currentStatus;
-      const url = `http://127.0.0.1:8000/items/${userId}/items/${itemId}/availability`;
-
-      await axios.put(
-        url,
-        {},
-        {
-          params: { is_available: newStatus },
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setItems((prev) =>
-        prev.map((item) =>
-          item.id === itemId ? { ...item, is_available: newStatus } : item
-        )
-      );
-
-      // ✅ If after update all items are ON, set stallAvailable true
-      // ❌ But don’t flip it OFF if one goes OFF
-      setItems((prev) => {
-        const updated = prev.map((item) =>
-          item.id === itemId ? { ...item, is_available: newStatus } : item
-        );
-        if (updated.every((i) => i.is_available)) {
-          setStallAvailable(true);
-        }
-        return updated;
-      });
-    } catch (error) {
-      console.error(
-        "❌ Error updating availability:",
-        error.response?.data || error.message
-      );
-    }
-  };
-
-  // ✅ Toggle all items (bulk stall toggle)
-  const toggleStallAvailability = async () => {
-    try {
-      const newStatus = !stallAvailable;
-      setStallAvailable(newStatus);
-
-      await Promise.all(
-        items.map((item) =>
-          axios.put(
-            `http://127.0.0.1:8000/items/${userId}/items/${item.id}/availability`,
-            {},
-            {
-              params: { is_available: newStatus },
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          )
-        )
-      );
-
-      setItems((prev) =>
-        prev.map((item) => ({ ...item, is_available: newStatus }))
-      );
-    } catch (error) {
-      console.error(
-        "❌ Error updating stall availability:",
-        error.response?.data || error.message
-      );
-    }
-  };
-
-  if (!stallId)
-    return <p className="text-red-600">No stall assigned to this vendor.</p>;
+  if (!stallId) return <p className="text-red-600">No stall selected.</p>;
   if (loading) return <p>Loading items...</p>;
 
   return (
     <div>
-      <TokenHeader/>
-    <div className="vendor-container">
-      {/* ✅ Stall Card */}
-      <div className="stall-container">
-        <div className="stall-card">
-          <h2 className="stall-name">{stallName || `Stall ${stallId}`}</h2>
-          <label className="switch">
-            <input
-              type="checkbox"
-              checked={stallAvailable}
-              onChange={toggleStallAvailability}
-            />
-            <span className="slider"></span>
-          </label>
-        </div>
-      </div>
-
-      {/* ✅ Items Grid */}
-      {items.length === 0 ? (
-        <p>No items found for this stall.</p>
-      ) : (
-        <div className="vendor-grid">
-          {items.map((item) => (
-            <div key={item.id} className="vendor-card">
-              <img
-                src={item.image_url || "https://via.placeholder.com/150"}
-                alt={item.name}
+      <TokenHeader />
+      <div className="vendor-container">
+        {/* Stall Card */}
+        <div className="stall-container">
+          <div className="stall-card">
+            <h2 className="stall-name">{stallName || `Stall ${stallId}`}</h2>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={stallAvailable}
+                onChange={() => {
+                  const newStatus = !stallAvailable;
+                  setStallAvailable(newStatus);
+                  setItems((prev) => prev.map((i) => ({ ...i, is_available: newStatus })));
+                }}
               />
-              <h3>{item.name}</h3>
-              <p className="price">₹{item.final_price}</p>
-
-              <label className="switch small">
-                <input
-                  type="checkbox"
-                  checked={item.is_available}
-                  onChange={() =>
-                    toggleAvailability(item.id, item.is_available)
-                  }
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
-          ))}
+              <span className="slider"></span>
+            </label>
+          </div>
         </div>
-      )}
-    </div>
+
+        {/* Items */}
+        {items.length === 0 ? (
+          <p>No items found for this stall.</p>
+        ) : (
+          <div className="vendor-grid">
+            {items.map((item) => (
+              <div key={item.id} className="vendor-card">
+                <img
+                  src={item.image_url || "https://via.placeholder.com/150"}
+                  alt={item.name}
+                />
+                <h3>{item.name}</h3>
+                <p className="price">₹{item.final_price}</p>
+                <label className="switch small">
+                  <input
+                    type="checkbox"
+                    checked={item.is_available}
+                    onChange={() =>
+                      setItems((prev) =>
+                        prev.map((i) =>
+                          i.id === item.id ? { ...i, is_available: !i.is_available } : i
+                        )
+                      )
+                    }
+                  />
+                  <span className="slider"></span>
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

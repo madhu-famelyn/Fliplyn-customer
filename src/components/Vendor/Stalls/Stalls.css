@@ -1,0 +1,45 @@
+/* Container */
+.stalls-container {
+  display: flex;
+  flex-wrap: wrap; 
+  margin-top: 30vh;
+  gap: 20px;
+  justify-content: center; /* Centers the stalls */
+  max-width: 1200px;
+  padding: 10px;
+}
+
+/* Stall Card */
+.stall-card-simple {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  width: 240px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stall-card-simple:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Stall Image */
+.stall-image-simple {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+  padding: 10px;
+}
+
+/* Text */
+.stall-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #cc6600; /* light orange accent */
+  margin: 12px 0;
+}

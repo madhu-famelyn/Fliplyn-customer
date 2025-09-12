@@ -199,11 +199,11 @@ if (editMode) {
 
   return (
     <AdminLayout>
-      <div className="stall-container">
-        <h1 className="stall-heading">Stall Management</h1>
+      <div className=" stalls-admin-stall-container">
+        <h1 className=" stalls-admin-stall-heading">Stall Management</h1>
 
         <button
-          className="toggle-button"
+          className=" stalls-admin-toggle-button"
           onClick={() => {
             setShowForm(!showForm);
             setEditMode(false);
@@ -223,7 +223,7 @@ if (editMode) {
         </button>
 
         {showForm && (
-          <form className="stall-form" onSubmit={handleSubmit}>
+          <form className=" stalls-admin-stall-form" onSubmit={handleSubmit}>
             <input
               type="text"
               name="name"
@@ -267,19 +267,19 @@ if (editMode) {
               value={form.closing_time}
               onChange={handleChange}
             />
-<div className="toggle-switch">
+<div className=" stalls-admin-toggle-switch">
   <input
     type="checkbox"
     id="is_available"
     name="is_available"
-    className="toggle-input"
+    className=" stalls-admin-toggle-input"
     checked={form.is_available}
     onChange={handleChange}
   />
-  <label className="toggle-label" htmlFor="is_available">
-    <span className="toggle-slider"></span>
+  <label className=" stalls-admin-toggle-label" htmlFor="is_available">
+    <span className=" stalls-admin-toggle-slider"></span>
   </label>
-  <span className="toggle-text">
+  <span className=" stalls-admin-toggle-text">
     {form.is_available ? "Available" : "Unavailable"}
   </span>
 </div>
@@ -291,30 +291,30 @@ if (editMode) {
           </form>
         )}
 
-        <div className="stall-list">
+        <div className=" stalls-admin-stall-list">
           {allStalls.map(({ building, stalls }) => (
-            <div key={building.id} className="building-block">
+            <div key={building.id} className=" stalls-admin-building-block">
               <h2>{building.building_name || building.name}</h2>
               {stalls.length === 0 ? (
                 <p>No stalls found.</p>
               ) : (
-                <div className="stalls-grid">
+                <div className=" stalls-admin-stalls-grid">
                   {stalls.map((stall) => (
-                    <div key={stall.id} className="stall-card">
+                    <div key={stall.id} className=" stalls-admin-stall-card">
                       <img
                         src={stall.image_url}
                         alt={stall.name}
-                        className="stall-image"
+                        className=" stalls-admin-stall-image"
                         onClick={() => handleCardClick(stall.id, building.id)}
                       />
-                      <div className="stall-info">
+                      <div className=" stalls-admin-stall-info">
                         <h3>{stall.name}</h3>
                         <p><strong>Description:</strong> {stall.description}</p>
                         <p><strong>Opens:</strong> {stall.opening_time || 'N/A'} - <strong>Closes:</strong> {stall.closing_time || 'N/A'}</p>
                         <p><strong>Status:</strong> {stall.is_available ? '✅ Available' : '❌ Unavailable'}</p>
                       </div>
                       <FaEdit
-                        className="edit-icon"
+                        className=" stalls-admin-edit-icon"
                         onClick={() => handleEditClick(stall)}
                         title="Edit Stall"
                       />
@@ -327,8 +327,8 @@ if (editMode) {
         </div>
 
         {showPopup && (
-          <div className="popup-overlay">
-            <div className="popup-form">
+          <div className=" stalls-admin-popup-overlay">
+            <div className=" stalls-admin-popup-form">
               <h2>Edit Stall</h2>
               <form onSubmit={handleSubmit}>
                 <input
@@ -374,27 +374,27 @@ if (editMode) {
                   value={form.closing_time}
                   onChange={handleChange}
                 />
-                <div className="toggle-switch">
+                <div className=" stalls-admin-toggle-switch">
   <input
     type="checkbox"
     id="is_available"
     name="is_available"
-    className="toggle-input"
+    className=" stalls-admin-toggle-input"
     checked={form.is_available}
     onChange={handleChange}
   />
-  <label className="toggle-label" htmlFor="is_available">
-    <span className="toggle-slider"></span>
+  <label className=" stalls-admin-toggle-label" htmlFor="is_available">
+    <span className=" stalls-admin-toggle-slider"></span>
   </label>
-  <span className="toggle-text">
+  <span className=" stalls-admin-toggle-text">
     {form.is_available ? "Available" : "Unavailable"}
   </span>
 </div>
 
                 <input type="file" accept="image/*" onChange={handleFileChange} />
 
-                <div className="popup-buttons">
-                  <button type="button" className="delete-btn" onClick={handleDeleteStall}>
+                <div className=" stalls-admin-popup-buttons">
+                  <button type="button" className=" stalls-admin-delete-btn" onClick={handleDeleteStall}>
                     🗑️ Delete
                   </button>
                   <button type="button" onClick={() => setShowPopup(false)}>

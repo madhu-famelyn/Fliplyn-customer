@@ -13,8 +13,6 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Dashboard", icon: <Home size={18} /> },
-    { name: "Employee Management", icon: <Users size={18} /> },
-    { name: "Add Money", icon: <Plus size={18} /> },
     { name: "Report", icon: <Briefcase size={18} /> },
   ];
 

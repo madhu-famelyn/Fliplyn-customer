@@ -1,315 +1,209 @@
-.stall-container {
-  padding: 24px;
-  max-width: 1000px;
-  margin: auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  /* background-color: #f7f7f5; */
-  border-radius: 16px;
+/* Container */
+.stalls-admin-stall-container {
+  padding: 20px;
+  background: #f9f9f9; /* neutral light gray */
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: #333;
 }
 
-.stall-heading {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 18px;
-  color: #333333;
+.stalls-admin-stall-heading {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333; /* neutral heading */
   text-align: center;
 }
 
-.toggle-button {
-  background-color: #007d80;
-  color: #ffffff;
-  padding: 10px 16px;
+/* Toggle button */
+.stalls-admin-toggle-button {
+  background: #f0a04b; /* orange */
+  color: white;
+  padding: 10px 15px;
   border: none;
-  border-radius: 10px;
   cursor: pointer;
-  font-size: 15px;
-  margin-bottom: 24px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  transition: background 0.3s ease;
+  font-size: 1rem;
+  margin-bottom: 20px;
 }
 
-.toggle-button:hover {
-  background-color: #006a6b;
+.stalls-admin-toggle-button:hover {
+  background: #e28324;
 }
 
-.stall-form {
+/* Form */
+.stalls-admin-stall-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-bottom: 30px;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #d4d4d4;
+  gap: 12px;
+  background: #fff;
+  padding: 15px;
+  border: 1px solid #ddd; /* neutral border */
 }
 
-.stall-form input,
-.stall-form textarea,
-.stall-form select {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #d4d4d4;
-  background-color: #f0f5ff;
-  font-size: 15px;
-  color: #333333;
+.stalls-admin-stall-form input,
+.stalls-admin-stall-form textarea,
+.stalls-admin-stall-form select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
 }
 
-.stall-form input:focus,
-.stall-form textarea:focus,
-.stall-form select:focus {
-  outline: none;
-  border: 1px solid #009999;
-  background-color: #ffffff;
-}
-
-.stall-form button {
-  background-color: #007d80;
-  color: #ffffff;
-  padding: 10px 18px;
+.stalls-admin-stall-form button {
+  background: #f0a04b; /* orange */
+  color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 15px;
+  padding: 10px;
   cursor: pointer;
-  margin-top: 12px;
 }
 
-.stall-form button:disabled {
-  background-color: #d4d4d4;
+.stalls-admin-stall-form button:disabled {
+  background: #f7c68e;
   cursor: not-allowed;
 }
 
-.stall-list {
-  margin-top: 28px;
+/* Building blocks */
+.stalls-admin-building-block {
+  margin-top: 30px;
 }
 
-.building-block {
-  margin-bottom: 40px;
+.stalls-admin-building-block h2 {
+  background: #f1f1f1; /* neutral instead of orange */
+  padding: 8px;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
 }
 
-.building-block h2 {
-  font-size: 20px;
-  margin-bottom: 14px;
-  color: #333333;
-  border-left: 5px solid #007d80;
-  padding-left: 12px;
-}
-
-.stalls-grid {
+/* Stall grid */
+.stalls-admin-stalls-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px; /* Added spacing to avoid card overlap */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 15px;
 }
 
-.stall-card {
-  border: 1px solid #d4d4d4;
-  border-radius: 12px;
-  /* overflow: hidden; */
-  background: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s ease;
+.stalls-admin-stall-card {
+  border: 1px solid #ddd; /* neutral */
+  padding: 10px;
+  background: #fff;
+  position: relative;
 }
 
-.stall-card:hover {
-  transform: translateY(-4px);
-}
-
-.stall-image {
+.stalls-admin-stall-image {
   width: 100%;
-  height: 140px;
+  height: 160px;
   object-fit: cover;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
 }
 
-.stall-info {
-  padding: 14px;
+.stalls-admin-stall-info {
+  margin-top: 10px;
+  font-size: 0.9rem;
 }
 
-.stall-info h3 {
-  font-size: 17px;
-  margin: 0 0 6px;
-  color: #333333;
+.stalls-admin-stall-info h3 {
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+  color: #333; /* neutral */
 }
 
-.stall-info p {
-  font-size: 14px;
-  color: #333333;
-  margin: 0;
+/* Edit icon */
+.stalls-admin-edit-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #666; /* neutral gray */
+  cursor: pointer;
 }
 
-@media (max-width: 600px) {
-  .stall-heading {
-    font-size: 22px;
-  }
-
-  .stall-form {
-    padding: 16px;
-  }
-
-  .stall-form input,
-  .stall-form textarea,
-  .stall-form select {
-    font-size: 14px;
-    padding: 10px;
-  }
-
-  .toggle-button {
-    font-size: 14px;
-    padding: 9px 14px;
-  }
-
-  .stalls-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stall-image {
-    height: 120px;
-  }
-
-  .stall-info h3 {
-    font-size: 16px;
-  }
-
-  .stall-info p {
-    font-size: 13px;
-  }
+/* Toggle switch */
+.stalls-admin-toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
+.stalls-admin-toggle-input {
+  display: none;
+}
 
+.stalls-admin-toggle-label {
+  width: 36px;
+  height: 18px;
+  background: #ccc;
+  position: relative;
+  cursor: pointer;
+}
 
+.stalls-admin-toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: white;
+  transition: 0.2s;
+}
 
+.stalls-admin-toggle-input:checked + .stalls-admin-toggle-label {
+  background: #f0a04b; /* orange only when active */
+}
 
+.stalls-admin-toggle-input:checked + .stalls-admin-toggle-label .stalls-admin-toggle-slider {
+  transform: translateX(18px);
+}
 
+.stalls-admin-toggle-text {
+  font-size: 0.85rem;
+}
 
-
-
-
-
-
-
-
-
-
-
-.popup-overlay {
+/* Popup overlay */
+.stalls-admin-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  background: rgba(0,0,0,0.4); /* neutral dark overlay */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000;
 }
 
-.popup-form {
+.stalls-admin-popup-form {
   background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 400px;
+  border: 1px solid #ddd; /* neutral */
 }
 
-.popup-form h2 {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
+.stalls-admin-popup-form h2 {
+  margin-bottom: 15px;
+  color: #333; /* neutral */
 }
 
-.popup-form form input,
-.popup-form form textarea,
-.popup-form form select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.popup-buttons {
+/* Popup buttons */
+.stalls-admin-popup-buttons {
   display: flex;
   justify-content: space-between;
+  margin-top: 15px;
 }
 
-.popup-buttons button {
-  padding: 0.5rem 1.2rem;
+.stalls-admin-popup-buttons button {
+  padding: 8px 12px;
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
   cursor: pointer;
-  background-color: #007bff;
+}
+
+.stalls-admin-popup-buttons button[type="submit"] {
+  background: #f0a04b; /* orange */
   color: white;
 }
 
-.popup-buttons button:first-child {
-  background-color: #aaa;
+.stalls-admin-popup-buttons button[type="button"] {
+  background: #eee;
 }
 
-
-
-
-
-
-
-
-
-/* Toggle Switch */
-.toggle-switch {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.toggle-input {
-  display: none;
-}
-
-.toggle-label {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 26px;
-  margin-bottom: 2vh;
-  cursor: pointer;
-}
-
-.toggle-slider {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  right: 2px;
-  bottom: 2px;
-  background-color: #ccc;
-  border-radius: 26px;
-  transition: 0.3s;
-}
-
-.toggle-slider::before {
-  content: "";
-  position: absolute;
-  height: 22px;
-  width: 22px;
-  left: 2px;
-  background: white;
-  border-radius: 50%;
-  transition: 0.3s;
-
-}
-
-/* When checked */
-.toggle-input:checked + .toggle-label .toggle-slider {
-  background-color: #4caf50; /* green */
-}
-
-.toggle-input:checked + .toggle-label .toggle-slider::before {
-  transform: translateX(24px);
-}
-
-.toggle-text {
-  font-size: 14px;
-  font-weight: 500;
+.stalls-admin-delete-btn {
+  background: #e57373 !important; /* red for delete */
+  color: white;
 }

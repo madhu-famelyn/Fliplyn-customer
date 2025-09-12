@@ -1,11 +1,11 @@
-/* Overlay and modal */
+/* === Overlay and Modal === */
 .orders-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0,0,0,0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,33 +13,70 @@
 }
 
 .orders-modal {
-  background: #fff;
+  background: #ffffff;
   padding: 20px;
   width: 90%;
   max-width: 900px;
-  max-height: 90%;
+  max-height: 80%;
   overflow-y: auto;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  border: 1px solid #f2c38f; /* light orange border */
   position: relative;
 }
 
+/* Close button */
 .close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #cc4e00;
+  background: #f6a860; /* light orange */
   color: #fff;
   border: none;
-  border-radius: 50%;
   width: 28px;
   height: 28px;
   cursor: pointer;
   font-size: 16px;
   line-height: 1;
+  text-align: center;
 }
 
-/* Table styling */
+/* === Filters and Export === */
+.filter-section {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+
+.filter-section label {
+  font-size: 14px;
+  color: #444;
+}
+
+.filter-section input,
+.filter-section select {
+  padding: 5px 8px;
+  font-size: 14px;
+  border: 1px solid #e6a96c; /* soft orange border */
+  background: #fffdf9;
+  color: #333;
+}
+
+.export-btn {
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #ffd9a6; /* very light orange */
+  border: 1px solid #f2b974;
+  color: #804d00; /* darker orange-brown */
+  cursor: pointer;
+}
+
+.export-btn:hover {
+  background-color: #fccc8c; /* slightly deeper light orange */
+}
+
+/* === Table Styling === */
 .orders-table {
   width: 100%;
   border-collapse: collapse;
@@ -48,23 +85,24 @@
 
 .orders-table th,
 .orders-table td {
-  border: 1px solid #ddd;
+  border: 1px solid #e6e6e6;
   padding: 8px;
   text-align: left;
   font-size: 14px;
 }
 
 .orders-table th {
-  background-color: #f0f0f0;
+  background-color: #fff3e0; /* very soft orange */
   font-weight: 600;
+  color: #663300;
 }
 
 .orders-table tr:nth-child(even) {
-  background-color: #fafafa;
+  background-color: #fffaf4; /* subtle orange tint */
 }
 
 .orders-table tr:hover {
-  background-color: #f1f1f1;
+  background-color: #ffe9cc; /* highlight with light orange */
 }
 
 /* Items inside table cell */
@@ -77,4 +115,14 @@
 .items-list li {
   margin-bottom: 4px;
   font-size: 13px;
+}
+
+/* === Total Section === */
+.total-section {
+  margin-top: 15px;
+  padding: 10px;
+  border-top: 2px solid #f2c38f;
+  font-weight: bold;
+  font-size: 16px;
+  color: #663300;
 }

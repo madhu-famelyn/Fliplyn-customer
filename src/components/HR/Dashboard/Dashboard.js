@@ -1,13 +1,16 @@
+// src/pages/hr/Dashboard.js
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ for navigation
+import { useNavigate } from "react-router-dom";
 import Layout from "../SideBar/Layout";
 import { useHrAuth } from "../../AuthContex/HrContext";
 import { getWalletGroupsByHrId } from "./Service";
+import CreateWalletGroupModal from "../AddWalletGroup/AddWalletGroup";
 import "./Dashboard.css";
 
 const Dashboard = () => {
   const { hr, token } = useHrAuth();
   const [walletGroups, setWalletGroups] = useState([]);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   // ✅ Fetch wallet groups
@@ -37,6 +40,16 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Action Button */}
+        <div className="dashboard-actions">
+          <button
+            className="add-group-btn"
+            onClick={() => setShowModal(true)}
+          >
+            + Add Group
+          </button>
+        </div>
+
         {/* Wallet Groups Section */}
         {walletGroups.length > 0 ? (
           <div className="wallet-cards">
@@ -44,7 +57,7 @@ const Dashboard = () => {
               <div
                 className="wallet-card"
                 key={group.id}
-                onClick={() => handleCardClick(group.id)} // ✅ navigate
+                onClick={() => handleCardClick(group.id)}
                 style={{ cursor: "pointer" }}
               >
                 <p className="group-name">{group.group_name}</p>
@@ -56,6 +69,18 @@ const Dashboard = () => {
           </div>
         ) : (
           <p className="no-wallets">No wallet groups found</p>
+        )}
+
+        {/* Create Group Modal */}
+        {showModal && (
+          <CreateWalletGroupModal
+            onClose={() => setShowModal(false)}
+            hr={hr}
+            token={token}
+            onGroupCreated={(newGroup) =>
+              setWalletGroups((prev) => [...prev, newGroup])
+            }
+          />
         )}
       </div>
     </Layout>

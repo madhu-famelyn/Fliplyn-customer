@@ -12,7 +12,6 @@ import {
   AiOutlineCheck,
   AiOutlineClose,
   AiOutlinePlus,
-  AiOutlineDelete,
 } from "react-icons/ai";
 import "./EmployeDetails.css";
 
@@ -23,7 +22,7 @@ const EmployeesPage = () => {
   const [group, setGroup] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showExcelModal, setShowExcelModal] = useState(false);
-  const [showOrdersModal, setShowOrdersModal] = useState(false); // new modal state
+  const [showOrdersModal, setShowOrdersModal] = useState(false);
 
   // normalize user list so "phone" is always available
   const normalizeUsers = (users) =>
@@ -45,35 +44,49 @@ const EmployeesPage = () => {
   }, [hr, token, groupId]);
 
   const renderTick = (value) =>
-    value ? <AiOutlineCheck color="green" size={18} /> : <AiOutlineClose color="red" size={18} />;
+    value ? (
+      <AiOutlineCheck color="green" size={18} />
+    ) : (
+      <AiOutlineClose color="red" size={18} />
+    );
 
   const handleGroupUpdated = (updatedGroup) => {
     setGroup(updatedGroup);
     setEmployees(normalizeUsers(updatedGroup.user_info || updatedGroup.users || []));
   };
 
-  const handleDeleteUser = async (mobile_number) => {
-    if (!window.confirm(`Are you sure you want to remove user ${mobile_number}?`)) return;
+  // ✅ Activate/Deactivate User
+  const handleToggleUserStatus = async (userId, currentStatus) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to ${currentStatus ? "deactivate" : "activate"} this user?`
+      )
+    )
+      return;
 
     try {
-      const response = await axios.delete(
-        `http://localhost:8000/${groupId}/remove-member`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          data: { mobile_number },
-        }
+      const response = await axios.put(
+        `http://localhost:8000/${groupId}/update-user-status`,
+        { user_id: userId, is_active: !currentStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      if (response.data.wallet_group) {
-        handleGroupUpdated(response.data.wallet_group);
+
+      if (response.data.user_info) {
+        // update employee list with latest status
+        setEmployees((prev) =>
+          prev.map((emp) =>
+            emp.user_id === userId ? { ...emp, is_active: !currentStatus } : emp
+          )
+        );
       }
     } catch (err) {
-      console.error("Failed to delete user:", err.response?.data?.detail || err.message);
-      alert(err.response?.data?.detail || "Failed to delete user");
+      console.error("Failed to update user status:", err.response?.data?.detail || err.message);
+      alert(err.response?.data?.detail || "Failed to update user status");
     }
   };
 
   const handleGetOrderHistory = () => {
-    setShowOrdersModal(true); // open modal instead of navigate
+    setShowOrdersModal(true);
   };
 
   return (
@@ -84,10 +97,18 @@ const EmployeesPage = () => {
             <h2 className="employees-page-group-name">Group: {group.group_name}</h2>
 
             <div className="employees-page-wallet-info">
-              <p><strong>Wallet Amount:</strong> {group.wallet_amount}</p>
-              <p><strong>Carry Forward:</strong> {renderTick(group.carry_forward)}</p>
-              <p><strong>Exclude Weekend:</strong> {renderTick(group.exclude_weekend)}</p>
-              <p><strong>Daily Wallet:</strong> {renderTick(group.daily_wallet)}</p>
+              <p>
+                <strong>Wallet Amount:</strong> {group.wallet_amount}
+              </p>
+              <p>
+                <strong>Carry Forward:</strong> {renderTick(group.carry_forward)}
+              </p>
+              <p>
+                <strong>Exclude Weekend:</strong> {renderTick(group.exclude_weekend)}
+              </p>
+              <p>
+                <strong>Daily Wallet:</strong> {renderTick(group.daily_wallet)}
+              </p>
             </div>
 
             <div className="employees-page-header">
@@ -110,6 +131,7 @@ const EmployeesPage = () => {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
+                    <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -120,12 +142,19 @@ const EmployeesPage = () => {
                       <td>{emp.email}</td>
                       <td>{emp.phone}</td>
                       <td>
+                        {emp.is_active ? (
+                          <span style={{ color: "green", fontWeight: "bold" }}>Active</span>
+                        ) : (
+                          <span style={{ color: "red", fontWeight: "bold" }}>Inactive</span>
+                        )}
+                      </td>
+                      <td>
                         <button
                           style={{
                             display: "inline-flex",
                             alignItems: "center",
                             gap: "6px",
-                            backgroundColor: "#cc4e00ff",
+                            backgroundColor: emp.is_active ? "#cc0000" : "#007bff",
                             color: "#ffffff",
                             border: "none",
                             borderRadius: "6px",
@@ -134,9 +163,9 @@ const EmployeesPage = () => {
                             fontWeight: 500,
                             cursor: "pointer",
                           }}
-                          onClick={() => handleDeleteUser(emp.phone)}
+                          onClick={() => handleToggleUserStatus(emp.user_id, emp.is_active)}
                         >
-                          <AiOutlineDelete size={16} /> Delete
+                          {emp.is_active ? "Deactivate" : "Activate"}
                         </button>
                       </td>
                     </tr>

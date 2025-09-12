@@ -42,6 +42,7 @@ import HRDashboard from "./components/HR/Dashboard/Dashboard";
 import HrLogin from "./components/HR/Login/LogIn";
 import EmployeesPage from "./components/HR/EmployDetails/EmployeDetails";
 import HROrdersPage from "./components/HR/EmployDetails/OrdersPage";
+import VendorStalls from "./components/Vendor/Stalls/Stalls";
 // import HrLogin from "./components/HR/Login/Login";
 
 // Private route for Admin
@@ -90,7 +91,9 @@ function App() {
           {/* Vendor Routes */}
           <Route path="/vendor" element={<VendorLogin />} />
           <Route path="/user" element={<VendorPrivateRoute element={<User />} />} />
-          <Route path="/items-vendor" element={<VendorPrivateRoute element={<VendorItems />} />} />
+          <Route path="/vendor-stall" element={<VendorStalls/>}/>
+
+          <Route path="/items-vendor/:id" element={<VendorPrivateRoute element={<VendorItems />} />} />
 
 
           <Route path="/hr" element={<HrLogin/>} />
