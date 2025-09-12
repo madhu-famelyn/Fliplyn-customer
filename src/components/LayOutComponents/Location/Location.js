@@ -9,7 +9,7 @@ import { IoMdAdd } from 'react-icons/io';
 export default function Locations() {
   const { userId, token } = useAuth();
   const [buildings, setBuildings] = useState([]);
-  const [countries, setCountries] = useState([]); // ✅ fixed
+  const [ setCountries] = useState([]); // ✅ fixed
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 

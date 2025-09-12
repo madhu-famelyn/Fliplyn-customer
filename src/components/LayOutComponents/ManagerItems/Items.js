@@ -11,7 +11,7 @@ export default function ItemDetails() {
   const { userId, token, role } = useAuth();
 
   // ✅ Proper state declaration (no ESLint error now)
-  const [manager, setManager] = useState(null);
+  const [ setManager] = useState(null);
   const [stalls, setStalls] = useState([]);
   const [selectedStallId, setSelectedStallId] = useState('');
   const [items, setItems] = useState([]);
