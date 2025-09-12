@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import AdminLayout from "../../LayOut/AdminLayout";
 import CreateGroup from "./CreateGroup";
@@ -40,7 +40,8 @@ export default function Group() {
     fetchBuildings();
   }, [adminId, token]);
 
-  const fetchGroups = async () => {
+  // ✅ Memoize fetchGroups so ESLint is happy
+  const fetchGroups = useCallback(async () => {
     if (!buildingId) return;
     setLoading(true);
     try {
@@ -54,11 +55,11 @@ export default function Group() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [buildingId, token]);
 
   useEffect(() => {
     fetchGroups();
-  }, [buildingId]);
+  }, [fetchGroups]);
 
   const handleBuildingChange = (e) => setBuildingId(e.target.value);
   const handleGroupCreated = () => fetchGroups();

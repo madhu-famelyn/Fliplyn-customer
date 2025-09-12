@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   addMoneyToWallet,
   fetchBuildingByAdminId,
@@ -22,29 +22,8 @@ export default function AddMoney() {
 
   const { token, userId } = useAuth();
 
-  useEffect(() => {
-    const loadBuildings = async () => {
-      try {
-        const buildings = await fetchBuildingByAdminId(userId, token);
-        if (buildings.length > 0) {
-          setBuildings(buildings);
-          setBuildingId(buildings[0].id);
-          loadWallets(buildings[0].id);
-        } else {
-          setError('No buildings found for this admin.');
-        }
-      } catch (err) {
-        console.error("Error fetching buildings:", err);
-        setError('Failed to fetch building data.');
-      }
-    };
-
-    if (userId) {
-      loadBuildings();
-    }
-  }, [userId, token]);
-
-  const loadWallets = async (bId) => {
+  // ✅ Memoize loadWallets
+  const loadWallets = useCallback(async (bId) => {
     try {
       const wallets = await fetchWalletsByBuildingId(bId, token);
       setWallets(wallets);
@@ -66,7 +45,29 @@ export default function AddMoney() {
       console.error('Error loading wallets:', err);
       setWallets([]);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    const loadBuildings = async () => {
+      try {
+        const buildings = await fetchBuildingByAdminId(userId, token);
+        if (buildings.length > 0) {
+          setBuildings(buildings);
+          setBuildingId(buildings[0].id);
+          loadWallets(buildings[0].id);
+        } else {
+          setError('No buildings found for this admin.');
+        }
+      } catch (err) {
+        console.error("Error fetching buildings:", err);
+        setError('Failed to fetch building data.');
+      }
+    };
+
+    if (userId) {
+      loadBuildings();
+    }
+  }, [userId, token, loadWallets]); // ✅ Added loadWallets here
 
   const handleBuildingChange = (e) => {
     const selectedId = e.target.value;

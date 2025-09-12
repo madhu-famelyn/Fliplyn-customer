@@ -103,7 +103,6 @@ const handleSubmit = async (e) => {
   setLoading(true);
   try {
 if (editMode) {
-  const updatedStall = await updateStall(editingStallId, { ...form, admin_id: adminId }, token);
   alert('✅ Stall updated successfully!');
 
   // Update local UI without waiting for fetch

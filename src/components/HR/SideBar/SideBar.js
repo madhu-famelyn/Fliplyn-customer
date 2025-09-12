@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import {
   Home,
-  Users,
-  Plus,
   Briefcase,
 } from "lucide-react"; 
 

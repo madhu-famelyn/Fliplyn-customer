@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AdminLayout from '../../LayOut/AdminLayout';
 import {
   fetchBuildingsByAdminId,
@@ -82,6 +82,7 @@ const AdminItems = () => {
     };
 
     if (selectedStallId) loadSingleStallItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedStallId]);
 
   const handleToggleAvailability = async (itemId, currentStatus) => {

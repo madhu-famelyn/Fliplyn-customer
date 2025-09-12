@@ -5,13 +5,12 @@ import {
   fetchStallsByBuilding,
   fetchItemsByStallId,
 } from './Service';
-import AdminLayout from '../../LayOut/AdminLayout';
 import './Items.css';
 
 export default function ItemDetails() {
   const { userId, token, role } = useAuth();
 
-  const [manager, setManager] = useState(null);
+  const [ setManager] = useState(null);
   const [stalls, setStalls] = useState([]);
   const [selectedStallId, setSelectedStallId] = useState('');
   const [items, setItems] = useState([]);

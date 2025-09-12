@@ -3,10 +3,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   FaMapMarkerAlt, FaBuilding, FaStore, FaShoppingCart,
-  FaChartBar, FaUsers, FaCog, FaSignOutAlt, FaBars, FaTimes
+  FaChartBar, FaUsers, FaSignOutAlt, FaBars, FaTimes
 } from 'react-icons/fa';
 import { GiToken } from 'react-icons/gi';  
-import { MdDashboard } from 'react-icons/md';
 import './AdminLayout.css';
 
 export default function AdminLayout({ children }) {

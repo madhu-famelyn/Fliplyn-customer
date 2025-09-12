@@ -7,7 +7,7 @@ import "./Items.css";
 
 const VendorItems = () => {
   const { id } = useParams(); // ✅ read stallId from URL
-  const { stallId: contextStallId, token, userId } = useAuth();
+  const { stallId: contextStallId, token } = useAuth();
   const stallId = id || contextStallId; // ✅ URL first, then context
 
   const [items, setItems] = useState([]);
