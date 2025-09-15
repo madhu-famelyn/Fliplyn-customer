@@ -79,7 +79,7 @@ export default function CreateGroup({ onGroupCreated }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/wallet-group/upload-excel/",
+        "https://admin-aged-field-2794.fly.dev/wallet-group/upload-excel/",
         form,
         {
           headers: {

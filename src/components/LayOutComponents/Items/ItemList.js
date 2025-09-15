@@ -61,7 +61,7 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
 
     try {
       await axios.put(
-        `http://localhost:8000/api/item/${selectedItem.id}`,
+        `https://admin-aged-field-2794.fly.dev/api/item/${selectedItem.id}`,
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -84,7 +84,7 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
 
     try {
       await axios.put(
-        `http://localhost:8000/items/items/${selectedItem.id}/upload-image`,
+        `https://admin-aged-field-2794.fly.dev/items/items/${selectedItem.id}/upload-image`,
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

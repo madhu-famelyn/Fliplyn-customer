@@ -66,7 +66,7 @@ const EmployeesPage = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8000/${groupId}/update-user-status`,
+        `https://admin-aged-field-2794.fly.dev/${groupId}/update-user-status`,
         { user_id: userId, is_active: !currentStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

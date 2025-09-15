@@ -1,9 +1,28 @@
 // src/api/Service.js
-const BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // 🔒 Hardcoded, no .env fallback
+
+// ✅ Use environment variable if available, otherwise fallback to hardcoded HTTPS
+const BASE_URL = (
+  import.meta.env.VITE_API_URL || 'https://admin-aged-field-2794.fly.dev'
+).replace(/^http:/, 'https:');
+
+// ✅ Helper to handle fetch requests with error checking
+const request = async (url, options = {}) => {
+  try {
+    const res = await fetch(url, options);
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`HTTP ${res.status}: ${text}`);
+    }
+    return res.json();
+  } catch (err) {
+    console.error('Fetch Error:', err);
+    throw err;
+  }
+};
 
 // ✅ Create Building
 export const createBuilding = async (payload, token) => {
-  const res = await fetch(`${BASE_URL}/buildings`, {
+  return request(`${BASE_URL}/buildings`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -11,29 +30,24 @@ export const createBuilding = async (payload, token) => {
     },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error('Failed to create building');
-  return res.json();
 };
 
 // ✅ Delete Building by ID
 export const deleteBuildingById = async (buildingId, token) => {
-  const res = await fetch(`${BASE_URL}/buildings/${buildingId}`, {
+  await request(`${BASE_URL}/buildings/${buildingId}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!res.ok) throw new Error('Delete failed');
   return true;
 };
 
 // ✅ Fetch Buildings by city ID
 export const fetchBuildings = async (cityId, token) => {
-  const res = await fetch(`${BASE_URL}/buildings?city_id=${cityId}`, {
+  return request(`${BASE_URL}/buildings?city_id=${cityId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!res.ok) throw new Error('Failed to fetch buildings');
-  return res.json();
 };

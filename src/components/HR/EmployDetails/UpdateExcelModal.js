@@ -21,7 +21,7 @@ const UpdateExcelModal = ({ groupId, token, hrId, onClose, onGroupUpdated }) => 
     try {
       // Upload Excel
       await axios.put(
-        `http://localhost:8000/wallet-groups/${groupId}/upload-excel`,
+        `https://admin-aged-field-2794.fly.dev/wallet-groups/${groupId}/upload-excel`,
         formData,
         {
           headers: {
