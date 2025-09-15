@@ -1,9 +1,6 @@
-// src/pages/hr/CreateWalletGroupModal.js
 import React, { useState } from "react";
-import axios from "axios";
 import "./AddWalletGroup.css";
-
-const API_BASE = "https://admin-aged-field-2794.fly.dev"; // change if needed
+import { uploadWalletGroupExcel } from "../../Service";
 
 const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
   const [groupName, setGroupName] = useState("");
@@ -23,9 +20,9 @@ const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
     }
 
     const formData = new FormData();
-    formData.append("building_id", hr.building_id); // ✅ from login
-    formData.append("admin_id", hr.admin_id); // ✅ from login
-    formData.append("hr_id", hr.id); // ✅ HR id
+    formData.append("building_id", hr.building_id);
+    formData.append("admin_id", hr.admin_id);
+    formData.append("hr_id", hr.id);
     formData.append("group_name", groupName);
     formData.append("wallet_amount", walletAmount);
     formData.append("carry_forward", carryForward);
@@ -36,20 +33,10 @@ const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
 
     try {
       setLoading(true);
-      const res = await axios.post(
-        `${API_BASE}/wallet-group/upload-excel/`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
+      const res = await uploadWalletGroupExcel(formData, token); // ✅ use service
       alert(res.data.message);
+
       if (onGroupCreated) {
-        // reload groups list
         onGroupCreated({
           id: crypto.randomUUID(),
           group_name: groupName,

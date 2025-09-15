@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { getWalletGroupsByHrId } from "../Dashboard/Service";
+import { getWalletGroupsByHrId, uploadWalletGroupExcel1}from "../../Service";
 import "./EmployeDetails.css";
 
 const UpdateExcelModal = ({ groupId, token, hrId, onClose, onGroupUpdated }) => {
@@ -15,23 +14,11 @@ const UpdateExcelModal = ({ groupId, token, hrId, onClose, onGroupUpdated }) => 
     setLoading(true);
     setError("");
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
-      // Upload Excel
-      await axios.put(
-        `https://admin-aged-field-2794.fly.dev/wallet-groups/${groupId}/upload-excel`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // ✅ Upload Excel using service
+      await uploadWalletGroupExcel1(groupId, file, token);
 
-      // Refetch wallet groups after successful upload
+      // ✅ Refetch wallet groups after successful upload
       if (hrId) {
         const groups = await getWalletGroupsByHrId(hrId, token);
         const updatedGroup = groups.find((g) => g.id === groupId);

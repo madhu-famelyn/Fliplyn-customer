@@ -1,9 +1,6 @@
-// src/components/Employees/AddMemberModal.js
 import React, { useState } from "react";
-import axios from "axios";
+import { addMemberToWalletGroup } from "../../Service";
 import "./AddMemberModal.css";
-
-const API_BASE = "https://admin-aged-field-2794.fly.dev";
 
 const AddMemberModal = ({ groupId, token, onClose, onMemberAdded }) => {
   const [name, setName] = useState("");
@@ -18,20 +15,19 @@ const AddMemberModal = ({ groupId, token, onClose, onMemberAdded }) => {
     setError("");
 
     try {
-      const response = await axios.post(
-        `${API_BASE}/wallet-group/add-member`,
-        {
-          group_id: groupId,
-          name,
-          email,
-          mobile_number: mobileNumber,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const response = await addMemberToWalletGroup(
+        groupId,
+        name,
+        email,
+        mobileNumber,
+        token
       );
 
-      onMemberAdded(response.data.wallet_group);
+      // ✅ Notify parent about the new member
+      if (onMemberAdded) {
+        onMemberAdded(response.data.wallet_group);
+      }
+
       onClose();
     } catch (err) {
       console.error(err);

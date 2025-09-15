@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useHrAuth } from "../../AuthContex/HrContext";
-import { getWalletGroupsByHrId } from "../Dashboard/Service";
+import { getWalletGroupsByHrId, updateUserStatus } from "../../Service";
 import Layout from "../SideBar/Layout";
-import AddMemberModal from "./AddMemberModel";
+import AddMemberModal from "./AddMemberModal";
 import UpdateExcelModal from "./UpdateExcelModal";
 import OrdersModal from "./OrdersPage";
-import { AiOutlineHistory } from "react-icons/ai";
-import axios from "axios";
-import {
-  AiOutlineCheck,
-  AiOutlineClose,
-  AiOutlinePlus,
-} from "react-icons/ai";
+import { AiOutlineHistory, AiOutlineCheck, AiOutlineClose, AiOutlinePlus } from "react-icons/ai";
 import "./EmployeDetails.css";
 
 const EmployeesPage = () => {
@@ -24,12 +18,8 @@ const EmployeesPage = () => {
   const [showExcelModal, setShowExcelModal] = useState(false);
   const [showOrdersModal, setShowOrdersModal] = useState(false);
 
-  // normalize user list so "phone" is always available
   const normalizeUsers = (users) =>
-    (users || []).map((u) => ({
-      ...u,
-      phone: u.phone || u.mobile_number,
-    }));
+    (users || []).map((u) => ({ ...u, phone: u.phone || u.mobile_number }));
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -44,35 +34,21 @@ const EmployeesPage = () => {
   }, [hr, token, groupId]);
 
   const renderTick = (value) =>
-    value ? (
-      <AiOutlineCheck color="green" size={18} />
-    ) : (
-      <AiOutlineClose color="red" size={18} />
-    );
+    value ? <AiOutlineCheck color="green" size={18} /> : <AiOutlineClose color="red" size={18} />;
 
   const handleGroupUpdated = (updatedGroup) => {
     setGroup(updatedGroup);
     setEmployees(normalizeUsers(updatedGroup.user_info || updatedGroup.users || []));
   };
 
-  // ✅ Activate/Deactivate User
   const handleToggleUserStatus = async (userId, currentStatus) => {
-    if (
-      !window.confirm(
-        `Are you sure you want to ${currentStatus ? "deactivate" : "activate"} this user?`
-      )
-    )
+    if (!window.confirm(`Are you sure you want to ${currentStatus ? "deactivate" : "activate"} this user?`))
       return;
 
     try {
-      const response = await axios.put(
-        `https://admin-aged-field-2794.fly.dev/${groupId}/update-user-status`,
-        { user_id: userId, is_active: !currentStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await updateUserStatus(groupId, userId, !currentStatus, token); // ✅ use service
 
       if (response.data.user_info) {
-        // update employee list with latest status
         setEmployees((prev) =>
           prev.map((emp) =>
             emp.user_id === userId ? { ...emp, is_active: !currentStatus } : emp
@@ -85,9 +61,7 @@ const EmployeesPage = () => {
     }
   };
 
-  const handleGetOrderHistory = () => {
-    setShowOrdersModal(true);
-  };
+  const handleGetOrderHistory = () => setShowOrdersModal(true);
 
   return (
     <Layout>
@@ -95,20 +69,11 @@ const EmployeesPage = () => {
         {group && (
           <>
             <h2 className="employees-page-group-name">Group: {group.group_name}</h2>
-
             <div className="employees-page-wallet-info">
-              <p>
-                <strong>Wallet Amount:</strong> {group.wallet_amount}
-              </p>
-              <p>
-                <strong>Carry Forward:</strong> {renderTick(group.carry_forward)}
-              </p>
-              <p>
-                <strong>Exclude Weekend:</strong> {renderTick(group.exclude_weekend)}
-              </p>
-              <p>
-                <strong>Daily Wallet:</strong> {renderTick(group.daily_wallet)}
-              </p>
+              <p><strong>Wallet Amount:</strong> {group.wallet_amount}</p>
+              <p><strong>Carry Forward:</strong> {renderTick(group.carry_forward)}</p>
+              <p><strong>Exclude Weekend:</strong> {renderTick(group.exclude_weekend)}</p>
+              <p><strong>Daily Wallet:</strong> {renderTick(group.daily_wallet)}</p>
             </div>
 
             <div className="employees-page-header">
@@ -117,7 +82,6 @@ const EmployeesPage = () => {
                 <button className="btn-add" onClick={() => setShowAddModal(true)}>
                   <AiOutlinePlus size={16} className="btn-icon" /> Add Member Manually
                 </button>
-
                 <button className="btn-add" onClick={handleGetOrderHistory}>
                   <AiOutlineHistory size={16} className="btn-icon" /> Get Order History
                 </button>
@@ -142,11 +106,9 @@ const EmployeesPage = () => {
                       <td>{emp.email}</td>
                       <td>{emp.phone}</td>
                       <td>
-                        {emp.is_active ? (
-                          <span style={{ color: "green", fontWeight: "bold" }}>Active</span>
-                        ) : (
-                          <span style={{ color: "red", fontWeight: "bold" }}>Inactive</span>
-                        )}
+                        <span style={{ color: emp.is_active ? "green" : "red", fontWeight: "bold" }}>
+                          {emp.is_active ? "Active" : "Inactive"}
+                        </span>
                       </td>
                       <td>
                         <button
