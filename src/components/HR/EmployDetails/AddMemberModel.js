@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./AddMemberModal.css";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://admin-aged-field-2794.fly.dev";
 
 const AddMemberModal = ({ groupId, token, onClose, onMemberAdded }) => {
   const [name, setName] = useState("");

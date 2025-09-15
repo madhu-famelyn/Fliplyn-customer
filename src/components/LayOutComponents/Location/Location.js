@@ -19,10 +19,10 @@ export default function Locations() {
     const fetchData = async () => {
       try {
         const [buildingsRes, countriesRes] = await Promise.all([
-          fetch(`http://127.0.0.1:8000/buildings/buildings/by-admin/${userId}`, {
+          fetch(`https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://127.0.0.1:8000/locations/countries`, {
+          fetch(`https://admin-aged-field-2794.fly.dev/locations/countries`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -54,7 +54,7 @@ export default function Locations() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/buildings/${buildingId}`, {
+      const res = await fetch(`https://admin-aged-field-2794.fly.dev/buildings/${buildingId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

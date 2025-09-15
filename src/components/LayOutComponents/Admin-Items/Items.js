@@ -5,6 +5,7 @@ import {
   fetchStallsByBuildingId,
   fetchItemsByStallId,
   updateItemAvailability,
+  updateStallAvailability,   // ✅ NEW
 } from './Service';
 import { useAuth } from '../../AuthContex/ContextAPI';
 import './Items.css';
@@ -85,7 +86,8 @@ const AdminItems = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedStallId]);
 
-  const handleToggleAvailability = async (itemId, currentStatus) => {
+  // ✅ Item availability toggle
+  const handleToggleItemAvailability = async (itemId, currentStatus) => {
     try {
       await updateItemAvailability(itemId, !currentStatus);
       if (selectedStallId) {
@@ -106,6 +108,19 @@ const AdminItems = () => {
       }
     } catch (error) {
       console.error('Error updating item availability:', error);
+    }
+  };
+
+  // ✅ Stall availability toggle
+  const handleToggleStallAvailability = async (stallId, currentStatus) => {
+    try {
+      await updateStallAvailability(stallId, !currentStatus);
+      const updatedStalls = stalls.map(s =>
+        s.id === stallId ? { ...s, is_available: !currentStatus } : s
+      );
+      setStalls(updatedStalls);
+    } catch (error) {
+      console.error('Error updating stall availability:', error);
     }
   };
 
@@ -147,6 +162,30 @@ const AdminItems = () => {
           </select>
         </div>
 
+        {/* ✅ Stall availability toggle list */}
+        {stalls.length > 0 && (
+          <div className="admin-stalls-list">
+            <h3 className="admin-stalls-heading">Manage Stalls</h3>
+            {stalls.map(stall => (
+              <div key={stall.id} className="admin-stall-card">
+                <span className="admin-stall-name">🏪 {stall.name}</span>
+                <label
+                  className={`admin-availability-toggle ${stall.is_available ? 'on' : 'off'}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={stall.is_available}
+                    onChange={() =>
+                      handleToggleStallAvailability(stall.id, stall.is_available)
+                    }
+                  />
+                  <span className="admin-slider" />
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
+
         {loading ? (
           <p className="admin-loading-message">Loading...</p>
         ) : items.length > 0 ? (
@@ -184,7 +223,9 @@ const AdminItems = () => {
                     <input
                       type="checkbox"
                       checked={item.is_available}
-                      onChange={() => handleToggleAvailability(item.id, item.is_available)}
+                      onChange={() =>
+                        handleToggleItemAvailability(item.id, item.is_available)
+                      }
                     />
                     <span className="admin-slider" />
                   </label>

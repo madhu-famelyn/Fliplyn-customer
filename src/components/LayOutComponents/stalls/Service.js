@@ -1,7 +1,7 @@
 // src/pages/stalls/Service.js
 import axios from 'axios';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = 'https://admin-aged-field-2794.fly.dev';
 
 // Fetch buildings by admin ID
 export const fetchBuildings = async (adminId, token) => {
@@ -19,7 +19,7 @@ export const fetchBuildings = async (adminId, token) => {
 // Create a new stall
 export const createStall = async (formData, token) => {
   try {
-    const res = await axios.post("http://127.0.0.1:8000/stalls/", formData, {
+    const res = await axios.post("https://admin-aged-field-2794.fly.dev/stalls/", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",

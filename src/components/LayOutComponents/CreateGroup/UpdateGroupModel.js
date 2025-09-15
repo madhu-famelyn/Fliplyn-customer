@@ -19,7 +19,7 @@ const UpdateGroupModal = ({ groupId, onClose, onUpdated, token }) => {
     const ws = XLSX.utils.json_to_sheet(nonRegisteredUsers);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Non-Registered Users");
-    XLSX.writeFile(wb, "non_registered_users.xlsx");
+    XLSX.writeFile(wb, "Non_Registered_Users.xlsx");
   };
 
   const handleSubmit = async (e) => {
@@ -36,11 +36,11 @@ const UpdateGroupModal = ({ groupId, onClose, onUpdated, token }) => {
     setLoading(true);
     setMessage("");
     setMessageType("");
-    setNonRegisteredUsers([]); // Reset
+    setNonRegisteredUsers([]);
 
     try {
       const res = await axios.put(
-        `http://127.0.0.1:8000/wallet-groups/${groupId}/upload-excel`,
+        `https://admin-aged-field-2794.fly.dev/wallet-groups/${groupId}/upload-excel`,
         formData,
         {
           headers: {
@@ -54,7 +54,6 @@ const UpdateGroupModal = ({ groupId, onClose, onUpdated, token }) => {
       setMessage("✅ File uploaded successfully.");
 
       if (res.data?.non_registered_users?.length) {
-        console.log("📜 Non-registered users:", res.data.non_registered_users);
         setNonRegisteredUsers(res.data.non_registered_users);
       }
 
@@ -70,10 +69,6 @@ const UpdateGroupModal = ({ groupId, onClose, onUpdated, token }) => {
       setMessage(errorMsg);
 
       if (error.response?.data?.non_registered_users?.length) {
-        console.log(
-          "📜 Non-registered users (from error):",
-          error.response.data.non_registered_users
-        );
         setNonRegisteredUsers(error.response.data.non_registered_users);
       }
     } finally {
@@ -116,14 +111,7 @@ const UpdateGroupModal = ({ groupId, onClose, onUpdated, token }) => {
               <button
                 type="button"
                 onClick={downloadNonRegisteredUsers}
-                style={{
-                  padding: "8px 12px",
-                  backgroundColor: "#007bff",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                style={modalStyle.downloadBtn}
               >
                 Download Non-Registered Users
               </button>
@@ -131,14 +119,10 @@ const UpdateGroupModal = ({ groupId, onClose, onUpdated, token }) => {
           )}
 
           <div style={modalStyle.buttons}>
-            <button type="submit" disabled={loading}>
+            <button type="submit" disabled={loading} style={modalStyle.uploadBtn}>
               {loading ? "Uploading..." : "Upload"}
             </button>
-            <button
-              type="button"
-              onClick={onClose}
-              style={{ marginLeft: "10px" }}
-            >
+            <button type="button" onClick={onClose} style={modalStyle.cancelBtn}>
               Cancel
             </button>
           </div>
@@ -148,36 +132,65 @@ const UpdateGroupModal = ({ groupId, onClose, onUpdated, token }) => {
   );
 };
 
+// ✅ Modal styles (inline)
 const modalStyle = {
   overlay: {
     position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    inset: 0,
+    backgroundColor: "rgba(0,0,0,0.6)",
     display: "flex",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     zIndex: 1000,
   },
   modal: {
     backgroundColor: "#fff",
-    borderRadius: "8px",
+    borderRadius: "10px",
     padding: "20px",
     width: "400px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+    maxWidth: "90%",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+    animation: "fadeIn 0.3s ease-in-out",
   },
   formGroup: {
     marginBottom: "15px",
+    display: "flex",
+    flexDirection: "column",
   },
   message: {
+    fontWeight: "500",
+    marginTop: "10px",
     marginBottom: "10px",
-    fontWeight: "bold",
   },
   buttons: {
     display: "flex",
     justifyContent: "flex-end",
+    marginTop: "20px",
+  },
+  uploadBtn: {
+    padding: "8px 16px",
+    backgroundColor: "#008000",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+  },
+  cancelBtn: {
+    padding: "8px 16px",
+    backgroundColor: "#cc0000",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    marginLeft: "10px",
+  },
+  downloadBtn: {
+    padding: "8px 12px",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
   },
 };
 

@@ -1,9 +1,27 @@
 // src/services/buildingService.js
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000'; // ✅ Use this consistently
+const API_BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // ✅ Use this consistently
 
 // ✅ Fetch buildings by admin ID
+
+// ✅ Update stall availability
+export const updateStallAvailability = async (stallId, isAvailable) => {
+  const response = await fetch(`${API_BASE_URL}/stalls/${stallId}/availability`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ is_available: isAvailable }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update stall availability");
+  }
+  return response.json();
+};
+
+
 export const fetchBuildingsByAdminId = async (adminId) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/buildings/buildings/by-admin/${adminId}`);

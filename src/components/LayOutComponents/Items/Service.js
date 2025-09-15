@@ -1,7 +1,7 @@
    // Service.js
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:8000'; // Update if your FastAPI server is on a different port
+const BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // Update if your FastAPI server is on a different port
 
 // Create a new item
 export const createItem = async (formData) => {
@@ -51,9 +51,32 @@ export const deleteItemById = async (itemId) => {
     throw error;
   }
 };
+// src/pages/Items/Service.js
+
+// Bulk upload items via Excel
+export const uploadItemsExcel = async (formData) => {
+  const { data } = await axios.post(
+    'https://admin-aged-field-2794.fly.dev/items/items/bulk-upload', // ✅ full backend route
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
+  return data;
+};
 
 
-
+// --- Upload single image for item (optional separate API) ---
+export const uploadItemImage = async (formData) => {
+  const { data } = await axios.post(`${BASE_URL}/upload-image`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return data;
+};
 
 // Service.js
 
@@ -74,4 +97,24 @@ export const updateItemById = async (itemId, formData) => {
     console.error('Error updating item:', error);
     throw error;
   }
+};
+
+
+
+export const updateItemImage = async (itemId, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(
+    `${BASE_URL}/items/items/${itemId}/upload-image`,
+    {
+      method: "PUT",
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to update item image");
+  }
+  return response.json();
 };

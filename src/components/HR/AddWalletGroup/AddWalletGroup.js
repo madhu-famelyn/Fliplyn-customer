@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./AddWalletGroup.css";
 
-const API_BASE = "http://127.0.0.1:8000"; // change if needed
+const API_BASE = "https://admin-aged-field-2794.fly.dev"; // change if needed
 
 const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
   const [groupName, setGroupName] = useState("");

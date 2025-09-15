@@ -1,17 +1,19 @@
 // src/pages/Item.js
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import ItemBulkUpload from "./ItemBulkUpload";
 import {
   createItem,
   getItemsByCategoryId,
   updateItemAvailability,
   deleteItemById,
-} from './Service';
-import { useAuth } from '../../AuthContex/ContextAPI';
-import AdminLayout from '../../LayOut/AdminLayout';
-import ItemForm from './ItemForm';
-import ItemList from './ItemList';
-import './Items.css';
+  updateItemImage, // ✅ new import
+} from "./Service";
+import { useAuth } from "../../AuthContex/ContextAPI";
+import AdminLayout from "../../LayOut/AdminLayout";
+import ItemForm from "./ItemForm";
+import ItemList from "./ItemList";
+import "./Items.css";
 
 const Item = () => {
   const location = useLocation();
@@ -19,22 +21,23 @@ const Item = () => {
   const { userId: adminId } = useAuth();
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    Gst_precentage: '',
+    name: "",
+    description: "",
+    price: "",
+    Gst_precentage: "",
     tax_included: false,
     is_available: true,
-    building_id: '',
-    stall_id: '',
-    category_id: '',
-    admin_id: '',
+    building_id: "",
+    stall_id: "",
+    category_id: "",
+    admin_id: "",
   });
 
   const [file, setFile] = useState(null);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [items, setItems] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [showBulkUpload, setShowBulkUpload] = useState(false);
 
   useEffect(() => {
     if (buildingId && stallId && categoryId && adminId) {
@@ -53,11 +56,13 @@ const Item = () => {
     try {
       const data = await getItemsByCategoryId(catId);
       const sorted = Array.isArray(data)
-        ? data.sort((a, b) => (b.is_available === true) - (a.is_available === true))
+        ? data.sort(
+            (a, b) => (b.is_available === true) - (a.is_available === true)
+          )
         : [];
       setItems(sorted);
     } catch (err) {
-      console.error('Failed to fetch items:', err);
+      console.error("Failed to fetch items:", err);
       setItems([]);
     }
   };
@@ -65,17 +70,17 @@ const Item = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    if (name === 'tax_included') {
+    if (name === "tax_included") {
       const isChecked = checked;
       setFormData((prev) => ({
         ...prev,
         tax_included: isChecked,
-        Gst_precentage: isChecked ? '' : prev.Gst_precentage,
+        Gst_precentage: isChecked ? "" : prev.Gst_precentage,
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: type === 'checkbox' ? checked : value,
+        [name]: type === "checkbox" ? checked : value,
       }));
     }
   };
@@ -84,21 +89,21 @@ const Item = () => {
     e.preventDefault();
     const formPayload = new FormData();
     for (const key in formData) {
-      if (formData[key] !== '') {
+      if (formData[key] !== "") {
         formPayload.append(key, formData[key]);
       }
     }
-    if (file) formPayload.append('file', file);
+    if (file) formPayload.append("file", file);
 
     try {
       await createItem(formPayload);
-      setMessage('✅ Item created successfully!');
+      setMessage("✅ Item created successfully!");
       setFormData((prev) => ({
         ...prev,
-        name: '',
-        description: '',
-        price: '',
-        Gst_precentage: '',
+        name: "",
+        description: "",
+        price: "",
+        Gst_precentage: "",
         tax_included: false,
         is_available: true,
       }));
@@ -106,7 +111,7 @@ const Item = () => {
       fetchItems(categoryId);
     } catch (error) {
       console.error(error);
-      setMessage('❌ Failed to create item');
+      setMessage("❌ Failed to create item");
     }
   };
 
@@ -115,21 +120,35 @@ const Item = () => {
       await updateItemAvailability(itemId, !currentStatus);
       fetchItems(categoryId);
     } catch (err) {
-      console.error('Error updating availability:', err);
+      console.error("Error updating availability:", err);
     }
   };
 
   const handleDelete = async (itemId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this item?');
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this item?"
+    );
     if (!confirmDelete) return;
 
     try {
       await deleteItemById(itemId);
-      setMessage('🗑️ Item deleted');
+      setMessage("🗑️ Item deleted");
       fetchItems(categoryId);
     } catch (err) {
-      console.error('Error deleting item:', err);
-      setMessage('❌ Failed to delete item');
+      console.error("Error deleting item:", err);
+      setMessage("❌ Failed to delete item");
+    }
+  };
+
+  // ✅ New: handle image update
+  const handleImageUpdate = async (itemId, file) => {
+    try {
+      await updateItemImage(itemId, file);
+      setMessage("🖼️ Image updated successfully!");
+      fetchItems(categoryId);
+    } catch (err) {
+      console.error("Error updating image:", err);
+      setMessage("❌ Failed to update image");
     }
   };
 
@@ -138,9 +157,21 @@ const Item = () => {
       <div className="item-container">
         <h2>Items</h2>
 
-        <button onClick={() => setShowForm(!showForm)} className="add-item-btn">
-          {showForm ? 'Close Form' : '+ Add Item'}
-        </button>
+        <div className="item-actions">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="add-item-btn"
+          >
+            {showForm ? "Close Form" : "+ Add Item"}
+          </button>
+
+          <button
+            onClick={() => setShowBulkUpload(!showBulkUpload)}
+            className="upload-excel-btn"
+          >
+            {showBulkUpload ? "Close Bulk Upload" : "📄 Upload Excel"}
+          </button>
+        </div>
 
         {showForm && (
           <ItemForm
@@ -153,10 +184,21 @@ const Item = () => {
           />
         )}
 
+        {showBulkUpload && (
+          <ItemBulkUpload
+            buildingId={buildingId}
+            stallId={stallId}
+            categoryId={categoryId}
+            adminId={adminId}
+            onSuccess={() => fetchItems(categoryId)}
+          />
+        )}
+
         <ItemList
           items={items}
           handleToggleAvailability={handleToggleAvailability}
           handleDelete={handleDelete}
+          handleImageUpdate={handleImageUpdate} // ✅ pass down
         />
       </div>
     </AdminLayout>

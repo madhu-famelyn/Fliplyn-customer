@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import * as XLSX from "xlsx"; // Import the xlsx library for Excel export
+import * as XLSX from "xlsx"; // For Excel export
 import "./CreateGroup.css";
 
 export default function CreateGroup({ onGroupCreated }) {
@@ -12,23 +12,26 @@ export default function CreateGroup({ onGroupCreated }) {
     exclude_weekend: false,
     daily_wallet: false,
     days_count: 1,
+    payment_method: "prepaid", // ✅ default prepaid
   });
 
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const [buildings, setBuildings] = useState([]);
-  const [missingUsers, setMissingUsers] = useState([]); // Track missing users
+  const [missingUsers, setMissingUsers] = useState([]); // ✅ Missing users from backend
 
-  const adminId = localStorage.getItem("userId") || localStorage.getItem("admin_id");
-  const token = localStorage.getItem("token") || localStorage.getItem("access_token");
+  const adminId =
+    localStorage.getItem("userId") || localStorage.getItem("admin_id");
+  const token =
+    localStorage.getItem("token") || localStorage.getItem("access_token");
 
+  // ✅ Fetch buildings for dropdown
   useEffect(() => {
     const fetchBuildings = async () => {
       if (!adminId) return;
-
       try {
         const res = await axios.get(
-          `http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`,
+          `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -44,6 +47,7 @@ export default function CreateGroup({ onGroupCreated }) {
     }
   }, [adminId, token]);
 
+  // ✅ Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -52,10 +56,12 @@ export default function CreateGroup({ onGroupCreated }) {
     }));
   };
 
+  // ✅ Handle file selection
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
+  // ✅ Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -68,6 +74,7 @@ export default function CreateGroup({ onGroupCreated }) {
     for (const key in formData) {
       form.append(key, formData[key]);
     }
+    form.append("admin_id", adminId);
     form.append("file", file);
 
     try {
@@ -81,21 +88,31 @@ export default function CreateGroup({ onGroupCreated }) {
           },
         }
       );
+
+      // ✅ Backend now returns missing users in response
       setMessage(response.data.message || "Group created successfully.");
-      onGroupCreated(); // reload groups after creation
+      setMissingUsers(response.data.non_registered_users || []);
+      onGroupCreated();
+
+      // Reset form
+      setFormData({
+        building_id: "",
+        wallet_amount: "",
+        group_name: "",
+        carry_forward: false,
+        exclude_weekend: false,
+        daily_wallet: false,
+        days_count: 1,
+        payment_method: "prepaid",
+      });
+      setFile(null);
     } catch (error) {
       const errMsg = error.response?.data?.detail || "Upload failed.";
       setMessage(`Error: ${errMsg}`);
-
-      // If users are not found, we capture them here
-      if (error.response?.data?.detail.includes("User with email")) {
-        const missingUserEmail = error.response?.data?.detail.split(' ')[4]; // Extract email
-        setMissingUsers((prev) => [...prev, { email: missingUserEmail }]);
-      }
     }
   };
 
-  // Download missing users as an Excel file
+  // ✅ Download missing users as Excel
   const downloadMissingUsers = () => {
     if (missingUsers.length === 0) return;
 
@@ -103,7 +120,6 @@ export default function CreateGroup({ onGroupCreated }) {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Missing Users");
 
-    // Export file with "Missing_Users" name
     XLSX.writeFile(wb, "Missing_Users.xlsx");
   };
 
@@ -122,12 +138,11 @@ export default function CreateGroup({ onGroupCreated }) {
             <option value="" disabled>
               Select Building
             </option>
-           {buildings.map((building) => (
-  <option key={building.id} value={building.id}>
-    {building.building_name || "Unnamed Building"}  {/* Update this to building.building_name */}
-  </option>
-))}
-
+            {buildings.map((building) => (
+              <option key={building.id} value={building.id}>
+                {building.building_name || "Unnamed Building"}
+              </option>
+            ))}
           </select>
         </label>
 
@@ -179,6 +194,32 @@ export default function CreateGroup({ onGroupCreated }) {
           Daily Wallet
         </label>
 
+        <label>
+          Days Count:
+          <input
+            type="number"
+            name="days_count"
+            value={formData.days_count}
+            onChange={handleChange}
+            required
+            min="1"
+          />
+        </label>
+
+        {/* ✅ Payment Method Dropdown */}
+        <label>
+          Payment Method:
+          <select
+            name="payment_method"
+            value={formData.payment_method}
+            onChange={handleChange}
+            required
+          >
+            <option value="prepaid">Prepaid</option>
+            <option value="postpaid">Postpaid</option>
+          </select>
+        </label>
+
         <input
           type="file"
           accept=".xlsx,.xls"
@@ -190,13 +231,26 @@ export default function CreateGroup({ onGroupCreated }) {
       </form>
 
       {message && (
-        <p className={`message ${message.startsWith("Error") ? "error" : "success"}`}>
+        <p
+          className={`message ${
+            message.startsWith("Error") ? "error" : "success"
+          }`}
+        >
           {message}
         </p>
       )}
 
+      {/* ✅ Show missing users + Download button */}
       {missingUsers.length > 0 && (
-        <div>
+        <div className="missing-users-section">
+          <h3>Missing Users</h3>
+          <ul>
+            {missingUsers.map((user, index) => (
+              <li key={index}>
+                {user.name} - {user.email} - {user.mobile_number}
+              </li>
+            ))}
+          </ul>
           <button onClick={downloadMissingUsers}>
             Download Missing Users
           </button>

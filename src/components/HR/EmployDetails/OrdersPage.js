@@ -22,7 +22,7 @@ const OrdersModal = ({ userIds, onClose }) => {
         let allOrders = [];
         for (const userId of userIds) {
           const res = await axios.get(
-            `http://127.0.0.1:8000/orders/user/${userId}`,
+            `https://admin-aged-field-2794.fly.dev/orders/user/${userId}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
           allOrders = [...allOrders, ...res.data];

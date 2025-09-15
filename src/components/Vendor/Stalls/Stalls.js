@@ -21,7 +21,7 @@ const VendorStalls = () => {
     const fetchStalls = async () => {
       try {
         const promises = stallIds.map((id) =>
-          axios.get(`http://127.0.0.1:8000/stalls/${id}`, {
+          axios.get(`https://admin-aged-field-2794.fly.dev/stalls/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         );

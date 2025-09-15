@@ -25,7 +25,7 @@ export default function Group() {
       if (!adminId || !token) return;
       try {
         const res = await axios.get(
-          `http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`,
+          `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = res.data || [];
@@ -40,13 +40,13 @@ export default function Group() {
     fetchBuildings();
   }, [adminId, token]);
 
-  // ✅ Memoize fetchGroups so ESLint is happy
+  // ✅ Memoize fetchGroups
   const fetchGroups = useCallback(async () => {
     if (!buildingId) return;
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/wallet-groups/by-building/${buildingId}`,
+        `https://admin-aged-field-2794.fly.dev/wallet-groups/by-building/${buildingId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setGroups(res.data || []);
@@ -135,7 +135,8 @@ export default function Group() {
                     <strong>Users Count:</strong> {group.users?.length || 0}
                   </p>
                   <p>
-                    <strong>Wallet Amount:</strong> {group.wallet_amount ?? "N/A"}
+                    <strong>Wallet Amount:</strong>{" "}
+                    {group.wallet_amount ?? "N/A"}
                   </p>
                   <p>
                     <strong>Carry Forward:</strong>{" "}
@@ -148,6 +149,16 @@ export default function Group() {
                   <p>
                     <strong>Daily Wallet:</strong>{" "}
                     {group.daily_wallet ? "Yes" : "No"}
+                  </p>
+                  <p>
+                    <strong>Days Count:</strong>{" "}
+                    {group.days_count ?? "N/A"}
+                  </p>
+                  <p>
+                    <strong>Payment Method:</strong>{" "}
+                    {group.payment_method
+                      ? group.payment_method.toUpperCase()
+                      : "N/A"}
                   </p>
 
                   <p className="created-date">
