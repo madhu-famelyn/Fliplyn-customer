@@ -1,13 +1,30 @@
 // src/services/buildingService.js
 import axios from 'axios';
 
-// Use environment variable for base URL
-const API_BASE = import.meta.env.VITE_API_URL;
+const API_BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // ✅ Use this consistently
 
 // ✅ Fetch buildings by admin ID
+
+// ✅ Update stall availability
+export const updateStallAvailability = async (stallId, isAvailable) => {
+  const response = await fetch(`${API_BASE_URL}/stalls/${stallId}/availability`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ is_available: isAvailable }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update stall availability");
+  }
+  return response.json();
+};
+
+
 export const fetchBuildingsByAdminId = async (adminId) => {
   try {
-    const response = await axios.get(`${API_BASE}/buildings/buildings/by-admin/${adminId}`);
+    const response = await axios.get(`${API_BASE_URL}/buildings/buildings/by-admin/${adminId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching buildings:', error);
@@ -18,7 +35,7 @@ export const fetchBuildingsByAdminId = async (adminId) => {
 // ✅ Fetch stalls by building ID
 export const fetchStallsByBuildingId = async (buildingId) => {
   try {
-    const response = await axios.get(`${API_BASE}/stalls/building/${buildingId}`);
+    const response = await axios.get(`${API_BASE_URL}/stalls/building/${buildingId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching stalls:', error);
@@ -26,23 +43,10 @@ export const fetchStallsByBuildingId = async (buildingId) => {
   }
 };
 
-// ✅ Update stall availability
-export const updateStallAvailability = async (stallId, isAvailable) => {
-  try {
-    const response = await axios.put(`${API_BASE}/stalls/${stallId}/availability`, {
-      is_available: isAvailable,
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Failed to update stall availability:', error);
-    throw error.response?.data || error;
-  }
-};
-
 // ✅ Fetch items by stall ID
 export const fetchItemsByStallId = async (stallId) => {
   try {
-    const response = await axios.get(`${API_BASE}/items/stall/${stallId}`);
+    const response = await axios.get(`${API_BASE_URL}/items/stall/${stallId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching items by stall ID:', error);
@@ -53,9 +57,10 @@ export const fetchItemsByStallId = async (stallId) => {
 // ✅ Update item availability (PATCH)
 export const updateItemAvailability = async (itemId, isAvailable) => {
   try {
-    const response = await axios.patch(`${API_BASE}/items/items/${itemId}/availability`, {
-      is_available: isAvailable,
-    });
+    const response = await axios.patch(
+      `${API_BASE_URL}/items/items/${itemId}/availability`,
+      { is_available: isAvailable }
+    );
     return response.data;
   } catch (error) {
     console.error('Error updating item availability:', error);
@@ -66,7 +71,7 @@ export const updateItemAvailability = async (itemId, isAvailable) => {
 // ✅ Update item (PUT)
 export const updateItem = async (itemId, data) => {
   try {
-    const response = await axios.put(`${API_BASE}/items/${itemId}`, data, {
+    const response = await axios.put(`${API_BASE_URL}/items/${itemId}`, data, {
       headers: { 'Content-Type': 'application/json' },
     });
     return response.data;
@@ -79,7 +84,7 @@ export const updateItem = async (itemId, data) => {
 // ✅ Delete item (DELETE)
 export const deleteItemById = async (itemId) => {
   try {
-    const response = await axios.delete(`${API_BASE}/items/${itemId}`);
+    const response = await axios.delete(`${API_BASE_URL}/items/${itemId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting item:', error);

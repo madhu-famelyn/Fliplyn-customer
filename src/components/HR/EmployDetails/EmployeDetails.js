@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useHrAuth } from "../../AuthContex/HrContext";
 import { getWalletGroupsByHrId, updateUserStatus } from "../../Service";
 import Layout from "../SideBar/Layout";
-import AddMemberModal from "./AddMemberModal";
+import AddMemberModal from "./AddMemberModel";
 import UpdateExcelModal from "./UpdateExcelModal";
 import OrdersModal from "./OrdersPage";
 import { AiOutlineHistory, AiOutlineCheck, AiOutlineClose, AiOutlinePlus } from "react-icons/ai";

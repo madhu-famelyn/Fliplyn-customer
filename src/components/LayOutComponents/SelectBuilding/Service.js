@@ -3,7 +3,7 @@ const BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // 🔒 Hardcoded, no 
 
 // ✅ Create Building
 export const createBuilding = async (payload, token) => {
-  const res = await fetch(`${BASE_URL}/buildings`, {
+  const res = await fetch(`${BASE_URL}/buildings/`, {   // ✅ fixed
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -14,7 +14,6 @@ export const createBuilding = async (payload, token) => {
   if (!res.ok) throw new Error('Failed to create building');
   return res.json();
 };
-
 // ✅ Delete Building by ID
 export const deleteBuildingById = async (buildingId, token) => {
   const res = await fetch(`${BASE_URL}/buildings/${buildingId}`, {

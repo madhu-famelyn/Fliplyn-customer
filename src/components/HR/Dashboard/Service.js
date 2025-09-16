@@ -1,8 +1,7 @@
 // src/services/walletService.js
 import axios from "axios";
 
-// ✅ Use environment variable for base URL
-const API_BASE = import.meta.env.VITE_API_URL;
+const API_BASE = "https://admin-aged-field-2794.fly.dev"; // adjust if backend runs on another host
 
 // ✅ Service to fetch wallet groups by HR ID
 export const getWalletGroupsByHrId = async (hrId, token) => {
@@ -23,14 +22,4 @@ export const getWalletGroupsByHrId = async (hrId, token) => {
     console.error("❌ Failed to fetch wallet groups:", error);
     return [];
   }
-};
-
-// ✅ Service to create wallet group via Excel upload
-export const uploadWalletGroupExcel = (formData, token) => {
-  return axios.post(`${API_BASE}/wallet-group/upload-excel/`, formData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
-    },
-  });
 };

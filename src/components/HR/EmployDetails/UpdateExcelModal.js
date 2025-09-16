@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { getWalletGroupsByHrId, uploadWalletGroupExcel1}from "../../Service";
 import "./EmployeDetails.css";
-
+    
 const UpdateExcelModal = ({ groupId, token, hrId, onClose, onGroupUpdated }) => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ const UpdateExcelModal = ({ groupId, token, hrId, onClose, onGroupUpdated }) => 
 
     try {
       // ✅ Upload Excel using service
-      await uploadWalletGroupExcel1(groupId, file, token);
+      await uploadWalletGroupExcel1(groupId, file, token); 
 
       // ✅ Refetch wallet groups after successful upload
       if (hrId) {
