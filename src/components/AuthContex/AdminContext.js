@@ -1,5 +1,3 @@
-
-
 // src/AuthContex/ContextAPI.js
 
 import React, { createContext, useContext, useState, useEffect } from "react";
@@ -10,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [email, setEmail] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [adminId, setAdminId] = useState(null); // ✅ added
   const [role, setRole] = useState(null); // admin or vendor
   const [phone, setPhone] = useState(null); // vendor specific
 
@@ -19,15 +18,14 @@ export const AuthProvider = ({ children }) => {
     const storedUserId = localStorage.getItem("userId");
     const storedRole = localStorage.getItem("role");
     const storedPhone = localStorage.getItem("phone");
+    const storedAdminId = localStorage.getItem("adminId"); // ✅ added
 
-    if (storedToken && storedUserId && storedRole) {
-      setToken(storedToken);
-      setUserId(storedUserId);
-      setRole(storedRole);
-
-      if (storedEmail) setEmail(storedEmail);
-      if (storedPhone) setPhone(storedPhone);
-    }
+    if (storedToken) setToken(storedToken);
+    if (storedUserId) setUserId(storedUserId);
+    if (storedRole) setRole(storedRole);
+    if (storedEmail) setEmail(storedEmail);
+    if (storedPhone) setPhone(storedPhone);
+    if (storedAdminId) setAdminId(storedAdminId); // ✅ added
   }, []);
 
   // Handles both admin & vendor
@@ -49,16 +47,28 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("token", jwt);
     localStorage.setItem("userId", id);
     localStorage.setItem("role", userRole);
+
+    if (userRole === "admin") {
+      setAdminId(id);
+      localStorage.setItem("adminId", id); // ✅ store adminId
+    }
   };
 
   const logoutUser = () => {
     setToken(null);
     setEmail(null);
     setUserId(null);
+    setAdminId(null); // ✅ clear adminId
     setRole(null);
     setPhone(null);
 
-    localStorage.clear();
+    // clear only auth values
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("adminId");
+    localStorage.removeItem("role");
+    localStorage.removeItem("phone");
   };
 
   return (
@@ -67,6 +77,7 @@ export const AuthProvider = ({ children }) => {
         token,
         email,
         userId,
+        adminId, // ✅ now available
         role,
         phone,
         loginUser,
