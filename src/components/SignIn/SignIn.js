@@ -4,7 +4,7 @@ import { login } from './sevice';
 import { useAuth } from '../AuthContex/AdminContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 export default function SignInPage() {
   const [email, setEmail] = useState('');
