@@ -4,6 +4,7 @@ import { login } from './sevice';
 import { useAuth } from '../AuthContex/AdminContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import jwtDecode from 'jwt-decode';
 
 export default function SignInPage() {
   const [email, setEmail] = useState('');
@@ -20,7 +21,16 @@ export default function SignInPage() {
     setLoading(true);
     try {
       const response = await login(email, password);
-      const userId = response.user?.id;
+
+      console.log("Login API Response:", response); // ✅ debug
+
+      // Get userId from response.user.id or fallback to JWT "sub"
+      let userId = response.user?.id;
+      if (!userId && response.access_token) {
+        const decoded = jwtDecode(response.access_token);
+        userId = decoded.sub;
+      }
+
       loginUser(response.access_token, email, userId, 'admin');
       navigate('/dashboard');
     } catch (err) {
@@ -68,13 +78,9 @@ export default function SignInPage() {
 
         <div className="signin-links">
           <p>Don’t have an account? <Link to="/signup">Sign Up</Link></p>
-          <p className="signin-manager-link">
-            {/* Want to login as manager? <Link to="/manager-login">Login as Manager</Link> */}
-          </p>
         </div>
       </div>
 
-      {/* ✅ Loader Overlay */}
       {loading && (
         <div className="signin-loader-overlay">
           <div className="signin-loader-box">
