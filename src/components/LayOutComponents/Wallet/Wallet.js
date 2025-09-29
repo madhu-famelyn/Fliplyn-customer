@@ -22,30 +22,47 @@ export default function AddMoney() {
 
   const { token, userId } = useAuth();
 
-  // ✅ Memoize loadWallets
-  const loadWallets = useCallback(async (bId) => {
-    try {
-      const wallets = await fetchWalletsByBuildingId(bId, token);
-      setWallets(wallets);
+  // ✅ Load wallets for a building
+  const loadWallets = useCallback(
+    async (bId) => {
+      try {
+        const wallets = await fetchWalletsByBuildingId(bId, token);
+        setWallets(wallets);
 
-      // Fetch user info for each wallet
-      const userDetails = {};
-      await Promise.all(wallets.map(async (wallet) => {
-        if (!userDetails[wallet.user_id]) {
-          try {
-            const user = await fetchUserById(wallet.user_id, token);
-            userDetails[wallet.user_id] = user;
-          } catch (error) {
-            console.error(`Error fetching user ${wallet.user_id}:`, error);
-          }
-        }
-      }));
-      setUserMap(userDetails);
-    } catch (err) {
-      console.error('Error loading wallets:', err);
-      setWallets([]);
-    }
-  }, [token]);
+        // Fetch user info for each wallet.user_id
+        const userDetails = {};
+        await Promise.all(
+          wallets.map(async (wallet) => {
+            if (!userDetails[wallet.user_id]) {
+              try {
+                const user = await fetchUserById(wallet.user_id, token);
+
+                // ✅ Map exact fields from API response
+                userDetails[wallet.user_id] = {
+                  name: user.name || 'Unknown',
+                  email: user.company_email || 'N/A',
+                  phone: user.phone_number || 'N/A',
+                };
+              } catch (error) {
+                console.error(`Error fetching user ${wallet.user_id}:`, error);
+                userDetails[wallet.user_id] = {
+                  name: 'Unknown',
+                  email: 'N/A',
+                  phone: 'N/A',
+                };
+              }
+            }
+          })
+        );
+
+        setUserMap(userDetails);
+      } catch (err) {
+        console.error('Error loading wallets:', err);
+        setWallets([]);
+      }
+    },
+    [token]
+  );
 
   useEffect(() => {
     const loadBuildings = async () => {
@@ -59,7 +76,7 @@ export default function AddMoney() {
           setError('No buildings found for this admin.');
         }
       } catch (err) {
-        console.error("Error fetching buildings:", err);
+        console.error('Error fetching buildings:', err);
         setError('Failed to fetch building data.');
       }
     };
@@ -67,7 +84,7 @@ export default function AddMoney() {
     if (userId) {
       loadBuildings();
     }
-  }, [userId, token, loadWallets]); // ✅ Added loadWallets here
+  }, [userId, token, loadWallets]);
 
   const handleBuildingChange = (e) => {
     const selectedId = e.target.value;
@@ -101,7 +118,7 @@ export default function AddMoney() {
       setAmount('');
       loadWallets(buildingId); // Refresh wallet list
     } catch (err) {
-      console.error("Error adding money:", err);
+      console.error('Error adding money:', err);
       setError(err.response?.data?.detail || '❌ Something went wrong.');
     }
   };
@@ -114,7 +131,9 @@ export default function AddMoney() {
           <select value={buildingId} onChange={handleBuildingChange} required>
             <option value="">Select a Building</option>
             {buildings.map((b) => (
-              <option key={b.id} value={b.id}>{b.building_name}</option>
+              <option key={b.id} value={b.id}>
+                {b.building_name}
+              </option>
             ))}
           </select>
 
@@ -158,13 +177,23 @@ export default function AddMoney() {
                 const user = userMap[wallet.user_id] || {};
                 return (
                   <li key={wallet.id} className="wallet-item">
-                    <strong>User:</strong> {user.name || 'Unknown'}<br />
-                    <strong>Email:</strong> {user.company_email || 'N/A'}<br />
-                    <strong>Phone:</strong> {user.phone_number || 'N/A'}<br />
-                    <strong>Wallet Amount:</strong> ₹{wallet.wallet_amount}<br />
-                    <strong>Balance:</strong> ₹{wallet.balance_amount}<br />
-                    <strong>Retainable:</strong> {wallet.is_retainable ? 'Yes' : 'No'}<br />
-                    <strong>Expires At:</strong> {wallet.expiry_at ? new Date(wallet.expiry_at).toLocaleString() : 'N/A'}
+                    <strong>User:</strong> {user.name}
+                    <br />
+                    <strong>Email:</strong> {user.email}
+                    <br />
+                    <strong>Phone:</strong> {user.phone}
+                    <br />
+                    <strong>Wallet Amount:</strong> ₹{wallet.wallet_amount}
+                    <br />
+                    <strong>Balance:</strong> ₹{wallet.balance_amount}
+                    <br />
+                    <strong>Retainable:</strong>{' '}
+                    {wallet.is_retainable ? 'Yes' : 'No'}
+                    <br />
+                    <strong>Expires At:</strong>{' '}
+                    {wallet.expiry_at
+                      ? new Date(wallet.expiry_at).toLocaleString()
+                      : 'N/A'}
                   </li>
                 );
               })}

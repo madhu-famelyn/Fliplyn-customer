@@ -44,15 +44,15 @@ export const fetchWalletsByBuildingId = async (buildingId, token) => {
   return await res.json();
 };
 
-
 export const fetchUserById = async (userId, token) => {
-  const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/${userId}`, {
+  const res = await fetch(`https://admin-aged-field-2794.fly.dev/user/${userId}`, {
     headers: {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
-  if (!response.ok) {
-    throw new Error('Failed to fetch user details');
-  }
-  return await response.json();
+  if (!res.ok) throw new Error('Failed to fetch user details');
+  return await res.json();
 };
+
+
+

@@ -14,7 +14,6 @@ import {
 
 import { HrAuthProvider } from "./components/AuthContex/HrContext";
 
-
 import Dashboard from "./components/LayOutComponents/DashBoard/Dashboard";
 import Locations from "./components/LayOutComponents/Location/Location";
 import SelectCountry from "./components/LayOutComponents/SelectCountry/SelectCountry";
@@ -38,22 +37,23 @@ import TokenReceiptPage from "./components/LayOutComponents/PrintToken/TokenReci
 import VendorLogin from "./components/Vendor/Login/Login";
 import VendorItems from "./components/Vendor/ItemsList/Items";
 import HRDashboard from "./components/HR/Dashboard/Dashboard";
-
 import HrLogin from "./components/HR/Login/LogIn";
 import EmployeesPage from "./components/HR/EmployDetails/EmployeDetails";
 import HROrdersPage from "./components/HR/EmployDetails/OrdersPage";
 import VendorStalls from "./components/Vendor/Stalls/Stalls";
-// import HrLogin from "./components/HR/Login/Login";
+import OrdersByEmail from "./components/LayOutComponents/GetOrder/GetOrder";
 
-// Private route for Admin
+// ✅ Admin Private Route
 const AdminPrivateRoute = ({ element }) => {
-  const { token } = useAdminAuth();
+  const auth = useAdminAuth() || {};
+  const { token } = auth;
   return token ? element : <Navigate to="/login" />;
 };
 
-// Private route for Vendor
+// ✅ Vendor Private Route
 const VendorPrivateRoute = ({ element }) => {
-  const { token } = useVendorAuth();
+  const auth = useVendorAuth() || {};
+  const { token } = auth;
   return token ? element : <Navigate to="/vendor" />;
 };
 
@@ -62,49 +62,104 @@ function App() {
     <AdminAuthProvider>
       <VendorAuthProvider>
         <HrAuthProvider>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<SignInPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<SignInPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
 
-          {/* Admin Routes */}
-          <Route path="/dashboard" element={<AdminPrivateRoute element={<Dashboard />} />} />
-          <Route path="/locations" element={<AdminPrivateRoute element={<Locations />} />} />
-          <Route path="/select-country" element={<AdminPrivateRoute element={<SelectCountry />} />} />
-          <Route path="/select-state" element={<AdminPrivateRoute element={<SelectState />} />} />
-          <Route path="/select-city" element={<AdminPrivateRoute element={<SelectCity />} />} />
-          <Route path="/create-building" element={<AdminPrivateRoute element={<CreateBuilding />} />} />
-          <Route path="/stalls" element={<AdminPrivateRoute element={<Stall />} />} />
-          <Route path="/add-category/:stallId" element={<AdminPrivateRoute element={<AddCategory />} />} />
-          <Route path="/item" element={<AdminPrivateRoute element={<Item />} />} />
-          <Route path="/manager-login" element={<ManagerLogin />} />
-          <Route path="/manager-stalls" element={<AdminPrivateRoute element={<ManagerStalls />} />} />
-          <Route path="/manager-details" element={<AdminPrivateRoute element={<ManagerDetails />} />} />
-          <Route path="/manager-items" element={<AdminPrivateRoute element={<ItemDetails />} />} />
-          <Route path="/add-money" element={<AdminPrivateRoute element={<AddMoney />} />} />
-          <Route path="/items-admin" element={<AdminPrivateRoute element={<AdminItems />} />} />
-          <Route path="/create-group" element={<AdminPrivateRoute element={<Group />} />} />
-          <Route path="/token" element={<AdminPrivateRoute element={<EnterTokenPage />} />} />
-          <Route path="/print-token/:tokenNumber" element={<TokenReceiptPage />} />
+            {/* Admin Routes */}
+            <Route
+              path="/dashboard"
+              element={<AdminPrivateRoute element={<Dashboard />} />}
+            />
+            <Route
+              path="/locations"
+              element={<AdminPrivateRoute element={<Locations />} />}
+            />
+            <Route
+              path="/select-country"
+              element={<AdminPrivateRoute element={<SelectCountry />} />}
+            />
+            <Route
+              path="/select-state"
+              element={<AdminPrivateRoute element={<SelectState />} />}
+            />
+            <Route
+              path="/select-city"
+              element={<AdminPrivateRoute element={<SelectCity />} />}
+            />
+            <Route
+              path="/create-building"
+              element={<AdminPrivateRoute element={<CreateBuilding />} />}
+            />
+            <Route
+              path="/stalls"
+              element={<AdminPrivateRoute element={<Stall />} />}
+            />
+            <Route
+              path="/add-category/:stallId"
+              element={<AdminPrivateRoute element={<AddCategory />} />}
+            />
+            <Route
+              path="/item"
+              element={<AdminPrivateRoute element={<Item />} />}
+            />
+            <Route path="/manager-login" element={<ManagerLogin />} />
+            <Route
+              path="/manager-stalls"
+              element={<AdminPrivateRoute element={<ManagerStalls />} />}
+            />
+            <Route
+              path="/manager-details"
+              element={<AdminPrivateRoute element={<ManagerDetails />} />}
+            />
+            <Route
+              path="/manager-items"
+              element={<AdminPrivateRoute element={<ItemDetails />} />}
+            />
+            <Route
+              path="/add-money"
+              element={<AdminPrivateRoute element={<AddMoney />} />}
+            />
+            <Route
+              path="/items-admin"
+              element={<AdminPrivateRoute element={<AdminItems />} />}
+            />
+            <Route
+              path="/create-group"
+              element={<AdminPrivateRoute element={<Group />} />}
+            />
+            <Route
+              path="/token"
+              element={<AdminPrivateRoute element={<EnterTokenPage />} />}
+            />
+            <Route path="/print-token/:tokenNumber" element={<TokenReceiptPage />} />
+            <Route
+              path="/get-order-email"
+              element={<AdminPrivateRoute element={<OrdersByEmail />} />}
+            />
 
+            {/* Vendor Routes */}
+            <Route path="/vendor" element={<VendorLogin />} />
+            <Route
+              path="/user"
+              element={<VendorPrivateRoute element={<User />} />}
+            />
+            <Route path="/vendor-stall" element={<VendorStalls />} />
+            <Route
+              path="/items-vendor/:id"
+              element={<VendorPrivateRoute element={<VendorItems />} />}
+            />
 
-          {/* Vendor Routes */}
-          <Route path="/vendor" element={<VendorLogin />} />
-          <Route path="/user" element={<VendorPrivateRoute element={<User />} />} />
-          <Route path="/vendor-stall" element={<VendorStalls/>}/>
+            {/* HR Routes */}
+            <Route path="/hr" element={<HrLogin />} />
+            <Route path="/hr-dashboard" element={<HRDashboard />} />
+            <Route path="/wallet-group/:groupId" element={<EmployeesPage />} />
+            <Route path="/order-history" element={<HROrdersPage />} />
 
-          <Route path="/items-vendor/:id" element={<VendorPrivateRoute element={<VendorItems />} />} />
-
-
-          <Route path="/hr" element={<HrLogin/>} />
-          <Route path="/hr-dashboard" element={<HRDashboard/>}/>
-          <Route path="/wallet-group/:groupId" element={<EmployeesPage />} />
-          <Route path="/order-history" element={<HROrdersPage />} />
-
-
-          {/* Fallback */}
-          <Route path="*" element={<SignInPage />} />
-        </Routes>
+            {/* Fallback */}
+            <Route path="*" element={<SignInPage />} />
+          </Routes>
         </HrAuthProvider>
       </VendorAuthProvider>
     </AdminAuthProvider>

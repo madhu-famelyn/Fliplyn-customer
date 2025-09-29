@@ -32,6 +32,9 @@ export default function AdminLayout({ children }) {
             <li><Link to="/manager-details" onClick={toggleSidebar}><FaChartBar /> Manager Details</Link></li>
             <li><Link to="/user" onClick={toggleSidebar}><FaUsers /> Users</Link></li>
             <li><Link to="/token" onClick={toggleSidebar}><GiToken/>Token</Link></li>
+            <li><Link to="/get-order-email" onClick={toggleSidebar}><GiToken/>Get Order</Link></li>
+
+
 
             <li className="menu-separator"></li>
 
