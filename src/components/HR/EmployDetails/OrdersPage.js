@@ -32,7 +32,6 @@ const OrdersModal = ({ userIds, onClose }) => {
     [token]
   );
 
-  // ✅ Stable function using useCallback
   const fetchStallNameFromOrder = useCallback(
     async (order) => {
       if (!order.order_details?.length) return "N/A";
@@ -53,7 +52,6 @@ const OrdersModal = ({ userIds, onClose }) => {
     [token, fetchStallName]
   );
 
-  // ✅ Added fetchStallNameFromOrder in dependency array
   useEffect(() => {
     const fetchOrders = async () => {
       if (!userIds?.length) return;
@@ -143,9 +141,7 @@ const OrdersModal = ({ userIds, onClose }) => {
     const itemTotal = order.order_details.reduce((sum, i) => sum + i.total, 0);
     const totalGst = order.total_gst || 0;
     const totalWithGst = itemTotal + totalGst;
-    const roundedTotal = Math.round(totalWithGst);
-    const roundOff = (roundedTotal - totalWithGst).toFixed(2);
-    const grandTotal = roundedTotal;
+    const grandTotal = Math.round(totalWithGst);
     return { grandTotal };
   };
 
@@ -181,6 +177,7 @@ const OrdersModal = ({ userIds, onClose }) => {
         <button className="close-btn" onClick={onClose}>✖</button>
         <h2>Order History</h2>
 
+        {/* Filters */}
         <div className="filter-section">
           <label>
             Start Date:
@@ -215,36 +212,36 @@ const OrdersModal = ({ userIds, onClose }) => {
         {loading && <p>Loading orders...</p>}
         {!loading && filteredOrders.length === 0 && <p>No orders found.</p>}
 
+        {/* ✅ Photo-style arrangement */}
         {!loading && filteredOrders.length > 0 && (
-          <table className="orders-table" style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr>
-                <th>Stall</th>
-                <th>Token</th>
-                <th>Email</th>
-                <th>Date</th>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Grand Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map((o) => {
-                const { grandTotal } = calculateAmounts(o);
-                return o.order_details.map((i, idx) => (
-                  <tr key={`${o.id}-${i.item_id}-${idx}`} style={{ borderBottom: "1px solid #ddd" }}>
-                    <td>{o.stallName}</td>
-                    <td>{o.token_number}</td>
-                    <td>{o.user_email || ""}</td>
-                    <td>{new Date(o.created_datetime).toLocaleString()}</td>
-                    <td>{i.name}</td>
-                    <td>{i.quantity}</td>
-                    <td>{grandTotal.toFixed(2)}</td>
-                  </tr>
-                ));
-              })}
-            </tbody>
-          </table>
+          <div className="orders-grid">
+            {filteredOrders.map((o) => {
+              const { grandTotal } = calculateAmounts(o);
+              return (
+                <div key={o.id} className="order-card">
+                  <div className="order-header">
+                    <h3>{o.stallName}</h3>
+                    <span className="order-token">Token: {o.token_number}</span>
+                  </div>
+                  <p><strong>Email:</strong> {o.user_email || "N/A"}</p>
+                  <p><strong>Date:</strong> {new Date(o.created_datetime).toLocaleString()}</p>
+                  
+                  <div className="order-items">
+                    {o.order_details.map((i, idx) => (
+                      <div key={idx} className="order-item">
+                        <span>{i.name}</span>
+                        <span>Qty: {i.quantity}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="order-total">
+                    <strong>Grand Total:</strong> ₹{grandTotal.toFixed(2)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
 
         <div className="total-section">

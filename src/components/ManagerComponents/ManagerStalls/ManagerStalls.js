@@ -6,7 +6,6 @@ import "./ManagerStalls.css"; // CSS file
 
 export default function ManagerStallIds() {
   const { user } = useAuth(); // get building_id from auth context
-  const [stallIds, setStallIds] = useState([]);
   const [stallData, setStallData] = useState([]); // store full stall info
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -24,8 +23,6 @@ export default function ManagerStallIds() {
         const response = await axios.get(
           `https://admin-aged-field-2794.fly.dev/stalls/building/${user.building_id}`
         );
-        const ids = response.data.map((stall) => stall.id); // only IDs
-        setStallIds(ids);
         setStallData(response.data); // full data including images
       } catch (err) {
         console.error(err);
@@ -58,17 +55,17 @@ export default function ManagerStallIds() {
         >
           View Sales
         </button>
-         <button
+        <button
           className="ms-btn"
           onClick={() => navigate("/add-stall")}
         >
-          add stall
+          Add Stall
         </button>
-         <button
+        <button
           className="ms-btn"
-          onClick={() => navigate("/view-sales")}
+          onClick={() => navigate("/place-bulk-order")}
         >
-            place bulk order
+          Place Bulk Order
         </button>
       </div>
 

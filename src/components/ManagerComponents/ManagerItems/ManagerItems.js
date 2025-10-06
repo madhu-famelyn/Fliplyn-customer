@@ -3,6 +3,11 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import "./ManagerItems.css";
 
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import "./ManagerItems.css";
+
 export default function ItemListByStall() {
   const { stallId } = useParams();
   const [items, setItems] = useState([]);
@@ -83,7 +88,6 @@ export default function ItemListByStall() {
           const gstAmount = item.Gst_precentage
             ? (item.price * item.Gst_precentage) / 100
             : 0;
-          const totalPrice = item.price + gstAmount;
 
           return (
             <div className="ils-card" key={item.id}>
