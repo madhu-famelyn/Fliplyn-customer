@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useBuildingManagerAuth } from "../AuthContex/BuildingManagerContext";
 import * as XLSX from "xlsx"; // ✅ For export
-import { Outlet } from "react-router-dom";
 
 export default function BuildingSalesReport() {
 const { manager } = useBuildingManagerAuth();

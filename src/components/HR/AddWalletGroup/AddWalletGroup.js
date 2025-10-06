@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import "./AddWalletGroup.css";
 import { uploadWalletGroupExcel } from "../../Service";
-import { getWalletGroupsByHrId } from "../../Service"; // ✅ works
 
 
 const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import * as XLSX from "xlsx";
 import { useHrAuth } from "../../AuthContex/HrContext";
 import { getOrdersByUserIds } from "../../Service";
@@ -14,36 +14,46 @@ const OrdersModal = ({ userIds, onClose }) => {
   const [month, setMonth] = useState("");
   const [timeFilter, setTimeFilter] = useState("");
 
-  // Fetch stall name by stall_id
-  const fetchStallName = async (stallId) => {
-    try {
-      const res = await fetch(`https://admin-aged-field-2794.fly.dev/stalls/${stallId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) return "N/A";
-      const data = await res.json();
-      return Array.isArray(data) ? data[0]?.name || "N/A" : data?.name || "N/A";
-    } catch {
-      return "N/A";
-    }
-  };
+  // ✅ Fetch stall name by stall_id
+  const fetchStallName = useCallback(
+    async (stallId) => {
+      try {
+        const res = await fetch(
+          `https://admin-aged-field-2794.fly.dev/stalls/${stallId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) return "N/A";
+        const data = await res.json();
+        return Array.isArray(data) ? data[0]?.name || "N/A" : data?.name || "N/A";
+      } catch {
+        return "N/A";
+      }
+    },
+    [token]
+  );
 
-  const fetchStallNameFromOrder = async (order) => {
-    if (!order.order_details?.length) return "N/A";
-    const firstItemId = order.order_details[0].item_id;
-    try {
-      const res = await fetch(`https://admin-aged-field-2794.fly.dev/items/items/${firstItemId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) return "N/A";
-      const itemData = await res.json();
-      const stallId = itemData?.stall_id;
-      return stallId ? await fetchStallName(stallId) : "N/A";
-    } catch {
-      return "N/A";
-    }
-  };
+  // ✅ Stable function using useCallback
+  const fetchStallNameFromOrder = useCallback(
+    async (order) => {
+      if (!order.order_details?.length) return "N/A";
+      const firstItemId = order.order_details[0].item_id;
+      try {
+        const res = await fetch(
+          `https://admin-aged-field-2794.fly.dev/items/items/${firstItemId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) return "N/A";
+        const itemData = await res.json();
+        const stallId = itemData?.stall_id;
+        return stallId ? await fetchStallName(stallId) : "N/A";
+      } catch {
+        return "N/A";
+      }
+    },
+    [token, fetchStallName]
+  );
 
+  // ✅ Added fetchStallNameFromOrder in dependency array
   useEffect(() => {
     const fetchOrders = async () => {
       if (!userIds?.length) return;
@@ -76,7 +86,7 @@ const OrdersModal = ({ userIds, onClose }) => {
       }
     };
     fetchOrders();
-  }, [userIds, token]);
+  }, [userIds, token, fetchStallNameFromOrder]);
 
   useEffect(() => {
     let filtered = orders;
@@ -88,7 +98,9 @@ const OrdersModal = ({ userIds, onClose }) => {
       const tomorrow = new Date(today);
       tomorrow.setDate(today.getDate() + 1);
       filtered = filtered.filter(
-        (o) => new Date(o.created_datetime) >= today && new Date(o.created_datetime) < tomorrow
+        (o) =>
+          new Date(o.created_datetime) >= today &&
+          new Date(o.created_datetime) < tomorrow
       );
     }
 
@@ -99,7 +111,9 @@ const OrdersModal = ({ userIds, onClose }) => {
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 7);
       filtered = filtered.filter(
-        (o) => new Date(o.created_datetime) >= startOfWeek && new Date(o.created_datetime) < endOfWeek
+        (o) =>
+          new Date(o.created_datetime) >= startOfWeek &&
+          new Date(o.created_datetime) < endOfWeek
       );
     }
 
@@ -117,7 +131,8 @@ const OrdersModal = ({ userIds, onClose }) => {
 
     if (month) {
       filtered = filtered.filter(
-        (o) => new Date(o.created_datetime).getMonth() + 1 === parseInt(month)
+        (o) =>
+          new Date(o.created_datetime).getMonth() + 1 === parseInt(month)
       );
     }
 
