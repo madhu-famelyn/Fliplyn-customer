@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useHrAuth } from "../../AuthContex/HrContext";
-import { getWalletGroupsByHrId, updateUserStatus } from "../../Service";
+import { updateUserStatus } from "../../Service";
 import Layout from "../SideBar/Layout";
 import AddMemberModal from "./AddMemberModel";
 import UpdateExcelModal from "./UpdateExcelModal";
+import { getWalletGroupsByHrId}from "../Dashboard/Service";
+
 import OrdersModal from "./OrdersPage";
 import { AiOutlineHistory, AiOutlineCheck, AiOutlineClose, AiOutlinePlus } from "react-icons/ai";
 import "./EmployeDetails.css";

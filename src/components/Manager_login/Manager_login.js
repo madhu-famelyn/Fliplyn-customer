@@ -1,4 +1,3 @@
-// 📁 src/pages/manager_login.js
 import React, { useState } from 'react';
 import { loginManager } from './Service';
 import { useAuth } from '../AuthContex/ContextAPI';
@@ -13,23 +12,30 @@ export default function ManagerLogin() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const data = await loginManager({ email, password });
-      loginUser(data.access_token, data.user.email, data.user.id, 'manager');
-      navigate('/dashboard');
-    } catch (error) {
-      setMessage(error?.response?.data?.detail || 'Login failed');
-    }
-  };
+const handleLogin = async (e) => {
+  e.preventDefault();
+  console.log("🔹 Manager login attempt:", { email, password });
+
+  try {
+    const data = await loginManager({ email, password });
+    console.log("✅ Login response:", data);
+
+    loginUser(data.access_token, data.user, "manager");
+    console.log("📝 User logged in, navigating to /manager-stalls");
+    navigate("/manager-stalls");
+  } catch (error) {
+    console.error("❌ Login failed:", error.response?.data || error.message);
+    setMessage(error?.response?.data?.detail || "Login failed");
+  }
+};
+
 
   return (
-    <div className="manager-login-wrapper">
-      <div className="manager-login-card">
-        <h2 className="manager-login-title">Manager Login</h2>
-        <form onSubmit={handleLogin} className="manager-login-form">
-          <div className="manager-login-field">
+    <div className="ml-wrapper">
+      <div className="ml-card">
+        <h2 className="ml-title">Manager Login</h2>
+        <form onSubmit={handleLogin} className="ml-form">
+          <div className="ml-field">
             <label>Email:</label>
             <input
               type="email"
@@ -37,10 +43,11 @@ export default function ManagerLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="manager@example.com"
+              className="ml-input"
             />
           </div>
 
-          <div className="manager-login-field">
+          <div className="ml-field">
             <label>Password:</label>
             <input
               type="password"
@@ -48,11 +55,12 @@ export default function ManagerLogin() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
+              className="ml-input"
             />
           </div>
 
-          <button type="submit" className="manager-login-button">Login</button>
-          {message && <p className="manager-login-error">{message}</p>}
+          <button type="submit" className="ml-btn">Login</button>
+          {message && <p className="ml-error">{message}</p>}
         </form>
       </div>
     </div>

@@ -28,14 +28,14 @@
 }
 
 .input-field:focus {
-  border-color: #009999; /* Teal focus */
+  border-color: #cc9735; /* Teal focus */
   outline: none;
 }
 
 .submit-btn {
   width: 100%;
   padding: 12px;
-  background-color: #007d80; /* Teal button */
+  background-color: #e68a00; /* Teal button */
   color: #ffffff;
   font-size: 17px;
   border: none;
@@ -45,7 +45,7 @@
 }
 
 .submit-btn:hover {
-  background-color: #006a6b; /* Darker teal */
+  background-color: #e68a00; /* Darker teal */
 }
 
 .submit-btn:disabled {

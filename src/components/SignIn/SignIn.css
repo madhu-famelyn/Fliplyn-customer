@@ -43,7 +43,7 @@
 
 .signin-form input:focus {
   outline: none;
-  border-color: #009999;
+  border-color: #cc9735;
   background-color: #ffffff;
 }
 
@@ -62,7 +62,7 @@
 .signin-button {
   width: 100%;
   padding: 12px;
-  background-color: #007d80;
+  background-color: #e68a00;
   color: white;
   border: none;
   border-radius: 30px;
@@ -73,7 +73,7 @@
 }
 
 .signin-button:hover {
-  background-color: #006a6b;
+  background-color: #e68a00;
 }
 
 .signin-error {
@@ -93,7 +93,7 @@
 .signin-manager-link {
   margin-top: 8px;
   font-size: 13px;
-  color: #007d80;
+  color: #e68a00;
   text-decoration: underline;
   cursor: pointer;
 }

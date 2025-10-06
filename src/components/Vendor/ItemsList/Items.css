@@ -248,3 +248,24 @@
 }
 
 
+
+.nav-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 20px;
+  margin-top: 20vh;
+}
+
+.view-reports-btn {
+  background: #4cafef;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+}
+
+.view-reports-btn:hover {
+  background: #379ad8;
+}

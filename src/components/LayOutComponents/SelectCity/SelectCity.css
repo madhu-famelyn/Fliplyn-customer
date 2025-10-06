@@ -20,12 +20,12 @@
 }
 
 .city-input:focus {
-  border-color: #009999; /* Teal border focus */
+  border-color: #cc9735; /* Teal border focus */
   outline: none;
 }
 
 .submit-button {
-  background-color: #007d80; /* Teal button */
+  background-color: #e68a00; /* Teal button */
   color: #ffffff;
   padding: 10px 20px;
   border: none;
@@ -36,7 +36,7 @@
 }
 
 .submit-button:hover {
-  background-color: #006a6b; /* Darker teal on hover */
+  background-color: #e68a00; /* Darker teal on hover */
 }
 
 .submit-button:disabled {

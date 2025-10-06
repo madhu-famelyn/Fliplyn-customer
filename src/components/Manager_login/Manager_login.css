@@ -1,81 +1,83 @@
-.manager-login-wrapper {
+/* 📁 src/pages/ManagerLogin.css */
+
+.ml-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f7f7f5;
-  font-family: 'Inter', sans-serif;
+  background-color: #f9f9f9; /* very light gray */
+  font-family: Arial, sans-serif;
 }
 
-.manager-login-card {
-  background-color: #ffffff;
+.ml-card {
+  background-color: #ffffff; /* white */
   padding: 40px 30px;
-  border-radius: 12px;
-  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  max-width: 400px;
+  width: 380px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
 }
 
-.manager-login-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 24px;
+.ml-card:hover {
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.25); /* light orange shadow on hover */
+}
+
+.ml-title {
+  margin-bottom: 25px;
+  color: #000000; /* light orange for title */
   text-align: center;
-  color: #333;
+  font-size: 24px;
+  font-weight: bold;
 }
 
-.manager-login-form {
+.ml-form {
   display: flex;
   flex-direction: column;
 }
 
-.manager-login-field {
+.ml-field {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
 }
 
-.manager-login-field label {
+.ml-field label {
   margin-bottom: 6px;
-  color: #333;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.manager-login-field input {
-  padding: 10px 14px;
-  font-size: 15px;
-  border: 1px solid #d4d4d4;
-  border-radius: 8px;
-  background-color: #f0f5ff;
-  transition: border-color 0.3s;
-}
-
-.manager-login-field input:focus {
-  outline: none;
-  border-color: #009999;
-  background-color: #ffffff;
-}
-
-.manager-login-button {
-  padding: 12px 0;
-  background-color: #007d80;
-  color: white;
-  font-size: 16px;
   font-weight: 600;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  color: #555555; /* dark gray text */
 }
 
-.manager-login-button:hover {
-  background-color: #006a6b;
-}
-
-.manager-login-error {
-  color: #cc0000;
+.ml-input {
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0; /* light gray border */
+  background-color: #fcfcfc; /* very light gray background */
   font-size: 14px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ml-input:focus {
+  outline: none;
+  border-color: #ff9900; /* light orange border on focus */
+  box-shadow: 0 0 5px rgba(255, 153, 0, 0.3);
+}
+
+.ml-btn {
+  padding: 12px;
+  background-color: #ff9900; /* light orange */
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ml-btn:hover {
+  background-color: #e68a00; /* slightly darker orange */
+  box-shadow: 0 2px 8px rgba(255, 153, 0, 0.3);
+}
+
+.ml-error {
+  margin-top: 15px;
+  color: #cc0000; /* red error message */
   text-align: center;
-  margin-top: 12px;
+  font-size: 13px;
 }

@@ -25,7 +25,7 @@
 
 .popular-state-button {
   padding: 10px 24px;
-  background-color: #007d80; /* Teal */
+  background-color: #e68a00; /* Teal */
   color: #ffffff;
   border: none;
   border-radius: 25px;
@@ -35,7 +35,7 @@
 }
 
 .popular-state-button:hover {
-  background-color: #006a6b; /* Dark teal */
+  background-color: #e68a00; /* Dark teal */
 }
 
 .state-input {
@@ -51,12 +51,12 @@
 }
 
 .state-input:focus {
-  border-color: #009999; /* Teal border focus */
+  border-color: #cc9735; /* Teal border focus */
   outline: none;
 }
 
 .submit-button {
-  background-color: #007d80; /* Teal button */
+  background-color: #e68a00; /* Teal button */
   color: #ffffff;
   padding: 12px 30px;
   font-size: 16px;
@@ -67,7 +67,7 @@
 }
 
 .submit-button:hover {
-  background-color: #006a6b; /* Darker teal on hover */
+  background-color: #e68a00; /* Darker teal on hover */
 }
 
 @media (max-width: 600px) {

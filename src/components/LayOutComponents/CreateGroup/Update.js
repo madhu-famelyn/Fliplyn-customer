@@ -35,7 +35,7 @@ const UpdateGroupModal = ({ onClose }) => {
             padding: "8px 16px",
             border: "none",
             borderRadius: "4px",
-            backgroundColor: "#007d80",
+            backgroundColor: "#e68a00",
             color: "#fff",
             cursor: "pointer",
           }}

@@ -111,7 +111,7 @@ const WalletGroupList = () => {
             >
               {/* 🖉 Edit Icon in top-right */}
               
-              <strong style={{ fontSize: '16px', color: '#007d80' }}>
+              <strong style={{ fontSize: '16px', color: '#e68a00' }}>
                 {group.group_name || 'Unnamed Group'}
               </strong>
               <p style={{ margin: '5px 0' }}>

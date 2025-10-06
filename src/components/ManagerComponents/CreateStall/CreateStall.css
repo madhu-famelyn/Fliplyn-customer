@@ -1,0 +1,82 @@
+.add-stall-container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 30px;
+  border: 1px solid #ddd;
+  background-color: #ffffff;
+  font-family: "Geist", sans-serif;
+}
+
+.add-stall-container h2 {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #333;
+}
+
+.add-stall-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.add-stall-container input[type="text"],
+.add-stall-container input[type="time"],
+.add-stall-container input[type="file"],
+.add-stall-container textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #aaa;
+  outline: none;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.add-stall-container input[type="text"]:focus,
+.add-stall-container input[type="time"]:focus,
+.add-stall-container input[type="file"]:focus,
+.add-stall-container textarea:focus {
+  border: 1px solid #000;
+  background-color: #fff;
+}
+
+.add-stall-container textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.add-stall-container label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.add-stall-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #ce6f21;
+  cursor: pointer;
+}
+
+.add-stall-container button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #e3871f;
+  color: #fff;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.add-stall-container button[type="submit"]:hover {
+  background-color: #e78c0e;
+}

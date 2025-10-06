@@ -19,7 +19,7 @@ export const fetchCategoriesByStall = async (stallId) => {
 
 
 export const updateCategory = async (categoryId, formData) => {
-  const res = await axios.put(`https://admin-aged-field-2794.fly.dev/categories/${categoryId}`, formData, {
+  const res = await axios.put(`http://localhost:3000/categories/${categoryId}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return res.data;

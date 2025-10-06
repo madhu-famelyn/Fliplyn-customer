@@ -1,0 +1,135 @@
+.ils-wrapper {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ils-heading {
+  font-size: 22px;
+  font-weight: bold;
+  color: #ff7f50; /* orange */
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.ils-search {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ff7f50; /* orange border */
+  outline: none;
+  font-size: 14px;
+}
+
+.ils-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ils-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(255, 127, 80, 0.2);
+}
+
+.ils-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.ils-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ils-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.ils-price {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ff7f50; /* orange */
+  margin: 0;
+}
+
+.ils-gst {
+  font-size: 12px;
+  color: #777;
+  margin: 0;
+}
+
+/* Toggle switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 22px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #ff7f50; /* orange */
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .ils-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .ils-image {
+    width: 100%;
+    height: 150px;
+  }
+
+  .ils-toggle {
+    align-self: flex-end;
+  }
+}

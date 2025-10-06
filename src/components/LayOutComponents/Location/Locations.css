@@ -22,7 +22,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #007d80;
+  background-color: #e68a00;
   color: #ffffff;
   border: none;
   padding: 10px 20px;
@@ -34,7 +34,7 @@
 }
 
 .add-location-btn:hover {
-  background-color: #006a6b;
+  background-color: #e68a00;
 }
 
 .locations-grid {
@@ -82,11 +82,11 @@
 }
 
 .edit-icon {
-  color: #007d80;
+  color: #e68a00;
 }
 
 .edit-icon:hover {
-  color: #006a6b;
+  color: #e68a00;
 }
 
 .delete-icon {

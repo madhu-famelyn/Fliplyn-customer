@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../AuthContex/ContextAPI";
 import axios from "axios";
 import TokenHeader from "../../LayOutComponents/PrintToken/Header";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // ✅ useNavigate added
 import "./Items.css";
 
 const VendorItems = () => {
@@ -14,6 +14,8 @@ const VendorItems = () => {
   const [loading, setLoading] = useState(true);
   const [stallAvailable, setStallAvailable] = useState(false);
   const [stallName, setStallName] = useState("");
+
+  const navigate = useNavigate(); // ✅ navigation hook
 
   // Fetch stall info
   useEffect(() => {
@@ -30,7 +32,10 @@ const VendorItems = () => {
           setStallAvailable(response.data.is_available);
         }
       } catch (error) {
-        console.error("❌ Error fetching stall info:", error.response?.data || error.message);
+        console.error(
+          "❌ Error fetching stall info:",
+          error.response?.data || error.message
+        );
       }
     };
 
@@ -56,7 +61,10 @@ const VendorItems = () => {
           setStallAvailable(allAvailable);
         }
       } catch (error) {
-        console.error("❌ Error fetching items:", error.response?.data || error.message);
+        console.error(
+          "❌ Error fetching items:",
+          error.response?.data || error.message
+        );
       } finally {
         setLoading(false);
       }
@@ -71,6 +79,17 @@ const VendorItems = () => {
   return (
     <div>
       <TokenHeader />
+
+      {/* ✅ Reports button on top */}
+      <div className="nav-bar">
+        <button
+          className="view-reports-btn"
+          onClick={() => navigate(`/stall/${stallId}/reports`)}
+        >
+          📊 View Reports
+        </button>
+      </div>
+
       <div className="vendor-container">
         {/* Stall Card */}
         <div className="stall-container">
@@ -83,7 +102,9 @@ const VendorItems = () => {
                 onChange={() => {
                   const newStatus = !stallAvailable;
                   setStallAvailable(newStatus);
-                  setItems((prev) => prev.map((i) => ({ ...i, is_available: newStatus })));
+                  setItems((prev) =>
+                    prev.map((i) => ({ ...i, is_available: newStatus }))
+                  );
                 }}
               />
               <span className="slider"></span>
@@ -111,7 +132,9 @@ const VendorItems = () => {
                     onChange={() =>
                       setItems((prev) =>
                         prev.map((i) =>
-                          i.id === item.id ? { ...i, is_available: !i.is_available } : i
+                          i.id === item.id
+                            ? { ...i, is_available: !i.is_available }
+                            : i
                         )
                       )
                     }

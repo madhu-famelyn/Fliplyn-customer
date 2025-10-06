@@ -1,7 +1,7 @@
 // src/pages/stalls/Service.js
 import axios from 'axios';
 
-const API_BASE = 'https://admin-aged-field-2794.fly.dev';
+const API_BASE = '';
 
 // Fetch buildings by admin ID
 export const fetchBuildings = async (adminId, token) => {

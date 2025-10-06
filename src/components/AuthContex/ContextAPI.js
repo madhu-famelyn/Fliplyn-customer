@@ -1,87 +1,38 @@
-// src/AuthContex/ContextAPI.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null); // vendor_id
+  const [user, setUser] = useState(null); // store all user/manager details
   const [role, setRole] = useState(null);
-  const [phone, setPhone] = useState(null);
-  const [stallIds, setStallIds] = useState([]); // ✅ multiple stalls
-  const [vendorName, setVendorName] = useState(null);
-
-  // ✅ NEW: Track which stall vendor selected
-  const [selectedStallId, setSelectedStallId] = useState(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    const storedUserId = localStorage.getItem("userId");
+    const storedUser = localStorage.getItem("user");
     const storedRole = localStorage.getItem("role");
-    const storedPhone = localStorage.getItem("phone");
-    const storedStallIds = localStorage.getItem("stallIds");
-    const storedVendorName = localStorage.getItem("vendorName");
-    const storedSelectedStallId = localStorage.getItem("selectedStallId");
 
-    if (storedToken && storedUserId && storedRole) {
+    if (storedToken && storedUser && storedRole) {
       setToken(storedToken);
-      setUserId(storedUserId);
+      setUser(JSON.parse(storedUser));
       setRole(storedRole);
-
-      if (storedPhone) setPhone(storedPhone);
-      if (storedStallIds) setStallIds(JSON.parse(storedStallIds)); // ✅ parse JSON array
-      if (storedVendorName) setVendorName(storedVendorName);
-      if (storedSelectedStallId) setSelectedStallId(storedSelectedStallId);
     }
   }, []);
 
-  // ✅ Adjusted to handle multiple stallIds
-  const loginUser = (
-    jwt,
-    id,
-    userRole,
-    userPhone = null,
-    userStallIds = [], // now array
-    name = null
-  ) => {
+  const loginUser = (jwt, userData, userRole) => {
     setToken(jwt);
-    setUserId(id);
+    setUser(userData);
     setRole(userRole);
 
-    if (userPhone) {
-      setPhone(userPhone);
-      localStorage.setItem("phone", userPhone);
-    }
-
-    if (userStallIds?.length > 0) {
-      setStallIds(userStallIds);
-      localStorage.setItem("stallIds", JSON.stringify(userStallIds));
-    }
-
-    if (name) {
-      setVendorName(name);
-      localStorage.setItem("vendorName", name);
-    }
-
     localStorage.setItem("token", jwt);
-    localStorage.setItem("userId", id);
+    localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("role", userRole);
-  };
-
-  // ✅ NEW: Set selected stall
-  const setStallId = (id) => {
-    setSelectedStallId(id);
-    localStorage.setItem("selectedStallId", id);
   };
 
   const logoutUser = () => {
     setToken(null);
-    setUserId(null);
+    setUser(null);
     setRole(null);
-    setPhone(null);
-    setStallIds([]);
-    setVendorName(null);
-    setSelectedStallId(null);
     localStorage.clear();
   };
 
@@ -89,13 +40,8 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         token,
-        userId, // vendor_id
+        user, // full manager details
         role,
-        phone,
-        stallIds, // ✅ multiple stalls available
-        vendorName,
-        selectedStallId, // ✅ currently chosen stall
-        setStallId, // ✅ function exposed
         loginUser,
         logoutUser,
       }}
@@ -106,6 +52,7 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
 
 
 

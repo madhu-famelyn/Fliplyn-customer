@@ -1,0 +1,79 @@
+/* src/pages/buildingManager/BuildingManager.css */
+
+.bm-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  padding-top: 80px; /* pushes form down from top */
+  height: 100vh;
+  background: #ffffff; /* plain white, no gradient */
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.bm-login-form {
+  display: grid;
+  gap: 1rem; /* grid spacing between elements */
+  background: transparent; /* no background box */
+  padding: 0; /* no padding around */
+  width: 320px; /* fixed clean width */
+}
+
+.bm-login-title {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #222222;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.bm-form-group {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.bm-label {
+  font-size: 0.9rem;
+  color: #444444;
+}
+
+.bm-input {
+  width: 92%;
+  padding: 10px 12px;
+  border: 1px solid #999999;
+  border-radius: 0; /* no curves */
+  outline: none;
+  font-size: 0.95rem;
+  background: #ffffff;
+}
+
+.bm-input:focus {
+  border: 1px solid #000000; /* solid black on focus */
+}
+
+.bm-login-button {
+  width: 100%;
+  padding: 12px;
+  background: #b85e14; /* flat black button */
+  color: #ffffff;
+  border: none;
+  border-radius: 0; /* no curves */
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bm-login-button:hover {
+  background: #ac3131;
+}
+
+.bm-login-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.bm-error {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #cc0000;
+  font-weight: 500;
+}

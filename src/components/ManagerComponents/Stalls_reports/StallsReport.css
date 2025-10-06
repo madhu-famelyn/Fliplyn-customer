@@ -1,0 +1,244 @@
+.stalls-report {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.stall-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.stall-dropdown label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+}
+
+.stall-dropdown select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stall-dropdown select:hover {
+  border-color: #888;
+}
+
+.stall-dropdown select:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+  outline: none;
+}
+
+.stalls-report table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stalls-report th,
+.stalls-report td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.stalls-report th {
+  background-color: #f0f0f0;
+  font-weight: 600;
+}
+
+.stalls-report tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.stalls-report img {
+  border-radius: 4px;
+}
+
+
+
+
+.stall-sales-report {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.stall-sales-report h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.stall-dropdown {
+  margin-bottom: 15px;
+}
+
+.stall-dropdown label {
+  margin-right: 10px;
+  font-weight: 500;
+}
+
+.stall-dropdown select {
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.filter-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filter-options button {
+  padding: 6px 12px;
+  background-color: #d08215;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.filter-options button:hover {
+  background-color: #ba7513;
+}
+
+.custom-range input {
+  margin-left: 10px;
+  padding: 5px 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th,
+table td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  font-size: 13px;
+  text-align: left;
+}
+
+table th {
+  background-color: #f2f2f2;
+}
+
+
+
+.sort-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.sort-options label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.sort-options select {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-options select:hover {
+  border-color: #888;
+}
+
+.sort-options select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
+}
+
+
+.company-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.company-filter label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+}
+
+.company-filter select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.company-filter select:hover {
+  border-color: #888;
+}
+
+.company-filter select:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+  outline: none;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* space between dropdowns */
+  margin-bottom: 15px;
+}
+
+.filter-row label {
+  margin-right: 5px;
+  font-weight: 500;
+}
+
+
+
+
+/* Responsive layout for mobile */
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;   /* stack vertically */
+    align-items: stretch;     /* full width */
+    gap: 12px;                /* reduce spacing */
+  }
+
+  .filter-row > div {
+    width: 100%;              /* each dropdown takes full width */
+  }
+
+  .filter-row label {
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .stall-dropdown select,
+  .sort-options select,
+  .company-filter select {
+    width: 100%;              /* full width dropdowns */
+    padding: 8px 12px;
+  }
+}

@@ -29,13 +29,14 @@ export default function EnterTokenPage() {
             Token Number
           </label>
           <input
-            id="tokenInput"
-            type="number"
-            placeholder="Enter token number"
-            value={tokenNumber}
-            onChange={(e) => setTokenNumber(e.target.value)}
-            className="token-input"
-          />
+  id="tokenInput"
+  type="text"   // ✅ changed from "number" to "text"
+  placeholder="Enter token number"
+  value={tokenNumber}
+  onChange={(e) => setTokenNumber(e.target.value)}
+  className="token-input"
+/>
+
           <button type="submit" id="fetchBtn" className="token-button">
             Fetch Order Details
           </button>

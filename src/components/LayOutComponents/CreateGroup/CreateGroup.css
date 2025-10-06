@@ -53,11 +53,11 @@
 }
 
 .create-group-form input[type="checkbox"] {
-  accent-color: #006a6b;
+  accent-color: #e68a00;
 }
 
 .create-group-form button {
-  background-color: #009999;
+  background-color: #e68a00;
   color: #ffffff;
   padding: 0.75rem;
   font-size: 1rem;
@@ -68,7 +68,7 @@
 }
 
 .create-group-form button:hover {
-  background-color: #007d80;
+  background-color: #e68a00;
 }
 
 .message {
@@ -129,13 +129,13 @@
   top: 10px;
   right: 10px;
   cursor: pointer;
-  color: #007d80;
+  color: #e68a00;
   font-size: 16px;
 }
 
 .group-name {
   font-size: 16px;
-  color: #007d80;
+  color: #e68a00;
 }
 
 .group-item p {
@@ -269,7 +269,7 @@
   display: inline-block;
   margin-top: 15px;
   padding: 10px 16px;
-  background-color: #007d80;
+  background-color: #e68a00;
   color: white;
   border: none;
   border-radius: 8px;
@@ -280,7 +280,7 @@
 }
 
 .download-btn:hover {
-  background-color: #014d4e;
+  background-color: #c18f0f;
 }
 
 /* ===== Animations ===== */
@@ -347,7 +347,7 @@ button {
   padding: 10px 20px;
   border-radius: 5px;
   border: none;
-  background-color: #007d80;
+  background-color: #e68a00;
   color: white;
   cursor: pointer;
   font-weight: bold;
@@ -360,7 +360,7 @@ button:disabled {
 }
 
 button:hover:not(:disabled) {
-  background-color: #005d5d;
+  background-color: #ff942f;
 }
 
 button + button {
@@ -435,7 +435,7 @@ button + button {
 /* === Headings === */
 .modal-details h3,
 .modal-details h4 {
-  color: #006a6b;
+  color: #e68a00;
   margin-top: 0;
 }
 
@@ -472,7 +472,7 @@ button + button {
 /* === Buttons === */
 button.download-btn,
 button.view-orders-btn {
-  background-color: #009999;
+  background-color: #cc9735;
   color: #ffffff;
   border: none;
   border-radius: 6px;
@@ -485,7 +485,7 @@ button.view-orders-btn {
 
 button.download-btn:hover,
 button.view-orders-btn:hover {
-  background-color: #007d80;
+  background-color: #e68a00;
 }
 
 button.download-btn:disabled,
@@ -517,6 +517,6 @@ button.view-orders-btn:disabled {
 
 .date-filters input:focus,
 .date-filters select:focus {
-  border-color: #009999;
-  box-shadow: 0 0 3px rgba(0, 153, 153, 0.4);
+  border-color: #cc9735;
+  box-shadow: 0 0 3px rgba(201, 119, 36, 0.4);
 }

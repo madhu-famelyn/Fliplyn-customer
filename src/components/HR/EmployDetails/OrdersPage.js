@@ -12,67 +12,152 @@ const OrdersModal = ({ userIds, onClose }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [month, setMonth] = useState("");
+  const [timeFilter, setTimeFilter] = useState("");
 
-  // 🔄 Fetch orders
+  // Fetch stall name by stall_id
+  const fetchStallName = async (stallId) => {
+    try {
+      const res = await fetch(`https://admin-aged-field-2794.fly.dev/stalls/${stallId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return "N/A";
+      const data = await res.json();
+      return Array.isArray(data) ? data[0]?.name || "N/A" : data?.name || "N/A";
+    } catch {
+      return "N/A";
+    }
+  };
+
+  const fetchStallNameFromOrder = async (order) => {
+    if (!order.order_details?.length) return "N/A";
+    const firstItemId = order.order_details[0].item_id;
+    try {
+      const res = await fetch(`https://admin-aged-field-2794.fly.dev/items/items/${firstItemId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return "N/A";
+      const itemData = await res.json();
+      const stallId = itemData?.stall_id;
+      return stallId ? await fetchStallName(stallId) : "N/A";
+    } catch {
+      return "N/A";
+    }
+  };
+
   useEffect(() => {
     const fetchOrders = async () => {
       if (!userIds?.length) return;
       setLoading(true);
-      const allOrders = await getOrdersByUserIds(userIds, token);
-      setOrders(allOrders);
-      setFilteredOrders(allOrders);
-      setLoading(false);
+      try {
+        const allOrders = await getOrdersByUserIds(userIds, token);
+
+        const enrichedOrdersResults = await Promise.allSettled(
+          allOrders.map(async (o) => {
+            try {
+              const stallName = await fetchStallNameFromOrder(o);
+              return { ...o, stallName };
+            } catch {
+              return null;
+            }
+          })
+        );
+
+        const enrichedOrders = enrichedOrdersResults
+          .filter((r) => r.status === "fulfilled" && r.value)
+          .map((r) => r.value);
+
+        setOrders(enrichedOrders);
+        setFilteredOrders(enrichedOrders);
+      } catch {
+        setOrders([]);
+        setFilteredOrders([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchOrders();
   }, [userIds, token]);
 
-  // 🔍 Filter orders by startDate, endDate, or month
   useEffect(() => {
     let filtered = orders;
+    const now = new Date();
 
-    if (startDate)
+    if (timeFilter === "day") {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      filtered = filtered.filter(
+        (o) => new Date(o.created_datetime) >= today && new Date(o.created_datetime) < tomorrow
+      );
+    }
+
+    if (timeFilter === "week") {
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 7);
+      filtered = filtered.filter(
+        (o) => new Date(o.created_datetime) >= startOfWeek && new Date(o.created_datetime) < endOfWeek
+      );
+    }
+
+    if (startDate) {
       filtered = filtered.filter(
         (o) => new Date(o.created_datetime) >= new Date(startDate + "T00:00:00")
       );
+    }
 
-    if (endDate)
+    if (endDate) {
       filtered = filtered.filter(
         (o) => new Date(o.created_datetime) <= new Date(endDate + "T23:59:59")
       );
+    }
 
-    if (month)
+    if (month) {
       filtered = filtered.filter(
         (o) => new Date(o.created_datetime).getMonth() + 1 === parseInt(month)
       );
+    }
 
     setFilteredOrders(filtered);
-  }, [startDate, endDate, month, orders]);
+  }, [orders, startDate, endDate, month, timeFilter]);
 
-  const totalAmount = filteredOrders.reduce((sum, o) => sum + o.total_amount, 0);
+  const calculateAmounts = (order) => {
+    const itemTotal = order.order_details.reduce((sum, i) => sum + i.total, 0);
+    const totalGst = order.total_gst || 0;
+    const totalWithGst = itemTotal + totalGst;
+    const roundedTotal = Math.round(totalWithGst);
+    const roundOff = (roundedTotal - totalWithGst).toFixed(2);
+    const grandTotal = roundedTotal;
+    return { grandTotal };
+  };
 
-  // 📤 Export to Excel
+  const totalAmount = filteredOrders.reduce(
+    (sum, o) => sum + calculateAmounts(o).grandTotal,
+    0
+  );
+
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(
-      filteredOrders.map((o) => ({
-        "Order #": o.token_number,
-        User: `${o.user_email} (${o.user_phone})`,
+    const rows = filteredOrders.flatMap((o) => {
+      const { grandTotal } = calculateAmounts(o);
+      return o.order_details.map((i) => ({
+        Stall: o.stallName,
+        Token: o.token_number,
+        Email: o.user_email || "",
         Date: new Date(o.created_datetime).toLocaleString(),
-        "Total Amount": o.total_amount,
-        GST: o.total_gst,
-        "Paid With Wallet": o.paid_with_wallet ? "Yes" : "No",
-        Items: o.order_details
-          .map((i) => `${i.name} - ${i.quantity} × ₹${i.price}`)
-          .join(", "),
-      }))
-    );
-
-    XLSX.utils.sheet_add_aoa(worksheet, [["", "", "TOTAL", totalAmount]], {
-      origin: `A${filteredOrders.length + 2}`,
+        Item: i.name,
+        Qty: i.quantity,
+        Price: i.price.toFixed(2),
+        GrandTotal: grandTotal.toFixed(2),
+      }));
     });
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-    XLSX.writeFile(workbook, "orders.xlsx");
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Orders");
+    XLSX.writeFile(wb, "orders.xlsx");
   };
 
   return (
@@ -95,8 +180,18 @@ const OrdersModal = ({ userIds, onClose }) => {
             <select value={month} onChange={(e) => setMonth(e.target.value)}>
               <option value="">All</option>
               {Array.from({ length: 12 }, (_, i) => (
-                <option key={i + 1} value={i + 1}>{new Date(0, i).toLocaleString("default", { month: "long" })}</option>
+                <option key={i + 1} value={i + 1}>
+                  {new Date(0, i).toLocaleString("default", { month: "long" })}
+                </option>
               ))}
+            </select>
+          </label>
+          <label>
+            Quick Filter:
+            <select value={timeFilter} onChange={(e) => setTimeFilter(e.target.value)}>
+              <option value="">All</option>
+              <option value="day">This Day</option>
+              <option value="week">This Week</option>
             </select>
           </label>
           <button className="export-btn" onClick={exportToExcel}>Export to Excel</button>
@@ -106,47 +201,40 @@ const OrdersModal = ({ userIds, onClose }) => {
         {!loading && filteredOrders.length === 0 && <p>No orders found.</p>}
 
         {!loading && filteredOrders.length > 0 && (
-          <>
-            <table className="orders-table">
-              <thead>
-                <tr>
-                  <th>Order #</th>
-                  <th>User</th>
-                  <th>Date</th>
-                  <th>Total Amount</th>
-                  <th>GST</th>
-                  <th>Paid With Wallet</th>
-                  <th>Items</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.map((o) => (
-                  <tr key={o.id}>
+          <table className="orders-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th>Stall</th>
+                <th>Token</th>
+                <th>Email</th>
+                <th>Date</th>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Grand Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredOrders.map((o) => {
+                const { grandTotal } = calculateAmounts(o);
+                return o.order_details.map((i, idx) => (
+                  <tr key={`${o.id}-${i.item_id}-${idx}`} style={{ borderBottom: "1px solid #ddd" }}>
+                    <td>{o.stallName}</td>
                     <td>{o.token_number}</td>
-                    <td>{o.user_email} ({o.user_phone})</td>
+                    <td>{o.user_email || ""}</td>
                     <td>{new Date(o.created_datetime).toLocaleString()}</td>
-                    <td>₹{o.total_amount.toFixed(2)}</td>
-                    <td>₹{o.total_gst.toFixed(2)}</td>
-                    <td>{o.paid_with_wallet ? "Yes" : "No"}</td>
-                    <td>
-                      <ul className="items-list">
-                        {o.order_details.map((i) => (
-                          <li key={i.item_id}>
-                            {i.name} - {i.quantity} × ₹{i.price} = ₹{i.total}
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
+                    <td>{i.name}</td>
+                    <td>{i.quantity}</td>
+                    <td>{grandTotal.toFixed(2)}</td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="total-section">
-              <h3>Total Amount: ₹{totalAmount.toFixed(2)}</h3>
-            </div>
-          </>
+                ));
+              })}
+            </tbody>
+          </table>
         )}
+
+        <div className="total-section">
+          <h3>Total Paid: ₹{totalAmount.toFixed(2)}</h3>
+        </div>
       </div>
     </div>
   );

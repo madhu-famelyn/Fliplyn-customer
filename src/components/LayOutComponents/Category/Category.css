@@ -37,7 +37,7 @@
 .category-form input[type="text"]:focus,
 .category-form input[type="file"]:focus {
   outline: none;
-  border-color: #009999; /* Teal border on focus */
+  border-color: #cc9735; /* Teal border on focus */
   background-color: #ffffff; /* White on focus */
 }
 
@@ -48,14 +48,14 @@
   font-weight: 600;
   border: none;
   border-radius: 8px;
-  background-color: #007d80; /* Teal */
+  background-color: #e68a00; /* Teal */
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .category-form button:hover {
-  background-color: #006a6b; /* Dark teal */
+  background-color: #e68a00; /* Dark teal */
 }
 
 .category-form button:disabled {
@@ -132,7 +132,7 @@
 /* Create Button */
 .create-category-btn {
   padding: 8px 12px;
-  background-color: #007d80; /* Teal */
+  background-color: #e68a00; /* Teal */
   color: white;
   border: none;
   border-radius: 6px;
@@ -143,7 +143,7 @@
 }
 
 .create-category-btn:hover {
-  background-color: #006a6b; /* Dark teal */
+  background-color: #e68a00; /* Dark teal */
 }
 
 /* Success & Error Texts */
@@ -190,14 +190,14 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  background: #009999;
+  background: #cc9735;
   color: #ffffff;
   padding: 5px;
   border-radius: 50%;
   cursor: pointer;
 }
 .edit-icon:hover {
-  background: #007d80;
+  background: #e68a00;
 }
 
 /* Modal Styles */
@@ -223,7 +223,7 @@
 
 .modal h2 {
   margin-bottom: 15px;
-  color: #006a6b;
+  color: #e68a00;
 }
 
 .modal input[type="text"],

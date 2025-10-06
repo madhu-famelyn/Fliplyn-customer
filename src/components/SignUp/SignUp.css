@@ -43,7 +43,7 @@
 
 .signup-unique-form input:focus {
   outline: none;
-  border-color: #009999;
+  border-color: #cc9735;
   background-color: #ffffff;
 }
 
@@ -62,7 +62,7 @@
 .signup-unique-button {
   width: 100%;
   padding: 12px;
-  background-color: #007d80;
+  background-color: #e68a00;
   color: white;
   border: none;
   border-radius: 30px;
@@ -73,7 +73,7 @@
 }
 
 .signup-unique-button:hover {
-  background-color: #006a6b;
+  background-color: #e68a00;
 }
 
 .signup-unique-error,

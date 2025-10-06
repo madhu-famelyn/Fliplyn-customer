@@ -1,0 +1,79 @@
+/* Page Container */
+.reports-container {
+  padding: 20px;
+  background-color: #ffffff; /* normal white background */
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Page Title */
+.reports-container h1 {
+  color: #e67e22; /* orange accent */
+  margin-bottom: 20px;
+}
+
+/* Filter Controls */
+.filter-controls {
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.filter-controls select,
+.filter-controls input[type="date"] {
+  margin-left: 8px;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.date-range {
+  margin-left: 12px;
+}
+
+/* Table Styling */
+.table-wrapper {
+  overflow-x: auto;
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.orders-table th,
+.orders-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.orders-table th {
+  background-color: #fafafa; /* neutral, not orange */
+  font-weight: bold;
+}
+
+.orders-table tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+.orders-table tr:hover {
+  background-color: #fdf5ed; /* very light orange hover (subtle) */
+}
+
+/* Total Amount */
+.total-amount {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #e67e22; /* orange text */
+  background: #fffaf5; /* very light orange background */
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid #f5d6b3;
+}

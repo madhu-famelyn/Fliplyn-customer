@@ -4,6 +4,13 @@
   height: 100vh;
   background-color: #f7f7f5; /* replaced #f8f9fc */
 }
+/* Sidebar scrollable */
+.sidebar-scroll {
+  height: calc(100vh - 80px); /* adjust based on logo height */
+  overflow-y: auto;
+  padding-bottom: 20px; /* optional spacing at bottom */
+}
+
 
 /* Sidebar */
 .sidebar {
@@ -74,7 +81,7 @@
   height: 36px;
   border-radius: 50%;
   background-color: white;
-  color: #007d80; /* replaced #2d79f3 */
+  color: #e68a00; /* replaced #2d79f3 */
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -115,7 +122,7 @@
   background: transparent;
   border: none;
   font-size: 24px;
-  color: #007d80; /* replaced #2d79f3 */
+  color: #e68a00; /* replaced #2d79f3 */
   display: none;
   cursor: pointer;
 }
@@ -165,7 +172,7 @@
 /* Sidebar */
 .sidebar {
   width: 250px;
-  background-color: #007d80;
+  background-color: #e68a00;
   color: white;
   padding: 20px 0;
   display: flex;
@@ -212,7 +219,7 @@
   background: transparent;
   border: none;
   font-size: 24px;
-  color: #007d80;
+  color: #e68a00;
   display: none;
 }
 

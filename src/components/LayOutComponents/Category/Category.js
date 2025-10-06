@@ -184,7 +184,7 @@ export default function AddCategory() {
                       position: 'absolute',
                       top: '8px',
                       right: '8px',
-                      color: '#007d80',
+                      color: '#e68a00',
                       background: '#f7f7f5',
                       borderRadius: '50%',
                       padding: '4px',

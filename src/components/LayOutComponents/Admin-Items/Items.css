@@ -54,7 +54,7 @@
 }
 
 .admin-item-card:hover {
-  box-shadow: 0 0 10px rgba(0, 123, 128, 0.2);
+  box-shadow: 0 0 10px rgba(223, 147, 34, 0.2);
 }
 
 .admin-item-image {
@@ -79,13 +79,13 @@
 
 .admin-item-price {
   font-size: 16px;
-  color: #007d80;
+  color: #e68a00;
   margin: 0;
 }
 
 .admin-item-tax {
   font-size: 14px;
-  color: #006a6b;
+  color: #e68a00;
   margin: 2px 0 0;
 }
 
@@ -137,7 +137,7 @@
 }
 
 .admin-availability-toggle input:checked + .admin-slider {
-  background-color: #009999;
+  background-color: #cc9735;
 }
 
 .admin-availability-toggle input:checked + .admin-slider:before {
@@ -146,10 +146,10 @@
 
 /* On state */
 .admin-availability-toggle.on .admin-slider {
-  background-color: #009999;
+  background-color: #cc9735;
 }
 
 /* Off state */
 .admin-availability-toggle.off .admin-slider {
-  background-color: #d4d4d4;
+  background-color: #cc9735;
 }

@@ -29,20 +29,27 @@ export default function User() {
 
   useEffect(() => {
     if (userId && token) {
+      console.log('[DEBUG] Fetching user details for:', userId);
+
       getUserDetails(userId, token)
         .then(data => {
+          console.log('[DEBUG] User details fetched:', data);
           setUserData(data);
           return fetchBuildings(userId, token);
         })
         .then(async buildingsData => {
+          console.log('[DEBUG] Buildings fetched:', buildingsData);
           setBuildings(buildingsData);
+
           if (buildingsData.length > 0) {
             const firstBuildingId = buildingsData[0].id;
+            console.log('[DEBUG] Using first building ID:', firstBuildingId);
             const managersData = await fetchManagersByBuilding(firstBuildingId, token);
+            console.log('[DEBUG] Managers for building', firstBuildingId, ':', managersData);
             setManagers(managersData);
           }
         })
-        .catch(err => console.error('Error:', err));
+        .catch(err => console.error('[ERROR] Failed fetching user/buildings:', err));
     }
   }, [userId, token]);
 
@@ -51,11 +58,13 @@ export default function User() {
     setForm(prev => ({ ...prev, [name]: value }));
 
     if (name === 'building_id' && value) {
+      console.log('[DEBUG] Building selected:', value);
       try {
         const mgrs = await fetchManagersByBuilding(value, token);
+        console.log('[DEBUG] Managers for selected building:', mgrs);
         setManagers(mgrs);
       } catch (err) {
-        console.error('Failed to fetch managers for selected building:', err);
+        console.error('[ERROR] Failed to fetch managers for selected building:', err);
         setManagers([]);
       }
     }
@@ -63,35 +72,42 @@ export default function User() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('[DEBUG] Submitting manager form:', form);
+
     try {
       await createManager({ ...form, admin_id: userId }, token);
+      console.log('[DEBUG] Manager created successfully');
       alert('Manager added successfully!');
       setShowModal(false);
       setForm({ name: '', email: '', phone_number: '', building_id: '', password: '' });
 
       if (form.building_id) {
         const mgrs = await fetchManagersByBuilding(form.building_id, token);
+        console.log('[DEBUG] Updated managers after adding:', mgrs);
         setManagers(mgrs);
       }
     } catch (error) {
-      console.error('Error creating manager:', error);
+      console.error('[ERROR] Error creating manager:', error);
       alert('Failed to add manager');
     }
   };
 
   const handleDeleteClick = (manager) => {
+    console.log('[DEBUG] Delete clicked for manager:', manager);
     setSelectedManager(manager);
     setConfirmDeleteModal(true);
   };
 
   const confirmDeleteManager = async () => {
+    console.log('[DEBUG] Confirming delete for manager:', selectedManager);
     try {
       await deleteManager(selectedManager.id, token);
       setManagers(prev => prev.filter(m => m.id !== selectedManager.id));
       setConfirmDeleteModal(false);
       setSelectedManager(null);
+      console.log('[DEBUG] Manager deleted successfully');
     } catch (err) {
-      console.error('Error deleting manager:', err);
+      console.error('[ERROR] Error deleting manager:', err);
       alert('Failed to delete manager');
     }
   };
@@ -146,7 +162,7 @@ export default function User() {
                   <option value="">-- Select Building --</option>
                   {buildings.map(b => (
                     <option key={b.id} value={b.id}>
-                      {b.building_name || b.name || 'Unnamed Building'}
+                      {b.building_name || b.name || 'Unnamed Building'} (ID: {b.id})
                     </option>
                   ))}
                 </select>
