@@ -9,7 +9,7 @@ import {
   deleteItemById,
   updateItemImage, // ✅ new import
 } from "./Service";
-import { useAuth } from "../../AuthContex/ContextAPI";
+import { useAuth } from "../../AuthContex/AdminContext";
 import AdminLayout from "../../LayOut/AdminLayout";
 import ItemForm from "./ItemForm";
 import ItemList from "./ItemList";
@@ -39,33 +39,49 @@ const Item = () => {
   const [showForm, setShowForm] = useState(false);
   const [showBulkUpload, setShowBulkUpload] = useState(false);
 
-  useEffect(() => {
-    if (buildingId && stallId && categoryId && adminId) {
-      setFormData((prev) => ({
-        ...prev,
-        building_id: buildingId,
-        stall_id: stallId,
-        category_id: categoryId,
-        admin_id: adminId,
-      }));
-      fetchItems(categoryId);
-    }
-  }, [buildingId, stallId, categoryId, adminId]);
+useEffect(() => {
+  console.log("🛠️ Item page mounted");
+  console.log("Location state:", location.state);
+  console.log("Context adminId:", adminId);
+  console.log("buildingId:", buildingId, "stallId:", stallId, "categoryId:", categoryId);
 
-  const fetchItems = async (catId) => {
-    try {
-      const data = await getItemsByCategoryId(catId);
-      const sorted = Array.isArray(data)
-        ? data.sort(
-            (a, b) => (b.is_available === true) - (a.is_available === true)
-          )
-        : [];
-      setItems(sorted);
-    } catch (err) {
-      console.error("Failed to fetch items:", err);
-      setItems([]);
-    }
-  };
+  if (!buildingId || !stallId || !categoryId || !adminId) {
+    console.warn(
+      "⚠️ Missing required IDs, cannot fetch items",
+      { buildingId, stallId, categoryId, adminId }
+    );
+    return;
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    building_id: buildingId,
+    stall_id: stallId,
+    category_id: categoryId,
+    admin_id: adminId,
+  }));
+
+  fetchItems(categoryId);
+}, [buildingId, stallId, categoryId, adminId, location.state]);
+
+
+const fetchItems = async (catId) => {
+  console.log("🔍 fetchItems called for categoryId:", catId);
+
+  try {
+    const data = await getItemsByCategoryId(catId);
+    console.log("📦 Items fetched:", data);
+
+    const sorted = Array.isArray(data)
+      ? data.sort((a, b) => (b.is_available === true) - (a.is_available === true))
+      : [];
+    setItems(sorted);
+  } catch (err) {
+    console.error("❌ Failed to fetch items:", err);
+    setItems([]);
+  }
+};
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

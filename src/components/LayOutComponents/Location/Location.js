@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../AuthContex/ContextAPI';
+import { useAuth } from '../../AuthContex/AdminContext';
 import AdminLayout from '../../LayOut/AdminLayout';
 import './Locations.css';
 import { useNavigate } from 'react-router-dom';
@@ -7,23 +7,37 @@ import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { IoMdAdd } from 'react-icons/io';
 
 export default function Locations() {
-  const { userId, token } = useAuth();
+  const { adminId, token } = useAuth(); // ✅ use adminId instead of userId
   const [buildings, setBuildings] = useState([]);
-  const [,  setCountries] = useState([]); // ✅ fixed
+  const [, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userId || !token) return;
+    console.log('Locations component mounted');
+    console.log('Auth state:', { adminId, token });
+
+    // fallback to localStorage if context is empty
+    const storedAdminId = adminId || localStorage.getItem('adminId');
+    const storedToken = token || localStorage.getItem('token');
+
+    if (!storedAdminId || !storedToken) {
+      console.warn('⚠️ Missing adminId or token, skipping fetch', { storedAdminId, storedToken });
+      setLoading(false);
+      return;
+    }
+
+    console.log('✅ Using adminId:', storedAdminId);
+    console.log('✅ Using token:', storedToken);
 
     const fetchData = async () => {
       try {
         const [buildingsRes, countriesRes] = await Promise.all([
-          fetch(`https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` },
+          fetch(`https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${storedAdminId}`, {
+            headers: { Authorization: `Bearer ${storedToken}` },
           }),
           fetch(`https://admin-aged-field-2794.fly.dev/locations/countries`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${storedToken}` },
           }),
         ]);
 
@@ -40,31 +54,27 @@ export default function Locations() {
     };
 
     fetchData();
-  }, [userId, token]); // ✅ no ESLint warning now
+  }, [adminId, token]);
 
   const handleCardClick = (buildingId) => {
     console.log('Clicked building:', buildingId);
-    // Example: navigate(`/locations/${buildingId}`);
+    // navigate(`/locations/${buildingId}`);
   };
 
   const handleDelete = async (buildingId) => {
-    const confirmDelete = window.confirm(
-      'Are you sure you want to delete this building?'
-    );
-    if (!confirmDelete) return;
-
+    if (!window.confirm('Are you sure you want to delete this building?')) return;
     try {
       const res = await fetch(`https://admin-aged-field-2794.fly.dev/buildings/${buildingId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.ok) {
         setBuildings((prev) => prev.filter((b) => b.id !== buildingId));
+        console.log('Building deleted:', buildingId);
       } else {
-        console.error('Failed to delete building');
+        const text = await res.text();
+        console.error('Failed to delete building:', res.status, text);
       }
     } catch (err) {
       console.error('Error deleting building:', err);
@@ -76,12 +86,8 @@ export default function Locations() {
       <div className="locations-container">
         <div className="locations-header">
           <h1>Locations</h1>
-          <button
-            className="add-location-btn"
-            onClick={() => navigate('/select-country')}
-          >
-            <IoMdAdd size={18} />
-            Add Location
+          <button className="add-location-btn" onClick={() => navigate('/select-country')}>
+            <IoMdAdd size={18} /> Add Location
           </button>
         </div>
 
@@ -97,46 +103,16 @@ export default function Locations() {
               >
                 <div className="card-header">
                   <h3>{b.building_name}</h3>
-                  <div
-                    className="card-actions"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <div className="card-actions" onClick={(e) => e.stopPropagation()}>
                     <FiEdit2 className="icon edit-icon" />
-                    <FiTrash2
-                      className="icon delete-icon"
-                      onClick={() => handleDelete(b.id)}
-                    />
+                    <FiTrash2 className="icon delete-icon" onClick={() => handleDelete(b.id)} />
                   </div>
                 </div>
-                <p>
-                  <strong>Country:</strong> {b.country_name}
-                </p>
-                <p>
-                  <strong>State:</strong> {b.state_name || 'N/A'}
-                </p>
-                <p>
-                  <strong>City:</strong> {b.city_name || 'N/A'}
-                </p>
-                <p>
-                  <strong>Floor Access:</strong>{' '}
-                  {b.user_access?.floor_access?.join(', ') || 'N/A'}
-                </p>
-                <p>
-                  <strong>Managers Count:</strong> {b.managers?.length || 0}
-                </p>
-
-                {b.managers?.length > 0 && (
-                  <div className="manager-section">
-                    <strong>Manager Details:</strong>
-                    <ul>
-                      {b.managers.map((m) => (
-                        <li key={m.id}>
-                          {m.name} — {m.phone_number}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                <p><strong>Country:</strong> {b.country_name}</p>
+                <p><strong>State:</strong> {b.state_name || 'N/A'}</p>
+                <p><strong>City:</strong> {b.city_name || 'N/A'}</p>
+                <p><strong>Floor Access:</strong> {b.user_access?.floor_access?.join(', ') || 'N/A'}</p>
+                <p><strong>Managers Count:</strong> {b.managers?.length || 0}</p>
               </div>
             ))}
           </div>

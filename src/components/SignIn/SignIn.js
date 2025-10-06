@@ -1,61 +1,45 @@
-import React, { useState } from "react";
-import "./SignIn.css";
-import { login } from "./sevice";
-import { useAuth } from "../AuthContex/ContextAPI";
-import { useNavigate, Link } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import React, { useState } from 'react';
+import './SignIn.css';
+import { login } from './sevice';
+import { useAuth } from '../AuthContex/AdminContext';
+import { useNavigate, Link } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { jwtDecode } from "jwt-decode";
 
 export default function SignInPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const { loginUser } = useAuth();
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
-
     try {
-      const response = await login(email, password);
-      console.log("Login API Response:", response);
+const response = await login(email, password);
+console.log("Login API Response:", response); // ✅ debug
 
-      let userId = response.user?.id;
-      let userRole = response.user?.role || "admin";
-      let userPhone = response.user?.phone || null;
-      let adminIdFromResponse = response.user?.admin_id || null;
+// If your API returns response.data, extract it first
+const data = response.data || response; 
 
-      // Fallback: decode JWT if userId not found
-      if (!userId && response.access_token) {
-        try {
-          const decoded = jwtDecode(response.access_token);
-          userId = decoded.sub || decoded.user_id || decoded.id;
-          console.log("Decoded JWT:", decoded);
-        } catch (decodeErr) {
-          console.error("JWT decode failed:", decodeErr);
-        }
-      }
+let userId = data.user?.id;
+if (!userId && data.access_token) {
+  const decoded = jwtDecode(data.access_token);
+  userId = decoded.sub;
+}
 
-      if (!userId) throw new Error("No userId found in login response");
+console.log("✅ Extracted adminId:", userId);
 
-      // Save into AuthContext
-      loginUser(
-        response.access_token,
-        email,
-        userId,
-        userRole,
-        userPhone,
-        adminIdFromResponse
-      );
+loginUser(data.access_token, email, userId, 'admin');
+navigate('/dashboard');
 
-      navigate("/dashboard");
+      navigate('/dashboard');
     } catch (err) {
-      setError(err.message || "Invalid credentials.");
+      setError(err.message || 'Invalid credentials.');
     } finally {
       setLoading(false);
     }
@@ -78,7 +62,7 @@ export default function SignInPage() {
           <label>Password *</label>
           <div className="signin-password-wrapper">
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -92,15 +76,13 @@ export default function SignInPage() {
           </div>
 
           <button type="submit" className="signin-button" disabled={loading}>
-            {loading ? "Signing In..." : "Sign In"}
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
           {error && <p className="signin-error">{error}</p>}
         </form>
 
         <div className="signin-links">
-          <p>
-            Don’t have an account? <Link to="/signup">Sign Up</Link>
-          </p>
+          <p>Don’t have an account? <Link to="/signup">Sign Up</Link></p>
         </div>
       </div>
 

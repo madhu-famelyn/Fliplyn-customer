@@ -7,7 +7,7 @@ import {
   updateItemAvailability,
   updateStallAvailability,   // ✅ NEW
 } from './Service';
-import { useAuth } from '../../AuthContex/ContextAPI';
+import { useAuth } from '../../AuthContex/AdminContext';
 import './Items.css';
 
 const AdminItems = () => {

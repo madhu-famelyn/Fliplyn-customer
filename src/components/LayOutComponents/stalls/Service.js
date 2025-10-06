@@ -1,12 +1,16 @@
 // src/pages/stalls/Service.js
 import axios from 'axios';
 
-const API_BASE = '';
+// Base URL for the backend API
+const API_BASE = 'https://admin-aged-field-2794.fly.dev/';
 
+// ====================
 // Fetch buildings by admin ID
+// ====================
 export const fetchBuildings = async (adminId, token) => {
   try {
-    const res = await axios.get(`${API_BASE}/buildings/buildings/by-admin/${adminId}`, {
+    // Corrected path: /stalls/buildings/by-admin/:adminId
+    const res = await axios.get(`${API_BASE}buildings/buildings/by-admin/${adminId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
@@ -16,10 +20,12 @@ export const fetchBuildings = async (adminId, token) => {
   }
 };
 
+// ====================
 // Create a new stall
+// ====================
 export const createStall = async (formData, token) => {
   try {
-    const res = await axios.post("https://admin-aged-field-2794.fly.dev/stalls/", formData, {
+    const res = await axios.post(`${API_BASE}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -27,29 +33,35 @@ export const createStall = async (formData, token) => {
     });
     return res.data;
   } catch (err) {
-    console.error("Stall create error response:", err.response?.data || err.message);
+    console.error("❌ Stall create error response:", err.response?.data || err.message);
     throw new Error("Failed to create stall");
   }
 };
 
+// ====================
 // Fetch stalls by building ID
+// ====================
 export const fetchStallsByBuilding = async (buildingId, token) => {
   try {
-    const res = await axios.get(`${API_BASE}/stalls/building/${buildingId}`, {
+    // Use the backend's correct GET endpoint
+    const res = await axios.get(`${API_BASE}stalls/building/${buildingId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
   } catch (error) {
-    console.error('Failed to fetch stalls:', error.response?.data || error.message);
+    console.error('❌ Failed to fetch stalls:', error.response?.data || error.message);
     throw new Error('Failed to fetch stalls');
   }
 };
 
+
+// ====================
 // Delete stall by ID
+// ====================
 export const deleteStall = async (stallId, token) => {
   try {
     console.log("🗑 Deleting Stall ID:", stallId);
-    const res = await axios.delete(`${API_BASE}/stalls/${stallId}`, {
+    const res = await axios.delete(`${API_BASE}${stallId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log("✅ Stall deleted successfully:", res.data);
@@ -60,7 +72,9 @@ export const deleteStall = async (stallId, token) => {
   }
 };
 
+// ====================
 // Update a stall by ID
+// ====================
 export const updateStall = async (stallId, stallData, token) => {
   try {
     const formData = new FormData();
@@ -74,11 +88,11 @@ export const updateStall = async (stallId, stallData, token) => {
     if (stallData.is_available !== undefined)
       formData.append("is_available", stallData.is_available ? "true" : "false");
 
-    // ✅ Add opening and closing time
+    // Add opening and closing time if provided
     if (stallData.opening_time !== undefined) formData.append("opening_time", stallData.opening_time);
     if (stallData.closing_time !== undefined) formData.append("closing_time", stallData.closing_time);
 
-    const res = await axios.put(`${API_BASE}/stalls/${stallId}`, formData, {
+    const res = await axios.put(`${API_BASE}${stallId}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",

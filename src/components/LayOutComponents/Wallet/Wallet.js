@@ -5,7 +5,7 @@ import {
   fetchWalletsByBuildingId,
   fetchUserById
 } from './Service';
-import { useAuth } from '../../AuthContex/ContextAPI';
+import { useAuth } from '../../AuthContex/AdminContext';
 import AdminLayout from '../../LayOut/AdminLayout';
 import './Wallet.css';
 

@@ -1,7 +1,7 @@
 // src/pages/ManagerDetails.js
 
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../AuthContex/ContextAPI';
+import { useAuth } from '../../AuthContex/AdminContext';
 import {
   fetchManagerById,
   fetchAdminById,

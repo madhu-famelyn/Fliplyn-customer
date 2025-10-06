@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import AdminLayout from "../../LayOut/AdminLayout";
 import CreateGroup from "./CreateGroup";
-import { useAuth } from "../../AuthContex/ContextAPI";
+import { useAuth } from "../../AuthContex/AdminContext";
 import { FaEdit } from "react-icons/fa";
 import UpdateGroupModal from "./UpdateGroupModel";
 import GroupDetailsModal from "./GroupDetailsModel";

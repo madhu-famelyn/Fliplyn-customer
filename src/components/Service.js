@@ -5,7 +5,6 @@ const API_BASE = 'https://admin-aged-field-2794.fly.dev';
 
 
 /**
- * Upload Wallet Group Excel
  * @param {Object} data - Form data
  * @param {string} token - Bearer token
  * @returns Axios response
@@ -21,7 +20,6 @@ export const uploadWalletGroupExcel = (data, token) => {
 
 
 
-// ✅ Fetch wallet groups by HR ID
 export const getWalletGroupsByHrId = async (hrId, token) => {
   try {
     const response = await axios.get(`${API_BASE}/hr/get-wallet/${hrId}`, {
@@ -34,7 +32,8 @@ export const getWalletGroupsByHrId = async (hrId, token) => {
   }
 };
 
-// ✅ Add a member manually to a wallet group
+
+
 export const addMemberToWalletGroup = (groupId, name, email, mobileNumber, token) => {
   return axios.post(
     `${API_BASE}/wallet-group/add-member`,
@@ -47,7 +46,6 @@ export const addMemberToWalletGroup = (groupId, name, email, mobileNumber, token
 
 
 
-// ✅ Update a user's active status
 export const updateUserStatus = (groupId, userId, isActive, token) => {
   return axios.put(
     `${API_BASE}/wallet-group/${groupId}/update-user-status`,

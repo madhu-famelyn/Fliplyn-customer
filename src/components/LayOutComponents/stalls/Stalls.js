@@ -13,7 +13,7 @@ import {
 } from './Service';
 
 export default function CreateStallForm() {
-  const { userId: adminId, token } = useAuth();
+  const { adminId, token } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -37,23 +37,31 @@ export default function CreateStallForm() {
 
   
 useEffect(() => {
-  if (adminId && token) {
-    console.log("✅ useEffect - Using adminId from context:", adminId);
-    console.log("✅ useEffect - Using token:", token);
+  // Use adminId/token from context, fallback to localStorage
+  const storedAdminId = adminId || localStorage.getItem("adminId");
+  const storedToken = token || localStorage.getItem("token");
 
-    fetchBuildings(adminId, token)
-      .then((data) => {
-        console.log("🏢 Buildings fetched:", data);
-        setBuildings(data);
-        if (data.length > 0) {
-          setForm((prev) => ({ ...prev, building_id: data[0].id }));
-          fetchAllStalls(data, token);
-        }
-      })
-      .catch((err) => console.error('❌ Error fetching buildings:', err));
-  } else {
-    console.warn("⚠️ No adminId/token found in context or localStorage", { adminId, token });
+  if (!storedAdminId || !storedToken) {
+    console.warn("⚠️ No adminId/token found in context or localStorage", {
+      adminId: storedAdminId,
+      token: storedToken,
+    });
+    return;
   }
+
+  console.log("✅ useEffect - Using adminId:", storedAdminId);
+  console.log("✅ useEffect - Using token:", storedToken);
+
+  fetchBuildings(storedAdminId, storedToken)
+    .then((data) => {
+      console.log("🏢 Buildings fetched:", data);
+      setBuildings(data);
+      if (data.length > 0) {
+        setForm((prev) => ({ ...prev, building_id: data[0].id }));
+        fetchAllStalls(data, storedToken);
+      }
+    })
+    .catch((err) => console.error("❌ Error fetching buildings:", err));
 }, [adminId, token]);
 
 
