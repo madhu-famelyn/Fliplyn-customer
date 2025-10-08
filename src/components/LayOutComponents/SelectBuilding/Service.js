@@ -1,5 +1,5 @@
 // src/api/Service.js
-const BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // 🔒 Hardcoded, no .env fallback
+const BASE_URL = 'https://fliplyn.onrender.com'; // 🔒 Hardcoded, no .env fallback
 
 // ✅ Create Building
 export const createBuilding = async (payload, token) => {

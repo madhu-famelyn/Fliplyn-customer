@@ -16,7 +16,7 @@ export default function RefundHistory({ managerId, refresh }) {
       setLoading(true);
       try {
         const res = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/refunds/manager/${managerId}`
+          `https://fliplyn.onrender.com/refunds/manager/${managerId}`
         );
         setRefunds(res.data);
       } catch (err) {

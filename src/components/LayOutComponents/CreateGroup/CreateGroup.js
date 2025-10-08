@@ -31,7 +31,7 @@ export default function CreateGroup({ onGroupCreated }) {
       if (!adminId) return;
       try {
         const res = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
+          `https://fliplyn.onrender.com/buildings/buildings/by-admin/${adminId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -79,7 +79,7 @@ export default function CreateGroup({ onGroupCreated }) {
 
     try {
       const response = await axios.post(
-        "https://admin-aged-field-2794.fly.dev/wallet-group/upload-excel/",
+        "https://fliplyn.onrender.com/wallet-group/upload-excel/",
         form,
         {
           headers: {

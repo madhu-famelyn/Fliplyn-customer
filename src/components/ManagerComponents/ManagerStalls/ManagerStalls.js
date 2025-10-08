@@ -21,7 +21,7 @@ export default function ManagerStallIds() {
 
       try {
         const response = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/stalls/building/${user.building_id}`
+          `https://fliplyn.onrender.com/stalls/building/${user.building_id}`
         );
         setStallData(response.data); // full data including images
       } catch (err) {

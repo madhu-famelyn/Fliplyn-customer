@@ -14,7 +14,7 @@ const ReportsPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get(`https://admin-aged-field-2794.fly.dev/orders/by-stall/${stallId}`);
+        const res = await axios.get(`https://fliplyn.onrender.com/orders/by-stall/${stallId}`);
         setOrders(res.data);
         if (res.data.length > 0) {
           setStallName(res.data[0].order_details[0].stall_name);

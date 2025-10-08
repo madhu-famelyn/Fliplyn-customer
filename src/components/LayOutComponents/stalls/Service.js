@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Base URL for the backend API
-const API_BASE = 'https://admin-aged-field-2794.fly.dev/';
+const API_BASE = 'https://fliplyn.onrender.com/';
 
 // ====================
 // Fetch buildings by admin ID

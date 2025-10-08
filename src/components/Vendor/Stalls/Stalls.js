@@ -21,7 +21,7 @@ const VendorStalls = () => {
     const fetchStalls = async () => {
       try {
         const promises = stallIds.map((id) =>
-          axios.get(`https://admin-aged-field-2794.fly.dev/stalls/${id}`, {
+          axios.get(`https://fliplyn.onrender.com/stalls/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         );

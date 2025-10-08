@@ -15,7 +15,7 @@ export default function TokenReceiptPage() {
     const fetchOrder = async () => {
       try {
         const res = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/orders/orders/by-token/${tokenNumber}`
+          `https://fliplyn.onrender.com/orders/orders/by-token/${tokenNumber}`
         );
         setOrder(res.data);
       } catch (err) {

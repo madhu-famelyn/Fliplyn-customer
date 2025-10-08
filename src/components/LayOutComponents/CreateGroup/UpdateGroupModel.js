@@ -40,7 +40,7 @@ const UpdateGroupModal = ({ groupId, onClose, onUpdated, token }) => {
 
     try {
       const res = await axios.put(
-        `https://admin-aged-field-2794.fly.dev/wallet-groups/${groupId}/upload-excel`,
+        `https://fliplyn.onrender.com/wallet-groups/${groupId}/upload-excel`,
         formData,
         {
           headers: {

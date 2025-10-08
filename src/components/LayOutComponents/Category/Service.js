@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://admin-aged-field-2794.fly.dev';
+const BASE_URL = 'https://fliplyn.onrender.com';
 
 export const createCategory = async (formData) => {
   const response = await axios.post(`${BASE_URL}/categories/`, formData, {
@@ -19,7 +19,7 @@ export const fetchCategoriesByStall = async (stallId) => {
 
 
 export const updateCategory = async (categoryId, formData) => {
-  const res = await axios.put(`https://admin-aged-field-2794.fly.dev/categories/${categoryId}`, formData, {
+  const res = await axios.put(`https://fliplyn.onrender.com/categories/${categoryId}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return res.data;

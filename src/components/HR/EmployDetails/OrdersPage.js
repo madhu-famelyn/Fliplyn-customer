@@ -19,7 +19,7 @@ const OrdersModal = ({ userIds, onClose }) => {
     async (stallId) => {
       try {
         const res = await fetch(
-          `https://admin-aged-field-2794.fly.dev/stalls/${stallId}`,
+          `https://fliplyn.onrender.com/stalls/${stallId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) return "N/A";
@@ -38,7 +38,7 @@ const OrdersModal = ({ userIds, onClose }) => {
       const firstItemId = order.order_details[0].item_id;
       try {
         const res = await fetch(
-          `https://admin-aged-field-2794.fly.dev/items/items/${firstItemId}`,
+          `https://fliplyn.onrender.com/items/items/${firstItemId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) return "N/A";
@@ -212,37 +212,53 @@ const OrdersModal = ({ userIds, onClose }) => {
         {loading && <p>Loading orders...</p>}
         {!loading && filteredOrders.length === 0 && <p>No orders found.</p>}
 
-        {/* ✅ Photo-style arrangement */}
-        {!loading && filteredOrders.length > 0 && (
-          <div className="orders-grid">
-            {filteredOrders.map((o) => {
-              const { grandTotal } = calculateAmounts(o);
-              return (
-                <div key={o.id} className="order-card">
-                  <div className="order-header">
-                    <h3>{o.stallName}</h3>
-                    <span className="order-token">Token: {o.token_number}</span>
-                  </div>
-                  <p><strong>Email:</strong> {o.user_email || "N/A"}</p>
-                  <p><strong>Date:</strong> {new Date(o.created_datetime).toLocaleString()}</p>
-                  
-                  <div className="order-items">
-                    {o.order_details.map((i, idx) => (
-                      <div key={idx} className="order-item">
-                        <span>{i.name}</span>
-                        <span>Qty: {i.quantity}</span>
-                      </div>
-                    ))}
-                  </div>
+        {/* ✅ Table layout */}
+{/* ✅ Table layout */}
+{!loading && filteredOrders.length > 0 && (
+  <table className="orders-table">
+    <thead>
+      <tr>
+        <th>Token</th>
+        <th>Email</th>
+        <th>Date</th>
+        <th>Items</th>
+        <th>Grand Total (₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {filteredOrders.map((order) => {
+        const { grandTotal } = calculateAmounts(order);
+        return (
+          <tr key={order.id}>
+            {/* ✅ Token - one cell */}
+            <td>{order.token_number}</td>
 
-                  <div className="order-total">
-                    <strong>Grand Total:</strong> ₹{grandTotal.toFixed(2)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+            {/* ✅ Email - one cell */}
+            <td>{order.user_email || "N/A"}</td>
+
+            {/* ✅ Date */}
+            <td>{new Date(order.created_datetime).toLocaleString()}</td>
+
+            {/* ✅ All items in one cell */}
+            <td>
+              <ul className="items-list">
+                {order.order_details.map((item, idx) => (
+                  <li key={idx}>
+                    {item.name} × {item.quantity}
+                  </li>
+                ))}
+              </ul>
+            </td>
+
+            {/* ✅ Grand Total */}
+            <td><strong>{grandTotal.toFixed(2)}</strong></td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+)}
+
 
         <div className="total-section">
           <h3>Total Paid: ₹{totalAmount.toFixed(2)}</h3>

@@ -1,7 +1,7 @@
 // src/services/countryService.js
 import axios from 'axios';
 
-const API_BASE_URL = 'https://admin-aged-field-2794.fly.dev';
+const API_BASE_URL = 'https://fliplyn.onrender.com';
 
 export const createCountrySelection = async (adminId, selectedCountry, token) => {
   const response = await axios.post(

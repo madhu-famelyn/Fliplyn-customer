@@ -1,7 +1,7 @@
 // src/services/walletService.js
 import axios from 'axios';
 
-const BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // Update this to your API URL
+const BASE_URL = 'https://fliplyn.onrender.com'; // Update this to your API URL
 
 export const addMoneyToWallet = async (payload, token) => {
   const response = await axios.post(`${BASE_URL}/wallets/add-money`, payload, {
@@ -15,7 +15,7 @@ export const addMoneyToWallet = async (payload, token) => {
 
 export const fetchBuildingByAdminId = async (adminId, token) => {
   try {
-    const response = await fetch(`https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`, {
+    const response = await fetch(`https://fliplyn.onrender.com/buildings/buildings/by-admin/${adminId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -35,7 +35,7 @@ export const fetchBuildingByAdminId = async (adminId, token) => {
 
 
 export const fetchWalletsByBuildingId = async (buildingId, token) => {
-  const res = await fetch(`https://admin-aged-field-2794.fly.dev/wallets/by-building/${buildingId}`, {
+  const res = await fetch(`https://fliplyn.onrender.com/wallets/by-building/${buildingId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -45,7 +45,7 @@ export const fetchWalletsByBuildingId = async (buildingId, token) => {
 };
 
 export const fetchUserById = async (userId, token) => {
-  const res = await fetch(`https://admin-aged-field-2794.fly.dev/user/${userId}`, {
+  const res = await fetch(`https://fliplyn.onrender.com/user/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

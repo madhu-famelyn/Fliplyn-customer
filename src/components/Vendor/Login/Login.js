@@ -19,7 +19,7 @@ const handleLogin = async (e) => {
   setError("");
 
   try {
-    const res = await axios.post("https://admin-aged-field-2794.fly.dev/vendors/auth/login", {
+    const res = await axios.post("https://fliplyn.onrender.com/vendors/auth/login", {
       phone_number: phoneNumber,
       password: password,
     });

@@ -34,7 +34,7 @@ export default function ViewBuildingManagers() {
 
       // 1️⃣ Get buildings by admin_id
       const buildingsRes = await axios.get(
-        `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
+        `https://fliplyn.onrender.com/buildings/buildings/by-admin/${adminId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ export default function ViewBuildingManagers() {
 
       for (const building of buildingsData) {
         const managersRes = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/api/building-managers/by-building/${building.id}`,
+          `https://fliplyn.onrender.com/api/building-managers/by-building/${building.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -94,7 +94,7 @@ export default function ViewBuildingManagers() {
     e.preventDefault();
     try {
       const payload = { ...formData };
-      await axios.post(`https://admin-aged-field-2794.fly.dev/api/building-managers/`, payload, {
+      await axios.post(`https://fliplyn.onrender.com/api/building-managers/`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

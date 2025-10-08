@@ -1,6 +1,6 @@
 // src/services/managerService.js
 
-const BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // Replace with your backend URL
+const BASE_URL = 'https://fliplyn.onrender.com'; // Replace with your backend URL
 
 export const fetchManagerById = async (managerId, token) => {
   const response = await fetch(`${BASE_URL}/managers/${managerId}`, {

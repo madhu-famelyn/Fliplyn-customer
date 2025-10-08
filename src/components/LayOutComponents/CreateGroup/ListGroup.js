@@ -17,7 +17,7 @@ const WalletGroupList = () => {
 
       try {
         const res = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
+          `https://fliplyn.onrender.com/buildings/buildings/by-admin/${adminId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -42,7 +42,7 @@ const WalletGroupList = () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/wallet-groups/by-building/${buildingId}`
+          `https://fliplyn.onrender.com/wallet-groups/by-building/${buildingId}`
         );
         setGroups(res.data || []);
       } catch (error) {
