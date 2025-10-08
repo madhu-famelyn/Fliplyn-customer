@@ -21,7 +21,7 @@ const { manager } = useBuildingManagerAuth();
       if (!manager?.building_id) return;
       try {
         const res = await axios.get(
-          `http://127.0.0.1:8000/stalls/building/${manager.building_id}`
+          `https://admin-aged-field-2794.fly.dev/stalls/building/${manager.building_id}`
         );
         setStalls(res.data);
       } catch (err) {
@@ -45,7 +45,7 @@ const { manager } = useBuildingManagerAuth();
           for (let stall of stalls) {
             try {
               const res = await axios.get(
-                `http://127.0.0.1:8000/orders/by-stall/${stall.id}`
+                `https://admin-aged-field-2794.fly.dev/orders/by-stall/${stall.id}`
               );
               const stallOrders = res.data.map((order) => ({
                 ...order,
@@ -61,7 +61,7 @@ const { manager } = useBuildingManagerAuth();
           }
         } else {
           const res = await axios.get(
-            `http://127.0.0.1:8000/orders/by-stall/${selectedStallId}`
+            `https://admin-aged-field-2794.fly.dev/orders/by-stall/${selectedStallId}`
           );
           const stallName =
             stalls.find((s) => s.id === selectedStallId)?.name || "";

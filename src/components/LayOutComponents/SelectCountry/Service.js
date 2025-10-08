@@ -1,7 +1,7 @@
 // src/services/countryService.js
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = 'https://admin-aged-field-2794.fly.dev';
 
 export const createCountrySelection = async (adminId, selectedCountry, token) => {
   const response = await axios.post(

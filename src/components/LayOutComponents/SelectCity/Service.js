@@ -12,7 +12,7 @@ export const fetchCitiesByCountryState = async (country, state) => {
   return data.data || [];
 };
 
-const BASE_URL = 'http://127.0.0.1:8000'; // ✅ Add your backend URL
+const BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // ✅ Add your backend URL
 
 export const createCity = async (cityData, token) => {
   const response = await axios.post(`${BASE_URL}/cities/`, cityData, {

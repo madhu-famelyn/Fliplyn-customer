@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Base URL for the backend API
-const API_BASE = 'http://127.0.0.1:8000/';
+const API_BASE = 'https://admin-aged-field-2794.fly.dev/';
 
 // ====================
 // Fetch buildings by admin ID

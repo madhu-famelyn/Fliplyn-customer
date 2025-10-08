@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // ✅ Use Vite environment variable
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = 'https://admin-aged-field-2794.fly.dev/';
 
 
 /**
@@ -60,7 +60,7 @@ export const updateUserStatus = (groupId, userId, isActive, token) => {
 export const getOrdersByUserIds = async (userIds, token) => {
   const responses = await Promise.all(
     userIds.map(async (id) => {
-      const res = await fetch(`http://127.0.0.1:8000/orders/user/details/${id}`, {
+      const res = await fetch(`https://admin-aged-field-2794.fly.dev/orders/user/details/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

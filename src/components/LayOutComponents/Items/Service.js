@@ -1,7 +1,7 @@
    // Service.js
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:8000'; // Update if your FastAPI server is on a different port
+const BASE_URL = 'https://admin-aged-field-2794.fly.dev'; // Update if your FastAPI server is on a different port
 
 // Create a new item
 export const createItem = async (formData) => {
@@ -56,7 +56,7 @@ export const deleteItemById = async (itemId) => {
 // Bulk upload items via Excel
 export const uploadItemsExcel = async (formData) => {
   const { data } = await axios.post(
-    'http://127.0.0.1:8000/items/items/bulk-upload', // ✅ full backend route
+    'https://admin-aged-field-2794.fly.dev/items/items/bulk-upload', // ✅ full backend route
     formData,
     {
       headers: {

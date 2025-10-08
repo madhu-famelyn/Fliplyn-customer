@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/hr/auth"; // adjust if backend is deployed
+const API_URL = "https://admin-aged-field-2794.fly.dev/hr/auth"; // adjust if backend is deployed
 
 // HR Login API
 export const hrLogin = async (credentials) => {

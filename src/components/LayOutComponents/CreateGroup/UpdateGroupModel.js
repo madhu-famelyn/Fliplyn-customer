@@ -40,7 +40,7 @@ const UpdateGroupModal = ({ groupId, onClose, onUpdated, token }) => {
 
     try {
       const res = await axios.put(
-        `http://127.0.0.1:8000/wallet-groups/${groupId}/upload-excel`,
+        `https://admin-aged-field-2794.fly.dev/wallet-groups/${groupId}/upload-excel`,
         formData,
         {
           headers: {
