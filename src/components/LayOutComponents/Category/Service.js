@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://admin-aged-field-2794.fly.dev/';
+const BASE_URL = 'https://admin-aged-field-2794.fly.dev';
 
 export const createCategory = async (formData) => {
   const response = await axios.post(`${BASE_URL}/categories/`, formData, {
