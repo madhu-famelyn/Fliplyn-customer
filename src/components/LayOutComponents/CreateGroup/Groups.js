@@ -25,7 +25,7 @@ export default function Group() {
       if (!adminId || !token) return;
       try {
         const res = await axios.get(
-          `http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`,
+          `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = res.data || [];
@@ -46,7 +46,7 @@ export default function Group() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/wallet-groups/by-building/${buildingId}`,
+        `https://admin-aged-field-2794.fly.dev/wallet-groups/by-building/${buildingId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setGroups(res.data || []);

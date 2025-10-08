@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:8000/';
+const BASE_URL = 'https://admin-aged-field-2794.fly.dev/';
 
 export const createCategory = async (formData) => {
   const response = await axios.post(`${BASE_URL}/categories/`, formData, {
@@ -19,7 +19,7 @@ export const fetchCategoriesByStall = async (stallId) => {
 
 
 export const updateCategory = async (categoryId, formData) => {
-  const res = await axios.put(`http://127.0.0.1:8000/categories/${categoryId}`, formData, {
+  const res = await axios.put(`https://admin-aged-field-2794.fly.dev/categories/${categoryId}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return res.data;

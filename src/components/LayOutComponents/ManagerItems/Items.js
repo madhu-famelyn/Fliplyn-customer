@@ -87,7 +87,7 @@ export default function ItemDetails() {
               className="border rounded p-4 shadow hover:shadow-lg transition"
             >
               <img
-                src={`http://127.0.0.1:8000/${item.image_url}`} // ✅ Correct backend
+                src={`https://admin-aged-field-2794.fly.dev/${item.image_url}`} // ✅ Correct backend
                 alt={item.name}
                 className="w-full h-48 object-cover rounded mb-3"
                 onError={(e) => {

@@ -31,7 +31,7 @@ export default function CreateGroup({ onGroupCreated }) {
       if (!adminId) return;
       try {
         const res = await axios.get(
-          `http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`,
+          `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -79,7 +79,7 @@ export default function CreateGroup({ onGroupCreated }) {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/wallet-group/upload-excel/",
+        "https://admin-aged-field-2794.fly.dev/wallet-group/upload-excel/",
         form,
         {
           headers: {

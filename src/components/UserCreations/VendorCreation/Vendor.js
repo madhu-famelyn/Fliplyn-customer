@@ -29,7 +29,7 @@ export default function ViewVendors() {
   const fetchVendors = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/vendors/by-admin/${adminId}`,
+        `https://admin-aged-field-2794.fly.dev/vendors/by-admin/${adminId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -48,7 +48,7 @@ export default function ViewVendors() {
   const fetchStalls = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/stalls/admin/${adminId}`,
+        `https://admin-aged-field-2794.fly.dev/stalls/admin/${adminId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -74,7 +74,7 @@ export default function ViewVendors() {
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/vendors/create?admin_id=${adminId}`,
+        `https://admin-aged-field-2794.fly.dev/vendors/create?admin_id=${adminId}`,
         payload,
         {
           headers: {

@@ -1,7 +1,7 @@
 // 📁 src/services/signupService.js
 export async function signUp(data) {
   const response = await fetch(
-    "http://127.0.0.1:8000/admin/",   // ✅ trailing slash is important
+    "https://admin-aged-field-2794.fly.dev/admin/",   // ✅ trailing slash is important
     {
       method: "POST",
       headers: {
