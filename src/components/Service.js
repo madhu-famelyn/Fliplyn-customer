@@ -10,7 +10,7 @@ const API_BASE = 'https://admin-aged-field-2794.fly.dev/';
  * @returns Axios response
  */
 export const uploadWalletGroupExcel = (data, token) => {
-  return axios.post(`${API_BASE}/wallet-groups/upload-excel`, data, {
+  return axios.post(`${API_BASE}wallet-group/upload-excel/`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
@@ -21,7 +21,7 @@ export const uploadWalletGroupExcel = (data, token) => {
 
 export const getWalletGroupsByHrId = async (hrId, token) => {
   try {
-    const response = await axios.get(`${API_BASE}/hr/get-wallet/${hrId}`, {
+    const response = await axios.get(`${API_BASE}hr/get-wallet/${hrId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return Array.isArray(response.data) ? response.data : [];

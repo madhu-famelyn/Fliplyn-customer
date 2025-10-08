@@ -6,7 +6,7 @@ const API_BASE = "https://admin-aged-field-2794.fly.dev/"; // adjust if backend 
 // ✅ Service to fetch wallet groups by HR ID
 export const getWalletGroupsByHrId = async (hrId, token) => {
   try {
-    const response = await axios.get(`${API_BASE}/hr/get-wallet/${hrId}`, {
+    const response = await axios.get(`${API_BASE}hr/get-wallet/${hrId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
