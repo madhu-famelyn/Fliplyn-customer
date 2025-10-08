@@ -31,7 +31,7 @@ export default function ViewManagers() {
     try {
       // 1️⃣ Get buildings by admin_id
       const buildingsRes = await axios.get(
-        `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
+        `http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -53,7 +53,7 @@ export default function ViewManagers() {
       const allManagers = [];
       for (const building of buildingsData) {
         const managersRes = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/managers/building/${building.id}`,
+          `http://127.0.0.1:8000/managers/building/${building.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -94,7 +94,7 @@ export default function ViewManagers() {
         admin_id: adminId,
       };
 
-      await axios.post(`https://admin-aged-field-2794.fly.dev/managers/`, payload, {
+      await axios.post(`http://127.0.0.1:8000/managers/`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

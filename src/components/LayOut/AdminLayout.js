@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   FaMapMarkerAlt, FaBuilding, FaStore, FaShoppingCart,
-  FaChartBar, FaUsers, FaSignOutAlt, FaBars, FaTimes
+  FaUsers, FaSignOutAlt, FaBars, FaTimes
 } from 'react-icons/fa';
 import { GiToken } from 'react-icons/gi';  
 import './AdminLayout.css';

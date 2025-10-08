@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://admin-aged-field-2794.fly.dev';
+const BASE_URL = 'http://127.0.0.1:8000';
 
 /**
  * 🔍 Get Manager by ID

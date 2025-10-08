@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContex/ContextAPI";
 import "./AddWallet.css";
 
 export default function WalletUpload() {
   const { token, user: manager } = useAuth();
+
   const [walletAmount, setWalletAmount] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [image, setImage] = useState(null);
@@ -16,9 +17,51 @@ export default function WalletUpload() {
   const [formVisible, setFormVisible] = useState(false);
   const [popupImage, setPopupImage] = useState(null);
 
+  // ✅ Fetch wallets (memoized to avoid re-creation on every render)
+  const fetchWallets = useCallback(
+    async (building_id) => {
+      setFetchingWallets(true);
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/wallets/by-building/${building_id}/images`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const walletsData = res.data;
+
+        // 🔹 Fetch user details for each wallet
+        const walletsWithUser = await Promise.all(
+          walletsData.map(async (wallet) => {
+            try {
+              const userRes = await axios.get(
+                `http://localhost:8000/user/${wallet.user_id}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              return {
+                ...wallet,
+                user_name: userRes.data.name || "Unknown",
+              };
+            } catch (err) {
+              console.error(`Error fetching user ${wallet.user_id}:`, err);
+              return { ...wallet, user_name: "Unknown" };
+            }
+          })
+        );
+
+        setWallets(walletsWithUser);
+      } catch (err) {
+        console.error("Error fetching wallets:", err);
+      } finally {
+        setFetchingWallets(false);
+      }
+    },
+    [token]
+  );
+
   // ✅ Fetch manager details and wallets
   useEffect(() => {
     if (!manager?.id) return;
+
     const fetchManagerDetails = async () => {
       try {
         const res = await axios.get(
@@ -27,53 +70,17 @@ export default function WalletUpload() {
         );
         const building_id = res.data.building_id || "";
         setBuildingId(building_id);
-        if (building_id) fetchWallets(building_id);
+
+        if (building_id) {
+          fetchWallets(building_id);
+        }
       } catch (err) {
         console.error("Error fetching manager details:", err);
       }
     };
+
     fetchManagerDetails();
-  }, [manager, token]);
-
-  // ✅ Fetch wallets
-// ✅ Fetch wallets and user names
-const fetchWallets = async (building_id) => {
-  setFetchingWallets(true);
-  try {
-    const res = await axios.get(
-      `http://localhost:8000/wallets/by-building/${building_id}/images`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    const walletsData = res.data;
-
-    // 🔹 Fetch user details for each wallet
-    const walletsWithUser = await Promise.all(
-      walletsData.map(async (wallet) => {
-        try {
-          const userRes = await axios.get(
-            `http://localhost:8000/user/${wallet.user_id}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          return {
-            ...wallet,
-            user_name: userRes.data.name || "Unknown",
-          };
-        } catch (err) {
-          console.error(`Error fetching user ${wallet.user_id}:`, err);
-          return { ...wallet, user_name: "Unknown" };
-        }
-      })
-    );
-
-    setWallets(walletsWithUser);
-  } catch (err) {
-    console.error("Error fetching wallets:", err);
-  } finally {
-    setFetchingWallets(false);
-  }
-};
-
+  }, [manager, token, fetchWallets]);
 
   // ✅ Create Wallet
   const handleSubmit = async (e) => {
@@ -180,9 +187,7 @@ const fetchWallets = async (building_id) => {
       {/* Wallet Table */}
       <h3>Wallets</h3>
       {fetchingWallets && <p>Loading wallets...</p>}
-      {!fetchingWallets && wallets.length === 0 && (
-        <p>No wallets found.</p>
-      )}
+      {!fetchingWallets && wallets.length === 0 && <p>No wallets found.</p>}
 
       {wallets.length > 0 && (
         <table className="wallet-table">

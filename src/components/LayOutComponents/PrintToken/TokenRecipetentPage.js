@@ -15,7 +15,7 @@ export default function TokenReceiptPage() {
     const fetchOrder = async () => {
       try {
         const res = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/orders/orders/by-token/${tokenNumber}`
+          `http://127.0.0.1:8000/orders/orders/by-token/${tokenNumber}`
         );
         setOrder(res.data);
       } catch (err) {
