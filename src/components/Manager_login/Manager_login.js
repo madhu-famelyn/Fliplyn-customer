@@ -12,23 +12,38 @@ export default function ManagerLogin() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  console.log("🔹 Manager login attempt:", { email, password });
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    console.log("🔹 Manager login attempt:", { email, password });
 
-  try {
-    const data = await loginManager({ email, password });
-    console.log("✅ Login response:", data);
+    try {
+      // ✅ send correct keys
+      const data = await loginManager({ email, password });
 
-    loginUser(data.access_token, data.user, "manager");
-    console.log("📝 User logged in, navigating to /manager-stalls");
-    navigate("/manager-stalls");
-  } catch (error) {
-    console.error("❌ Login failed:", error.response?.data || error.message);
-    setMessage(error?.response?.data?.detail || "Login failed");
-  }
-};
+      console.log("✅ Login response:", data);
 
+      loginUser(data.access_token, data.user, "manager");
+      navigate("/manager-stalls");
+
+    } catch (error) {
+      console.error("❌ Login failed:", error.response?.data || error.message);
+
+      let msg = "Login failed";
+
+      const detail = error.response?.data?.detail;
+      if (detail) {
+        if (Array.isArray(detail)) {
+          msg = detail.map(d => d.msg || JSON.stringify(d)).join(", ");
+        } else if (typeof detail === "string") {
+          msg = detail;
+        } else {
+          msg = JSON.stringify(detail);
+        }
+      }
+
+      setMessage(msg);
+    }
+  };
 
   return (
     <div className="ml-wrapper">

@@ -24,7 +24,7 @@ const VendorItems = () => {
     const fetchStall = async () => {
       try {
         const response = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/stalls/${stallId}`,
+          `http://127.0.0.1:8000/stalls/${stallId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setStallName(response.data.name);
@@ -52,7 +52,7 @@ const VendorItems = () => {
     const fetchItems = async () => {
       try {
         const response = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/items/stall/${stallId}`,
+          `http://127.0.0.1:8000/items/stall/${stallId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (Array.isArray(response.data)) {

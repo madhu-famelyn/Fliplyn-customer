@@ -55,6 +55,13 @@ import BuildingSalesReport from "./components/BuildingManager/BuilingMangerRepor
 import AddStall from "./components/ManagerComponents/CreateStall/CreateStall";
 import ManagerStallIds from "./components/ManagerComponents/ManagerStalls/ManagerStalls";
 
+import MainPage from "./components/UserCreations/MainPage";
+import ViewManagers from "./components/UserCreations/ManagerCreation/Manager";
+import ViewVendors from "./components/UserCreations/VendorCreation/Vendor";
+import ManagerViewVendors from "./components/ManagerComponents/AddVendor/AddVendor";
+import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
+// import ViewBuildingManagers from "./components/UserCreations/BuildingManagerCreations/BuildingManager";
+
 // ✅ Admin Private Route
 const AdminPrivateRoute = ({ element }) => {
   const auth = useAdminAuth() || {};
@@ -125,11 +132,24 @@ function App() {
               <Route path="/view-sales" element={<StallsReport />} />
               <Route path="/add-stall" element={<AddStall />} />
 
+              <Route path="/user-creation" element={<MainPage />} />
+              <Route path="/view-managers" element={<ViewManagers />} />
+              <Route path="view-vendors" element={<ViewVendors />} />
+              <Route path="manager-view-vendors" element={<ManagerViewVendors />} />
+
+
+
+              
+
               {/* Building Manager Routes */}
               <Route path="/bld-mng" element={<BuildingManagerLogin />} />
               <Route
                 path="/bld-mng-stalls"
                 element={<BuildingManagerPrivateRoute element={<ManagerStallIds />} />}
+              />
+               <Route
+                path="/wallet-add-mng"
+                element={<BuildingManagerPrivateRoute element={<WalletUpload />} />}
               />
               <Route
                 path="/bld-mng-report"

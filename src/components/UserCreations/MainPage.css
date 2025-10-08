@@ -1,0 +1,55 @@
+.user-creation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  font-family: "Geist", sans-serif;
+}
+
+.user-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 40px;
+  color: #2c3e50;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.big-button {
+  width: 240px; /* same fixed width for all buttons */
+  height: 70px; /* same height for all buttons */
+  background-color: #edac1f;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.big-button:hover {
+  background-color: #34495e;
+  transform: scale(1.03);
+}
+
+@media (max-width: 768px) {
+  .big-button {
+    width: 100%;
+    height: 65px;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 15px;
+    width: 90%;
+  }
+}

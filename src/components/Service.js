@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // ✅ Use Vite environment variable
-const API_BASE = 'https://admin-aged-field-2794.fly.dev';
+const API_BASE = 'http://127.0.0.1:8000';
 
 
 /**
@@ -10,7 +10,7 @@ const API_BASE = 'https://admin-aged-field-2794.fly.dev';
  * @returns Axios response
  */
 export const uploadWalletGroupExcel = (data, token) => {
-  return axios.post(`${API_BASE}/wallet-group/supload-excel/`, data, {
+  return axios.post(`${API_BASE}/wallet-group/upload-excel/`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
@@ -48,7 +48,7 @@ export const addMemberToWalletGroup = (groupId, name, email, mobileNumber, token
 
 export const updateUserStatus = (groupId, userId, isActive, token) => {
   return axios.put(
-    `${API_BASE}/wallet-group/${groupId}/update-user-status`,
+    `${API_BASE}/${groupId}/update-user-status`,
     { user_id: userId, is_active: isActive },
     { headers: { Authorization: `Bearer ${token}` } }
   );
@@ -60,7 +60,7 @@ export const updateUserStatus = (groupId, userId, isActive, token) => {
 export const getOrdersByUserIds = async (userIds, token) => {
   const responses = await Promise.all(
     userIds.map(async (id) => {
-      const res = await fetch(`https://admin-aged-field-2794.fly.dev/orders/user/details/${id}`, {
+      const res = await fetch(`http://127.0.0.1:8000/orders/user/details/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

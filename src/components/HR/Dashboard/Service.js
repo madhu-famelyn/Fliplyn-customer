@@ -1,7 +1,7 @@
 // src/services/walletService.js
 import axios from "axios";
 
-const API_BASE = "https://admin-aged-field-2794.fly.dev"; // adjust if backend runs on another host
+const API_BASE = "http://127.0.0.1:8000"; // adjust if backend runs on another host
 
 // ✅ Service to fetch wallet groups by HR ID
 export const getWalletGroupsByHrId = async (hrId, token) => {

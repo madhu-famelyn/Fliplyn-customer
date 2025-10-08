@@ -1,0 +1,100 @@
+.wallet-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.orange-btn {
+  background-color: orange;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.orange-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.wallet-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+  border: 1px solid #ccc;
+  padding: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.wallet-form input[type="number"],
+.wallet-form input[type="text"],
+.wallet-form input[type="file"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.status-message {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.wallet-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.wallet-table th,
+.wallet-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.wallet-table th {
+  background-color: #f8f8f8;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-content img {
+  max-width: 80vw;
+  max-height: 80vh;
+  border: 3px solid orange;
+}

@@ -44,7 +44,7 @@ export default function RefundModal() {
     };
 
     try {
-      const response = await axios.post("https://admin-aged-field-2794.fly.dev/refunds/", payload);
+      const response = await axios.post("http://127.0.0.1:8000/refunds/", payload);
 
       if (response.data) {
         setMessage("✅ Refund processed successfully!");
