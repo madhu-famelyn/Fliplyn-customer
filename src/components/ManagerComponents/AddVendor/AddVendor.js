@@ -33,7 +33,7 @@ export default function ManagerViewVendors() {
   const fetchVendors = async () => {
     try {
       const response = await axios.get(
-        `https://fliplyn.onrender.com/vendors/by-building/${building_id}`,
+        `https://admin-aged-field-2794.fly.dev/vendors/by-building/${building_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -53,7 +53,7 @@ export default function ManagerViewVendors() {
   const fetchStalls = async () => {
     try {
       const response = await axios.get(
-        `https://fliplyn.onrender.com/stalls/building/${building_id}`,
+        `https://admin-aged-field-2794.fly.dev/stalls/building/${building_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -81,7 +81,7 @@ export default function ManagerViewVendors() {
     };
 
     try {
-      await axios.post(`https://fliplyn.onrender.com/vendors/create`, payload, {
+      await axios.post(`https://admin-aged-field-2794.fly.dev/vendors/create`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-const BASE_URL = 'https://fliplyn.onrender.com/'; // Replace if different
+const BASE_URL = 'https://admin-aged-field-2794.fly.dev/'; // Replace if different
 
 export const fetchManagerById = async (managerId, token) => {
   const res = await fetch(`${BASE_URL}/managers/${managerId}`, {

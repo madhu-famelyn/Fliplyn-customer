@@ -14,7 +14,7 @@ export default function OrdersByEmail() {
     setError("");
     try {
       const response = await axios.get(
-        `https://fliplyn.onrender.com/orders/user/by-email/${encodeURIComponent(email)}`
+        `https://admin-aged-field-2794.fly.dev/orders/user/by-email/${encodeURIComponent(email)}`
       );
       setOrders(response.data);
     } catch (err) {

@@ -19,7 +19,7 @@ const OrdersModal = ({ userIds, onClose }) => {
     async (stallId) => {
       try {
         const res = await fetch(
-          `https://fliplyn.onrender.com/stalls/${stallId}`,
+          `https://admin-aged-field-2794.fly.dev/stalls/${stallId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) return "N/A";
@@ -38,7 +38,7 @@ const OrdersModal = ({ userIds, onClose }) => {
       const firstItemId = order.order_details[0].item_id;
       try {
         const res = await fetch(
-          `https://fliplyn.onrender.com/items/items/${firstItemId}`,
+          `https://admin-aged-field-2794.fly.dev/items/items/${firstItemId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) return "N/A";

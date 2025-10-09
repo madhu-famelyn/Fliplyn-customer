@@ -21,7 +21,7 @@ export default function ItemListByStall() {
 
       try {
         const response = await axios.get(
-          `https://fliplyn.onrender.com/items/stall/${stallId}`
+          `https://admin-aged-field-2794.fly.dev/items/stall/${stallId}`
         );
         setItems(response.data);
         setFilteredItems(response.data);
@@ -48,7 +48,7 @@ export default function ItemListByStall() {
     try {
       // Update backend
       await axios.patch(
-        `https://fliplyn.onrender.com/items/items/${itemId}/availability`,
+        `https://admin-aged-field-2794.fly.dev/items/items/${itemId}/availability`,
         { is_available: !currentStatus }
       );
 

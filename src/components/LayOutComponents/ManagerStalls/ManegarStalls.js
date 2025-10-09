@@ -143,7 +143,7 @@
 //               {stalls.map((stall) => (
 //                 <div key={stall.id} className="stall-card">
 //                 <img
-//                   src={`https://fliplyn.onrender.com/${stall.image_url}`}  // ✅ Correct Render API domain
+//                   src={`https://admin-aged-field-2794.fly.dev/${stall.image_url}`}  // ✅ Correct Render API domain
 //                   alt={stall.name}
 //                   className="stall-image"
 //                   onError={(e) => {

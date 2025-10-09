@@ -21,7 +21,7 @@ export default function StallSalesReport() {
       if (!user?.building_id) return;
       try {
         const res = await axios.get(
-          `https://fliplyn.onrender.com/stalls/building/${user.building_id}`
+          `https://admin-aged-field-2794.fly.dev/stalls/building/${user.building_id}`
         );
         setStalls(res.data);
       } catch (err) {
@@ -45,7 +45,7 @@ export default function StallSalesReport() {
           for (let stall of stalls) {
             try {
               const res = await axios.get(
-                `https://fliplyn.onrender.com/orders/by-stall/${stall.id}`
+                `https://admin-aged-field-2794.fly.dev/orders/by-stall/${stall.id}`
               );
               const stallOrders = res.data.map((order) => ({
                 ...order,
@@ -61,7 +61,7 @@ export default function StallSalesReport() {
           }
         } else {
           const res = await axios.get(
-            `https://fliplyn.onrender.com/orders/by-stall/${selectedStallId}`
+            `https://admin-aged-field-2794.fly.dev/orders/by-stall/${selectedStallId}`
           );
           const stallName =
             stalls.find((s) => s.id === selectedStallId)?.name || "";

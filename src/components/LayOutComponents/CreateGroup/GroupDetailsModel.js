@@ -20,7 +20,7 @@ const GroupDetailsModal = ({ groupId, token, onClose }) => {
     const fetchGroupDetails = async () => {
       try {
         const res = await axios.get(
-          `https://fliplyn.onrender.com/wallet-group/${groupId}`,
+          `https://admin-aged-field-2794.fly.dev/wallet-group/${groupId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setGroupDetails(res.data);
@@ -56,7 +56,7 @@ const GroupDetailsModal = ({ groupId, token, onClose }) => {
       for (let user of groupDetails.users) {
         try {
           const res = await axios.get(
-            `https://fliplyn.onrender.com/orders/user/${user.user_id}`,
+            `https://admin-aged-field-2794.fly.dev/orders/user/${user.user_id}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
           const walletOrders = res.data.filter(
