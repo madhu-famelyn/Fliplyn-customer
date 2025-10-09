@@ -28,6 +28,25 @@ export const getItemsByCategoryId = async (categoryId) => {
   }
 };
 
+
+// ✅ New unified update endpoint
+export const updateItemDetailsWithImage = async (itemId, formData) => {
+  const response = await fetch(
+    `${BASE_URL}/items/${itemId}/update-image-details`,
+    {
+      method: "PUT",
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to update item details");
+  }
+
+  return response.json();
+};
+
+
 // Update item availability
 export const updateItemAvailability = async (itemId, isAvailable) => {
   try {

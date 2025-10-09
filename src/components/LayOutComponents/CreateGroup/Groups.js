@@ -3,10 +3,10 @@ import axios from "axios";
 import AdminLayout from "../../LayOut/AdminLayout";
 import CreateGroup from "./CreateGroup";
 import { useAuth } from "../../AuthContex/AdminContext";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaEye } from "react-icons/fa";
 import UpdateGroupModal from "./UpdateGroupModel";
 import GroupDetailsModal from "./GroupDetailsModel";
-import "./CreateGroup.css"; // ✅ Import CSS
+import "./CreateGroup.css"; // ✅ For styling
 
 export default function Group() {
   const { userId: adminId, token } = useAuth();
@@ -15,11 +15,15 @@ export default function Group() {
   const [buildingId, setBuildingId] = useState("");
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [editingGroupId, setEditingGroupId] = useState(null);
 
-  // NEW: for viewing details
+  // For modals
+  const [editingGroupId, setEditingGroupId] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
 
+  // For toggling the create form
+  const [showForm, setShowForm] = useState(false);
+
+  // ✅ Fetch Buildings
   useEffect(() => {
     const fetchBuildings = async () => {
       if (!adminId || !token) return;
@@ -40,7 +44,7 @@ export default function Group() {
     fetchBuildings();
   }, [adminId, token]);
 
-  // ✅ Memoize fetchGroups
+  // ✅ Fetch Groups
   const fetchGroups = useCallback(async () => {
     if (!buildingId) return;
     setLoading(true);
@@ -62,24 +66,33 @@ export default function Group() {
   }, [fetchGroups]);
 
   const handleBuildingChange = (e) => setBuildingId(e.target.value);
-  const handleGroupCreated = () => fetchGroups();
+  const handleGroupCreated = () => {
+    fetchGroups();
+    setShowForm(false);
+  };
+
+  // Edit & Details
   const handleEditClick = (groupId) => setEditingGroupId(groupId);
-  const handleCloseModal = () => setEditingGroupId(null);
-
-  // NEW: handle clicking for details
-  const handleViewDetails = (groupId) => {
-    setSelectedGroupId(groupId);
-  };
-
-  const closeDetailsModal = () => {
-    setSelectedGroupId(null);
-  };
+  const handleCloseEditModal = () => setEditingGroupId(null);
+  const handleViewDetails = (groupId) => setSelectedGroupId(groupId);
+  const handleCloseDetailsModal = () => setSelectedGroupId(null);
 
   return (
     <AdminLayout>
       <div className="group-page-container">
-        <h2>Wallet Groups</h2>
+        {/* Header */}
+        <div className="form-header">
+          <h2>Wallet Groups</h2>
+          <button
+            type="button"
+            className="open-form-btn"
+            onClick={() => setShowForm(!showForm)}
+          >
+            {showForm ? "Close Form" : "Open Form"}
+          </button>
+        </div>
 
+        {/* Building Selector */}
         {buildings.length > 1 && (
           <div className="building-selector">
             <label htmlFor="building-select">Select Building:</label>
@@ -98,95 +111,95 @@ export default function Group() {
           </div>
         )}
 
-        {buildingId && (
-          <CreateGroup
-            onGroupCreated={handleGroupCreated}
-            buildingId={buildingId}
-          />
+        {/* Create Group Form */}
+        {showForm && buildingId && (
+          <div className="group-create-form-wrapper">
+            <CreateGroup
+              onGroupCreated={handleGroupCreated}
+              buildingId={buildingId}
+            />
+          </div>
         )}
 
-        <div className="group-list">
+        {/* Table of Groups */}
+        <div className="group-table-section">
           {loading ? (
             <p>Loading wallet groups...</p>
           ) : groups.length === 0 ? (
             <p>No wallet groups found.</p>
           ) : (
-            <ul>
-              {groups.map((group) => (
-                <li
-                  key={group.id}
-                  className="group-item"
-                  onClick={() => handleViewDetails(group.id)} // NEW: Click to view details
-                  style={{ cursor: "pointer" }}
-                >
-                  <FaEdit
-                    title="Edit group"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering details popup
-                      handleEditClick(group.id);
-                    }}
-                    className="edit-icon"
-                  />
-                  <strong className="group-name">
-                    {group.group_name || "Unnamed Group"}
-                  </strong>
-
-                  <p>
-                    <strong>Users Count:</strong> {group.users?.length || 0}
-                  </p>
-                  <p>
-                    <strong>Wallet Amount:</strong>{" "}
-                    {group.wallet_amount ?? "N/A"}
-                  </p>
-                  <p>
-                    <strong>Carry Forward:</strong>{" "}
-                    {group.carry_forward ? "Yes" : "No"}
-                  </p>
-                  <p>
-                    <strong>Exclude Weekend:</strong>{" "}
-                    {group.exclude_weekend ? "Yes" : "No"}
-                  </p>
-                  <p>
-                    <strong>Daily Wallet:</strong>{" "}
-                    {group.daily_wallet ? "Yes" : "No"}
-                  </p>
-                  <p>
-                    <strong>Days Count:</strong>{" "}
-                    {group.days_count ?? "N/A"}
-                  </p>
-                  <p>
-                    <strong>Payment Method:</strong>{" "}
-                    {group.payment_method
-                      ? group.payment_method.toUpperCase()
-                      : "N/A"}
-                  </p>
-
-                  <p className="created-date">
-                    <strong>Created:</strong>{" "}
-                    {new Date(group.created_datetime).toLocaleString()}
-                  </p>
-                </li>
-              ))}
-            </ul>
+            <div className="group-table-wrapper">
+              <table className="group-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Group Name</th>
+                    <th>Users</th>
+                    <th>Wallet Amount</th>
+                    <th>Carry Fwd</th>
+                    <th>Exclude Weekend</th>
+                    <th>Daily Wallet</th>
+                    <th>Days Count</th>
+                    <th>Payment Method</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {groups.map((group, index) => (
+                    <tr key={group.id}>
+                      <td>{index + 1}</td>
+                      <td>{group.group_name || "Unnamed Group"}</td>
+                      <td>{group.users?.length || 0}</td>
+                      <td>{group.wallet_amount ?? "N/A"}</td>
+                      <td>{group.carry_forward ? "Yes" : "No"}</td>
+                      <td>{group.exclude_weekend ? "Yes" : "No"}</td>
+                      <td>{group.daily_wallet ? "Yes" : "No"}</td>
+                      <td>{group.days_count ?? "N/A"}</td>
+                      <td>
+                        {group.payment_method
+                          ? group.payment_method.toUpperCase()
+                          : "N/A"}
+                      </td>
+                      <td>
+                        {new Date(group.created_datetime).toLocaleString()}
+                      </td>
+                      <td>
+                        <FaEye
+                          className="action-icon view-icon"
+                          title="View Details"
+                          onClick={() => handleViewDetails(group.id)}
+                        />
+                        <FaEdit
+                          className="action-icon edit-icon"
+                          title="Edit Group"
+                          onClick={() => handleEditClick(group.id)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
-        {/* Edit Group Modal */}
+        {/* Edit Modal */}
         {editingGroupId && (
           <UpdateGroupModal
             groupId={editingGroupId}
-            onClose={handleCloseModal}
+            onClose={handleCloseEditModal}
             onUpdated={fetchGroups}
             token={token}
           />
         )}
 
-        {/* NEW: Group Details Modal */}
+        {/* Details Modal */}
         {selectedGroupId && (
           <GroupDetailsModal
             groupId={selectedGroupId}
             token={token}
-            onClose={closeDetailsModal}
+            onClose={handleCloseDetailsModal}
           />
         )}
       </div>

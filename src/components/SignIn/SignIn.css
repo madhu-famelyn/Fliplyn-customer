@@ -1,146 +1,196 @@
-.signin-wrapper {
+/* SignInPage.css */
+
+/* Wrapper */
+.sip-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Allows content to grow taller */
-  background-color: #f7f7f5;
-  font-family: 'Inter', sans-serif;
-  padding: 20px;
-  /* overflow-y: auto; Enables vertical scrolling */
-  flex-direction: column; /* Stack content vertically if needed */
-}
-
-.signin-card {
-  background: white;
-  padding: 40px 30px;
-  width: 100%;
-  max-width: 420px;
-  border-radius: 12px;
-  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
-}
-
-.signin-heading {
-  font-weight: 600;
-  font-size: 24px;
-  line-height: 32px;
-  margin-bottom: 24px;
-  text-align: center;
-  color: #333;
-}
-
-.signin-form input {
-  width: 100%;
-  padding: 12px 14px;
-  margin-top: 6px;
-  margin-bottom: 20px;
-  border: 1px solid #d4d4d4;
-  border-radius: 8px;
-  background-color: #f0f5ff;
-  font-size: 15px;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
-}
-
-.signin-form input:focus {
-  outline: none;
-  border-color: #cc9735;
-  background-color: #ffffff;
-}
-
-.signin-password-wrapper {
+  height: 100vh;
+  background-color: #f5f5f5; /* light grey background */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   position: relative;
 }
 
-.signin-toggle-icon {
-  position: absolute;
-  top: 50%;
-  right: 12px;
-  transform: translateY(-50%);
-  cursor: pointer;
+/* Card */
+.sip-card {
+  background-color: #fff;
+  width: 400px;
+  padding: 40px 30px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.signin-button {
+/* Heading */
+.sip-heading {
+  color: #333;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Form */
+.sip-form {
   width: 100%;
-  padding: 12px;
-  background-color: #e68a00;
-  color: white;
-  border: none;
-  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Label */
+.sip-label {
+  font-size: 14px;
   font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.signin-button:hover {
-  background-color: #e68a00;
-}
-
-.signin-error {
-  color: #cc0000;
-  margin-top: 10px;
-  font-size: 14px;
-  text-align: center;
-}
-
-.signin-links {
-  margin-top: 24px;
-  text-align: center;
-  font-size: 14px;
   color: #333;
 }
 
-.signin-manager-link {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #e68a00;
-  text-decoration: underline;
-  cursor: pointer;
+/* Input */
+/* Input wrapper to make both inputs the same size */
+.sip-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* space between fields */
+  width: 100%;
 }
 
+/* Label and input container for consistent width */
+.sip-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 
+/* Inputs */
+.sip-input {
+  padding: 12px 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+  width: 100%; /* Ensures inputs stretch full width of wrapper */
+  box-sizing: border-box; /* Include padding in width */
+  background-color: #fff;
+  /* No border radius */
+}
 
-.signin-loader-overlay {
+.sip-input:focus {
+  border-color: #999;
+  box-shadow: none;
+}
+
+/* Password Wrapper */
+.sip-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sip-toggle-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #555;
+  font-size: 18px;
+}
+
+/* Button */
+.sip-button {
+  padding: 12px;
+  background-color: #ff6f1e; /* Orange button */
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.3s;
+  /* No border radius */
+}
+
+.sip-button:hover {
+  background-color: #ff8c42;
+}
+
+.sip-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error Message */
+.sip-error {
+  color: #ff0000;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Links */
+.sip-links {
+  margin-top: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.sip-links a {
+  color: #ff6f1e; /* Orange link */
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sip-links a:hover {
+  text-decoration: underline;
+}
+
+/* Loader Overlay */
+.sip-loader-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.75);
-  z-index: 9999;
+  background: rgba(0, 0, 0, 0.15);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
-.signin-loader-box {
-  text-align: center;
+.sip-loader-box {
   background: #fff;
-  padding: 1.5rem 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 4px solid #ccc;
-  border-top: 4px solid #007bff;
+/* Spinner */
+.sip-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ff6f1e;
+  border-top: 4px solid #fff;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
+  animation: sip-spin 1s linear infinite;
+  margin-bottom: 15px;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+@keyframes sip-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.signin-loader-text {
-  font-size: 16px;
+.sip-loader-text {
   color: #333;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .sip-card {
+    width: 90%;
+    padding: 30px 20px;
+  }
 }

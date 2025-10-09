@@ -270,6 +270,106 @@ input:checked + .slider:before {
 
 
 
+/* === Modal Popup for Item Update === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  backdrop-filter: blur(3px);
+}
+
+.modal-form {
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 14px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+.modal-form h3 {
+  text-align: center;
+  margin-bottom: 18px;
+  color: #333;
+  font-weight: 600;
+}
+
+.modal-form label {
+  display: block;
+  font-weight: 500;
+  margin-top: 10px;
+  color: #444;
+}
+
+.modal-form input[type="text"],
+.modal-form input[type="number"],
+.modal-form input[type="file"] {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.modal-form input:focus {
+  border-color: #007bff;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.form-actions button:hover {
+  background: #0056b3;
+}
+
+.form-actions .cancel {
+  background: #dc3545;
+}
+
+.form-actions .cancel:hover {
+  background: #b02a37;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 
 

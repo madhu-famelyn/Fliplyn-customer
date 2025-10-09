@@ -10,6 +10,16 @@ export default function ItemListByStall() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [editingItem, setEditingItem] = useState(null);
+  const [updateForm, setUpdateForm] = useState({
+    name: "",
+    price: "",
+    Gst_precentage: "",
+    tax_included: false,
+    is_available: true,
+    is_veg: true,
+    file: null,
+  });
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -46,13 +56,10 @@ export default function ItemListByStall() {
   // ✅ Toggle Availability
   const toggleAvailability = async (itemId, currentStatus) => {
     try {
-      // Update backend
       await axios.patch(
-        `https://admin-aged-field-2794.fly.dev/items/items/${itemId}/availability`,
+        `/items/items/${itemId}/availability`,
         { is_available: !currentStatus }
       );
-
-      // Update local state
       setItems((prev) =>
         prev.map((item) =>
           item.id === itemId ? { ...item, is_available: !currentStatus } : item
@@ -61,6 +68,72 @@ export default function ItemListByStall() {
     } catch (err) {
       console.error("Error updating availability:", err);
       alert("Failed to update availability. Please try again.");
+    }
+  };
+
+  // ✅ Open Edit Modal
+  const openEditModal = (item) => {
+    setEditingItem(item);
+    setUpdateForm({
+      name: item.name || "",
+      price: item.price || "",
+      Gst_precentage: item.Gst_precentage || "",
+      tax_included: item.tax_included || false,
+      is_available: item.is_available || true,
+      is_veg: item.is_veg || true,
+      file: null,
+    });
+  };
+
+  // ✅ Handle Form Change
+  const handleChange = (e) => {
+    const { name, value, type, checked, files } = e.target;
+    if (type === "checkbox") {
+      setUpdateForm((prev) => ({ ...prev, [name]: checked }));
+    } else if (type === "file") {
+      setUpdateForm((prev) => ({ ...prev, file: files[0] }));
+    } else {
+      setUpdateForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  // ✅ Submit Update
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    if (!editingItem) return;
+
+    const formData = new FormData();
+    formData.append("name", updateForm.name);
+    formData.append("price", updateForm.price);
+    formData.append("Gst_precentage", updateForm.Gst_precentage);
+    formData.append("tax_included", updateForm.tax_included);
+    formData.append("is_available", updateForm.is_available);
+    formData.append("is_veg", updateForm.is_veg);
+    if (updateForm.file) {
+      formData.append("file", updateForm.file);
+    }
+
+    try {
+      const response = await axios.put(
+        `https://admin-aged-field-2794.fly.dev/items/${editingItem.id}/update-image-details`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      // ✅ Update UI
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === editingItem.id ? { ...item, ...response.data } : item
+        )
+      );
+
+      setEditingItem(null);
+      alert("Item updated successfully!");
+    } catch (err) {
+      console.error("Update failed:", err);
+      alert("Failed to update item. Please try again.");
     }
   };
 
@@ -96,7 +169,8 @@ export default function ItemListByStall() {
                 <p className="ils-price">₹{item.price.toFixed(2)}</p>
                 <p className="ils-gst">incl. {gstAmount.toFixed(2)} GST</p>
               </div>
-              <div className="ils-toggle">
+              <div className="ils-actions">
+                
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -107,12 +181,89 @@ export default function ItemListByStall() {
                   />
                   <span className="slider round"></span>
                 </label>
+                <button
+                  className="ils-edit-btn"
+                  onClick={() => openEditModal(item)}
+                >
+                  Edit
+                </button>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* ✅ Edit Modal */}
+      {editingItem && (
+        <div className="ils-modal">
+          <div className="ils-modal-content">
+            <h3>Update Item</h3>
+            <form onSubmit={handleUpdateSubmit}>
+              <input
+                type="text"
+                name="name"
+                placeholder="Item name"
+                value={updateForm.name}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="number"
+                name="price"
+                placeholder="Price"
+                value={updateForm.price}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="number"
+                name="Gst_precentage"
+                placeholder="GST %"
+                value={updateForm.Gst_precentage}
+                onChange={handleChange}
+              />
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="tax_included"
+                  checked={updateForm.tax_included}
+                  onChange={handleChange}
+                />
+                Tax Included
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="is_veg"
+                  checked={updateForm.is_veg}
+                  onChange={handleChange}
+                />
+                Vegetarian
+              </label>
+
+              <label>
+                Upload New Image:
+                <input type="file" name="file" onChange={handleChange} />
+              </label>
+
+              <div className="ils-modal-buttons">
+                <button type="submit" className="ils-save-btn">
+                  Update
+                </button>
+                <button
+                  type="button"
+                  className="ils-cancel-btn"
+                  onClick={() => setEditingItem(null)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-

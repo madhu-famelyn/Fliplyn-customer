@@ -4,7 +4,7 @@ import { login } from './sevice';
 import { useAuth } from '../AuthContex/AdminContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 export default function SignInPage() {
   const [email, setEmail] = useState('');
@@ -20,24 +20,22 @@ export default function SignInPage() {
     setError('');
     setLoading(true);
     try {
-const response = await login(email, password);
-console.log("Login API Response:", response); // ✅ debug
+      const response = await login(email, password);
+      console.log("Login API Response:", response);
 
-// If your API returns response.data, extract it first
-const data = response.data || response; 
+      const data = response.data || response;
 
-let userId = data.user?.id;
-if (!userId && data.access_token) {
-  const decoded = jwtDecode(data.access_token);
-  userId = decoded.sub;
-}
+      let userId = data.user?.id;
+      if (!userId && data.access_token) {
+        const decoded = jwtDecode(data.access_token);
+        userId = decoded.sub;
+      }
 
-console.log("✅ Extracted adminId:", userId);
+      console.log("✅ Extracted adminId:", userId);
 
-loginUser(data.access_token, email, userId, 'admin');
-navigate('/dashboard');
-
+      loginUser(data.access_token, email, userId, 'admin');
       navigate('/dashboard');
+
     } catch (err) {
       setError(err.message || 'Invalid credentials.');
     } finally {
@@ -46,51 +44,57 @@ navigate('/dashboard');
   };
 
   return (
-    <div className="signin-wrapper">
-      <div className="signin-card">
-        <h2 className="signin-heading">Sign In</h2>
+    <div className="sip-wrapper">
+      <div className="sip-card">
+        <h2 className="sip-heading">Sign In</h2>
 
-        <form onSubmit={handleSignIn} className="signin-form">
-          <label>Email *</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+<form onSubmit={handleSignIn} className="sip-form">
+  <div className="sip-input-wrapper">
+    <label className="sip-label">Email *</label>
+    <input
+      type="email"
+      required
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      className="sip-input"
+    />
+  </div>
 
-          <label>Password *</label>
-          <div className="signin-password-wrapper">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <span
-              className="signin-toggle-icon"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </span>
-          </div>
+  <div className="sip-input-wrapper">
+    <label className="sip-label">Password *</label>
+    <div className="sip-password-wrapper">
+      <input
+        type={showPassword ? 'text' : 'password'}
+        required
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="sip-input"
+      />
+      <span
+        className="sip-toggle-icon"
+        onClick={() => setShowPassword((prev) => !prev)}
+      >
+        {showPassword ? <FaEyeSlash /> : <FaEye />}
+      </span>
+    </div>
+  </div>
 
-          <button type="submit" className="signin-button" disabled={loading}>
-            {loading ? 'Signing In...' : 'Sign In'}
-          </button>
-          {error && <p className="signin-error">{error}</p>}
-        </form>
+  <button type="submit" className="sip-button" disabled={loading}>
+    {loading ? 'Signing In...' : 'Sign In'}
+  </button>
+</form>
 
-        <div className="signin-links">
+
+        <div className="sip-links">
           <p>Don’t have an account? <Link to="/signup">Sign Up</Link></p>
         </div>
       </div>
 
       {loading && (
-        <div className="signin-loader-overlay">
-          <div className="signin-loader-box">
-            <div className="spinner" />
-            <p className="signin-loader-text">Please wait, logging you in...</p>
+        <div className="sip-loader-overlay">
+          <div className="sip-loader-box">
+            <div className="sip-spinner" />
+            <p className="sip-loader-text">Please wait, logging you in...</p>
           </div>
         </div>
       )}

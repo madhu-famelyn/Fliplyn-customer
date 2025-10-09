@@ -1,153 +1,181 @@
-/* Container */
+/* Main container */
 .add-money-container {
-  max-width: 500px;
-  margin: 40px auto;
-  padding: 30px;
-  background-color: #f7f7f5; /* consistent with your palette */
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  font-family: 'Segoe UI', sans-serif;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
 }
 
-/* Heading */
-.add-money-container h2 {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #333;
+/* Header section */
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.form-header h2 {
   font-size: 22px;
+  font-weight: 600;
+}
+
+/* Toggle form button */
+.open-form-btn {
+  background-color: orange;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.open-form-btn:hover {
+  background-color: darkorange;
 }
 
 /* Form */
 .add-money-form {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+  background: #fafafa;
+  padding: 15px;
+  border: 1px solid #ddd;
 }
 
-/* Inputs & Select */
+/* All inputs and selects */
+.add-money-form select,
 .add-money-form input[type="text"],
-.add-money-form input[type="number"],
-.add-money-form select {
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid #d4d4d4;
-  background-color: #f0f5ff;
-  font-size: 16px;
-  transition: border 0.3s ease;
-  color: #333;
-}
-
-/* Larger font & spacing in select for visibility */
-.add-money-form select option {
+.add-money-form input[type="number"] {
+  flex: 1 1 300px;
   padding: 10px;
-  font-size: 15px;
-  color: #333;
-  background-color: #fff;
-}
-
-/* Focus effect */
-.add-money-form input:focus,
-.add-money-form select:focus {
-  border: 1px solid #cc9735;
+  border: 1px solid #ccc;
   outline: none;
-  background-color: #ffffff;
+  font-size: 14px;
+  background-color: #fff;
+  box-sizing: border-box;
 }
 
-/* Checkbox group */
+.add-money-form select:focus,
+.add-money-form input:focus {
+  border-color: #888;
+}
+
+/* Checkbox container */
 .checkbox-container {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
-  color: #333;
+  flex: 1 1 100%;
+  margin-top: 5px;
 }
 
-/* Button */
-.add-money-form button {
-  padding: 12px;
-  font-size: 16px;
-  background-color: #e68a00;
-  color: white;
+.checkbox-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+/* Submit button */
+.add-money-form button[type="submit"] {
+  background-color: orange;
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.3s ease;
-}
-
-.add-money-form button:hover {
-  background-color: #e68a00;
-}
-
-/* Messages */
-.success-message {
-  color: #008000;
+  padding: 10px 18px;
   font-size: 14px;
-  margin-top: 15px;
-  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  flex: 1 1 150px;
+}
+
+.add-money-form button[type="submit"]:hover {
+  background-color: darkorange;
+}
+
+/* Success and error messages */
+.success-message {
+  background-color: #e6f7e6;
+  color: #2e7d32;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #c8e6c9;
+  font-size: 14px;
 }
 
 .error-message {
-  color: #cc0000;
+  background-color: #fdecea;
+  color: #c62828;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #f5c6cb;
   font-size: 14px;
-  margin-top: 15px;
-  text-align: center;
 }
 
-
-/* Wallet.css */
-
+/* Wallet table section */
 .wallet-section {
-  margin-top: 40px;
-  padding: 24px;
-  border-radius: 16px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 30px;
 }
 
 .wallet-section h3 {
-  font-size: 24px;
+  margin-bottom: 10px;
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 20px;
-  color: #333;
-  border-bottom: 2px solid #ccc;
-  padding-bottom: 10px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
 }
 
-.wallet-list {
-  display: grid;
-  gap: 20px;
-}
-
-.wallet-item {
+/* Table wrapper for horizontal scroll */
+.wallet-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #ddd;
   background-color: #fff;
-  padding: 18px 20px;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
 }
 
-.wallet-item:hover {
-  transform: translateY(-2px);
+.wallet-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
 }
 
-.wallet-item strong {
-  display: inline-block;
-  width: 140px;
+.wallet-table th,
+.wallet-table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.wallet-table th {
+  background-color: #f8f8f8;
   font-weight: 600;
-  color: #444;
+  border-bottom: 2px solid #ddd;
 }
 
-.wallet-item br {
-  margin-bottom: 8px;
+.wallet-table tr:hover {
+  background-color: #f9f9f9;
 }
 
+/* Responsive */
 @media (max-width: 600px) {
-  .wallet-item strong {
-    width: auto;
-    display: block;
-    margin-bottom: 4px;
+  .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .add-money-form {
+    flex-direction: column;
+  }
+
+  .add-money-form button[type="submit"],
+  .open-form-btn {
+    width: 100%;
+    text-align: center;
   }
 }

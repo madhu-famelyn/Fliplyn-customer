@@ -87,9 +87,7 @@ export default function ViewBuildingManagers() {
     }
   };
 
-  // ===========================
-  // Create manager
-  // ===========================
+
   const handleCreateManager = async (e) => {
     e.preventDefault();
     try {

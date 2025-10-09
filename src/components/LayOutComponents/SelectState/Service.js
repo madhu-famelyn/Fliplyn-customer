@@ -1,7 +1,7 @@
 // src/services/StateService.js
 import axios from 'axios';
 
-const API_BASE_URL = '';
+const API_BASE_URL = 'https://admin-aged-field-2794.fly.dev';
 
 export const createStateSelection = async (vendorId, countryId, stateName, token) => {
   const response = await axios.post(

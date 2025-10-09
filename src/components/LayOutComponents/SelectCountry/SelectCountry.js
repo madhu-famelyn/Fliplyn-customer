@@ -2,7 +2,7 @@
 import React from 'react';
 import AdminLayout from '../../LayOut/AdminLayout';
 import './SelectCountry.css';
-import { useAuth } from '../../AuthContex/ContextAPI';
+import { useAuth } from '../../AuthContex/AdminContext';
 import { createCountrySelection } from './Service';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,27 +26,46 @@ export default function SelectCountry() {
   const { userId, token } = useAuth();
   const navigate = useNavigate();
 
-  
-const handleSelectCountry = async (countryId) => {
-  const countryObj = dummyCountries.find((c) => c.id === countryId);
-  if (!countryObj) return;
+  const handleSelectCountry = async (countryId) => {
+    const countryObj = dummyCountries.find((c) => c.id === countryId);
+    if (!countryObj) return;
 
-  try {
-    const response = await createCountrySelection(userId, countryObj.name, token);
-    console.log('✅ Country Created:', response);
+    // ✅ LOG: Debug all data before sending
+    console.log('---------------------------');
+    console.log('UserId:', userId);
+    console.log('Token:', token);
+    console.log('Selected Country Object:', countryObj);
+    console.log('Sending payload:', { userId, countryName: countryObj.name });
 
-    // Redirect to state selection with country name and ID
-    navigate(`/select-state`, {
-      state: {
-        countryName: countryObj.name,
-        countryId: response.id, // UUID returned from backend
-      },
-    });
-  } catch (error) {
-    console.error('❌ Error creating country selection:', error);
-    alert('Something went wrong while creating the country.');
-  }
-};
+    try {
+      const response = await createCountrySelection(userId, countryObj.name, token);
+
+      // ✅ LOG: Full response
+      console.log('Full Response:', response);
+      console.log('Country Created ID:', response.id);
+
+      navigate(`/select-state`, {
+        state: {
+          countryName: countryObj.name,
+          countryId: response.id, // UUID returned from backend
+        },
+      });
+    } catch (error) {
+      // ✅ LOG: Everything about the error
+      console.error('❌ Error creating country selection:');
+      if (error.response) {
+        console.error('Status:', error.response.status);
+        console.error('Headers:', error.response.headers);
+        console.error('Data:', error.response.data);
+      } else if (error.request) {
+        console.error('Request:', error.request);
+      } else {
+        console.error('Message:', error.message);
+      }
+      console.error('Config:', error.config);
+      alert('Something went wrong while creating the country. Check console for details.');
+    }
+  };
 
   return (
     <AdminLayout>
@@ -64,7 +83,7 @@ const handleSelectCountry = async (countryId) => {
                 onClick={() => handleSelectCountry(country.id)}
               >
                 {isoCode && (
-                 <img
+                  <img
                     src={`https://flagcdn.com/w40/${isoCode}.png`}
                     alt={`${country.name} flag`}
                     className="flag-icon"

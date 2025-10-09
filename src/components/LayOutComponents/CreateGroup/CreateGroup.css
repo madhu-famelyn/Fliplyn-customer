@@ -1,157 +1,187 @@
-/* CreateGroup.css */
+/* ✅ CreateGroup.css */
 
-/* Import Poppins font from Google Fonts */
+/* Font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
-/* Apply Poppins font globally */
 *,
 *::before,
 *::after {
+  box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* Create Group Container */
+/* 🌿 Container */
 .create-group-container {
-  background-color: #f0f5ff;
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 500px;
+  background: #ffffff;
+  max-width: 700px;
   margin: 2rem auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
 }
 
 .create-group-container h1 {
-  color: #333333;
+  font-size: 1.6rem;
+  font-weight: 600;
   text-align: center;
   margin-bottom: 1.5rem;
+  color: #333;
 }
 
+/* 📝 Form */
 .create-group-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.5rem;
+}
+
+.create-group-form label {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
 }
 
 .create-group-form input[type="text"],
 .create-group-form input[type="number"],
-.create-group-form select,
-.create-group-form input[type="file"] {
-  padding: 0.6rem;
-  border: 1px solid #d4d4d4;
+.create-group-form input[type="file"],
+.create-group-form select {
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  outline: none;
   border-radius: 4px;
-  background-color: #ffffff;
-  color: #333333;
-  font-size: 1rem;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
 }
 
-.create-group-form label {
-  color: #333333;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.create-group-form input:focus,
+.create-group-form select:focus {
+  border-color: #888;
 }
 
+/* 🧰 Checkbox fields */
 .create-group-form input[type="checkbox"] {
-  accent-color: #e68a00;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
 }
 
-.create-group-form button {
-  background-color: #e68a00;
-  color: #ffffff;
-  padding: 0.75rem;
+.create-group-form label input[type="checkbox"] {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.create-group-form label:has(input[type="checkbox"]) {
+  flex-direction: row;
+  align-items: center;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+/* 📎 File input spans both columns */
+.create-group-form input[type="file"] {
+  grid-column: span 2;
+}
+
+/* 💾 Submit Button */
+.create-group-form button[type="submit"] {
+  grid-column: span 2;
+  padding: 12px;
+  background-color: #f97316; /* Orange */
+  color: #fff;
   font-size: 1rem;
+  font-weight: 500;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
-.create-group-form button:hover {
-  background-color: #e68a00;
+.create-group-form button[type="submit"]:hover {
+  background-color: #ea580c;
 }
 
+/* 🟢 / 🔴 Messages */
 .message {
-  text-align: center;
-  font-weight: bold;
   margin-top: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  padding: 10px;
+  border-radius: 4px;
 }
 
 .message.success {
-  color: #008000;
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #34d399;
 }
 
 .message.error {
-  color: #cc0000;
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
 }
 
-
-/* Group Page Container */
-.group-page-container {
-  padding: 20px;
+/* 📜 Missing Users Section */
+.missing-users-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
 }
 
-.group-page-container h2 {
-  margin-bottom: 20px;
+.missing-users-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #333;
 }
 
-.building-selector {
-  margin-bottom: 20px;
-}
-
-.building-selector label {
-  margin-right: 10px;
-}
-
-.building-selector select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-}
-
-.group-list ul {
+.missing-users-section ul {
   list-style: none;
-  padding: 0;
+  margin-bottom: 1rem;
 }
 
-.group-item {
-  position: relative;
-  padding: 12px;
-  margin-bottom: 10px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.missing-users-section li {
+  background: #f9fafb;
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
 }
 
-.edit-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+.missing-users-section button {
+  background-color: #2563eb;
+  color: #fff;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  color: #e68a00;
-  font-size: 16px;
+  transition: background 0.2s ease;
 }
 
-.group-name {
-  font-size: 16px;
-  color: #e68a00;
+.missing-users-section button:hover {
+  background-color: #1e40af;
 }
 
-.group-item p {
-  margin: 5px 0;
+/* 📱 Responsive */
+@media (max-width: 600px) {
+  .create-group-form {
+    grid-template-columns: 1fr;
+  }
+
+  .create-group-form button[type="submit"],
+  .create-group-form input[type="file"] {
+    grid-column: span 1;
+  }
 }
-
-.created-date {
-  font-size: 12px;
-  color: #555;
-}
-
-
-
-
-
-
 
 
 

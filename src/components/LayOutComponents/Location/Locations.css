@@ -1,141 +1,108 @@
+/* ========== LOCATIONS PAGE ========== */
 .locations-container {
-  padding: 40px;
-  background-color: #f7f7f5;
+  padding: 2rem;
+  background-color: #ffffff;
+  color: #000000;
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
 }
 
+/* Header */
 .locations-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 1.5rem;
 }
 
 .locations-header h1 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #333333;
+  font-size: 1.8rem;
+  font-weight: 600;
 }
 
 .add-location-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #e68a00;
+  background-color: #ff6f00; /* orange */
   color: #ffffff;
   border: none;
-  padding: 10px 20px;
-  font-weight: 600;
-  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
-  transition: background 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 125, 128, 0.2);
+  font-weight: 500;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .add-location-btn:hover {
-  background-color: #e68a00;
+  background-color: #e65c00;
+  transform: translateY(-2px);
 }
 
+/* Locations Grid */
 .locations-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
+/* Location Card */
 .location-card {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  cursor: pointer;
+  background-color: #f9f9f9;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border: 1px solid #e0e0e0;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
 }
 
 .location-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+/* Card Header */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 0.8rem;
 }
 
 .card-header h3 {
-  font-size: 1.3rem;
-  color: #333333;
+  font-size: 1.1rem;
+  font-weight: 600;
   margin: 0;
 }
 
+/* Card Actions */
 .card-actions {
   display: flex;
-  gap: 12px;
+  gap: 0.5rem;
 }
 
-.icon {
-  font-size: 1.1rem;
+.card-actions .icon {
   cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.edit-icon {
-  color: #e68a00;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .edit-icon:hover {
-  color: #e68a00;
-}
-
-.delete-icon {
-  color: #cc0000;
+  color: #ff6f00;
+  transform: scale(1.2);
 }
 
 .delete-icon:hover {
-  color: #a80000;
+  color: #e53935;
+  transform: scale(1.2);
 }
 
+/* Card Text */
 .location-card p {
+  margin: 0.25rem 0;
   font-size: 0.95rem;
-  color: #333333;
-  margin: 4px 0;
 }
 
-.manager-section {
-  margin-top: 12px;
-  background: #f0f5ff;
-  padding: 10px 14px;
-  border-radius: 10px;
-}
-
-.manager-section strong {
-  display: block;
-  margin-bottom: 6px;
-  color: #333333;
-}
-
-.manager-section ul {
-  padding-left: 16px;
-  margin: 0;
-}
-
-.manager-section li {
-  font-size: 0.9rem;
-  color: #555555;
-  margin: 2px 0;
-}
-
-@media (max-width: 768px) {
-  .locations-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .add-location-btn {
-    width: 100%;
-    justify-content: center;
-  }
+/* Clickable card pointer */
+.card-clickable:hover {
+  cursor: pointer;
 }

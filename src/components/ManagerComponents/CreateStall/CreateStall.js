@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContex/ContextAPI";
 import axios from "axios";
-import "./CreateStall.css"
+import "./CreateStall.css";
+
 export default function AddStall() {
   const navigate = useNavigate();
   const { token, user } = useAuth();
 
-  // form state
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [openingTime, setOpeningTime] = useState("");
@@ -19,10 +19,19 @@ export default function AddStall() {
     setFile(e.target.files[0]);
   };
 
+  // Convert 24-hour time (HH:MM) to 12-hour AM/PM format
+  const formatTimeToAMPM = (time) => {
+    if (!time) return "";
+    const [hours, minutes] = time.split(":");
+    let h = parseInt(hours, 10);
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12; // convert 0 => 12
+    return `${h.toString().padStart(2, "0")}:${minutes} ${ampm}`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ Get IDs from AuthContext
     const adminId = user?.admin_id;
     const managerId = user?.id;
     const buildingId = user?.building_id;
@@ -32,23 +41,26 @@ export default function AddStall() {
       return;
     }
 
-    // ✅ Build form data
     const formData = new FormData();
     formData.append("name", name);
     formData.append("description", description);
     formData.append("building_id", buildingId);
     formData.append("admin_id", adminId);
     formData.append("manager_id", managerId);
-    formData.append("opening_time", openingTime);
-    formData.append("closing_time", closingTime);
+    formData.append("opening_time", formatTimeToAMPM(openingTime));
+    formData.append("closing_time", formatTimeToAMPM(closingTime));
     formData.append("is_available", isAvailable);
-    if (file) {
-      formData.append("file", file);
+    if (file) formData.append("file", file);
+
+    // Log form data for debugging
+    console.log("🔹 Sending form data:");
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
     }
 
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/stalls/`, // replace with your base URL
+        "https://admin-aged-field-2794.fly.dev/stalls/", // replace with your real API URL
         formData,
         {
           headers: {
@@ -63,7 +75,7 @@ export default function AddStall() {
         navigate("/manager-stalls");
       }
     } catch (error) {
-      console.error("Error creating stall:", error);
+      console.error("❌ Error creating stall:", error.response?.data || error.message);
       alert(error.response?.data?.detail || "Failed to create stall");
     }
   };
@@ -71,6 +83,7 @@ export default function AddStall() {
   return (
     <div className="add-stall-container">
       <h2>Create New Stall</h2>
+
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <input
           type="text"
@@ -85,19 +98,19 @@ export default function AddStall() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+
         <p>Opening Time</p>
         <input
           type="time"
           value={openingTime}
           onChange={(e) => setOpeningTime(e.target.value)}
-          placeholder="Opening Time"
         />
+
         <p>Closing Time</p>
         <input
           type="time"
           value={closingTime}
           onChange={(e) => setClosingTime(e.target.value)}
-          placeholder="Closing Time"
         />
 
         <label>
@@ -109,7 +122,7 @@ export default function AddStall() {
           Is Available
         </label>
 
-        <input type="file" onChange={handleFileChange} />
+        <input type="file" accept="image/*" onChange={handleFileChange} />
 
         <button type="submit">Create Stall</button>
       </form>

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../LayOut/AdminLayout';
 import { createStateSelection } from './Service';
 import './SelectState.css';
-import { useAuth } from '../../AuthContex/ContextAPI';
+import { useAuth } from '../../AuthContex/AdminContext';
 
 export default function SelectState() {
   const { state } = useLocation(); // Expects: countryId, countryName

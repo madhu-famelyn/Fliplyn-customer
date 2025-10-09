@@ -2,10 +2,19 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FaMapMarkerAlt, FaBuilding, FaStore, FaShoppingCart,
-  FaUsers, FaSignOutAlt, FaBars, FaTimes
+  FaMapMarkerAlt,
+  FaBoxOpen,
+  FaStore,
+  FaWallet,
+  FaUsers,
+  FaSignOutAlt,
+  FaBars,
+  FaTimes,
+  FaUserPlus,
 } from 'react-icons/fa';
-import { GiToken } from 'react-icons/gi';  
+import { GiTakeMyMoney } from 'react-icons/gi';
+import { MdGroupAdd, MdOutlineLocalShipping } from 'react-icons/md';
+import { RiFileList2Line } from 'react-icons/ri';
 import './AdminLayout.css';
 
 export default function AdminLayout({ children }) {
@@ -15,45 +24,84 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="admin-layout">
+      {/* Hamburger for mobile */}
       <button className="hamburger" onClick={toggleSidebar}>
         {sidebarOpen ? <FaTimes /> : <FaBars />}
       </button>
 
+      {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <div className="logo">Fliplyn<br /><span>Admin Panel</span></div>
-        {/* Scrollable wrapper */}
+        <div className="logo">
+          Fliplyn<br /><span>Admin Panel</span>
+        </div>
+
         <div className="sidebar-scroll">
           <nav className="nav-menu">
             <ul>
-              <li><Link to="/locations" onClick={toggleSidebar}><FaMapMarkerAlt /> Locations</Link></li>
-              <li><Link to="/items-admin" onClick={toggleSidebar}><FaBuilding /> Items</Link></li>
-              <li><Link to="/stalls" onClick={toggleSidebar}><FaStore /> Stalls</Link></li>
-              <li><Link to="/add-money" onClick={toggleSidebar}><FaShoppingCart /> Add wallets</Link></li>
-              <li><Link to="/create-group" onClick={toggleSidebar}><FaShoppingCart /> Add wallets in Group</Link></li>
-              <li><Link to="/user-creation" onClick={toggleSidebar}><FaUsers /> Create Users</Link></li>
-              <li><Link to="/token" onClick={toggleSidebar}><GiToken/> Token</Link></li>
-              <li><Link to="/get-order-email" onClick={toggleSidebar}><GiToken/> Get Order</Link></li>
-              {/* New HR Details */}
-              {/* <li><Link to="/hr-details" onClick={toggleSidebar}><FaUsers /> HR Details</Link></li> */}
+              <li>
+                <Link to="/locations" onClick={toggleSidebar}>
+                  <FaMapMarkerAlt /> Locations
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/items-admin" onClick={toggleSidebar}>
+                  <FaBoxOpen /> Items
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/stalls" onClick={toggleSidebar}>
+                  <FaStore /> Stalls
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/add-money" onClick={toggleSidebar}>
+                  <FaWallet /> Add Wallets
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/create-group" onClick={toggleSidebar}>
+                  <MdGroupAdd /> Wallet Groups
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/user-creation" onClick={toggleSidebar}>
+                  <FaUserPlus /> Create Users
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/token" onClick={toggleSidebar}>
+                  <GiTakeMyMoney /> Token Management
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/image-wallet" onClick={toggleSidebar}>
+                  <RiFileList2Line /> Get Order
+                </Link>
+              </li>
+                    <li>
+                <Link to="/image-wallet" onClick={toggleSidebar}>
+                  <RiFileList2Line /> manager wallet
+                </Link>
+              </li>
 
               <li className="menu-separator"></li>
 
-              <li className="admin-info">
-                <div className="user-circle">A</div>
-                <div>
-                  <strong>Admin User</strong><br />
-                  <small>Super Admin</small>
-                </div>
-              </li>
-              <li><button className="logout-btn"><FaSignOutAlt /> Logout</button></li>
+              {/* Admin Info */}
+
             </ul>
           </nav>
         </div>
       </aside>
 
-      <main className="main-content">
-        {children}
-      </main>
+      {/* Main content */}
+      <main className="main-content">{children}</main>
     </div>
   );
 }

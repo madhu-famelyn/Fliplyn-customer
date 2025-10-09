@@ -60,6 +60,7 @@ import ViewManagers from "./components/UserCreations/ManagerCreation/Manager";
 import ViewVendors from "./components/UserCreations/VendorCreation/Vendor";
 import ManagerViewVendors from "./components/ManagerComponents/AddVendor/AddVendor";
 import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
+// import { UseAdminWallets } from "./components/ImageWallet/ImageWallet";
 // import ViewBuildingManagers from "./components/UserCreations/BuildingManagerCreations/BuildingManager";
 
 // ✅ Admin Private Route
@@ -105,7 +106,7 @@ function App() {
               <Route path="/item" element={<AdminPrivateRoute element={<Item />} />} />
               <Route path="/manager-login" element={<ManagerLogin />} />
               <Route path="/manager-stalls" element={<ManagerStallIds />} />
-              <Route path="/item/:stallId" element={<ItemListByStall />} />
+              <Route path="/manager-items/:stallId" element={<ItemListByStall />} />
               <Route path="/add-refund" element={<AddRefund />} />
               <Route path="/manager-details" element={<AdminPrivateRoute element={<ManagerDetails />} />} />
               <Route path="/manager-items" element={<AdminPrivateRoute element={<ItemDetails />} />} />
@@ -135,6 +136,8 @@ function App() {
               <Route path="/user-creation" element={<MainPage />} />
               <Route path="/view-managers" element={<ViewManagers />} />
               <Route path="view-vendors" element={<ViewVendors />} />
+              {/* <Route path="/image-wallet" element={<UseAdminWallets />} /> */}
+
               <Route path="manager-view-vendors" element={<ManagerViewVendors />} />
 
 

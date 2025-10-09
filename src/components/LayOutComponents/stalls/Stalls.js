@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../AuthContex/ContextAPI';
+import { useAuth } from '../../AuthContex/AdminContext';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../../LayOut/AdminLayout';
 import { FaEdit } from 'react-icons/fa';
@@ -10,6 +9,7 @@ import {
   fetchStallsByBuilding,
   fetchBuildings,
   deleteStall,
+  editStallBasic, // ✅ we'll add this in Service.js
 } from './Service';
 
 export default function CreateStallForm() {
@@ -35,36 +35,28 @@ export default function CreateStallForm() {
   const [showForm, setShowForm] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
-  
-useEffect(() => {
-  // Use adminId/token from context, fallback to localStorage
-  const storedAdminId = adminId || localStorage.getItem("adminId");
-  const storedToken = token || localStorage.getItem("token");
+  // ✅ Load buildings & stalls
+  useEffect(() => {
+    const storedAdminId = adminId || localStorage.getItem("adminId");
+    const storedToken = token || localStorage.getItem("token");
 
-  if (!storedAdminId || !storedToken) {
-    console.warn("⚠️ No adminId/token found in context or localStorage", {
-      adminId: storedAdminId,
-      token: storedToken,
-    });
-    return;
-  }
+    if (!storedAdminId || !storedToken) {
+      console.warn("⚠️ No adminId/token found in context or localStorage");
+      return;
+    }
 
-  console.log("✅ useEffect - Using adminId:", storedAdminId);
-  console.log("✅ useEffect - Using token:", storedToken);
+    fetchBuildings(storedAdminId, storedToken)
+      .then((data) => {
+        setBuildings(data);
+        if (data.length > 0) {
+          setForm((prev) => ({ ...prev, building_id: data[0].id }));
+          fetchAllStalls(data, storedToken);
+        }
+      })
+      .catch((err) => console.error("❌ Error fetching buildings:", err));
+  }, [adminId, token]);
 
-  fetchBuildings(storedAdminId, storedToken)
-    .then((data) => {
-      console.log("🏢 Buildings fetched:", data);
-      setBuildings(data);
-      if (data.length > 0) {
-        setForm((prev) => ({ ...prev, building_id: data[0].id }));
-        fetchAllStalls(data, storedToken);
-      }
-    })
-    .catch((err) => console.error("❌ Error fetching buildings:", err));
-}, [adminId, token]);
-
-
+  // ✅ Fetch all stalls grouped by building
   const fetchAllStalls = async (buildings, token) => {
     try {
       const allStallsPromises = buildings.map((b) =>
@@ -81,6 +73,7 @@ useEffect(() => {
     }
   };
 
+  // ✅ Form change handlers
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -93,81 +86,76 @@ useEffect(() => {
     setForm((prev) => ({ ...prev, file: e.target.files[0] }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  // ✅ Handle form submit (Create / Edit)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!adminId) {
-    alert("⚠️ Admin ID missing. Please login again.");
-    return;
-  }
-
-  if (!form.name || !form.description || !form.building_id || (!form.file && !editMode)) {
-    return alert('⚠️ Please fill all required fields.');
-  }
-
-  console.log("📤 Submitting stall with adminId:", adminId);
-
-  setLoading(true);
-  try {
-if (editMode) {
-  alert('✅ Stall updated successfully!');
-
-  // Update local UI without waiting for fetch
-  setAllStalls(prev =>
-    prev.map(group =>
-      group.building.id === form.building_id
-        ? {
-            ...group,
-            stalls: group.stalls.map(s =>
-              s.id === editingStallId ? { ...s, ...form } : s
-            ),
-          }
-        : group
-    )
-  );
-}else {
-      // ✅ Use FormData for create
-      const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("description", form.description);
-      formData.append("building_id", form.building_id);
-      formData.append("admin_id", adminId);
-      if (form.manager_id) formData.append("manager_id", form.manager_id);
-      if (form.opening_time) formData.append("opening_time", form.opening_time);
-      if (form.closing_time) formData.append("closing_time", form.closing_time);
-      formData.append("is_available", form.is_available);
-      if (form.file) formData.append("file", form.file);
-
-      await createStall(formData, token);
-      alert('✅ Stall created successfully!');
+    const storedAdminId = adminId || localStorage.getItem("adminId");
+    if (!storedAdminId) {
+      alert("⚠️ Admin ID missing. Please login again.");
+      return;
     }
 
-    // Reset form after success
-    setForm({
-      name: '',
-      description: '',
-      building_id: form.building_id,
-      manager_id: '',
-      opening_time: '',
-      closing_time: '',
-      is_available: true,
-      file: null,
-    });
-    setShowForm(false);
-    setEditMode(false);
-    setEditingStallId(null);
-    setShowPopup(false);
-    fetchAllStalls(buildings, token);
+    if (!form.name || !form.description || !form.building_id || (!form.file && !editMode)) {
+      return alert('⚠️ Please fill all required fields.');
+    }
 
-  } catch (err) {
-    console.error('❌ Operation failed:', err);
-    alert('Operation failed');
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    try {
+      if (editMode && editingStallId) {
+        // ✅ Update Stall via working API
+        const formData = new FormData();
+        formData.append("name", form.name);
+        formData.append("description", form.description);
+        if (form.opening_time) formData.append("opening_time", form.opening_time);
+        if (form.closing_time) formData.append("closing_time", form.closing_time);
+        formData.append("is_available", form.is_available);
+        if (form.file) formData.append("file", form.file);
 
+        await editStallBasic(editingStallId, formData, token);
+        alert('✅ Stall updated successfully!');
+      } else {
+        // ✅ Create Stall
+        const formData = new FormData();
+        formData.append("name", form.name);
+        formData.append("description", form.description);
+        formData.append("building_id", form.building_id);
+        formData.append("admin_id", storedAdminId);
+        if (form.manager_id) formData.append("manager_id", form.manager_id);
+        if (form.opening_time) formData.append("opening_time", form.opening_time);
+        if (form.closing_time) formData.append("closing_time", form.closing_time);
+        formData.append("is_available", form.is_available);
+        if (form.file) formData.append("file", form.file);
 
+        await createStall(formData, token);
+        alert('✅ Stall created successfully!');
+      }
+
+      // ✅ Refresh UI
+      setForm({
+        name: '',
+        description: '',
+        building_id: form.building_id,
+        manager_id: '',
+        opening_time: '',
+        closing_time: '',
+        is_available: true,
+        file: null,
+      });
+      setShowForm(false);
+      setEditMode(false);
+      setEditingStallId(null);
+      setShowPopup(false);
+      fetchAllStalls(buildings, token);
+    } catch (err) {
+      console.error('❌ Operation failed:', err);
+      alert('Operation failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Edit button click
   const handleEditClick = (stall) => {
     setForm({
       name: stall.name,
@@ -184,6 +172,7 @@ if (editMode) {
     setShowPopup(true);
   };
 
+  // ✅ Delete stall
   const handleDeleteStall = async () => {
     if (!window.confirm('⚠️ Are you sure you want to delete this stall?')) return;
     try {
@@ -205,11 +194,11 @@ if (editMode) {
 
   return (
     <AdminLayout>
-      <div className=" stalls-admin-stall-container">
-        <h1 className=" stalls-admin-stall-heading">Stall Management</h1>
+      <div className="stalls-admin-stall-container">
+        <h1 className="stalls-admin-stall-heading">Stall Management</h1>
 
         <button
-          className=" stalls-admin-toggle-button"
+          className="stalls-admin-toggle-button"
           onClick={() => {
             setShowForm(!showForm);
             setEditMode(false);
@@ -228,29 +217,12 @@ if (editMode) {
           {showForm ? '✖ Close Form' : '➕ Add Stall'}
         </button>
 
+        {/* ✅ Create Form */}
         {showForm && (
-          <form className=" stalls-admin-stall-form" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="name"
-              placeholder="Stall Name"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-            <textarea
-              name="description"
-              placeholder="Description"
-              value={form.description}
-              onChange={handleChange}
-              required
-            />
-            <select
-              name="building_id"
-              value={form.building_id}
-              onChange={handleChange}
-              required
-            >
+          <form className="stalls-admin-stall-form" onSubmit={handleSubmit}>
+            <input type="text" name="name" placeholder="Stall Name" value={form.name} onChange={handleChange} required />
+            <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
+            <select name="building_id" value={form.building_id} onChange={handleChange} required>
               <option value="">-- Select Building --</option>
               {buildings.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -258,69 +230,45 @@ if (editMode) {
                 </option>
               ))}
             </select>
-          
-            <input
-              type="text"
-              name="opening_time"
-              placeholder="Opening Time (e.g. 09:00 AM)"
-              value={form.opening_time}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="closing_time"
-              placeholder="Closing Time (e.g. 10:00 PM)"
-              value={form.closing_time}
-              onChange={handleChange}
-            />
-<div className=" stalls-admin-toggle-switch">
-  <input
-    type="checkbox"
-    id="is_available"
-    name="is_available"
-    className=" stalls-admin-toggle-input"
-    checked={form.is_available}
-    onChange={handleChange}
-  />
-  <label className=" stalls-admin-toggle-label" htmlFor="is_available">
-    <span className=" stalls-admin-toggle-slider"></span>
-  </label>
-  <span className=" stalls-admin-toggle-text">
-    {form.is_available ? "Available" : "Unavailable"}
-  </span>
-</div>
-
+            <input type="text" name="opening_time" placeholder="Opening Time (e.g. 09:00 AM)" value={form.opening_time} onChange={handleChange} />
+            <input type="text" name="closing_time" placeholder="Closing Time (e.g. 10:00 PM)" value={form.closing_time} onChange={handleChange} />
+            <div className="stalls-admin-toggle-switch">
+              <input type="checkbox" id="is_available" name="is_available" className="stalls-admin-toggle-input" checked={form.is_available} onChange={handleChange} />
+              <label className="stalls-admin-toggle-label" htmlFor="is_available">
+                <span className="stalls-admin-toggle-slider"></span>
+              </label>
+              <span className="stalls-admin-toggle-text">{form.is_available ? "Available" : "Unavailable"}</span>
+            </div>
             <input type="file" accept="image/*" onChange={handleFileChange} />
-            <button type="submit" disabled={loading}>
-              {loading ? (editMode ? 'Updating...' : 'Creating...') : editMode ? 'Update Stall' : 'Create Stall'}
-            </button>
+            <button type="submit" disabled={loading}>{loading ? 'Creating...' : 'Create Stall'}</button>
           </form>
         )}
 
-        <div className=" stalls-admin-stall-list">
+        {/* ✅ Stall Listing */}
+        <div className="stalls-admin-stall-list">
           {allStalls.map(({ building, stalls }) => (
-            <div key={building.id} className=" stalls-admin-building-block">
+            <div key={building.id} className="stalls-admin-building-block">
               <h2>{building.building_name || building.name}</h2>
               {stalls.length === 0 ? (
                 <p>No stalls found.</p>
               ) : (
-                <div className=" stalls-admin-stalls-grid">
+                <div className="stalls-admin-stalls-grid">
                   {stalls.map((stall) => (
-                    <div key={stall.id} className=" stalls-admin-stall-card">
+                    <div key={stall.id} className="stalls-admin-stall-card">
                       <img
                         src={stall.image_url}
                         alt={stall.name}
-                        className=" stalls-admin-stall-image"
+                        className="stalls-admin-stall-image"
                         onClick={() => handleCardClick(stall.id, building.id)}
                       />
-                      <div className=" stalls-admin-stall-info">
+                      <div className="stalls-admin-stall-info">
                         <h3>{stall.name}</h3>
                         <p><strong>Description:</strong> {stall.description}</p>
                         <p><strong>Opens:</strong> {stall.opening_time || 'N/A'} - <strong>Closes:</strong> {stall.closing_time || 'N/A'}</p>
                         <p><strong>Status:</strong> {stall.is_available ? '✅ Available' : '❌ Unavailable'}</p>
                       </div>
                       <FaEdit
-                        className=" stalls-admin-edit-icon"
+                        className="stalls-admin-edit-icon"
                         onClick={() => handleEditClick(stall)}
                         title="Edit Stall"
                       />
@@ -332,83 +280,28 @@ if (editMode) {
           ))}
         </div>
 
+        {/* ✅ Popup for Edit */}
         {showPopup && (
-          <div className=" stalls-admin-popup-overlay">
-            <div className=" stalls-admin-popup-form">
+          <div className="stalls-admin-popup-overlay">
+            <div className="stalls-admin-popup-form">
               <h2>Edit Stall</h2>
               <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Stall Name"
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                />
-                <textarea
-                  name="description"
-                  placeholder="Description"
-                  value={form.description}
-                  onChange={handleChange}
-                  required
-                />
-                <select
-                  name="building_id"
-                  value={form.building_id}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">-- Select Building --</option>
-                  {buildings.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.building_name || b.name || 'Unnamed'}
-                    </option>
-                  ))}
-                </select>
-               
-                <input
-                  type="text"
-                  name="opening_time"
-                  placeholder="Opening Time (e.g. 09:00 AM)"
-                  value={form.opening_time}
-                  onChange={handleChange}
-                />
-                <input
-                  type="text"
-                  name="closing_time"
-                  placeholder="Closing Time (e.g. 10:00 PM)"
-                  value={form.closing_time}
-                  onChange={handleChange}
-                />
-                <div className=" stalls-admin-toggle-switch">
-  <input
-    type="checkbox"
-    id="is_available"
-    name="is_available"
-    className=" stalls-admin-toggle-input"
-    checked={form.is_available}
-    onChange={handleChange}
-  />
-  <label className=" stalls-admin-toggle-label" htmlFor="is_available">
-    <span className=" stalls-admin-toggle-slider"></span>
-  </label>
-  <span className=" stalls-admin-toggle-text">
-    {form.is_available ? "Available" : "Unavailable"}
-  </span>
-</div>
-
+                <input type="text" name="name" placeholder="Stall Name" value={form.name} onChange={handleChange} required />
+                <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
+                <input type="text" name="opening_time" placeholder="Opening Time (e.g. 09:00 AM)" value={form.opening_time} onChange={handleChange} />
+                <input type="text" name="closing_time" placeholder="Closing Time (e.g. 10:00 PM)" value={form.closing_time} onChange={handleChange} />
+                <div className="stalls-admin-toggle-switch">
+                  <input type="checkbox" id="is_available" name="is_available" className="stalls-admin-toggle-input" checked={form.is_available} onChange={handleChange} />
+                  <label className="stalls-admin-toggle-label" htmlFor="is_available">
+                    <span className="stalls-admin-toggle-slider"></span>
+                  </label>
+                  <span className="stalls-admin-toggle-text">{form.is_available ? "Available" : "Unavailable"}</span>
+                </div>
                 <input type="file" accept="image/*" onChange={handleFileChange} />
-
-                <div className=" stalls-admin-popup-buttons">
-                  <button type="button" className=" stalls-admin-delete-btn" onClick={handleDeleteStall}>
-                    🗑️ Delete
-                  </button>
-                  <button type="button" onClick={() => setShowPopup(false)}>
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={loading}>
-                    {loading ? 'Updating...' : 'Update'}
-                  </button>
+                <div className="stalls-admin-popup-buttons">
+                  <button type="button" className="stalls-admin-delete-btn" onClick={handleDeleteStall}>🗑️ Delete</button>
+                  <button type="button" onClick={() => setShowPopup(false)}>Cancel</button>
+                  <button type="submit" disabled={loading}>{loading ? 'Updating...' : 'Update'}</button>
                 </div>
               </form>
             </div>

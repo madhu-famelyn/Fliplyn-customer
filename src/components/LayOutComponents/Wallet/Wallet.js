@@ -10,6 +10,7 @@ import AdminLayout from '../../LayOut/AdminLayout';
 import './Wallet.css';
 
 export default function AddMoney() {
+  const [showForm, setShowForm] = useState(false);
   const [identifier, setIdentifier] = useState('');
   const [amount, setAmount] = useState('');
   const [retainable, setRetainable] = useState(true);
@@ -26,18 +27,16 @@ export default function AddMoney() {
   const loadWallets = useCallback(
     async (bId) => {
       try {
-        const wallets = await fetchWalletsByBuildingId(bId, token);
-        setWallets(wallets);
+        const walletsData = await fetchWalletsByBuildingId(bId, token);
+        setWallets(walletsData);
 
         // Fetch user info for each wallet.user_id
         const userDetails = {};
         await Promise.all(
-          wallets.map(async (wallet) => {
+          walletsData.map(async (wallet) => {
             if (!userDetails[wallet.user_id]) {
               try {
                 const user = await fetchUserById(wallet.user_id, token);
-
-                // ✅ Map exact fields from API response
                 userDetails[wallet.user_id] = {
                   name: user.name || 'Unknown',
                   email: user.company_email || 'N/A',
@@ -64,14 +63,15 @@ export default function AddMoney() {
     [token]
   );
 
+  // ✅ Load buildings on mount
   useEffect(() => {
     const loadBuildings = async () => {
       try {
-        const buildings = await fetchBuildingByAdminId(userId, token);
-        if (buildings.length > 0) {
-          setBuildings(buildings);
-          setBuildingId(buildings[0].id);
-          loadWallets(buildings[0].id);
+        const buildingsData = await fetchBuildingByAdminId(userId, token);
+        if (buildingsData.length > 0) {
+          setBuildings(buildingsData);
+          setBuildingId(buildingsData[0].id);
+          loadWallets(buildingsData[0].id);
         } else {
           setError('No buildings found for this admin.');
         }
@@ -86,6 +86,7 @@ export default function AddMoney() {
     }
   }, [userId, token, loadWallets]);
 
+  // ✅ Building change
   const handleBuildingChange = (e) => {
     const selectedId = e.target.value;
     setBuildingId(selectedId);
@@ -94,6 +95,7 @@ export default function AddMoney() {
     loadWallets(selectedId);
   };
 
+  // ✅ Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess('');
@@ -126,45 +128,57 @@ export default function AddMoney() {
   return (
     <AdminLayout>
       <div className="add-money-container">
-        <h2>Add Money to Wallet</h2>
-        <form onSubmit={handleSubmit} className="add-money-form">
-          <select value={buildingId} onChange={handleBuildingChange} required>
-            <option value="">Select a Building</option>
-            {buildings.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.building_name}
-              </option>
-            ))}
-          </select>
+        <div className="form-header">
+          <h2>Add Money to Wallet</h2>
+          <button
+            type="button"
+            className="open-form-btn"
+            onClick={() => setShowForm(!showForm)}
+          >
+            {showForm ? 'Close Form' : 'Open Form'}
+          </button>
+        </div>
 
-          <input
-            type="text"
-            placeholder="Mobile number or Email"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            required
-          />
+        {showForm && (
+          <form onSubmit={handleSubmit} className="add-money-form">
+            <select value={buildingId} onChange={handleBuildingChange} required>
+              <option value="">Select a Building</option>
+              {buildings.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.building_name}
+                </option>
+              ))}
+            </select>
 
-          <input
-            type="number"
-            placeholder="Amount (₹)"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            required
-          />
-
-          <div className="checkbox-container">
             <input
-              type="checkbox"
-              id="retainable"
-              checked={retainable}
-              onChange={(e) => setRetainable(e.target.checked)}
+              type="text"
+              placeholder="Mobile number or Email"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              required
             />
-            <label htmlFor="retainable">Retainable</label>
-          </div>
 
-          <button type="submit">Add Money</button>
-        </form>
+            <input
+              type="number"
+              placeholder="Amount (₹)"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              required
+            />
+
+            <div className="checkbox-container">
+              <input
+                type="checkbox"
+                id="retainable"
+                checked={retainable}
+                onChange={(e) => setRetainable(e.target.checked)}
+              />
+              <label htmlFor="retainable">Retainable</label>
+            </div>
+
+            <button type="submit">Add Money</button>
+          </form>
+        )}
 
         {success && <p className="success-message">{success}</p>}
         {error && <p className="error-message">{error}</p>}
@@ -172,32 +186,43 @@ export default function AddMoney() {
         {wallets.length > 0 && (
           <div className="wallet-section">
             <h3>Wallets in this Building</h3>
-            <ul className="wallet-list">
-              {wallets.map((wallet) => {
-                const user = userMap[wallet.user_id] || {};
-                return (
-                  <li key={wallet.id} className="wallet-item">
-                    <strong>User:</strong> {user.name}
-                    <br />
-                    <strong>Email:</strong> {user.email}
-                    <br />
-                    <strong>Phone:</strong> {user.phone}
-                    <br />
-                    <strong>Wallet Amount:</strong> ₹{wallet.wallet_amount}
-                    <br />
-                    <strong>Balance:</strong> ₹{wallet.balance_amount}
-                    <br />
-                    <strong>Retainable:</strong>{' '}
-                    {wallet.is_retainable ? 'Yes' : 'No'}
-                    <br />
-                    <strong>Expires At:</strong>{' '}
-                    {wallet.expiry_at
-                      ? new Date(wallet.expiry_at).toLocaleString()
-                      : 'N/A'}
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="wallet-table-wrapper">
+              <table className="wallet-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>User Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Wallet Amount</th>
+                    <th>Balance</th>
+                    <th>Retainable</th>
+                    <th>Expires At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {wallets.map((wallet, index) => {
+                    const user = userMap[wallet.user_id] || {};
+                    return (
+                      <tr key={wallet.id}>
+                        <td>{index + 1}</td>
+                        <td>{user.name}</td>
+                        <td>{user.email}</td>
+                        <td>{user.phone}</td>
+                        <td>₹{wallet.wallet_amount}</td>
+                        <td>₹{wallet.balance_amount}</td>
+                        <td>{wallet.is_retainable ? 'Yes' : 'No'}</td>
+                        <td>
+                          {wallet.expiry_at
+                            ? new Date(wallet.expiry_at).toLocaleString()
+                            : 'N/A'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

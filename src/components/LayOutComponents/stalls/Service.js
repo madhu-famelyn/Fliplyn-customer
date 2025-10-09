@@ -25,7 +25,7 @@ export const fetchBuildings = async (adminId, token) => {
 // ====================
 export const createStall = async (formData, token) => {
   try {
-    const res = await axios.post(`${API_BASE}`, formData, {
+    const res = await axios.post(`${API_BASE}stalls/`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -104,4 +104,26 @@ export const updateStall = async (stallId, stallData, token) => {
     console.error("❌ Stall update failed:", error.response?.data || error.message);
     throw new Error("Failed to update stall");
   }
+};
+
+
+
+
+
+
+
+
+
+export const editStallBasic = async (stallId, formData, token) => {
+  const response = await axios.put(
+    `${API_BASE}stalls/${stallId}/edit-basic`,
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
 };

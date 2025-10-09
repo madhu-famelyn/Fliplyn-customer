@@ -23,7 +23,7 @@ export default function WalletUpload() {
       setFetchingWallets(true);
       try {
         const res = await axios.get(
-          `http://localhost:8000/wallets/by-building/${building_id}/images`,
+          `https://admin-aged-field-2794.fly.dev/wallets/by-building/${building_id}/images`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -34,7 +34,7 @@ export default function WalletUpload() {
           walletsData.map(async (wallet) => {
             try {
               const userRes = await axios.get(
-                `http://localhost:8000/user/${wallet.user_id}`,
+                `https://admin-aged-field-2794.fly.dev/user/${wallet.user_id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
               return {
@@ -65,7 +65,7 @@ export default function WalletUpload() {
     const fetchManagerDetails = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8000/managers/${manager.id}`,
+          `https://admin-aged-field-2794.fly.dev/managers/${manager.id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const building_id = res.data.building_id || "";
@@ -104,7 +104,7 @@ export default function WalletUpload() {
       setMessage("");
 
       const res = await axios.post(
-        "http://localhost:8000/wallets/create",
+        "https://admin-aged-field-2794.fly.dev/wallets/create",
         formData,
         {
           headers: {

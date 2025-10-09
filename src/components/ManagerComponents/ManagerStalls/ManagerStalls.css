@@ -1,132 +1,254 @@
+/* ==============================
+   General Wrapper
+=================================*/
 .ms-wrapper {
   padding: 20px;
-  background-color: #f9f9f9; /* very light gray */
+  background-color: #fff;
+  font-family: "Inter", Arial, sans-serif;
+  color: #222;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* center the content */
 }
 
+/* ==============================
+   Heading
+=================================*/
 .ms-heading {
-  font-size: 28px;
-  color: #000000; /* light orange */
-  margin: 20px 0 30px 0;
-  font-weight: bold;
   text-align: center;
+  color: #ff7b00;
+  font-size: 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 20px;
 }
 
+/* ==============================
+   Top Buttons
+=================================*/
+.ms-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.ms-btn {
+  background-color: #ff7b00;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.ms-btn:hover {
+  background-color: #e36f00;
+  transform: translateY(-2px);
+}
+
+.ms-btn.cancel {
+  background-color: #777;
+}
+
+.ms-btn.cancel:hover {
+  background-color: #555;
+}
+
+/* ==============================
+   Stall Grid
+=================================*/
 .ms-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* exactly 3 images per row */
-  gap: 80px;
-  justify-items: center; /* center each card in the grid */
-  width: 100%;
-  max-width: 1000px; /* restrict grid width */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
 }
 
 .ms-card {
-  background-color: #ffffff; /* white card */
-  box-shadow: 0 2px 5px rgba(255, 127, 80, 0.3); /* subtle orange shadow */
-  cursor: pointer;
-  text-align: center;
-  padding: 15px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  width: 100%; /* take full width of grid column */
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fffaf3;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .ms-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(255, 127, 80, 0.6);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .ms-image {
   width: 100%;
-  height: 180px; /* increased image size */
+  height: 160px;
   object-fit: cover;
-  border-radius: 5px;
+  border-bottom: 3px solid #ff7b00;
 }
 
-.ms-name {
-  margin-top: 15px;
+.ms-title {
   font-weight: 600;
-  color: #333333;
+  font-size: 16px;
+  color: #222;
+  margin: 10px 0 6px 0;
   text-align: center;
-  font-size: 18px;
+  padding: 0 8px;
 }
 
-/* Mobile responsiveness */
-@media (max-width: 1024px) {
-  .ms-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 images per row on tablets */
-    gap: 20px;
-  }
-
-  .ms-image {
-    height: 200px;
-  }
-
-  .ms-heading {
-    font-size: 26px;
-    margin-bottom: 25px;
-  }
+/* ==============================
+   Edit Modal
+=================================*/
+.ms-edit-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 10px;
 }
 
+.ms-edit-container {
+  background: #fffaf3;
+  border-radius: 8px;
+  border: 2px solid #ff7b00;
+  padding: 20px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ms-edit-container h3 {
+  text-align: center;
+  color: #ff7b00;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* ==============================
+   Edit Form
+=================================*/
+.ms-edit-container label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.ms-edit-container input[type="text"],
+.ms-edit-container textarea,
+.ms-edit-container input[type="file"],
+.ms-edit-container input[type="time"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.ms-edit-container textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.ms-edit-container input:focus,
+.ms-edit-container textarea:focus {
+  border-color: #ff7b00;
+}
+
+.ms-edit-container input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+/* ==============================
+   Edit Form Actions
+=================================*/
+.ms-edit-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ms-edit-actions button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: #fff;
+  background: #ff7b00;
+  text-transform: uppercase;
+  border-radius: 6px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.ms-edit-actions button:hover {
+  background: #e36f00;
+  transform: translateY(-1px);
+}
+
+.ms-edit-actions .cancel {
+  background: #777;
+}
+
+.ms-edit-actions .cancel:hover {
+  background: #555;
+}
+
+/* ==============================
+   Responsive Design
+=================================*/
 @media (max-width: 768px) {
-  .ms-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-
-  .ms-image {
-    height: 180px;
-  }
-
   .ms-heading {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .ms-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ms-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .ms-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ms-card {
+    width: 100%;
+  }
+
+  .ms-edit-container {
+    max-width: 95%;
+    padding: 18px;
   }
 }
 
 @media (max-width: 480px) {
-  .ms-grid {
-    grid-template-columns: 1fr; /* 1 image per row on small phones */
-    gap: 10px;
-  }
-
-  .ms-image {
-    height: 160px;
-  }
-
   .ms-heading {
     font-size: 20px;
-    margin-bottom: 20px;
   }
-}
 
+  .ms-edit-container {
+    padding: 15px;
+  }
 
-
-
-
-.ms-buttons {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.ms-btn {
-  padding: 10px 18px;
-  background-color: #ac620d;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.ms-btn:hover {
-  background-color: #006a6b;
+  .ms-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
 }

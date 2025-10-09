@@ -5,14 +5,18 @@ import { BiFoodTag } from "react-icons/bi";
 import "./Items.css";
 import axios from "axios";
 
+const BASE_URL = "https://admin-aged-field-2794.fly.dev";
+
 const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems }) => {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
-  const [showImageForm, setShowImageForm] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
-    final_price: "",
-    image_url: "",
+    price: "",
+    Gst_precentage: "",
+    tax_included: false,
+    is_available: true,
+    is_veg: true,
   });
   const [imageFile, setImageFile] = useState(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -21,77 +25,57 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
   const handleUpdateClick = (item) => {
     setSelectedItem(item);
     setFormData({
-      name: item.name,
-      final_price: item.final_price,
-      image_url: item.image_url,
+      name: item.name || "",
+      price: item.price || item.final_price || "",
+      Gst_precentage: item.Gst_precentage || "",
+      tax_included: item.tax_included || false,
+      is_available: item.is_available || false,
+      is_veg: item.is_veg || false,
     });
+    setImageFile(null);
     setShowUpdateForm(true);
   };
 
-  // Open image update form
-  const handleImageUpdateClick = (item) => {
-    setSelectedItem(item);
-    setImageFile(null);
-    setShowImageForm(true);
-  };
-
-  // Close modals
+  // Close modal
   const handleClose = () => {
     setShowUpdateForm(false);
-    setShowImageForm(false);
     setSelectedItem(null);
   };
 
-  // Handle input change
+  // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  // Submit update (name/price/image_url string)
+  // Submit full update (details + optional image)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedItem) return;
 
     const data = new FormData();
     data.append("name", formData.name);
-    data.append("final_price", formData.final_price);
-    data.append("image_url", formData.image_url);
-    data.append("is_available", selectedItem.is_available);
+    data.append("price", formData.price);
+    data.append("Gst_precentage", formData.Gst_precentage);
+    data.append("tax_included", formData.tax_included);
+    data.append("is_available", formData.is_available);
+    data.append("is_veg", formData.is_veg);
 
-    try {
-      await axios.put(
-        `https://admin-aged-field-2794.fly.dev/api/item/${selectedItem.id}`,
-        data,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      console.log("✅ Item updated successfully");
-      if (refreshItems) refreshItems();
-    } catch (error) {
-      console.error("❌ Error updating item:", error.response?.data || error.message);
+    if (imageFile) {
+      data.append("file", imageFile);
     }
 
-    handleClose();
-  };
-
-  // Submit image update only
-  const handleImageSubmit = async (e) => {
-    e.preventDefault();
-    if (!selectedItem || !imageFile) return;
-
-    const data = new FormData();
-    data.append("file", imageFile); // ✅ must match backend parameter name
-
     try {
-      await axios.put(
-        `https://admin-aged-field-2794.fly.dev/items/items/${selectedItem.id}/upload-image`,
-        data,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      console.log("✅ Item image updated successfully");
-      if (refreshItems) refreshItems();
+      await axios.put(`${BASE_URL}/items/${selectedItem.id}/update-image-details`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Item updated successfully");
+      if (refreshItems) await refreshItems(); // 🔁 refresh parent data
     } catch (error) {
-      console.error("❌ Error updating image:", error.response?.data || error.message);
+      console.error("❌ Error updating item:", error.response?.data || error.message);
     }
 
     handleClose();
@@ -107,11 +91,7 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
         ) : (
           <div className="items-grid">
             {items.map((item) => (
-              <div
-                key={`${item.id}-${item.is_available}`}
-                className="items-card-row"
-              >
-                {/* Item image */}
+              <div key={`${item.id}-${item.is_available}`} className="items-card-row">
                 <img
                   src={item.image_url}
                   alt={item.name}
@@ -123,7 +103,6 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
                   }}
                 />
 
-                {/* Item details */}
                 <div className="items-details">
                   <h4 className="items-name">{item.name}</h4>
                   <div className="price-gst">
@@ -136,19 +115,13 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
                   </div>
                 </div>
 
-                {/* Veg/Non-Veg icon */}
                 <BiFoodTag
                   className="veg-icon"
                   title={item.is_veg ? "Veg" : "Non-Veg"}
                   style={{ color: item.is_veg ? "#008000" : "#cc0000" }}
                 />
 
-                {/* Availability switch */}
-                <label
-                  className={`availability-switch ${
-                    item.is_available ? "on" : "off"
-                  }`}
-                >
+                <label className={`availability-switch ${item.is_available ? "on" : "off"}`}>
                   <input
                     type="checkbox"
                     checked={item.is_available}
@@ -159,15 +132,12 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
                   <span className="slider" />
                 </label>
 
-                {/* Dropdown actions */}
                 <div className="items-actions">
                   <button
                     className="dots-btn"
                     title="More actions"
                     onClick={() =>
-                      setActiveDropdown(
-                        activeDropdown === item.id ? null : item.id
-                      )
+                      setActiveDropdown(activeDropdown === item.id ? null : item.id)
                     }
                   >
                     <FaEllipsisV />
@@ -180,13 +150,10 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
                           handleToggleAvailability(item.id, item.is_available)
                         }
                       >
-                        {item.is_available
-                          ? "Mark Unavailable"
-                          : "Mark Available"}
+                        {item.is_available ? "Mark Unavailable" : "Mark Available"}
                       </button>
-                      <button onClick={() => handleUpdateClick(item)}>Edit</button>
-                      <button onClick={() => handleImageUpdateClick(item)}>
-                        Update Image
+                      <button onClick={() => handleUpdateClick(item)}>
+                        Edit / Update Image
                       </button>
                       <button
                         onClick={() => handleDelete(item.id)}
@@ -205,11 +172,10 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
         <p>Loading items...</p>
       )}
 
-      {/* Update modal (name/price/url) */}
       {showUpdateForm && (
         <div className="modal-overlay">
           <div className="modal-form">
-            <h3>Update Item</h3>
+            <h3>Update Item Details</h3>
             <form onSubmit={handleSubmit}>
               <label>Name:</label>
               <input
@@ -220,59 +186,64 @@ const ItemList = ({ items, handleToggleAvailability, handleDelete, refreshItems 
                 required
               />
 
-              <label>Final Price:</label>
+              <label>Price:</label>
               <input
                 type="number"
-                name="final_price"
-                value={formData.final_price}
+                name="price"
+                value={formData.price}
                 onChange={handleChange}
                 required
               />
 
-              <label>Image URL:</label>
+              <label>GST %:</label>
               <input
-                type="text"
-                name="image_url"
-                value={formData.image_url}
+                type="number"
+                name="Gst_precentage"
+                value={formData.Gst_precentage}
                 onChange={handleChange}
+                required
               />
 
-              <div className="form-actions">
-                <button type="submit">Update</button>
-                <button
-                  type="button"
-                  className="cancel"
-                  onClick={handleClose}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+              <label>
+                <input
+                  type="checkbox"
+                  name="tax_included"
+                  checked={formData.tax_included}
+                  onChange={handleChange}
+                />{" "}
+                Tax Included
+              </label>
 
-      {/* Update image modal */}
-      {showImageForm && (
-        <div className="modal-overlay">
-          <div className="modal-form">
-            <h3>Update Item Image</h3>
-            <form onSubmit={handleImageSubmit}>
-              <label>Upload New Image:</label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="is_available"
+                  checked={formData.is_available}
+                  onChange={handleChange}
+                />{" "}
+                Available
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="is_veg"
+                  checked={formData.is_veg}
+                  onChange={handleChange}
+                />{" "}
+                Veg
+              </label>
+
+              <label>Upload New Image (optional):</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => setImageFile(e.target.files[0])}
-                required
               />
 
               <div className="form-actions">
-                <button type="submit">Update Image</button>
-                <button
-                  type="button"
-                  className="cancel"
-                  onClick={handleClose}
-                >
+                <button type="submit">Update</button>
+                <button type="button" className="cancel" onClick={handleClose}>
                   Cancel
                 </button>
               </div>

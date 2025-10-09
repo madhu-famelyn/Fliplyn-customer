@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../LayOut/AdminLayout';
 import { createCity } from './Service';
-import { useAuth } from '../../AuthContex/ContextAPI';
+import { useAuth } from '../../AuthContex/AdminContext';
 import './SelectCity.css';
 
 const indianCities = {

@@ -32,7 +32,7 @@ const BuildingManagerLogin = () => {
       formData.append("password", password);
 
       const response = await axios.post(
-        "http://localhost:8000/api/building-managers/login",
+        "https://admin-aged-field-2794.fly.dev/api/building-managers/login",
         formData,
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       );
