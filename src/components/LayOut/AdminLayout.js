@@ -1,19 +1,16 @@
-// src/components/AdminLayout.js
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   FaMapMarkerAlt,
   FaBoxOpen,
   FaStore,
   FaWallet,
-  FaUsers,
-  FaSignOutAlt,
   FaBars,
   FaTimes,
   FaUserPlus,
 } from 'react-icons/fa';
 import { GiTakeMyMoney } from 'react-icons/gi';
-import { MdGroupAdd, MdOutlineLocalShipping } from 'react-icons/md';
+import { MdGroupAdd } from 'react-icons/md';
 import { RiFileList2Line } from 'react-icons/ri';
 import './AdminLayout.css';
 
