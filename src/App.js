@@ -139,6 +139,10 @@ function App() {
               {/* <Route path="/image-wallet" element={<UseAdminWallets />} /> */}
 
               <Route path="manager-view-vendors" element={<ManagerViewVendors />} />
+               <Route
+                path="/wallet-add-mng"
+                element={<WalletUpload />}
+              />
 
 
 
@@ -150,10 +154,7 @@ function App() {
                 path="/bld-mng-stalls"
                 element={<BuildingManagerPrivateRoute element={<ManagerStallIds />} />}
               />
-               <Route
-                path="/wallet-add-mng"
-                element={<BuildingManagerPrivateRoute element={<WalletUpload />} />}
-              />
+              
               <Route
                 path="/bld-mng-report"
                 element={<BuildingManagerPrivateRoute element={<BuildingSalesReport />} />}
