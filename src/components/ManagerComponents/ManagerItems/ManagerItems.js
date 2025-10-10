@@ -54,22 +54,29 @@ export default function ItemListByStall() {
   }, [searchTerm, items]);
 
   // ✅ Toggle Availability
-  const toggleAvailability = async (itemId, currentStatus) => {
-    try {
-      await axios.patch(
-        `/items/items/${itemId}/availability`,
-        { is_available: !currentStatus }
-      );
-      setItems((prev) =>
-        prev.map((item) =>
-          item.id === itemId ? { ...item, is_available: !currentStatus } : item
-        )
-      );
-    } catch (err) {
-      console.error("Error updating availability:", err);
-      alert("Failed to update availability. Please try again.");
-    }
-  };
+const toggleAvailability = async (itemId, currentStatus) => {
+  try {
+    // Backend base URL (you can move this to a config file or .env)
+    const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
+
+    // Send PATCH request to backend
+    await axios.patch(
+      `${API_BASE_URL}/items/items/${itemId}/availability`,
+      { is_available: !currentStatus }
+    );
+
+    // Update UI after success
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === itemId ? { ...item, is_available: !currentStatus } : item
+      )
+    );
+  } catch (err) {
+    console.error("❌ Error updating availability:", err);
+    alert("Failed to update availability. Please try again.");
+  }
+};
+
 
   // ✅ Open Edit Modal
   const openEditModal = (item) => {
