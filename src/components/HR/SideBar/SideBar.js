@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Home, Briefcase, Menu, X } from "lucide-react"; // added menu icons
+import { Home, Menu, X } from "lucide-react"; // added menu icons
 import { useNavigate } from "react-router-dom";
 import "./SideBar.css";
 
