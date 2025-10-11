@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContex/ContextAPI";
-import * as XLSX from "xlsx"; // ✅ For export
+import * as XLSX from "xlsx";
 import "./StallsReport.css";
 
 export default function StallSalesReport() {
@@ -14,8 +14,9 @@ export default function StallSalesReport() {
   const [filter, setFilter] = useState("all");
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [companyFilter, setCompanyFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("stall"); 
+  const [sortBy, setSortBy] = useState("stall");
 
+  // Fetch stalls
   useEffect(() => {
     const fetchStalls = async () => {
       if (!user?.building_id) return;
@@ -32,12 +33,22 @@ export default function StallSalesReport() {
     fetchStalls();
   }, [user]);
 
-  // ✅ Fetch orders for stalls
+  // Fetch orders and cache in localStorage
   useEffect(() => {
     if (!user?.building_id) return;
-    setLoading(true);
-    setError("");
+
     const fetchOrders = async () => {
+      setLoading(true);
+      setError("");
+
+      // Try loading cached orders first
+      const cachedOrders = localStorage.getItem("stallOrders");
+      if (cachedOrders) {
+        setOrders(JSON.parse(cachedOrders));
+        setLoading(false);
+        return;
+      }
+
       try {
         let fetchedOrders = [];
 
@@ -72,6 +83,7 @@ export default function StallSalesReport() {
         }
 
         setOrders(fetchedOrders);
+        localStorage.setItem("stallOrders", JSON.stringify(fetchedOrders));
       } catch (err) {
         console.error(err);
         setError("Failed to fetch orders.");
@@ -84,7 +96,15 @@ export default function StallSalesReport() {
     fetchOrders();
   }, [selectedStallId, stalls, user]);
 
-  // ✅ Filtering by date
+  // Helper: Extract company name (only 'cashe' allowed)
+  const getCompanyName = (email) => {
+    if (!email) return "Unknown";
+    const domain = email.split("@")[1] || "";
+    if (domain.includes("cashe")) return "cashe";
+    return "Other";
+  };
+
+  // Filter orders by date
   const filteredOrders = orders.filter((order) => {
     if (filter === "all") return true;
     const orderDate = new Date(order.created_datetime || new Date());
@@ -115,15 +135,7 @@ export default function StallSalesReport() {
     }
   });
 
-  // ✅ Extract company name (only cashe allowed)
-  const getCompanyName = (email) => {
-    if (!email) return "Unknown";
-    const domain = email.split("@")[1] || "";
-    if (domain.includes("cashe")) return "cashe";
-    return "Other";
-  };
-
-  // ✅ Apply company filter
+  // Apply company filter
   let companyFilteredOrders =
     companyFilter === "all"
       ? filteredOrders
@@ -131,7 +143,7 @@ export default function StallSalesReport() {
           (order) => getCompanyName(order.user_email) === companyFilter
         );
 
-  // ✅ Apply sorting
+  // Apply sorting
   companyFilteredOrders = [...companyFilteredOrders].sort((a, b) => {
     if (sortBy === "date") {
       return new Date(a.created_datetime) - new Date(b.created_datetime);
@@ -140,7 +152,7 @@ export default function StallSalesReport() {
     }
   });
 
-  // ✅ Grand total sales = sum of Total Paid column
+  // Grand total sales
   const totalSales = companyFilteredOrders.reduce((acc, order) => {
     const totalPaid =
       order.order_details.reduce((sum, d) => sum + d.total, 0) +
@@ -148,7 +160,7 @@ export default function StallSalesReport() {
     return acc + totalPaid;
   }, 0);
 
-  // ✅ Get unique companies (only cashe)
+  // Unique companies (only 'cashe')
   const companies = Array.from(
     new Set(
       filteredOrders
@@ -157,7 +169,7 @@ export default function StallSalesReport() {
     )
   );
 
-  // ✅ Export to Excel with Grand Total row
+  // Export to Excel
   const exportToExcel = () => {
     const rows = companyFilteredOrders.flatMap((order) =>
       order.order_details.map((item, index) => ({
@@ -179,7 +191,7 @@ export default function StallSalesReport() {
       }))
     );
 
-    // ✅ Add grand total row
+    // Add grand total row
     rows.push({
       Stall: "",
       Token: "",
@@ -206,54 +218,54 @@ export default function StallSalesReport() {
     <div className="stall-sales-report">
       <h2>Stall Sales Report</h2>
 
-    <div className="filter-row">
-  {/* Stall Dropdown */}
-  <div className="stall-dropdown">
-    <label htmlFor="stall-select">Select Stall:</label>
-    <select
-      id="stall-select"
-      value={selectedStallId}
-      onChange={(e) => setSelectedStallId(e.target.value)}
-    >
-      <option value="all">All Stalls</option>
-      {stalls.map((stall) => (
-        <option key={stall.id} value={stall.id}>
-          {stall.name}
-        </option>
-      ))}
-    </select>
-  </div>
+      <div className="filter-row">
+        {/* Stall Dropdown */}
+        <div className="stall-dropdown">
+          <label htmlFor="stall-select">Select Stall:</label>
+          <select
+            id="stall-select"
+            value={selectedStallId}
+            onChange={(e) => setSelectedStallId(e.target.value)}
+          >
+            <option value="all">All Stalls</option>
+            {stalls.map((stall) => (
+              <option key={stall.id} value={stall.id}>
+                {stall.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-  {/* Sort Options */}
-  <div className="sort-options">
-    <label htmlFor="sort-select">Sort By:</label>
-    <select
-      id="sort-select"
-      value={sortBy}
-      onChange={(e) => setSortBy(e.target.value)}
-    >
-      <option value="stall">Stall</option>
-      <option value="date">Date</option>
-    </select>
-  </div>
+        {/* Sort Options */}
+        <div className="sort-options">
+          <label htmlFor="sort-select">Sort By:</label>
+          <select
+            id="sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="stall">Stall</option>
+            <option value="date">Date</option>
+          </select>
+        </div>
 
-  {/* Company Filter */}
-  <div className="company-filter">
-    <label htmlFor="company-select">Filter by Company:</label>
-    <select
-      id="company-select"
-      value={companyFilter}
-      onChange={(e) => setCompanyFilter(e.target.value)}
-    >
-      <option value="all">All Companies</option>
-      {companies.map((company) => (
-        <option key={company} value={company}>
-          {company}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
+        {/* Company Filter */}
+        <div className="company-filter">
+          <label htmlFor="company-select">Filter by Company:</label>
+          <select
+            id="company-select"
+            value={companyFilter}
+            onChange={(e) => setCompanyFilter(e.target.value)}
+          >
+            <option value="all">All Companies</option>
+            {companies.map((company) => (
+              <option key={company} value={company}>
+                {company}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       {/* Date Filters */}
       <div className="filter-options">
@@ -283,9 +295,6 @@ export default function StallSalesReport() {
         )}
       </div>
 
-      {/* Company Filter */}
-     
-
       {/* Export */}
       <div className="export-btn">
         <button onClick={exportToExcel}>Export to Excel</button>
@@ -294,7 +303,6 @@ export default function StallSalesReport() {
       {loading && <p>Loading orders...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* If no orders but stall exists */}
       {!loading && !error && companyFilteredOrders.length === 0 && (
         <div>
           <p>No orders found for this range.</p>
@@ -308,7 +316,6 @@ export default function StallSalesReport() {
         </div>
       )}
 
-      {/* Report Table */}
       {companyFilteredOrders.length > 0 && (
         <>
           <h3>Grand Total Sales: ₹{totalSales.toFixed(2)}</h3>
@@ -323,7 +330,6 @@ export default function StallSalesReport() {
                 <th>Quantity</th>
                 <th>Price</th>
                 <th>Total</th>
-
                 <th>Total GST</th>
                 <th>Round Off</th>
                 <th>Total Paid</th>

@@ -61,7 +61,7 @@ export const fetchStallsByBuilding = async (buildingId, token) => {
 export const deleteStall = async (stallId, token) => {
   try {
     console.log("🗑 Deleting Stall ID:", stallId);
-    const res = await axios.delete(`${API_BASE}${stallId}`, {
+    const res = await axios.delete(`${API_BASE}stalls/${stallId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log("✅ Stall deleted successfully:", res.data);
@@ -71,6 +71,7 @@ export const deleteStall = async (stallId, token) => {
     throw error;
   }
 };
+
 
 // ====================
 // Update a stall by ID
