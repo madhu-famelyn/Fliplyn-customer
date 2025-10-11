@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // ✅ Use Vite environment variable
-const API_BASE = 'https://admin-aged-field-2794.fly.dev/';
+const API_BASE = "http://127.0.0.1:8000";
 
 
 /**
@@ -44,10 +44,10 @@ export const addMemberToWalletGroup = (groupId, name, email, mobileNumber, token
 
 
 
-
 export const updateUserStatus = (groupId, userId, isActive, token) => {
+  const url = `${API_BASE.replace(/\/$/, "")}/${groupId}/update-user-status`; // clean URL
   return axios.put(
-    `${API_BASE}/${groupId}/update-user-status`,
+    url,
     { user_id: userId, is_active: isActive },
     { headers: { Authorization: `Bearer ${token}` } }
   );

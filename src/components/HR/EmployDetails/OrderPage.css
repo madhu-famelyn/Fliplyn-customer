@@ -1,52 +1,81 @@
-/* === Modal Overlay === */
+/* ========================= */
+/* 🌟 MODAL OVERLAY & LAYOUT */
+/* ========================= */
 .orders-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 9999; /* ✅ Always on top of all layouts */
+  padding: 20px;
+  overflow-y: auto;
 }
 
-/* === Modal Container === */
+/* ========================= */
+/* 🌟 MODAL CONTAINER */
+/* ========================= */
 .orders-modal {
-  background: #fff;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px 30px;
   width: 90%;
   max-width: 1100px;
   max-height: 90vh;
   overflow-y: auto;
-  border-radius: 10px;
-  padding: 20px 25px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
   position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.25s ease-in-out;
 }
 
+/* ✅ Smooth fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ========================= */
+/* 🌟 CLOSE BUTTON */
+/* ========================= */
 .close-btn {
   position: absolute;
   top: 12px;
-  right: 15px;
-  background: transparent;
+  right: 12px;
+  background: none;
   border: none;
   font-size: 20px;
   cursor: pointer;
+  color: #444;
+  transition: 0.2s ease;
+}
+.close-btn:hover {
+  color: #d32f2f;
 }
 
+/* ========================= */
+/* 🌟 HEADING */
+/* ========================= */
 .orders-modal h2 {
-  margin-bottom: 15px;
-  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #222;
   font-weight: 600;
-  color: #333;
+  font-size: 22px;
 }
 
-/* === Filter Section === */
+/* ========================= */
+/* 🌟 FILTER SECTION */
+/* ========================= */
 .filter-section {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
+  justify-content: center;
+  align-items: flex-end;
   margin-bottom: 20px;
 }
 
@@ -54,95 +83,176 @@
   display: flex;
   flex-direction: column;
   font-size: 14px;
-  color: #444;
+  color: #333;
+  font-weight: 500;
 }
 
 .filter-section input,
 .filter-section select {
-  margin-top: 5px;
-  padding: 5px 8px;
+  padding: 6px 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 6px;
+  outline: none;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* ========================= */
+/* 🌟 BUTTONS */
+/* ========================= */
+.submit-btn,
+.export-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
 }
 
 .export-btn {
-  background-color: #2563eb;
-  color: #fff;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  align-self: flex-end;
-  transition: background 0.2s;
+  background-color: #4caf50;
 }
-
 .export-btn:hover {
-  background-color: #1e40af;
+  background-color: #3e8e41;
+}
+.export-btn:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
 }
 
-/* === Orders Table === */
+/* ========================= */
+/* 🌟 TABLE STYLING */
+/* ========================= */
 .orders-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
   margin-top: 10px;
 }
 
 .orders-table th,
 .orders-table td {
-  border: 1px solid #e5e7eb;
-  padding: 10px 12px;
+  border: 1px solid #ddd;
+  padding: 10px;
   text-align: left;
   vertical-align: top;
 }
 
 .orders-table th {
-  background-color: #f3f4f6;
+  background-color: #007bff;
+  color: rgb(0, 0, 0);
   font-weight: 600;
-  color: #333;
 }
 
-.orders-table tr:nth-child(even) {
-  background-color: #f9fafb;
+.orders-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
-/* Items list inside cell */
+.orders-table tbody tr:hover {
+  background-color: #eef4ff;
+}
+
+/* ========================= */
+/* 🌟 ITEMS LIST INSIDE TABLE */
+/* ========================= */
 .items-list {
   list-style: none;
+  padding-left: 0;
   margin: 0;
-  padding: 0;
 }
 
 .items-list li {
-  margin-bottom: 3px;
-  font-size: 14px;
+  font-size: 13px;
+  color: #333;
 }
 
-/* === Total Section === */
+/* ========================= */
+/* 🌟 TOTAL SECTION */
+/* ========================= */
 .total-section {
-  margin-top: 20px;
+  margin-top: 15px;
   text-align: right;
-}
-
-.total-section h3 {
-  font-size: 1.2rem;
   font-weight: 600;
-  color: #111;
+  color: #333;
+  font-size: 16px;
 }
 
-/* === Responsive === */
-@media (max-width: 768px) {
-  .orders-table th,
-  .orders-table td {
-    font-size: 13px;
-    padding: 8px;
+/* ========================= */
+/* 📱 MOBILE RESPONSIVE STYLES */
+/* ========================= */
+@media screen and (max-width: 768px) {
+  .orders-modal {
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
   }
 
   .filter-section {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 12px;
   }
 
+  .filter-section label {
+    width: 100%;
+  }
+
+  .submit-btn,
   .export-btn {
     width: 100%;
+  }
+
+  .orders-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    font-size: 13px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 8px;
+  }
+
+  .total-section {
+    text-align: center;
+    font-size: 15px;
+    margin-top: 20px;
+  }
+
+  .close-btn {
+    top: 15px;
+    right: 15px;
+    font-size: 22px;
+  }
+}
+
+/* ========================= */
+/* 🖥️ LARGE SCREEN ENHANCEMENTS */
+/* ========================= */
+@media screen and (min-width: 1200px) {
+  .orders-modal {
+    padding: 30px 40px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .filter-section {
+    gap: 20px;
   }
 }

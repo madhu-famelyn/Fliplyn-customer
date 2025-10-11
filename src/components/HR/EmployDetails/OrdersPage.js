@@ -13,6 +13,7 @@ const OrdersModal = ({ userIds, onClose }) => {
   const [endDate, setEndDate] = useState("");
   const [month, setMonth] = useState("");
   const [timeFilter, setTimeFilter] = useState("");
+  const [submitted, setSubmitted] = useState(false); // ✅ new state
 
   // ✅ Fetch stall name by stall_id
   const fetchStallName = useCallback(
@@ -52,41 +53,38 @@ const OrdersModal = ({ userIds, onClose }) => {
     [token, fetchStallName]
   );
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      if (!userIds?.length) return;
-      setLoading(true);
-      try {
-        const allOrders = await getOrdersByUserIds(userIds, token);
+  const fetchOrders = useCallback(async () => {
+    if (!userIds?.length) return;
+    setLoading(true);
+    try {
+      const allOrders = await getOrdersByUserIds(userIds, token);
+      const enrichedOrdersResults = await Promise.allSettled(
+        allOrders.map(async (o) => {
+          try {
+            const stallName = await fetchStallNameFromOrder(o);
+            return { ...o, stallName };
+          } catch {
+            return null;
+          }
+        })
+      );
 
-        const enrichedOrdersResults = await Promise.allSettled(
-          allOrders.map(async (o) => {
-            try {
-              const stallName = await fetchStallNameFromOrder(o);
-              return { ...o, stallName };
-            } catch {
-              return null;
-            }
-          })
-        );
+      const enrichedOrders = enrichedOrdersResults
+        .filter((r) => r.status === "fulfilled" && r.value)
+        .map((r) => r.value);
 
-        const enrichedOrders = enrichedOrdersResults
-          .filter((r) => r.status === "fulfilled" && r.value)
-          .map((r) => r.value);
-
-        setOrders(enrichedOrders);
-        setFilteredOrders(enrichedOrders);
-      } catch {
-        setOrders([]);
-        setFilteredOrders([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrders();
+      setOrders(enrichedOrders);
+      setFilteredOrders(enrichedOrders);
+    } catch {
+      setOrders([]);
+      setFilteredOrders([]);
+    } finally {
+      setLoading(false);
+    }
   }, [userIds, token, fetchStallNameFromOrder]);
 
   useEffect(() => {
+    if (!submitted) return; // ✅ fetch only after submit
     let filtered = orders;
     const now = new Date();
 
@@ -129,13 +127,12 @@ const OrdersModal = ({ userIds, onClose }) => {
 
     if (month) {
       filtered = filtered.filter(
-        (o) =>
-          new Date(o.created_datetime).getMonth() + 1 === parseInt(month)
+        (o) => new Date(o.created_datetime).getMonth() + 1 === parseInt(month)
       );
     }
 
     setFilteredOrders(filtered);
-  }, [orders, startDate, endDate, month, timeFilter]);
+  }, [orders, startDate, endDate, month, timeFilter, submitted]);
 
   const calculateAmounts = (order) => {
     const itemTotal = order.order_details.reduce((sum, i) => sum + i.total, 0);
@@ -169,6 +166,11 @@ const OrdersModal = ({ userIds, onClose }) => {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Orders");
     XLSX.writeFile(wb, "orders.xlsx");
+  };
+
+  const handleSubmit = async () => {
+    setSubmitted(true);
+    await fetchOrders(); // ✅ only fetch after submit button click
   };
 
   return (
@@ -206,63 +208,60 @@ const OrdersModal = ({ userIds, onClose }) => {
               <option value="week">This Week</option>
             </select>
           </label>
-          <button className="export-btn" onClick={exportToExcel}>Export to Excel</button>
+
+          <button className="submit-btn" onClick={handleSubmit}>
+            Submit
+          </button>
+
+          <button className="export-btn" onClick={exportToExcel} disabled={!filteredOrders.length}>
+            Export to Excel
+          </button>
         </div>
 
         {loading && <p>Loading orders...</p>}
-        {!loading && filteredOrders.length === 0 && <p>No orders found.</p>}
+        {!loading && submitted && filteredOrders.length === 0 && <p>No orders found.</p>}
 
-        {/* ✅ Table layout */}
-{/* ✅ Table layout */}
-{!loading && filteredOrders.length > 0 && (
-  <table className="orders-table">
-    <thead>
-      <tr>
-        <th>Token</th>
-        <th>Email</th>
-        <th>Date</th>
-        <th>Items</th>
-        <th>Grand Total (₹)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {filteredOrders.map((order) => {
-        const { grandTotal } = calculateAmounts(order);
-        return (
-          <tr key={order.id}>
-            {/* ✅ Token - one cell */}
-            <td>{order.token_number}</td>
+        {!loading && submitted && filteredOrders.length > 0 && (
+          <table className="orders-table">
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Email</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Grand Total (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredOrders.map((order) => {
+                const { grandTotal } = calculateAmounts(order);
+                return (
+                  <tr key={order.id}>
+                    <td>{order.token_number}</td>
+                    <td>{order.user_email || "N/A"}</td>
+                    <td>{new Date(order.created_datetime).toLocaleString()}</td>
+                    <td>
+                      <ul className="items-list">
+                        {order.order_details.map((item, idx) => (
+                          <li key={idx}>
+                            {item.name} × {item.quantity}
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td><strong>{grandTotal.toFixed(2)}</strong></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
 
-            {/* ✅ Email - one cell */}
-            <td>{order.user_email || "N/A"}</td>
-
-            {/* ✅ Date */}
-            <td>{new Date(order.created_datetime).toLocaleString()}</td>
-
-            {/* ✅ All items in one cell */}
-            <td>
-              <ul className="items-list">
-                {order.order_details.map((item, idx) => (
-                  <li key={idx}>
-                    {item.name} × {item.quantity}
-                  </li>
-                ))}
-              </ul>
-            </td>
-
-            {/* ✅ Grand Total */}
-            <td><strong>{grandTotal.toFixed(2)}</strong></td>
-          </tr>
-        );
-      })}
-    </tbody>
-  </table>
-)}
-
-
-        <div className="total-section">
-          <h3>Total Paid: ₹{totalAmount.toFixed(2)}</h3>
-        </div>
+        {submitted && filteredOrders.length > 0 && (
+          <div className="total-section">
+            <h3>Total Paid: ₹{totalAmount.toFixed(2)}</h3>
+          </div>
+        )}
       </div>
     </div>
   );

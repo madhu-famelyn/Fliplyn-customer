@@ -11,14 +11,24 @@ const Dashboard = () => {
   const { hr, token } = useHrAuth();
   const [walletGroups, setWalletGroups] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true); // ✅ Loader state
   const navigate = useNavigate();
 
   // ✅ Fetch wallet groups
   useEffect(() => {
     const fetchGroups = async () => {
       if (hr?.id && token) {
-        const groups = await getWalletGroupsByHrId(hr.id, token);
-        setWalletGroups(groups);
+        try {
+          setLoading(true);
+          const groups = await getWalletGroupsByHrId(hr.id, token);
+          setWalletGroups(groups);
+        } catch (err) {
+          console.error("❌ Failed to load wallet groups:", err);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
       }
     };
     fetchGroups();
@@ -27,7 +37,7 @@ const Dashboard = () => {
   const handleCardClick = (groupId) => {
     navigate(`/wallet-group/${groupId}`);
   };
-
+                         
   return (
     <Layout>
       <div className="dashboard-container">
@@ -42,16 +52,18 @@ const Dashboard = () => {
 
         {/* Action Button */}
         <div className="dashboard-actions">
-          <button
-            className="add-group-btn"
-            onClick={() => setShowModal(true)}
-          >
+          <button className="add-group-btn" onClick={() => setShowModal(true)}>
             + Add Group
           </button>
         </div>
 
-        {/* Wallet Groups Section */}
-        {walletGroups.length > 0 ? (
+        {/* ✅ Loader */}
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader"></div>
+            <p>Loading wallet groups...</p>
+          </div>
+        ) : walletGroups.length > 0 ? (
           <div className="wallet-cards">
             {walletGroups.map((group) => (
               <div

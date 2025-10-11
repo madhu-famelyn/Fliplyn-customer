@@ -1,45 +1,14 @@
-/* Sidebar container */
+/* ===============================
+   Layout Base
+================================*/
 .layout {
-  display: flex;             
+  display: flex;
   min-height: 100vh;
 }
 
-.sidebar {
-  width: 200px;
-  height: 100vh;
-  background: #fff;
-  border-right: 1px solid #e5e5e5;
-  padding: 20px 15px;
-  display: flex;
-  flex-direction: column;
-  position: fixed;         
-  top: 0;
-  left: 0;
-  z-index: 1000;        
-}
-
-/* Main content */
-.main-content {
-  flex: 1;
-  margin-left: 260px;
-  padding: 20px;
-  background: #fafafa;
-}
-
-
-.logo {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 30px;
-  text-align: left;
-  color: #000;
-  width: 100%;  
-  display: block;
-  border-bottom: 2px solid #f0f0f0; 
-  padding-bottom: 8px;       /* space above underline */
-}
-
-/* Sidebar container */
+/* ===============================
+   Sidebar (Desktop Default)
+================================*/
 .sidebar {
   width: 240px;
   height: 100vh;
@@ -48,17 +17,24 @@
   padding: 20px 15px;
   display: flex;
   flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: left 0.3s ease;
 }
 
-/* Logo/heading */
 .logo {
   font-size: 22px;
   font-weight: 700;
   margin-bottom: 30px;
+  text-align: left;
   color: #000;
+  width: 100%;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 8px;
 }
 
-/* Menu styling */
 .menu {
   list-style: none;
   padding: 0;
@@ -84,7 +60,7 @@
 
 .menu-item.active {
   background: #fff5ef;
-  color: #f97316; /* orange highlight */
+  color: #f97316;
   font-weight: 600;
 }
 
@@ -92,4 +68,91 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ===============================
+   Mobile Menu Toggle Button
+================================*/
+.menu-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 6px;
+  z-index: 1200;
+  cursor: pointer;
+  display: none; /* hidden on desktop */
+}
+
+/* ===============================
+   Overlay (for mobile)
+================================*/
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 900;
+}
+
+/* ===============================
+   Responsive Styles
+================================*/
+
+/* 🟡 Tablet (≤1024px) */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .menu-item {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+}
+
+/* 🔵 Mobile (≤768px) */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block; /* show hamburger */
+  }
+
+  .sidebar {
+    left: -260px; /* hidden by default */
+    width: 220px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar.open {
+    left: 0; /* slide in when open */
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+}
+
+/* 🔴 Small Phones (≤480px) */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 180px;
+  }
+
+  .menu-item {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .logo {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
 }
