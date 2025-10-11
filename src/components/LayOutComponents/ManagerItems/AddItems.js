@@ -35,14 +35,14 @@ export default function AddItemManager() {
       try {
         setLoading(true);
         const managerRes = await axios.get(
-          `http://127.0.0.1:8000/managers/${user.id}`,
+          `https://admin-aged-field-2794.fly.dev/managers/${user.id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setManager(managerRes.data);
 
         const buildingId = managerRes.data.building_id;
         const stallRes = await axios.get(
-          `http://127.0.0.1:8000/stalls/building/${buildingId}`,
+          `https://admin-aged-field-2794.fly.dev/stalls/building/${buildingId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setStalls(stallRes.data || []);
@@ -60,7 +60,7 @@ export default function AddItemManager() {
   const fetchCategories = async (stallId) => {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/categories/stall/${stallId}`,
+        `https://admin-aged-field-2794.fly.dev/categories/stall/${stallId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCategories(Array.isArray(res.data) ? res.data : [res.data]);
@@ -122,7 +122,7 @@ export default function AddItemManager() {
     if (formData.file) payload.append("file", formData.file);
 
     try {
-      await axios.post(`http://127.0.0.1:8000/items/`, payload, {
+      await axios.post(`https://admin-aged-field-2794.fly.dev/items/`, payload, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
       setSuccessMessage("Item created successfully!");
