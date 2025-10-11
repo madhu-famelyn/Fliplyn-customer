@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import "./ManagerItems.css";
-import { useNavigate } from "react-router-dom";
 
 
 
@@ -14,7 +13,6 @@ export default function ItemListByStall() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [editingItem, setEditingItem] = useState(null);
-    const navigate = useNavigate();
   
   const [updateForm, setUpdateForm] = useState({
     name: "",
