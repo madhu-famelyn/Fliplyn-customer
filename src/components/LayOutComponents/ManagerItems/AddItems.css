@@ -1,0 +1,189 @@
+/* =============================== */
+/* 🎨 GENERAL LAYOUT */
+/* =============================== */
+
+.add-item-manager-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-family: "Inter", sans-serif;
+}
+
+.add-item-manager-container h2 {
+  text-align: center;
+  color: #333;
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+/* =============================== */
+/* 📝 FORM ELEMENTS */
+/* =============================== */
+
+.add-item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.add-item-form label {
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.add-item-form select,
+.add-item-form input[type="text"],
+.add-item-form input[type="number"],
+.add-item-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s ease;
+}
+
+.add-item-form select:focus,
+.add-item-form input:focus,
+.add-item-form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.add-item-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* =============================== */
+/* ✅ CHECKBOXES */
+/* =============================== */
+
+.checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+.checkbox-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* =============================== */
+/* 📤 FILE INPUT */
+/* =============================== */
+
+.add-item-form input[type="file"] {
+  border: 1.5px dashed #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fafafa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-item-form input[type="file"]:hover {
+  border-color: #007bff;
+  background: #f0f8ff;
+}
+
+/* =============================== */
+/* 🚀 BUTTON */
+/* =============================== */
+
+.submit-btn {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.1s ease;
+}
+
+.submit-btn:hover {
+  background-color: #0062d1;
+}
+
+.submit-btn:disabled {
+  background-color: #b0c4de;
+  cursor: not-allowed;
+}
+
+.success-message {
+  text-align: center;
+  color: #28a745;
+  font-weight: 500;
+  margin-top: 20px;
+}
+
+/* =============================== */
+/* 📱 MOBILE RESPONSIVENESS */
+/* =============================== */
+
+@media screen and (max-width: 768px) {
+  .add-item-manager-container {
+    margin: 20px;
+    padding: 20px;
+    box-shadow: none;
+    border: 1px solid #eee;
+  }
+
+  .add-item-manager-container h2 {
+    font-size: 22px;
+  }
+
+  .add-item-form {
+    gap: 12px;
+  }
+
+  .add-item-form input,
+  .add-item-form select,
+  .add-item-form textarea {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .checkbox-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .submit-btn {
+    font-size: 15px;
+    padding: 10px;
+  }
+}
+
+/* =============================== */
+/* 🖥️ LARGE SCREEN ENHANCEMENTS */
+/* =============================== */
+
+@media screen and (min-width: 1024px) {
+  .add-item-manager-container {
+    max-width: 700px;
+  }
+
+  .add-item-manager-container h2 {
+    font-size: 28px;
+  }
+
+  .submit-btn {
+    font-size: 16px;
+  }
+}

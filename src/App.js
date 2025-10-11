@@ -60,10 +60,10 @@ import ViewManagers from "./components/UserCreations/ManagerCreation/Manager";
 import ViewVendors from "./components/UserCreations/VendorCreation/Vendor";
 import ManagerViewVendors from "./components/ManagerComponents/AddVendor/AddVendor";
 import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
-// import { UseAdminWallets } from "./components/ImageWallet/ImageWallet";
-// import ViewBuildingManagers from "./components/UserCreations/BuildingManagerCreations/BuildingManager";
+import AddItemManager from "./components/LayOutComponents/ManagerItems/AddItems";
 
-// ✅ Admin Private Route
+
+
 const AdminPrivateRoute = ({ element }) => {
   const auth = useAdminAuth() || {};
   const { token } = auth;
@@ -136,7 +136,8 @@ function App() {
               <Route path="/user-creation" element={<MainPage />} />
               <Route path="/view-managers" element={<ViewManagers />} />
               <Route path="view-vendors" element={<ViewVendors />} />
-              {/* <Route path="/image-wallet" element={<UseAdminWallets />} /> */}
+             <Route path="/add-item-manager" element={<AddItemManager />} />
+
 
               <Route path="manager-view-vendors" element={<ManagerViewVendors />} />
                <Route

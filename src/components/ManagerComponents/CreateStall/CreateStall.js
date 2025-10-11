@@ -13,19 +13,20 @@ export default function AddStall() {
   const [openingTime, setOpeningTime] = useState("");
   const [closingTime, setClosingTime] = useState("");
   const [isAvailable, setIsAvailable] = useState(true);
+  const [paymentType, setPaymentType] = useState("PREPAID");
   const [file, setFile] = useState(null);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  // Convert 24-hour time (HH:MM) to 12-hour AM/PM format
+  // ✅ Convert 24-hour (input type="time") → 12-hour (backend format)
   const formatTimeToAMPM = (time) => {
     if (!time) return "";
     const [hours, minutes] = time.split(":");
     let h = parseInt(hours, 10);
     const ampm = h >= 12 ? "PM" : "AM";
-    h = h % 12 || 12; // convert 0 => 12
+    h = h % 12 || 12; // Convert 0 → 12
     return `${h.toString().padStart(2, "0")}:${minutes} ${ampm}`;
   };
 
@@ -50,9 +51,9 @@ export default function AddStall() {
     formData.append("opening_time", formatTimeToAMPM(openingTime));
     formData.append("closing_time", formatTimeToAMPM(closingTime));
     formData.append("is_available", isAvailable);
+    formData.append("payment_type", paymentType);
     if (file) formData.append("file", file);
 
-    // Log form data for debugging
     console.log("🔹 Sending form data:");
     for (const [key, value] of formData.entries()) {
       console.log(key, value);
@@ -60,7 +61,7 @@ export default function AddStall() {
 
     try {
       const res = await axios.post(
-        "https://admin-aged-field-2794.fly.dev/stalls/", // replace with your real API URL
+        "https://admin-aged-field-2794.fly.dev/stalls/",
         formData,
         {
           headers: {
@@ -71,7 +72,7 @@ export default function AddStall() {
       );
 
       if (res.status === 200 || res.status === 201) {
-        alert("Stall created successfully!");
+        alert("✅ Stall created successfully!");
         navigate("/manager-stalls");
       }
     } catch (error) {
@@ -104,6 +105,7 @@ export default function AddStall() {
           type="time"
           value={openingTime}
           onChange={(e) => setOpeningTime(e.target.value)}
+          required
         />
 
         <p>Closing Time</p>
@@ -111,6 +113,7 @@ export default function AddStall() {
           type="time"
           value={closingTime}
           onChange={(e) => setClosingTime(e.target.value)}
+          required
         />
 
         <label>
@@ -120,6 +123,17 @@ export default function AddStall() {
             onChange={(e) => setIsAvailable(e.target.checked)}
           />
           Is Available
+        </label>
+
+        <label>
+          Payment Type:
+          <select
+            value={paymentType}
+            onChange={(e) => setPaymentType(e.target.value)}
+          >
+            <option value="PREPAID">PREPAID</option>
+            <option value="POSTPAID">POSTPAID</option>
+          </select>
         </label>
 
         <input type="file" accept="image/*" onChange={handleFileChange} />

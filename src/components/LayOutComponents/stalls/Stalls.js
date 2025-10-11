@@ -9,7 +9,7 @@ import {
   fetchStallsByBuilding,
   fetchBuildings,
   deleteStall,
-  editStallBasic, // ✅ we'll add this in Service.js
+  editStallBasic,
 } from './Service';
 
 export default function CreateStallForm() {
@@ -24,6 +24,7 @@ export default function CreateStallForm() {
     opening_time: '',
     closing_time: '',
     is_available: true,
+    payment_type: 'PREPAID', // ✅ Default uppercase
     file: null,
   });
 
@@ -35,7 +36,6 @@ export default function CreateStallForm() {
   const [showForm, setShowForm] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
-  // ✅ Load buildings & stalls
   useEffect(() => {
     const storedAdminId = adminId || localStorage.getItem("adminId");
     const storedToken = token || localStorage.getItem("token");
@@ -56,7 +56,6 @@ export default function CreateStallForm() {
       .catch((err) => console.error("❌ Error fetching buildings:", err));
   }, [adminId, token]);
 
-  // ✅ Fetch all stalls grouped by building
   const fetchAllStalls = async (buildings, token) => {
     try {
       const allStallsPromises = buildings.map((b) =>
@@ -73,7 +72,6 @@ export default function CreateStallForm() {
     }
   };
 
-  // ✅ Form change handlers
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -102,31 +100,23 @@ export default function CreateStallForm() {
 
     setLoading(true);
     try {
-      if (editMode && editingStallId) {
-        // ✅ Update Stall via working API
-        const formData = new FormData();
-        formData.append("name", form.name);
-        formData.append("description", form.description);
-        if (form.opening_time) formData.append("opening_time", form.opening_time);
-        if (form.closing_time) formData.append("closing_time", form.closing_time);
-        formData.append("is_available", form.is_available);
-        if (form.file) formData.append("file", form.file);
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("description", form.description);
+      if (form.opening_time) formData.append("opening_time", form.opening_time);
+      if (form.closing_time) formData.append("closing_time", form.closing_time);
+      formData.append("is_available", form.is_available);
+      formData.append("payment_type", form.payment_type); // ✅ Ensure uppercase
 
+      if (form.file) formData.append("file", form.file);
+
+      if (editMode && editingStallId) {
         await editStallBasic(editingStallId, formData, token);
         alert('✅ Stall updated successfully!');
       } else {
-        // ✅ Create Stall
-        const formData = new FormData();
-        formData.append("name", form.name);
-        formData.append("description", form.description);
         formData.append("building_id", form.building_id);
         formData.append("admin_id", storedAdminId);
         if (form.manager_id) formData.append("manager_id", form.manager_id);
-        if (form.opening_time) formData.append("opening_time", form.opening_time);
-        if (form.closing_time) formData.append("closing_time", form.closing_time);
-        formData.append("is_available", form.is_available);
-        if (form.file) formData.append("file", form.file);
-
         await createStall(formData, token);
         alert('✅ Stall created successfully!');
       }
@@ -140,6 +130,7 @@ export default function CreateStallForm() {
         opening_time: '',
         closing_time: '',
         is_available: true,
+        payment_type: 'PREPAID', // ✅ reset uppercase
         file: null,
       });
       setShowForm(false);
@@ -165,6 +156,7 @@ export default function CreateStallForm() {
       opening_time: stall.opening_time || '',
       closing_time: stall.closing_time || '',
       is_available: stall.is_available ?? true,
+      payment_type: stall.payment_type?.toUpperCase() || 'PREPAID', // ✅ ensure uppercase
       file: null,
     });
     setEditingStallId(stall.id);
@@ -210,6 +202,7 @@ export default function CreateStallForm() {
               opening_time: '',
               closing_time: '',
               is_available: true,
+              payment_type: 'PREPAID', // ✅ reset uppercase
               file: null,
             });
           }}
@@ -232,6 +225,13 @@ export default function CreateStallForm() {
             </select>
             <input type="text" name="opening_time" placeholder="Opening Time (e.g. 09:00 AM)" value={form.opening_time} onChange={handleChange} />
             <input type="text" name="closing_time" placeholder="Closing Time (e.g. 10:00 PM)" value={form.closing_time} onChange={handleChange} />
+
+            {/* ✅ Payment Type Dropdown */}
+            <select name="payment_type" value={form.payment_type} onChange={handleChange} required>
+              <option value="PREPAID">PREPAID</option>
+              <option value="POSTPAID">POSTPAID</option>
+            </select>
+
             <div className="stalls-admin-toggle-switch">
               <input type="checkbox" id="is_available" name="is_available" className="stalls-admin-toggle-input" checked={form.is_available} onChange={handleChange} />
               <label className="stalls-admin-toggle-label" htmlFor="is_available">
@@ -266,6 +266,7 @@ export default function CreateStallForm() {
                         <p><strong>Description:</strong> {stall.description}</p>
                         <p><strong>Opens:</strong> {stall.opening_time || 'N/A'} - <strong>Closes:</strong> {stall.closing_time || 'N/A'}</p>
                         <p><strong>Status:</strong> {stall.is_available ? '✅ Available' : '❌ Unavailable'}</p>
+                        <p><strong>Payment Type:</strong> {stall.payment_type || 'N/A'}</p>
                       </div>
                       <FaEdit
                         className="stalls-admin-edit-icon"
@@ -290,6 +291,13 @@ export default function CreateStallForm() {
                 <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
                 <input type="text" name="opening_time" placeholder="Opening Time (e.g. 09:00 AM)" value={form.opening_time} onChange={handleChange} />
                 <input type="text" name="closing_time" placeholder="Closing Time (e.g. 10:00 PM)" value={form.closing_time} onChange={handleChange} />
+
+                {/* ✅ Payment Type in Edit */}
+                <select name="payment_type" value={form.payment_type} onChange={handleChange} required>
+                  <option value="PREPAID">PREPAID</option>
+                  <option value="POSTPAID">POSTPAID</option>
+                </select>
+
                 <div className="stalls-admin-toggle-switch">
                   <input type="checkbox" id="is_available" name="is_available" className="stalls-admin-toggle-input" checked={form.is_available} onChange={handleChange} />
                   <label className="stalls-admin-toggle-label" htmlFor="is_available">

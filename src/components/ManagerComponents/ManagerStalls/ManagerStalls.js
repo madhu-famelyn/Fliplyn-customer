@@ -16,61 +16,57 @@ export default function ManagerEditStall() {
     opening_time: "",
     closing_time: "",
     is_available: true,
+    payment_type: "PREPAID",
     image: null,
   });
+
   const navigate = useNavigate();
 
-useEffect(() => {
-  if (!user) return; // Wait until user is loaded
+  useEffect(() => {
+    if (!user) return;
 
-  const fetchStalls = async () => {
-    if (!user?.building_id) {
-      setError("Building ID not found.");
-      setLoading(false);
-      return;
-    }
+    const fetchStalls = async () => {
+      if (!user?.building_id) {
+        setError("Building ID not found.");
+        setLoading(false);
+        return;
+      }
 
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `https://admin-aged-field-2794.fly.dev/stalls/building/${user.building_id}`
-      );
-      setStallData(response.data);
-      setError("");
-    } catch (err) {
-      console.error(err);
-      setError("Failed to fetch stalls.");
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `https://admin-aged-field-2794.fly.dev/stalls/building/${user.building_id}`
+        );
+        setStallData(response.data);
+        setError("");
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch stalls.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchStalls();
-}, [user]);
+    fetchStalls();
+  }, [user]);
 
   const handleEditClick = (stall) => {
-    setEditingStall(stall.id);
-    setFormData({
-      name: stall.name,
-      description: stall.description,
-      opening_time: stall.opening_time
-        ? new Date(`1970-01-01T${stall.opening_time}`).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          })
-        : "",
-      closing_time: stall.closing_time
-        ? new Date(`1970-01-01T${stall.closing_time}`).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          })
-        : "",
-      is_available: stall.is_available,
-      image: null,
-    });
-  };
+  setEditingStall(stall.id);
+  setFormData({
+    name: stall.name || "",
+    description: stall.description || "",
+    opening_time: stall.opening_time
+      ? stall.opening_time.slice(0, 5) // Keep "HH:MM"
+      : "",
+    closing_time: stall.closing_time
+      ? stall.closing_time.slice(0, 5) // Keep "HH:MM"
+      : "",
+    is_available: stall.is_available ?? true,
+    payment_type: stall.payment_type || "PREPAID",
+    image: null,
+  });
+};
+
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -87,37 +83,61 @@ useEffect(() => {
     }));
   };
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    if (!editingStall) return;
+const handleUpdate = async (e) => {
+  e.preventDefault();
+  if (!editingStall) return;
 
-    const form = new FormData();
-    form.append("name", formData.name);
-    form.append("description", formData.description);
-    form.append("opening_time", formData.opening_time);
-    form.append("closing_time", formData.closing_time);
-    form.append("is_available", formData.is_available);
-    if (formData.image) form.append("file", formData.image);
-
-    console.log("🔹 Sending form data:");
-    for (const [key, value] of form.entries()) {
-      console.log(key, value);
-    }
-
-    try {
-      const response = await axios.put(
-        `https://admin-aged-field-2794.fly.dev/stalls/${editingStall}/edit-basic`,
-        form,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      console.log("✅ Response:", response.data);
-      alert("Stall updated successfully!");
-      window.location.reload();
-    } catch (err) {
-      console.error("❌ Error updating stall:", err.response?.data || err.message);
-      alert("Failed to update stall.");
-    }
+  const convertTo12Hour = (time24) => {
+    if (!time24) return "";
+    const [hours, minutes] = time24.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+    const hours12 = hours % 12 || 12;
+    return `${hours12.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")} ${period}`;
   };
+
+  const form = new FormData();
+
+  // Convert opening and closing times to AM/PM before sending
+  const updatedForm = {
+    ...formData,
+    opening_time: convertTo12Hour(formData.opening_time),
+    closing_time: convertTo12Hour(formData.closing_time),
+  };
+
+  Object.entries(updatedForm).forEach(([key, value]) => {
+    if (value !== "" && value !== null && value !== undefined) {
+      if (key === "image" && value) {
+        form.append("file", value);
+      } else {
+        form.append(key, value);
+      }
+    }
+  });
+
+  if (user?.building_id) form.append("building_id", user.building_id);
+
+  console.log("🔹 Sending form data:");
+  for (const [key, value] of form.entries()) {
+    console.log(key, value);
+  }
+
+  try {
+    const response = await axios.put(
+      `https://admin-aged-field-2794.fly.dev/stalls/${editingStall}/edit-basic`,
+      form,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    console.log("✅ Response:", response.data);
+    alert("Stall updated successfully!");
+    window.location.reload();
+  } catch (err) {
+    console.error("❌ Error updating stall:", err.response?.data || err.message);
+    alert("Failed to update stall.");
+  }
+};
+
 
   if (loading) return <p>Loading stalls...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -128,31 +148,41 @@ useEffect(() => {
 
       {/* Top buttons */}
       <div className="ms-buttons">
+
         <button className="ms-btn" onClick={() => navigate("/add-refund")}>
           Add Refund
         </button>
+
         <button className="ms-btn" onClick={() => navigate("/view-sales")}>
           View Sales
         </button>
+
         <button className="ms-btn" onClick={() => navigate("/add-stall")}>
           Add Stall
         </button>
+
         <button className="ms-btn" onClick={() => navigate("/wallet-add-mng")}>
           Add Wallet
         </button>
+
         <button className="ms-btn" onClick={() => navigate("/manager-view-vendors")}>
           Add Vendor
         </button>
+
         <button className="ms-btn" onClick={() => navigate("/place-bulk-order")}>
           Place Bulk Order
         </button>
+
+        <button className="ms-btn" onClick={() => navigate("/add-item-manager")}>
+          Add item        
+        </button>
+
       </div>
 
       {/* Stall grid */}
       <div className="ms-grid">
         {stallData.map((stall) => (
           <div key={stall.id} className="ms-card">
-            {/* ✅ Click image to go to manager items */}
             <img
               src={stall.image_url}
               alt={stall.name}
@@ -161,6 +191,7 @@ useEffect(() => {
               style={{ cursor: "pointer" }}
             />
             <p className="ms-title">{stall.name}</p>
+    
             <button
               className="ms-btn"
               onClick={() => handleEditClick(stall)}
@@ -184,7 +215,6 @@ useEffect(() => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                required
               />
 
               <label>Description:</label>
@@ -212,6 +242,16 @@ useEffect(() => {
                 onChange={handleInputChange}
                 placeholder="10:00 PM"
               />
+
+              <label>Payment Type:</label>
+              <select
+                name="payment_type"
+                value={formData.payment_type}
+                onChange={handleInputChange}
+              >
+                <option value="PREPAID">PREPAID</option>
+                <option value="POSTPAID">POSTPAID</option>
+              </select>
 
               <label>
                 <input
