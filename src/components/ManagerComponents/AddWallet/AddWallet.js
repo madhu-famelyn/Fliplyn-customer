@@ -90,7 +90,9 @@ export default function WalletUpload() {
     try {
       setLoading(true);
       setMessage("");
-      const res = await axios.post(
+
+      // ✅ Removed `const res =` since it's unused
+      await axios.post(
         "https://admin-aged-field-2794.fly.dev/wallets/create",
         formData,
         {
