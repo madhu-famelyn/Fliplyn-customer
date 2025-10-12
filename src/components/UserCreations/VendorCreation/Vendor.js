@@ -7,6 +7,7 @@ import "./Vendor.css";
 
 export default function ViewVendors() {
   const { adminId, token } = useAuth();
+
   const [vendors, setVendors] = useState([]);
   const [stalls, setStalls] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,13 +21,20 @@ export default function ViewVendors() {
 
   useEffect(() => {
     if (adminId) {
+      console.log("🟢 Admin ID available:", adminId);
       fetchVendors();
       fetchStalls();
+    } else {
+      console.log("⚠️ No adminId found, skipping fetch.");
     }
     // eslint-disable-next-line
   }, [adminId]);
 
+  // =========================
+  // Fetch Vendors
+  // =========================
   const fetchVendors = async () => {
+    console.log("📡 Fetching vendors for adminId:", adminId);
     try {
       const response = await axios.get(
         `https://admin-aged-field-2794.fly.dev/vendors/by-admin/${adminId}`,
@@ -37,15 +45,20 @@ export default function ViewVendors() {
           },
         }
       );
+      console.log("✅ Vendors fetched successfully:", response.data);
       setVendors(response.data);
     } catch (error) {
-      console.error("Error fetching vendors:", error);
+      console.error("❌ Error fetching vendors:", error.response?.data || error);
     } finally {
       setLoading(false);
     }
   };
 
+  // =========================
+  // Fetch Stalls
+  // =========================
   const fetchStalls = async () => {
+    console.log("📡 Fetching stalls for adminId:", adminId);
     try {
       const response = await axios.get(
         `https://admin-aged-field-2794.fly.dev/stalls/admin/${adminId}`,
@@ -56,12 +69,16 @@ export default function ViewVendors() {
           },
         }
       );
+      console.log("✅ Stalls fetched successfully:", response.data);
       setStalls(response.data);
     } catch (error) {
-      console.error("Error fetching stalls:", error);
+      console.error("❌ Error fetching stalls:", error.response?.data || error);
     }
   };
 
+  // =========================
+  // Handle Vendor Creation
+  // =========================
   const handleCreateVendor = async (e) => {
     e.preventDefault();
 
@@ -72,8 +89,10 @@ export default function ViewVendors() {
       stall_ids: selectedStalls.map((s) => s.value),
     };
 
+    console.log("📝 Vendor creation payload:", payload);
+
     try {
-      await axios.post(
+      const response = await axios.post(
         `https://admin-aged-field-2794.fly.dev/vendors/create?admin_id=${adminId}`,
         payload,
         {
@@ -85,39 +104,64 @@ export default function ViewVendors() {
         }
       );
 
+      console.log("✅ Vendor created successfully:", response.data);
+
       // Reset form
       setModalOpen(false);
       setName("");
       setPhoneNumber("");
       setPassword("");
       setSelectedStalls([]);
+
+      console.log("🧹 Form reset and refreshing vendor list...");
       fetchVendors(); // Refresh vendor list
     } catch (error) {
-      console.error("Error Creating Vendor:", error.response?.data || error.message);
+      console.error("❌ Error Creating Vendor:", error.response?.data || error.message);
       alert(error.response?.data?.detail || "Failed to create vendor. Check console logs.");
     }
   };
 
-  // Prepare options for react-select
+  // =========================
+  // React Select Options
+  // =========================
   const stallOptions = stalls.map((stall) => ({
     value: stall.id,
     label: stall.name,
   }));
 
-  // Helper: convert vendor's stall_ids to names
+  console.log("📦 Stall Options prepared:", stallOptions);
+
+  // =========================
+  // Helper: Vendor Stall Names
+  // =========================
   const getStallNames = (vendor) => {
     if (!vendor.stall_ids || vendor.stall_ids.length === 0) return "—";
-    return vendor.stall_ids
+    const names = vendor.stall_ids
       .map((id) => stalls.find((s) => s.id === id)?.name || "Unknown")
       .join(", ");
+    console.log(`🏪 Vendor ${vendor.name} linked stalls:`, names);
+    return names;
   };
+
+  // =========================
+  // Render
+  // =========================
+  console.log("📊 Rendering Vendors:", vendors);
+  console.log("🏢 Rendering Stalls:", stalls);
+  console.log("🟠 Modal Open:", modalOpen);
 
   return (
     <AdminLayout>
       <div className="view-vendors-container">
         <div className="header-section">
           <h1>Vendors List</h1>
-          <button className="create-btn" onClick={() => setModalOpen(true)}>
+          <button
+            className="create-btn"
+            onClick={() => {
+              console.log("➕ Opening vendor creation modal");
+              setModalOpen(true);
+            }}
+          >
             + Create Vendor
           </button>
         </div>
@@ -149,7 +193,9 @@ export default function ViewVendors() {
           </div>
         )}
 
-        {/* Modal */}
+        {/* =========================
+            Modal Section
+        ========================== */}
         {modalOpen && (
           <div className="modal">
             <div className="modal-content">
@@ -159,21 +205,32 @@ export default function ViewVendors() {
                   type="text"
                   placeholder="Name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    console.log("✏️ Name changed:", e.target.value);
+                  }}
                   required
                 />
+
                 <input
                   type="text"
                   placeholder="Phone Number"
                   value={phone_number}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  onChange={(e) => {
+                    setPhoneNumber(e.target.value);
+                    console.log("📞 Phone number changed:", e.target.value);
+                  }}
                   required
                 />
+
                 <input
                   type="password"
                   placeholder="Password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    console.log("🔐 Password updated");
+                  }}
                   required
                 />
 
@@ -181,7 +238,10 @@ export default function ViewVendors() {
                 <Select
                   options={stallOptions}
                   value={selectedStalls}
-                  onChange={setSelectedStalls}
+                  onChange={(selected) => {
+                    setSelectedStalls(selected);
+                    console.log("🏬 Selected stalls:", selected);
+                  }}
                   isMulti
                   placeholder="Select stalls..."
                 />
@@ -193,7 +253,10 @@ export default function ViewVendors() {
                   <button
                     type="button"
                     className="cancel-btn"
-                    onClick={() => setModalOpen(false)}
+                    onClick={() => {
+                      console.log("❌ Closing modal without saving");
+                      setModalOpen(false);
+                    }}
                   >
                     Cancel
                   </button>

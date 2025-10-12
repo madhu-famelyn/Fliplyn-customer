@@ -1,119 +1,121 @@
 // src/pages/manager/ViewVendors.js
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../AuthContex/ContextAPI"; // ✅ Manager Auth Context
+import { useAuth } from "../../AuthContex/ContextAPI";
 import axios from "axios";
 import Select from "react-select";
 import "./AddVendor.css";
 
-export default function ManagerViewVendors() {
+export default function OMViewVendors() {
   const { token, user } = useAuth();
   const [vendors, setVendors] = useState([]);
   const [stalls, setStalls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   // Form state
-  const [name, setName] = useState("");
-  const [phone_number, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
+  const [vendorName, setVendorName] = useState("");
+  const [vendorPhone, setVendorPhone] = useState("");
+  const [vendorPassword, setVendorPassword] = useState("");
   const [selectedStalls, setSelectedStalls] = useState([]);
+  const [selectedAdmin, setSelectedAdmin] = useState(null);
+  const [admins, setAdmins] = useState([]);
 
-  const admin_id = user?.admin_id;
+  const admin_id = selectedAdmin?.value || user?.admin_id;
   const building_id = user?.building_id;
-
-  // 🔍 Initial log of user context
-  console.log("🧠 useAuth context:", { user, token, admin_id, building_id });
 
   useEffect(() => {
     if (building_id) {
-      console.log("🏢 Building ID detected:", building_id);
       fetchVendors();
       fetchStalls();
+      fetchAdmins(); // for OM users
     } else {
-      console.warn("⚠️ No building_id found — vendor/stall data will not load");
+      setLoading(false);
     }
     // eslint-disable-next-line
   }, [building_id]);
 
-  // Fetch vendors linked to this building
-const fetchVendors = async () => {
-  if (!building_id) {
-    console.warn("⚠️ No building_id found — vendor data will not load");
-    setVendors([]);
-    setLoading(false);
-    return;
-  }
+  // ==============================
+  // Fetch Vendors
+  // ==============================
+  const fetchVendors = async () => {
+    if (!building_id) return;
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://admin-aged-field-2794.fly.dev/vendors/by-admin/${user.admin_id}`,
+        {
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        }
+      );
+      setVendors(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error("Error fetching vendors:", error.response?.data || error.message);
+      setVendors([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  console.log("📡 Fetching vendors for building:", building_id);
-  try {
-    const response = await axios.get(
-      `https://admin-aged-field-2794.fly.dev/buildings/${building_id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          accept: "application/json",
-        },
-      }
-    );
-
-    console.log("✅ Building fetched:", response.data);
-
-    // Extract vendors array safely
-    const vendorsData = Array.isArray(response.data.vendors)
-      ? response.data.vendors
-      : response.data.vendors
-      ? [response.data.vendors]
-      : [];
-
-    console.log("📦 Vendors state:", vendorsData);
-    setVendors(vendorsData);
-  } catch (error) {
-    console.error("❌ Error fetching vendors:", error.response?.data || error.message);
-    setVendors([]); // fallback
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  // Fetch stalls for manager’s building
+  // ==============================
+  // Fetch Stalls
+  // ==============================
   const fetchStalls = async () => {
-    console.log("📡 Fetching stalls for building:", building_id);
+    if (!building_id) return;
     try {
       const response = await axios.get(
         `https://admin-aged-field-2794.fly.dev/stalls/building/${building_id}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            accept: "application/json",
-          },
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         }
       );
-      console.log("✅ Stalls fetched:", response.data);
       setStalls(response.data);
     } catch (error) {
-      console.error("❌ Error fetching stalls:", error.response || error.message);
+      console.error("Error fetching stalls:", error.response?.data || error.message);
+      setStalls([]);
     }
   };
 
-  // Create new vendor
+  // ==============================
+  // Fetch Admins (OM)
+  // ==============================
+  const fetchAdmins = async () => {
+    try {
+      const response = await axios.get(
+        `https://admin-aged-field-2794.fly.dev/admins`,
+        {
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        }
+      );
+      setAdmins(response.data.map(a => ({ value: a.id, label: a.name })));
+    } catch (error) {
+      console.error("Error fetching admins:", error.response?.data || error.message);
+      setAdmins([]);
+    }
+  };
+
+  // ==============================
+  // Create Vendor
+  // ==============================
   const handleCreateVendor = async (e) => {
     e.preventDefault();
 
     const payload = {
-      name,
-      phone_number,
-      password,
+      name: vendorName,
+      phone_number: vendorPhone,
+      password: vendorPassword,
       stall_ids: selectedStalls.map((s) => s.value),
-      admin_id,
-      building_id,
     };
 
-    console.log("📝 Creating vendor with payload:", payload);
+    if (!admin_id) {
+      alert("Please select a valid admin for this vendor.");
+      return;
+    }
 
     try {
-      const response = await axios.post(
-        `https://admin-aged-field-2794.fly.dev/vendors/create`,
+      setCreating(true);
+      await axios.post(
+        `https://admin-aged-field-2794.fly.dev/vendors/create?admin_id=${admin_id}`,
         payload,
         {
           headers: {
@@ -124,24 +126,27 @@ const fetchVendors = async () => {
         }
       );
 
-      console.log("✅ Vendor created successfully:", response.data);
-
+      // Reset form & close modal
       setModalOpen(false);
-      setName("");
-      setPhoneNumber("");
-      setPassword("");
+      setVendorName("");
+      setVendorPhone("");
+      setVendorPassword("");
       setSelectedStalls([]);
-      fetchVendors(); // refresh list
+      setSelectedAdmin(null);
+
+      fetchVendors(); // Refresh vendor list
     } catch (error) {
-      console.error("❌ Error creating vendor:", error.response?.data || error.message);
-      alert(error.response?.data?.detail || "Failed to create vendor. Check console logs.");
+      console.error("Error creating vendor:", error.response?.data || error.message);
+      alert(error.response?.data?.detail || "Failed to create vendor");
+    } finally {
+      setCreating(false);
     }
   };
 
-  const stallOptions = stalls.map((stall) => ({
-    value: stall.id,
-    label: stall.name,
-  }));
+  // ==============================
+  // Utility Functions
+  // ==============================
+  const stallOptions = stalls.map((stall) => ({ value: stall.id, label: stall.name }));
 
   const getStallNames = (vendor) => {
     if (!vendor.stall_ids || vendor.stall_ids.length === 0) return "—";
@@ -150,30 +155,30 @@ const fetchVendors = async () => {
       .join(", ");
   };
 
-  console.log("📦 Vendors state:", vendors);
-  console.log("📦 Stalls state:", stalls);
-
+  // ==============================
+  // UI Rendering
+  // ==============================
   return (
-    <div className="view-vendors-container">
-      <div className="header-section">
-        <h1>Vendors List</h1>
-        <button className="create-btn" onClick={() => setModalOpen(true)}>
+    <div className="om-vendors-page">
+      <div className="om-vendors-header">
+        <h1 className="om-vendors-title">Vendors List</h1>
+        <button className="om-create-vendor-btn" onClick={() => setModalOpen(true)}>
           + Create Vendor
         </button>
       </div>
 
       {loading ? (
-        <p>Loading...</p>
+        <p className="om-loading-text">Loading vendors...</p>
       ) : vendors.length === 0 ? (
-        <p>No vendors found.</p>
+        <p className="om-no-vendors-text">No vendors found.</p>
       ) : (
-        <div className="table-wrapper">
-          <table className="vendors-table">
+        <div className="om-vendors-table-wrapper">
+          <table className="om-vendors-table">
             <thead>
               <tr>
-                <th className="small-col">Name</th>
-                <th className="small-col">Phone Number</th>
-                <th className="large-col">Stalls</th>
+                <th className="om-col-name">Name</th>
+                <th className="om-col-phone">Phone Number</th>
+                <th className="om-col-stalls">Stalls</th>
               </tr>
             </thead>
             <tbody>
@@ -191,48 +196,66 @@ const fetchVendors = async () => {
 
       {/* Modal */}
       {modalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Create Vendor</h2>
-            <form onSubmit={handleCreateVendor}>
+        <div className="om-modal">
+          <div className="om-modal-content">
+            <h2 className="om-modal-title">Create Vendor</h2>
+            <form className="om-vendor-form" onSubmit={handleCreateVendor}>
               <input
+                className="om-input-name"
                 type="text"
                 placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={vendorName}
+                onChange={(e) => setVendorName(e.target.value)}
                 required
               />
               <input
+                className="om-input-phone"
                 type="text"
                 placeholder="Phone Number"
-                value={phone_number}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                value={vendorPhone}
+                onChange={(e) => setVendorPhone(e.target.value)}
                 required
               />
               <input
+                className="om-input-password"
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={vendorPassword}
+                onChange={(e) => setVendorPassword(e.target.value)}
                 required
               />
 
-              <label>Select Stalls:</label>
+              <label className="om-stall-label">Select Stalls:</label>
               <Select
                 options={stallOptions}
                 value={selectedStalls}
                 onChange={setSelectedStalls}
                 isMulti
                 placeholder="Select stalls..."
+                className="om-stalls-select"
               />
 
-              <div className="modal-actions">
-                <button type="submit" className="save-btn">
-                  Save
+              {/* Admin selection for OM */}
+              {!user.admin_id && (
+                <>
+                  <label className="om-admin-label">Select Admin:</label>
+                  <Select
+                    options={admins}
+                    value={selectedAdmin}
+                    onChange={setSelectedAdmin}
+                    placeholder="Select admin..."
+                    className="om-admin-select"
+                  />
+                </>
+              )}
+
+              <div className="om-modal-actions">
+                <button type="submit" className="om-save-btn" disabled={creating}>
+                  {creating ? "Creating..." : "Save"}
                 </button>
                 <button
                   type="button"
-                  className="cancel-btn"
+                  className="om-cancel-btn"
                   onClick={() => setModalOpen(false)}
                 >
                   Cancel
