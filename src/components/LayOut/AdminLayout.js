@@ -71,17 +71,7 @@ export default function AdminLayout({ children }) {
                 </Link>
               </li>
 
-              <li>
-                <Link to="/token" onClick={toggleSidebar}>
-                  <GiTakeMyMoney /> Token Management
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/image-wallet" onClick={toggleSidebar}>
-                  <RiFileList2Line /> Get Order
-                </Link>
-              </li>
+        
                     <li>
                 <Link to="/manager-wallet" onClick={toggleSidebar}>
                   <RiFileList2Line /> manager wallet
