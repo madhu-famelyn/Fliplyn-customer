@@ -5,7 +5,7 @@ import * as XLSX from "xlsx";
 // import "./StallsReport.css";
            
 export default function StallSalesReportAdmin() {
-  const { adminId, userId, role } = useAuth(); // ✅ use adminId from context
+  const { adminId} = useAuth(); // ✅ use adminId from context
   const [stalls, setStalls] = useState([]);
   const [selectedStallId, setSelectedStallId] = useState("all");
   const [orders, setOrders] = useState([]);

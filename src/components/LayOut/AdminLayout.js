@@ -9,7 +9,6 @@ import {
   FaTimes,
   FaUserPlus,
 } from 'react-icons/fa';
-import { GiTakeMyMoney } from 'react-icons/gi';
 import { MdGroupAdd } from 'react-icons/md';
 import { RiFileList2Line } from 'react-icons/ri';
 import './AdminLayout.css';
