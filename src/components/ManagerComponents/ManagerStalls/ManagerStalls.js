@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContex/ContextAPI";
 import { useNavigate } from "react-router-dom";
+import { FaEdit } from "react-icons/fa";
 import "./ManagerStalls.css";
 
 export default function ManagerEditStall() {
@@ -51,22 +52,17 @@ export default function ManagerEditStall() {
   }, [user]);
 
   const handleEditClick = (stall) => {
-  setEditingStall(stall.id);
-  setFormData({
-    name: stall.name || "",
-    description: stall.description || "",
-    opening_time: stall.opening_time
-      ? stall.opening_time.slice(0, 5) // Keep "HH:MM"
-      : "",
-    closing_time: stall.closing_time
-      ? stall.closing_time.slice(0, 5) // Keep "HH:MM"
-      : "",
-    is_available: stall.is_available ?? true,
-    payment_type: stall.payment_type || "PREPAID",
-    image: null,
-  });
-};
-
+    setEditingStall(stall.id);
+    setFormData({
+      name: stall.name || "",
+      description: stall.description || "",
+      opening_time: stall.opening_time ? stall.opening_time.slice(0, 5) : "",
+      closing_time: stall.closing_time ? stall.closing_time.slice(0, 5) : "",
+      is_available: stall.is_available ?? true,
+      payment_type: stall.payment_type || "PREPAID",
+      image: null,
+    });
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -83,130 +79,102 @@ export default function ManagerEditStall() {
     }));
   };
 
-const handleUpdate = async (e) => {
-  e.preventDefault();
-  if (!editingStall) return;
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!editingStall) return;
 
-  const convertTo12Hour = (time24) => {
-    if (!time24) return "";
-    const [hours, minutes] = time24.split(":").map(Number);
-    const period = hours >= 12 ? "PM" : "AM";
-    const hours12 = hours % 12 || 12;
-    return `${hours12.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")} ${period}`;
-  };
+    const convertTo12Hour = (time24) => {
+      if (!time24) return "";
+      const [hours, minutes] = time24.split(":").map(Number);
+      const period = hours >= 12 ? "PM" : "AM";
+      const hours12 = hours % 12 || 12;
+      return `${hours12.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")} ${period}`;
+    };
 
-  const form = new FormData();
+    const form = new FormData();
+    const updatedForm = {
+      ...formData,
+      opening_time: convertTo12Hour(formData.opening_time),
+      closing_time: convertTo12Hour(formData.closing_time),
+    };
 
-  // Convert opening and closing times to AM/PM before sending
-  const updatedForm = {
-    ...formData,
-    opening_time: convertTo12Hour(formData.opening_time),
-    closing_time: convertTo12Hour(formData.closing_time),
-  };
-
-  Object.entries(updatedForm).forEach(([key, value]) => {
-    if (value !== "" && value !== null && value !== undefined) {
-      if (key === "image" && value) {
-        form.append("file", value);
-      } else {
-        form.append(key, value);
+    Object.entries(updatedForm).forEach(([key, value]) => {
+      if (value !== "" && value !== null && value !== undefined) {
+        if (key === "image" && value) form.append("file", value);
+        else form.append(key, value);
       }
+    });
+
+    if (user?.building_id) form.append("building_id", user.building_id);
+
+    try {
+      const response = await axios.put(
+        `https://admin-aged-field-2794.fly.dev/stalls/${editingStall}/edit-basic`,
+        form,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      alert("Stall updated successfully!");
+      window.location.reload();
+    } catch (err) {
+      console.error("Error updating stall:", err.response?.data || err.message);
+      alert("Failed to update stall.");
     }
-  });
-
-  if (user?.building_id) form.append("building_id", user.building_id);
-
-  console.log("🔹 Sending form data:");
-  for (const [key, value] of form.entries()) {
-    console.log(key, value);
-  }
-
-  try {
-    const response = await axios.put(
-      `https://admin-aged-field-2794.fly.dev/stalls/${editingStall}/edit-basic`,
-      form,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
-    console.log("✅ Response:", response.data);
-    alert("Stall updated successfully!");
-    window.location.reload();
-  } catch (err) {
-    console.error("❌ Error updating stall:", err.response?.data || err.message);
-    alert("Failed to update stall.");
-  }
-};
-
+  };
 
   if (loading) return <p>Loading stalls...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div className="ms-wrapper">
-      <h2 className="ms-heading">Manage Outlets</h2>
+    <div className="mgr-wrapper">
+      <h2 className="mgr-heading">Manage Outlets</h2>
 
-      {/* Top buttons */}
-      <div className="ms-buttons">
-
-        <button className="ms-btn" onClick={() => navigate("/add-refund")}>
+      <div className="mgr-btn-row">
+        <button className="mgr-btn" onClick={() => navigate("/add-refund")}>
           Add Refund
         </button>
-
-        <button className="ms-btn" onClick={() => navigate("/view-sales")}>
+        <button className="mgr-btn" onClick={() => navigate("/view-sales")}>
           View Sales
         </button>
-
-        <button className="ms-btn" onClick={() => navigate("/add-stall")}>
+        <button className="mgr-btn" onClick={() => navigate("/add-stall")}>
           Add Stall
         </button>
-
-        <button className="ms-btn" onClick={() => navigate("/wallet-add-mng")}>
+        <button className="mgr-btn" onClick={() => navigate("/wallet-add-mng")}>
           Add Wallet
         </button>
-
-        <button className="ms-btn" onClick={() => navigate("/manager-view-vendors")}>
+        <button className="mgr-btn" onClick={() => navigate("/manager-view-vendors")}>
           Add Vendor
         </button>
-
-        <button className="ms-btn" onClick={() => navigate("/place-bulk-order")}>
+        <button className="mgr-btn" onClick={() => navigate("/place-bulk-order")}>
           Place Bulk Order
         </button>
-
-        <button className="ms-btn" onClick={() => navigate("/add-item-manager")}>
-          Add item        
+        <button className="mgr-btn" onClick={() => navigate("/add-item-manager")}>
+          Add Item
         </button>
-
       </div>
 
-      {/* Stall grid */}
-      <div className="ms-grid">
+      <div className="mgr-grid">
         {stallData.map((stall) => (
-          <div key={stall.id} className="ms-card">
-            <img
-              src={stall.image_url}
-              alt={stall.name}
-              className="ms-image"
-              onClick={() => navigate(`/manager-items/${stall.id}`)}
-              style={{ cursor: "pointer" }}
-            />
-            <p className="ms-title">{stall.name}</p>
-    
-            <button
-              className="ms-btn"
-              onClick={() => handleEditClick(stall)}
-              style={{ marginTop: "10px" }}
-            >
-              Edit
-            </button>
+          <div key={stall.id} className="mgr-card">
+            <div className="mgr-img-wrapper" onClick={() => navigate(`/manager-items/${stall.id}`)}>
+              <img src={stall.image_url} alt={stall.name} className="mgr-img" />
+            </div>
+            <div className="mgr-card-footer">
+              <p className="mgr-title">{stall.name}</p>
+              <FaEdit
+                className="mgr-edit-icon"
+                title="Edit Stall"
+                onClick={() => handleEditClick(stall)}
+              />
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Edit modal */}
       {editingStall && (
-        <div className="ms-edit-modal">
-          <div className="ms-edit-container">
+        <div className="mgr-modal">
+          <div className="mgr-modal-box">
             <h3>Edit Stall</h3>
             <form onSubmit={handleUpdate}>
               <label>Name:</label>
@@ -225,7 +193,7 @@ const handleUpdate = async (e) => {
                 rows="3"
               />
 
-              <label>Opening Time (e.g. 09:00 AM):</label>
+              <label>Opening Time:</label>
               <input
                 type="text"
                 name="opening_time"
@@ -234,7 +202,7 @@ const handleUpdate = async (e) => {
                 placeholder="09:00 AM"
               />
 
-              <label>Closing Time (e.g. 10:00 PM):</label>
+              <label>Closing Time:</label>
               <input
                 type="text"
                 name="closing_time"
@@ -253,7 +221,7 @@ const handleUpdate = async (e) => {
                 <option value="POSTPAID">POSTPAID</option>
               </select>
 
-              <label>
+              <label className="mgr-checkbox">
                 <input
                   type="checkbox"
                   name="is_available"
@@ -266,13 +234,13 @@ const handleUpdate = async (e) => {
               <label>Image:</label>
               <input type="file" accept="image/*" onChange={handleImageChange} />
 
-              <div className="ms-edit-actions">
-                <button type="submit" className="ms-btn">
+              <div className="mgr-actions">
+                <button type="submit" className="mgr-btn">
                   Update
                 </button>
                 <button
                   type="button"
-                  className="ms-btn cancel"
+                  className="mgr-btn cancel"
                   onClick={() => setEditingStall(null)}
                 >
                   Cancel

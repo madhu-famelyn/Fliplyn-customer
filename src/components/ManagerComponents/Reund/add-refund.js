@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContex/ContextAPI";
-import RefundHistory from "./RefundHistory"; // import refund history component
+import RefundHistory from "./RefundHistory";
 import "./AddRefund.css";
 
 export default function RefundModal() {
-  const { user } = useAuth(); // contains manager_id, admin_id etc.
+  const { user } = useAuth();
 
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ export default function RefundModal() {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [refreshHistory, setRefreshHistory] = useState(false); // trigger history refresh
+  const [refreshHistory, setRefreshHistory] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +44,10 @@ export default function RefundModal() {
     };
 
     try {
-      const response = await axios.post("https://admin-aged-field-2794.fly.dev/refunds/", payload);
+      const response = await axios.post(
+        "https://admin-aged-field-2794.fly.dev/refunds/",
+        payload
+      );
 
       if (response.data) {
         setMessage("✅ Refund processed successfully!");
@@ -54,14 +57,15 @@ export default function RefundModal() {
           refund_reason: "",
           user_email: "",
         });
-        setRefreshHistory((prev) => !prev); // refresh refund history
+        setRefreshHistory((prev) => !prev);
       } else {
         setMessage("⚠️ Refund request sent but backend did not confirm success.");
       }
     } catch (err) {
       console.error(err);
       setMessage(
-        err.response?.data?.detail || "❌ Something went wrong while processing refund"
+        err.response?.data?.detail ||
+          "❌ Something went wrong while processing refund"
       );
     } finally {
       setLoading(false);
@@ -69,17 +73,26 @@ export default function RefundModal() {
   };
 
   return (
-    <div>
+    <div className="refund-wrapper">
       {/* Open Button */}
-      <button className="open-btn" onClick={() => setIsOpen(true)}>
-        Open Refund
+      <button className="refund-open-btn" onClick={() => setIsOpen(true)}>
+        + Add Refund
       </button>
 
       {/* Modal */}
       {isOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Add Refund</h2>
+        <div className="refund-modal-overlay">
+          <div className="refund-modal">
+            <div className="refund-modal-header">
+              <h2>Add Refund</h2>
+              <button
+                className="refund-close-btn"
+                onClick={() => setIsOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+
             <form onSubmit={handleSubmit} className="refund-form">
               <label>Token Number</label>
               <input
@@ -116,21 +129,16 @@ export default function RefundModal() {
                 required
               />
 
-              <div className="modal-buttons">
-                <button type="submit" disabled={loading}>
-                  {loading ? "Processing..." : "Submit Refund"}
-                </button>
-                <button
-                  type="button"
-                  className="close-btn"
-                  onClick={() => setIsOpen(false)}
-                >
-                  X
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="refund-submit-btn"
+                disabled={loading}
+              >
+                {loading ? "Processing..." : "Submit Refund"}
+              </button>
             </form>
 
-            {message && <p className="refund-message">{message}</p>}
+            {message && <p className="refund-status-msg">{message}</p>}
           </div>
         </div>
       )}

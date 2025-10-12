@@ -1,244 +1,214 @@
-.stalls-report {
+/* 🌟 Container */
+.stall-report-container {
   padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Poppins", sans-serif;
+  background-color: #fafafa;
+  color: #333;
 }
 
-.stall-dropdown {
+/* 🔹 Title */
+.stall-report-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #2a2a2a;
+}
+
+/* 🔹 Filter Rows */
+.stall-report-filter-row {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 15px 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
 
-.stall-dropdown label {
-  font-size: 14px;
+.stall-report-filter-row label {
   font-weight: 500;
-  color: #444;
+  margin-right: 8px;
 }
 
-.stall-dropdown select {
+.stall-report-filter-row select {
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   background-color: #fff;
-  font-size: 14px;
+  font-size: 0.95rem;
+}
+
+/* 🔹 Date Filter Buttons */
+.stall-report-date-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.stall-report-date-filters button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
 }
 
-.stall-dropdown select:hover {
-  border-color: #888;
+.stall-report-date-filters button:hover {
+  background-color: #0056b3;
 }
 
-.stall-dropdown select:focus {
-  border-color: #4a90e2;
-  box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
-  outline: none;
+/* 🔹 Custom Date Range */
+.stall-report-custom-range {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
-.stalls-report table {
+.stall-report-custom-range input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* 🔹 Action Buttons */
+.stall-report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.stall-report-actions button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.stall-report-actions button:nth-child(2) {
+  background-color: #17a2b8;
+}
+
+.stall-report-actions button:nth-child(3) {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.stall-report-actions button:hover {
+  opacity: 0.9;
+}
+
+/* 🔹 Empty State */
+.stall-report-empty {
+  text-align: center;
+  background: #fff3cd;
+  color: #856404;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ffeeba;
+  margin-top: 20px;
+}
+
+/* 🔹 Grand Total */
+.stall-report-total {
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2a2a2a;
+  margin: 15px 0;
+}
+
+/* 🔹 Table Styles */
+.stall-report-table {
   width: 100%;
   border-collapse: collapse;
+  overflow-x: auto;
+  display: block;
+  white-space: nowrap;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.stalls-report th,
-.stalls-report td {
-  border: 1px solid #ccc;
-  padding: 8px 12px;
+.stall-report-table thead {
+  background-color: #007bff;
+  color: white;
+}
+
+.stall-report-table th,
+.stall-report-table td {
+  padding: 10px 12px;
   text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.9rem;
 }
 
-.stalls-report th {
-  background-color: #f0f0f0;
+.stall-report-table th {
   font-weight: 600;
 }
 
-.stalls-report tbody tr:nth-child(even) {
-  background-color: #fafafa;
+.stall-report-table tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
-.stalls-report img {
-  border-radius: 4px;
+.stall-report-table tr:hover {
+  background-color: #eef5ff;
 }
 
-
-
-
-.stall-sales-report {
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.stall-sales-report h2 {
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.stall-dropdown {
-  margin-bottom: 15px;
-}
-
-.stall-dropdown label {
-  margin-right: 10px;
-  font-weight: 500;
-}
-
-.stall-dropdown select {
-  padding: 6px 10px;
-  font-size: 14px;
-}
-
-.filter-options {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.filter-options button {
-  padding: 6px 12px;
-  background-color: #d08215;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.filter-options button:hover {
-  background-color: #ba7513;
-}
-
-.custom-range input {
-  margin-left: 10px;
-  padding: 5px 8px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-table th,
-table td {
-  border: 1px solid #ccc;
-  padding: 6px 10px;
-  font-size: 13px;
-  text-align: left;
-}
-
-table th {
-  background-color: #f2f2f2;
-}
-
-
-
-.sort-options {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 15px 0;
-  font-family: 'Inter', sans-serif;
-}
-
-.sort-options label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-}
-
-.sort-options select {
-  padding: 6px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.sort-options select:hover {
-  border-color: #888;
-}
-
-.sort-options select:focus {
-  outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
-}
-
-
-.company-filter {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 15px 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.company-filter label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #444;
-}
-
-.company-filter select {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.company-filter select:hover {
-  border-color: #888;
-}
-
-.company-filter select:focus {
-  border-color: #4a90e2;
-  box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
-  outline: none;
-}
-
-.filter-row {
-  display: flex;
-  align-items: center;
-  gap: 20px; /* space between dropdowns */
-  margin-bottom: 15px;
-}
-
-.filter-row label {
-  margin-right: 5px;
-  font-weight: 500;
-}
-
-
-
-
-/* Responsive layout for mobile */
-@media (max-width: 768px) {
-  .filter-row {
-    flex-direction: column;   /* stack vertically */
-    align-items: stretch;     /* full width */
-    gap: 12px;                /* reduce spacing */
+/* ✅ Responsive Design */
+@media (max-width: 1024px) {
+  .stall-report-filter-row {
+    flex-direction: column;
+    gap: 12px;
   }
 
-  .filter-row > div {
-    width: 100%;              /* each dropdown takes full width */
+  .stall-report-date-filters {
+    justify-content: center;
   }
 
-  .filter-row label {
-    margin-bottom: 4px;
-    display: block;
+  .stall-report-actions {
+    flex-direction: column;
   }
 
-  .stall-dropdown select,
-  .sort-options select,
-  .company-filter select {
-    width: 100%;              /* full width dropdowns */
-    padding: 8px 12px;
+  .stall-report-total {
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .stall-report-title {
+    font-size: 1.5rem;
+  }
+
+  .stall-report-filter-row select,
+  .stall-report-custom-range input {
+    width: 100%;
+  }
+
+  .stall-report-table th,
+  .stall-report-table td {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .stall-report-actions button {
+    width: 100%;
+  }
+
+  .stall-report-date-filters button {
+    flex: 1 1 45%;
   }
 }

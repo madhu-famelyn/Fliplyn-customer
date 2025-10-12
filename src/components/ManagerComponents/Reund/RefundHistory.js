@@ -46,9 +46,7 @@ export default function RefundHistory({ managerId, refresh }) {
         );
       });
     } else if (filter === "thisWeek") {
-      const startOfWeek = new Date(
-        now.setDate(now.getDate() - now.getDay())
-      );
+      const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
       filtered = refunds.filter((r) => new Date(r.created_at) >= startOfWeek);
     } else if (filter === "thisMonth") {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -57,9 +55,11 @@ export default function RefundHistory({ managerId, refresh }) {
       if (customRange.from && customRange.to) {
         const fromDate = new Date(customRange.from);
         const toDate = new Date(customRange.to);
-        toDate.setHours(23, 59, 59); // include entire end day
+        toDate.setHours(23, 59, 59);
         filtered = refunds.filter(
-          (r) => new Date(r.created_at) >= fromDate && new Date(r.created_at) <= toDate
+          (r) =>
+            new Date(r.created_at) >= fromDate &&
+            new Date(r.created_at) <= toDate
         );
       }
     }
@@ -67,19 +67,19 @@ export default function RefundHistory({ managerId, refresh }) {
     setFilteredRefunds(filtered);
   }, [refunds, filter, customRange]);
 
-  if (loading) return <p>Loading refund history...</p>;
-  if (!refunds.length) return <p>No refunds found.</p>;
+  if (loading) return <p className="refund-loading">Loading refund history...</p>;
+  if (!refunds.length) return <p className="refund-empty">No refunds found.</p>;
 
   return (
-    <div className="refund-history">
-      <h3>Refund History</h3>
+    <div className="refund-container">
+      <h3 className="refund-title">Refund History</h3>
 
-      {/* Filter controls */}
-      <div className="refund-filters" style={{ marginBottom: "15px" }}>
+      {/* Filters */}
+      <div className="refund-filters">
         <select
+          className="refund-select"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          style={{ marginRight: "10px", padding: "5px" }}
         >
           <option value="today">Today</option>
           <option value="thisWeek">This Week</option>
@@ -88,14 +88,13 @@ export default function RefundHistory({ managerId, refresh }) {
         </select>
 
         {filter === "custom" && (
-          <span>
+          <div className="refund-date-range">
             <input
               type="date"
               value={customRange.from}
               onChange={(e) =>
                 setCustomRange((prev) => ({ ...prev, from: e.target.value }))
               }
-              style={{ marginRight: "5px", padding: "5px" }}
             />
             <input
               type="date"
@@ -103,43 +102,44 @@ export default function RefundHistory({ managerId, refresh }) {
               onChange={(e) =>
                 setCustomRange((prev) => ({ ...prev, to: e.target.value }))
               }
-              style={{ marginRight: "5px", padding: "5px" }}
             />
-          </span>
+          </div>
         )}
       </div>
 
-      {/* Refund table */}
-      <table>
-        <thead>
-          <tr>
-            <th>Token</th>
-            <th>Amount</th>
-            <th>Reason</th>
-            <th>User Email</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRefunds.length ? (
-            filteredRefunds.map((refund) => (
-              <tr key={refund.id}>
-                <td>{refund.token_number}</td>
-                <td>{refund.refund_amount}</td>
-                <td>{refund.refund_reason}</td>
-                <td>{refund.user_email}</td>
-                <td>{new Date(refund.created_at).toLocaleString()}</td>
-              </tr>
-            ))
-          ) : (
+      {/* Refund Table */}
+      <div className="refund-table-wrapper">
+        <table className="refund-table">
+          <thead>
             <tr>
-              <td colSpan="5" style={{ textAlign: "center" }}>
-                No refunds for selected period.
-              </td>
+              <th>Token</th>
+              <th>Amount</th>
+              <th>Reason</th>
+              <th>User Email</th>
+              <th>Date</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredRefunds.length ? (
+              filteredRefunds.map((refund) => (
+                <tr key={refund.id}>
+                  <td>{refund.token_number}</td>
+                  <td>₹{refund.refund_amount}</td>
+                  <td>{refund.refund_reason}</td>
+                  <td>{refund.user_email}</td>
+                  <td>{new Date(refund.created_at).toLocaleString()}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="no-refunds">
+                  No refunds for selected period.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

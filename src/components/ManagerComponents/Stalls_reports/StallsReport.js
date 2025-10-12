@@ -15,8 +15,9 @@ export default function StallSalesReport() {
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [companyFilter, setCompanyFilter] = useState("all");
   const [sortBy, setSortBy] = useState("stall");
+  const [submitted, setSubmitted] = useState(false);
 
-  // Fetch stalls
+  // Fetch stalls initially
   useEffect(() => {
     const fetchStalls = async () => {
       if (!user?.building_id) return;
@@ -33,21 +34,13 @@ export default function StallSalesReport() {
     fetchStalls();
   }, [user]);
 
-  // Fetch orders and cache in localStorage
+  // Fetch orders only after clicking submit
   useEffect(() => {
-    if (!user?.building_id) return;
+    if (!user?.building_id || !submitted) return;
 
     const fetchOrders = async () => {
       setLoading(true);
       setError("");
-
-      // Try loading cached orders first
-      const cachedOrders = localStorage.getItem("stallOrders");
-      if (cachedOrders) {
-        setOrders(JSON.parse(cachedOrders));
-        setLoading(false);
-        return;
-      }
 
       try {
         let fetchedOrders = [];
@@ -64,10 +57,7 @@ export default function StallSalesReport() {
               }));
               fetchedOrders.push(...stallOrders);
             } catch (err) {
-              console.error(
-                `Failed to fetch orders for stall ${stall.name}`,
-                err
-              );
+              console.error(`Failed to fetch orders for stall ${stall.name}`, err);
             }
           }
         } else {
@@ -94,7 +84,7 @@ export default function StallSalesReport() {
     };
 
     fetchOrders();
-  }, [selectedStallId, stalls, user]);
+  }, [selectedStallId, stalls, user, submitted]);
 
   // Helper: Extract company name (only 'cashe' allowed)
   const getCompanyName = (email) => {
@@ -191,7 +181,6 @@ export default function StallSalesReport() {
       }))
     );
 
-    // Add grand total row
     rows.push({
       Stall: "",
       Token: "",
@@ -215,12 +204,12 @@ export default function StallSalesReport() {
   };
 
   return (
-    <div className="stall-sales-report">
-      <h2>Stall Sales Report</h2>
+    <div className="stall-report-container-unique">
+      <h2 className="stall-report-title-unique">Stall Sales Report</h2>
 
-      <div className="filter-row">
-        {/* Stall Dropdown */}
-        <div className="stall-dropdown">
+      {/* Filters Section */}
+      <div className="stall-report-filters-row-unique">
+        <div className="stall-report-dropdown-unique">
           <label htmlFor="stall-select">Select Stall:</label>
           <select
             id="stall-select"
@@ -236,8 +225,7 @@ export default function StallSalesReport() {
           </select>
         </div>
 
-        {/* Sort Options */}
-        <div className="sort-options">
+        <div className="stall-report-sort-unique">
           <label htmlFor="sort-select">Sort By:</label>
           <select
             id="sort-select"
@@ -249,8 +237,7 @@ export default function StallSalesReport() {
           </select>
         </div>
 
-        {/* Company Filter */}
-        <div className="company-filter">
+        <div className="stall-report-company-filter-unique">
           <label htmlFor="company-select">Filter by Company:</label>
           <select
             id="company-select"
@@ -267,8 +254,8 @@ export default function StallSalesReport() {
         </div>
       </div>
 
-      {/* Date Filters */}
-      <div className="filter-options">
+      {/* Date Filter Buttons */}
+      <div className="stall-report-date-filters-unique">
         <button onClick={() => setFilter("today")}>Today</button>
         <button onClick={() => setFilter("week")}>This Week</button>
         <button onClick={() => setFilter("month")}>This Month</button>
@@ -276,7 +263,7 @@ export default function StallSalesReport() {
         <button onClick={() => setFilter("all")}>All</button>
 
         {filter === "custom" && (
-          <div className="custom-range">
+          <div className="stall-report-custom-range-unique">
             <input
               type="date"
               value={customRange.start}
@@ -295,16 +282,30 @@ export default function StallSalesReport() {
         )}
       </div>
 
-      {/* Export */}
-      <div className="export-btn">
-        <button onClick={exportToExcel}>Export to Excel</button>
+      {/* Submit Button */}
+      <div className="stall-report-submit-btn-container-unique">
+        <button
+          className="stall-report-submit-btn-unique"
+          onClick={() => setSubmitted(true)}
+        >
+          Submit
+        </button>
       </div>
 
+      {/* Export Button */}
+      {orders.length > 0 && (
+        <div className="stall-report-export-btn-unique">
+          <button onClick={exportToExcel}>Export to Excel</button>
+        </div>
+      )}
+
+      {/* Loading & Error */}
       {loading && <p>Loading orders...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {!loading && !error && companyFilteredOrders.length === 0 && (
-        <div>
+      {/* Results */}
+      {!loading && !error && companyFilteredOrders.length === 0 && submitted && (
+        <div className="stall-report-no-orders-unique">
           <p>No orders found for this range.</p>
           {stalls.length > 0 && (
             <ul>
@@ -318,8 +319,10 @@ export default function StallSalesReport() {
 
       {companyFilteredOrders.length > 0 && (
         <>
-          <h3>Grand Total Sales: ₹{totalSales.toFixed(2)}</h3>
-          <table>
+          <h3 className="stall-report-total-unique">
+            Grand Total Sales: ₹{totalSales.toFixed(2)}
+          </h3>
+          <table className="stall-report-table-unique">
             <thead>
               <tr>
                 <th>Stall</th>

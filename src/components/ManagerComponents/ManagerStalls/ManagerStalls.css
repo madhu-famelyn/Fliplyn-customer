@@ -1,254 +1,186 @@
-/* ==============================
-   General Wrapper
-=================================*/
-.ms-wrapper {
+/* Layout */
+.mgr-wrapper {
   padding: 20px;
-  background-color: #fff;
-  font-family: "Inter", Arial, sans-serif;
+  font-family: "Inter", sans-serif;
+  background: #fdfdfd;
   color: #222;
   min-height: 100vh;
 }
 
-/* ==============================
-   Heading
-=================================*/
-.ms-heading {
+.mgr-heading {
+  font-size: 1.8rem;
+  font-weight: 600;
   text-align: center;
-  color: #ff7b00;
-  font-size: 28px;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 20px;
-}
-
-/* ==============================
-   Top Buttons
-=================================*/
-.ms-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
   margin-bottom: 25px;
 }
 
-.ms-btn {
-  background-color: #ff7b00;
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  font-weight: 600;
-  cursor: pointer;
-  text-transform: uppercase;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.ms-btn:hover {
-  background-color: #e36f00;
-  transform: translateY(-2px);
-}
-
-.ms-btn.cancel {
-  background-color: #777;
-}
-
-.ms-btn.cancel:hover {
-  background-color: #555;
-}
-
-/* ==============================
-   Stall Grid
-=================================*/
-.ms-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.ms-card {
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: #fffaf3;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+/* Buttons */
+.mgr-btn-row {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 25px;
 }
 
-.ms-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.ms-image {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-bottom: 3px solid #ff7b00;
-}
-
-.ms-title {
-  font-weight: 600;
-  font-size: 16px;
-  color: #222;
-  margin: 10px 0 6px 0;
-  text-align: center;
-  padding: 0 8px;
-}
-
-/* ==============================
-   Edit Modal
-=================================*/
-.ms-edit-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  padding: 10px;
-}
-
-.ms-edit-container {
-  background: #fffaf3;
-  border-radius: 8px;
-  border: 2px solid #ff7b00;
-  padding: 20px;
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.ms-edit-container h3 {
-  text-align: center;
-  color: #ff7b00;
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-/* ==============================
-   Edit Form
-=================================*/
-.ms-edit-container label {
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: 5px;
-}
-
-.ms-edit-container input[type="text"],
-.ms-edit-container textarea,
-.ms-edit-container input[type="file"],
-.ms-edit-container input[type="time"] {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
-
-.ms-edit-container textarea {
-  resize: vertical;
-  min-height: 70px;
-}
-
-.ms-edit-container input:focus,
-.ms-edit-container textarea:focus {
-  border-color: #ff7b00;
-}
-
-.ms-edit-container input[type="checkbox"] {
-  margin-right: 6px;
-}
-
-/* ==============================
-   Edit Form Actions
-=================================*/
-.ms-edit-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.ms-edit-actions button {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  color: #fff;
+.mgr-btn {
   background: #ff7b00;
-  text-transform: uppercase;
-  border-radius: 6px;
-  transition: background 0.3s ease, transform 0.2s ease;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  white-space: nowrap;
 }
 
-.ms-edit-actions button:hover {
-  background: #e36f00;
-  transform: translateY(-1px);
+.mgr-btn:hover {
+  background: #e96a00;
 }
 
-.ms-edit-actions .cancel {
-  background: #777;
-}
-
-.ms-edit-actions .cancel:hover {
+.mgr-btn.cancel {
   background: #555;
 }
 
-/* ==============================
-   Responsive Design
-=================================*/
-@media (max-width: 768px) {
-  .ms-heading {
-    font-size: 22px;
+.mgr-btn.cancel:hover {
+  background: #222;
+}
+
+/* Grid */
+.mgr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.mgr-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  padding: 10px;
+  text-align: center;
+  position: relative;
+  transition: 0.2s ease;
+}
+
+.mgr-card:hover {
+  transform: translateY(-3px);
+}
+
+.mgr-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border: none;
+  cursor: pointer;
+}
+
+.mgr-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.mgr-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.mgr-edit-icon {
+  color: #ff7b00;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.mgr-edit-icon:hover {
+  color: #e96a00;
+}
+
+/* Modal */
+.mgr-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 20, 20, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+  padding: 20px;
+}
+
+.mgr-modal-box {
+  background: #fff;
+  padding: 25px;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.mgr-modal-box h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.mgr-modal-box label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.mgr-modal-box input,
+.mgr-modal-box textarea,
+.mgr-modal-box select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  border-radius: 4px;
+  outline: none;
+}
+
+.mgr-modal-box textarea {
+  resize: none;
+}
+
+.mgr-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.mgr-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .mgr-heading {
+    font-size: 1.4rem;
   }
 
-  .ms-buttons {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .ms-btn {
-    width: 100%;
-    text-align: center;
-  }
-
-  .ms-grid {
+  .mgr-grid {
     grid-template-columns: 1fr;
   }
 
-  .ms-card {
+  .mgr-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mgr-btn {
     width: 100%;
-  }
-
-  .ms-edit-container {
-    max-width: 95%;
-    padding: 18px;
-  }
-}
-
-@media (max-width: 480px) {
-  .ms-heading {
-    font-size: 20px;
-  }
-
-  .ms-edit-container {
-    padding: 15px;
-  }
-
-  .ms-btn {
-    padding: 10px;
-    font-size: 13px;
   }
 }
