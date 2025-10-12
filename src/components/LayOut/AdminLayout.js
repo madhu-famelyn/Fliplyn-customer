@@ -83,8 +83,13 @@ export default function AdminLayout({ children }) {
                 </Link>
               </li>
                     <li>
-                <Link to="/image-wallet" onClick={toggleSidebar}>
+                <Link to="/manager-wallet" onClick={toggleSidebar}>
                   <RiFileList2Line /> manager wallet
+                </Link>
+              </li>
+                  <li>
+                <Link to="/stalls-report-admin" onClick={toggleSidebar}>
+                  <RiFileList2Line /> stalls report
                 </Link>
               </li>
 

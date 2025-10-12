@@ -32,6 +32,7 @@ import ItemDetails from "./components/LayOutComponents/ManagerItems/Items";
 import AddMoney from "./components/LayOutComponents/Wallet/Wallet";
 import AdminItems from "./components/LayOutComponents/Admin-Items/Items";
 import Group from "./components/LayOutComponents/CreateGroup/Groups";
+import StallSalesReportAdmin from "./components/LayOutComponents/StallsSalesReportAdmin/StallsSalesReport";
 
 import EnterTokenPage from "./components/LayOutComponents/PrintToken/EnterTokenPage";
 import TokenReceiptPage from "./components/LayOutComponents/PrintToken/TokenRecipetentPage";
@@ -49,6 +50,7 @@ import ReportsPage from "./components/Vendor/ItemsList/Reports";
 import ItemListByStall from "./components/ManagerComponents/ManagerItems/ManagerItems";
 import AddRefund from "./components/ManagerComponents/Reund/add-refund";
 import StallsReport from "./components/ManagerComponents/Stalls_reports/StallsReport";
+import WalletUploadAdmin from "./components/LayOutComponents/ManagerWallet/ManagerWallet";
 
 import BuildingManagerLogin from "./components/BuildingManager/BuildingManager";
 import BuildingSalesReport from "./components/BuildingManager/BuilingMangerReport";
@@ -114,6 +116,10 @@ function App() {
               <Route path="/items-admin" element={<AdminPrivateRoute element={<AdminItems />} />} />
               <Route path="/create-group" element={<AdminPrivateRoute element={<Group />} />} />
               <Route path="/token" element={<AdminPrivateRoute element={<EnterTokenPage />} />} />
+              <Route path="/manager-wallet" element={<AdminPrivateRoute element={<WalletUploadAdmin />} />} />
+
+              <Route path="/stalls-report-admin" element={<AdminPrivateRoute element={<StallSalesReportAdmin />} />} />
+
               <Route path="/print-token/:tokenNumber" element={<TokenReceiptPage />} />
               <Route path="/get-order-email" element={<AdminPrivateRoute element={<OrdersByEmail />} />} />
 

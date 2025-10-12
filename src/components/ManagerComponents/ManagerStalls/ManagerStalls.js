@@ -84,17 +84,17 @@ export default function ManagerEditStall() {
   };
 
   // ✅ Convert 12-hour time string to 24-hour for backend (if needed)
-  const convertTo24Hour = (time12) => {
-    if (!time12) return "";
-    const [time, period] = time12.split(" ");
-    if (!time || !period) return time12;
-    let [hours, minutes] = time.split(":").map(Number);
-    if (period.toUpperCase() === "PM" && hours < 12) hours += 12;
-    if (period.toUpperCase() === "AM" && hours === 12) hours = 0;
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}`;
-  };
+  // const convertTo24Hour = (time12) => {
+  //   if (!time12) return "";
+  //   const [time, period] = time12.split(" ");
+  //   if (!time || !period) return time12;
+  //   let [hours, minutes] = time.split(":").map(Number);
+  //   if (period.toUpperCase() === "PM" && hours < 12) hours += 12;
+  //   if (period.toUpperCase() === "AM" && hours === 12) hours = 0;
+  //   return `${hours.toString().padStart(2, "0")}:${minutes
+  //     .toString()
+  //     .padStart(2, "0")}`;
+  // };
 
   // ✅ Handle form submit
   const handleUpdate = async (e) => {

@@ -1,11 +1,11 @@
-// src/Component/Pages/StallsReport/StallSalesReportBM.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useBuildingManagerAuth } from "../AuthContex/BuildingManagerContext";
+import { useAuth } from "../../AuthContex/AdminContext";
 import * as XLSX from "xlsx";
-
-export default function StallSalesReportBM() {
-  const { manager, token } = useBuildingManagerAuth();
+// import "./StallsReport.css";
+           
+export default function StallSalesReportAdmin() {
+  const { adminId, userId, role } = useAuth(); // ✅ use adminId from context
   const [stalls, setStalls] = useState([]);
   const [selectedStallId, setSelectedStallId] = useState("all");
   const [orders, setOrders] = useState([]);
@@ -17,29 +17,26 @@ export default function StallSalesReportBM() {
   const [sortBy, setSortBy] = useState("stall");
   const [submitted, setSubmitted] = useState(false);
 
-  // ✅ Fetch stalls for manager's building
+  // ✅ Fetch stalls initially
   useEffect(() => {
-    if (!manager?.building_id || !token) return;
-
     const fetchStalls = async () => {
+      if (!adminId) return;
       try {
         const res = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/stalls/building/${manager.building_id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+          `https://admin-aged-field-2794.fly.dev/stalls/admin/${adminId}`
+        ); // Updated URL to fetch stalls by admin
         setStalls(res.data);
       } catch (err) {
         console.error(err);
         setError("Failed to fetch stalls.");
       }
     };
-
     fetchStalls();
-  }, [manager, token]);
+  }, [adminId]);
 
   // ✅ Fetch orders after submission
   useEffect(() => {
-    if (!manager?.building_id || !submitted || !token) return;
+    if (!adminId || !submitted) return;
 
     const fetchOrders = async () => {
       setLoading(true);
@@ -60,7 +57,6 @@ export default function StallSalesReportBM() {
                   start_date: customRange.start,
                   end_date: customRange.end,
                 },
-                headers: { Authorization: `Bearer ${token}` },
               });
             } else {
               const now = new Date();
@@ -86,7 +82,6 @@ export default function StallSalesReportBM() {
 
               res = await axios.get(`${baseUrl}/by-stall/${stall.id}/range`, {
                 params: { start_date: startDate, end_date: endDate },
-                headers: { Authorization: `Bearer ${token}` },
               });
             }
 
@@ -118,7 +113,7 @@ export default function StallSalesReportBM() {
         }
 
         setOrders(fetchedOrders);
-        localStorage.setItem("stallOrdersBM", JSON.stringify(fetchedOrders));
+        localStorage.setItem("stallOrders", JSON.stringify(fetchedOrders));
       } catch (err) {
         console.error(err);
         setError("Failed to fetch orders.");
@@ -130,7 +125,7 @@ export default function StallSalesReportBM() {
     };
 
     fetchOrders();
-  }, [selectedStallId, stalls, manager, submitted, filter, customRange, token]);
+  }, [selectedStallId, stalls, adminId, submitted, filter, customRange]);
 
   const getCompanyName = (email) => {
     if (!email) return "Unknown";
@@ -151,16 +146,13 @@ export default function StallSalesReportBM() {
 
   const totalSales = sortedOrders.reduce((acc, order) => {
     const totalPaid =
-      order.order_details.reduce((sum, d) => sum + d.total, 0) +
-      (order.round_off || 0);
+      order.order_details.reduce((sum, d) => sum + d.total, 0) + (order.round_off || 0);
     return acc + totalPaid;
   }, 0);
 
   const companies = Array.from(
     new Set(
-      orders
-        .map((o) => getCompanyName(o.user_email))
-        .filter((c) => c === "cashe")
+      orders.map((o) => getCompanyName(o.user_email)).filter((c) => c === "cashe")
     )
   );
 
@@ -192,7 +184,7 @@ export default function StallSalesReportBM() {
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Stall Sales Report");
-    XLSX.writeFile(wb, "Stall_Sales_Report_BM.xlsx");
+    XLSX.writeFile(wb, "Stall_Sales_Report.xlsx");
   };
 
   const handleSubmit = () => {
@@ -209,7 +201,7 @@ export default function StallSalesReportBM() {
 
   return (
     <div className="stall-report-container-unique">
-      <h2 className="stall-report-title-unique">Stall Sales Report (Building Manager)</h2>
+      <h2 className="stall-report-title-unique">Stall Sales Report</h2>
 
       {/* Filters */}
       <div className="stall-report-filters-row-unique">
