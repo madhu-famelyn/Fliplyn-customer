@@ -23,7 +23,7 @@ export default function ManagerEditStall() {
 
   const navigate = useNavigate();
 
-  // ✅ Fetch stalls when user is loaded
+  // ✅ Fetch stalls
   useEffect(() => {
     if (!user) return;
 
@@ -52,21 +52,21 @@ export default function ManagerEditStall() {
     fetchStalls();
   }, [user]);
 
-  // ✅ Open edit modal with existing stall data
+  // ✅ Open edit modal
   const handleEditClick = (stall) => {
     setEditingStall(stall.id);
     setFormData({
       name: stall.name || "",
       description: stall.description || "",
-      opening_time: stall.opening_time ? stall.opening_time.slice(0, 5) : "",
-      closing_time: stall.closing_time ? stall.closing_time.slice(0, 5) : "",
+      opening_time: stall.opening_time || "", // Keep full AM/PM
+      closing_time: stall.closing_time || "",
       is_available: stall.is_available ?? true,
       payment_type: stall.payment_type || "PREPAID",
       image: null,
     });
   };
 
-  // ✅ Handle input and checkbox change
+  // ✅ Input change handler
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -75,7 +75,7 @@ export default function ManagerEditStall() {
     }));
   };
 
-  // ✅ Handle image upload
+  // ✅ Image change
   const handleImageChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -83,15 +83,17 @@ export default function ManagerEditStall() {
     }));
   };
 
-  // ✅ Convert 24hr to 12hr for backend
-  const convertTo12Hour = (time24) => {
-    if (!time24) return "";
-    const [hours, minutes] = time24.split(":").map(Number);
-    const period = hours >= 12 ? "PM" : "AM";
-    const hours12 = hours % 12 || 12;
-    return `${hours12.toString().padStart(2, "0")}:${minutes
+  // ✅ Convert 12-hour time string to 24-hour for backend (if needed)
+  const convertTo24Hour = (time12) => {
+    if (!time12) return "";
+    const [time, period] = time12.split(" ");
+    if (!time || !period) return time12;
+    let [hours, minutes] = time.split(":").map(Number);
+    if (period.toUpperCase() === "PM" && hours < 12) hours += 12;
+    if (period.toUpperCase() === "AM" && hours === 12) hours = 0;
+    return `${hours.toString().padStart(2, "0")}:${minutes
       .toString()
-      .padStart(2, "0")} ${period}`;
+      .padStart(2, "0")}`;
   };
 
   // ✅ Handle form submit
@@ -101,9 +103,13 @@ export default function ManagerEditStall() {
 
     const updatedForm = {
       ...formData,
-      opening_time: convertTo12Hour(formData.opening_time),
-      closing_time: convertTo12Hour(formData.closing_time),
+      opening_time: formData.opening_time, // Keep AM/PM format for backend if it supports
+      closing_time: formData.closing_time,
     };
+
+    // Optional: If your backend requires 24-hour, uncomment below
+    // updatedForm.opening_time = convertTo24Hour(formData.opening_time);
+    // updatedForm.closing_time = convertTo24Hour(formData.closing_time);
 
     const form = new FormData();
     Object.entries(updatedForm).forEach(([key, value]) => {
@@ -136,7 +142,7 @@ export default function ManagerEditStall() {
     <div className="mgr-wrapper">
       <h2 className="mgr-heading">Manage Outlets</h2>
 
-      {/* ✅ Navigation Buttons */}
+      {/* Navigation Buttons */}
       <div className="mgr-btn-row">
         <button className="mgr-btn" onClick={() => navigate("/add-refund")}>
           Add Refund
@@ -145,12 +151,15 @@ export default function ManagerEditStall() {
           View Sales
         </button>
         <button className="mgr-btn" onClick={() => navigate("/add-stall")}>
-          Add Stall           
+          Add Stall
         </button>
         <button className="mgr-btn" onClick={() => navigate("/wallet-add-mng")}>
           Add Wallet
         </button>
-        <button className="mgr-btn" onClick={() => navigate("/manager-view-vendors")}>
+        <button
+          className="mgr-btn"
+          onClick={() => navigate("/manager-view-vendors")}
+        >
           Add Vendor
         </button>
         <button className="mgr-btn" onClick={() => navigate("/add-item-manager")}>
@@ -158,7 +167,7 @@ export default function ManagerEditStall() {
         </button>
       </div>
 
-      {/* ✅ Stall Grid */}
+      {/* Stall Grid */}
       <div className="mgr-grid">
         {stallData.map((stall) => (
           <div key={stall.id} className="mgr-card">
@@ -180,7 +189,7 @@ export default function ManagerEditStall() {
         ))}
       </div>
 
-      {/* ✅ Edit Modal */}
+      {/* Edit Modal */}
       {editingStall && (
         <div className="mgr-modal">
           <div className="mgr-modal-box">
