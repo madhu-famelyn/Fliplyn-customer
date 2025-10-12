@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./AddRefund.css";
 
-export default function RefundHistory({ managerId, refresh }) {
+export default function RefundHistory({ adminId, refresh }) {
   const [refunds, setRefunds] = useState([]);
   const [filteredRefunds, setFilteredRefunds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,13 +10,13 @@ export default function RefundHistory({ managerId, refresh }) {
   const [customRange, setCustomRange] = useState({ from: "", to: "" });
 
   useEffect(() => {
-    if (!managerId) return;
+    if (!adminId) return;
 
     const fetchRefunds = async () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/refunds/manager/${managerId}`
+          `https://admin-aged-field-2794.fly.dev/refunds/admin/${adminId}`
         );
         setRefunds(res.data);
       } catch (err) {
@@ -28,7 +28,7 @@ export default function RefundHistory({ managerId, refresh }) {
     };
 
     fetchRefunds();
-  }, [managerId, refresh]);
+  }, [adminId, refresh]);
 
   useEffect(() => {
     if (!refunds.length) return;

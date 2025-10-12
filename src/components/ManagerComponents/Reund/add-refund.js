@@ -12,6 +12,7 @@ export default function RefundModal() {
     token_number: "",
     refund_amount: "",
     refund_reason: "",
+    user_email: "",
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -25,8 +26,8 @@ export default function RefundModal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user?.id || !user?.admin_id) {
-      setMessage("Manager/Admin ID missing from context.");
+    if (!user?.admin_id) {
+      setMessage("Admin ID missing from context.");
       return;
     }
 
@@ -34,12 +35,12 @@ export default function RefundModal() {
     setMessage("");
 
     const payload = {
-      manager_id: user.id,
       admin_id: user.admin_id,
+      manager_id: user?.id || null, // optional if available
       token_number: formData.token_number,
       refund_amount: Number(formData.refund_amount),
       refund_reason: formData.refund_reason,
-      // user_email removed; backend fetches it automatically
+      user_email: formData.user_email,
     };
 
     try {
@@ -54,32 +55,18 @@ export default function RefundModal() {
           token_number: "",
           refund_amount: "",
           refund_reason: "",
+          user_email: "",
         });
         setRefreshHistory((prev) => !prev);
       } else {
-        setMessage(
-          "⚠️ Refund request sent but backend did not confirm success."
-        );
+        setMessage("⚠️ Refund request sent but backend did not confirm success.");
       }
     } catch (err) {
       console.error(err);
-      let errorMsg = "❌ Something went wrong while processing refund";
-
-      // Handle object/array from FastAPI/Pydantic validation errors
-      if (err.response?.data?.detail) {
-        if (Array.isArray(err.response.data.detail)) {
-          // take the first message or join all
-          errorMsg = err.response.data.detail
-            .map((d) => d.msg || JSON.stringify(d))
-            .join(", ");
-        } else if (typeof err.response.data.detail === "object") {
-          errorMsg = JSON.stringify(err.response.data.detail);
-        } else {
-          errorMsg = err.response.data.detail;
-        }
-      }
-
-      setMessage(errorMsg);
+      setMessage(
+        err.response?.data?.detail ||
+          "❌ Something went wrong while processing refund"
+      );
     } finally {
       setLoading(false);
     }
@@ -94,11 +81,8 @@ export default function RefundModal() {
 
       {/* Modal */}
       {isOpen && (
-        <div className="refund-modal-overlay" onClick={() => setIsOpen(false)}>
-          <div
-            className="refund-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="refund-modal-overlay">
+          <div className="refund-modal">
             <div className="refund-modal-header">
               <h2>Add Refund</h2>
               <button
@@ -136,6 +120,15 @@ export default function RefundModal() {
                 required
               />
 
+              <label>User Email</label>
+              <input
+                type="email"
+                name="user_email"
+                value={formData.user_email}
+                onChange={handleChange}
+                required
+              />
+
               <button
                 type="submit"
                 className="refund-submit-btn"
@@ -151,7 +144,7 @@ export default function RefundModal() {
       )}
 
       {/* Refund History */}
-      <RefundHistory managerId={user?.id} refresh={refreshHistory} />
+      <RefundHistory adminId={user?.admin_id} refresh={refreshHistory} />
     </div>
   );
 }

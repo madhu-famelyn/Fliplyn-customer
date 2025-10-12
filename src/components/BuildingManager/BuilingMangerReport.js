@@ -173,10 +173,7 @@ export default function StallSalesReportBM() {
         Date: new Date(order.created_datetime).toLocaleString(),
         Item: item.name,
         Quantity: item.quantity,
-        Price: item.price,
-        Total: item.total,
-        GST_Total: order.total_gst,
-        Round_Off: index === 0 ? order.round_off : "",
+
         Total_Paid:
           index === 0
             ? order.order_details.reduce((sum, d) => sum + d.total, 0) +
@@ -327,10 +324,6 @@ export default function StallSalesReportBM() {
                 <th>Date</th>
                 <th>Item</th>
                 <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>GST</th>
-                <th>Round Off</th>
                 <th>Total Paid</th>
               </tr>
             </thead>
@@ -350,10 +343,7 @@ export default function StallSalesReportBM() {
                       </td>
                       <td>{item.name}</td>
                       <td>{item.quantity}</td>
-                      <td>₹{item.price}</td>
-                      <td>₹{item.total}</td>
-                      <td>₹{order.total_gst}</td>
-                      <td>{index === 0 ? `₹${order.round_off}` : ""}</td>
+                    
                       <td>{index === 0 ? `₹${totalPaid.toFixed(2)}` : ""}</td>
                     </tr>
                   );
