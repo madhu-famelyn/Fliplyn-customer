@@ -23,6 +23,7 @@ export default function ManagerEditStall() {
 
   const navigate = useNavigate();
 
+  // ✅ Fetch stalls when user is loaded
   useEffect(() => {
     if (!user) return;
 
@@ -35,10 +36,10 @@ export default function ManagerEditStall() {
 
       try {
         setLoading(true);
-        const response = await axios.get(
+        const res = await axios.get(
           `https://admin-aged-field-2794.fly.dev/stalls/building/${user.building_id}`
         );
-        setStallData(response.data);
+        setStallData(res.data);
         setError("");
       } catch (err) {
         console.error(err);
@@ -51,6 +52,7 @@ export default function ManagerEditStall() {
     fetchStalls();
   }, [user]);
 
+  // ✅ Open edit modal with existing stall data
   const handleEditClick = (stall) => {
     setEditingStall(stall.id);
     setFormData({
@@ -64,6 +66,7 @@ export default function ManagerEditStall() {
     });
   };
 
+  // ✅ Handle input and checkbox change
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -72,6 +75,7 @@ export default function ManagerEditStall() {
     }));
   };
 
+  // ✅ Handle image upload
   const handleImageChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -79,27 +83,29 @@ export default function ManagerEditStall() {
     }));
   };
 
+  // ✅ Convert 24hr to 12hr for backend
+  const convertTo12Hour = (time24) => {
+    if (!time24) return "";
+    const [hours, minutes] = time24.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+    const hours12 = hours % 12 || 12;
+    return `${hours12.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")} ${period}`;
+  };
+
+  // ✅ Handle form submit
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!editingStall) return;
 
-    const convertTo12Hour = (time24) => {
-      if (!time24) return "";
-      const [hours, minutes] = time24.split(":").map(Number);
-      const period = hours >= 12 ? "PM" : "AM";
-      const hours12 = hours % 12 || 12;
-      return `${hours12.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")} ${period}`;
-    };
-
-    const form = new FormData();
     const updatedForm = {
       ...formData,
       opening_time: convertTo12Hour(formData.opening_time),
       closing_time: convertTo12Hour(formData.closing_time),
     };
 
+    const form = new FormData();
     Object.entries(updatedForm).forEach(([key, value]) => {
       if (value !== "" && value !== null && value !== undefined) {
         if (key === "image" && value) form.append("file", value);
@@ -110,16 +116,16 @@ export default function ManagerEditStall() {
     if (user?.building_id) form.append("building_id", user.building_id);
 
     try {
-      const response = await axios.put(
+      await axios.put(
         `https://admin-aged-field-2794.fly.dev/stalls/${editingStall}/edit-basic`,
         form,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      alert("Stall updated successfully!");
+      alert("✅ Stall updated successfully!");
       window.location.reload();
     } catch (err) {
       console.error("Error updating stall:", err.response?.data || err.message);
-      alert("Failed to update stall.");
+      alert("❌ Failed to update stall.");
     }
   };
 
@@ -130,6 +136,7 @@ export default function ManagerEditStall() {
     <div className="mgr-wrapper">
       <h2 className="mgr-heading">Manage Outlets</h2>
 
+      {/* ✅ Navigation Buttons */}
       <div className="mgr-btn-row">
         <button className="mgr-btn" onClick={() => navigate("/add-refund")}>
           Add Refund
@@ -154,10 +161,14 @@ export default function ManagerEditStall() {
         </button>
       </div>
 
+      {/* ✅ Stall Grid */}
       <div className="mgr-grid">
         {stallData.map((stall) => (
           <div key={stall.id} className="mgr-card">
-            <div className="mgr-img-wrapper" onClick={() => navigate(`/manager-items/${stall.id}`)}>
+            <div
+              className="mgr-img-wrapper"
+              onClick={() => navigate(`/manager-items/${stall.id}`)}
+            >
               <img src={stall.image_url} alt={stall.name} className="mgr-img" />
             </div>
             <div className="mgr-card-footer">
@@ -172,6 +183,7 @@ export default function ManagerEditStall() {
         ))}
       </div>
 
+      {/* ✅ Edit Modal */}
       {editingStall && (
         <div className="mgr-modal">
           <div className="mgr-modal-box">
@@ -183,6 +195,7 @@ export default function ManagerEditStall() {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
+                required
               />
 
               <label>Description:</label>
