@@ -10,14 +10,13 @@ export default function WalletUpload() {
   const [userEmail, setUserEmail] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fetchingWallets, setFetchingWallets] = useState(false);
   const [message, setMessage] = useState("");
   const [buildingId, setBuildingId] = useState("");
   const [wallets, setWallets] = useState([]);
-  const [fetchingWallets, setFetchingWallets] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [popupImage, setPopupImage] = useState(null);
 
-  // ✅ Fetch wallets (memoized to avoid re-creation on every render)
   const fetchWallets = useCallback(
     async (building_id) => {
       setFetchingWallets(true);
@@ -29,7 +28,6 @@ export default function WalletUpload() {
 
         const walletsData = res.data;
 
-        // 🔹 Fetch user details for each wallet
         const walletsWithUser = await Promise.all(
           walletsData.map(async (wallet) => {
             try {
@@ -37,12 +35,8 @@ export default function WalletUpload() {
                 `https://admin-aged-field-2794.fly.dev/user/${wallet.user_id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
-              return {
-                ...wallet,
-                user_name: userRes.data.name || "Unknown",
-              };
+              return { ...wallet, user_name: userRes.data.name || "Unknown" };
             } catch (err) {
-              console.error(`Error fetching user ${wallet.user_id}:`, err);
               return { ...wallet, user_name: "Unknown" };
             }
           })
@@ -58,7 +52,6 @@ export default function WalletUpload() {
     [token]
   );
 
-  // ✅ Fetch manager details and wallets
   useEffect(() => {
     if (!manager?.id) return;
 
@@ -70,10 +63,7 @@ export default function WalletUpload() {
         );
         const building_id = res.data.building_id || "";
         setBuildingId(building_id);
-
-        if (building_id) {
-          fetchWallets(building_id);
-        }
+        if (building_id) fetchWallets(building_id);
       } catch (err) {
         console.error("Error fetching manager details:", err);
       }
@@ -82,10 +72,8 @@ export default function WalletUpload() {
     fetchManagerDetails();
   }, [manager, token, fetchWallets]);
 
-  // ✅ Create Wallet
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!walletAmount || !userEmail) {
       setMessage("Please fill all required fields.");
       return;
@@ -102,7 +90,6 @@ export default function WalletUpload() {
     try {
       setLoading(true);
       setMessage("");
-
       const res = await axios.post(
         "https://admin-aged-field-2794.fly.dev/wallets/create",
         formData,
@@ -115,8 +102,6 @@ export default function WalletUpload() {
       );
 
       setMessage("✅ Wallet created successfully!");
-      console.log("Wallet Response:", res.data);
-
       setWalletAmount("");
       setUserEmail("");
       setImage(null);
@@ -142,7 +127,6 @@ export default function WalletUpload() {
         </button>
       </div>
 
-      {/* Wallet Form */}
       {formVisible && (
         <form className="wallet-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -179,49 +163,54 @@ export default function WalletUpload() {
           <button type="submit" disabled={loading} className="orange-btn">
             {loading ? "Creating..." : "Create Wallet"}
           </button>
-
           {message && <p className="status-message">{message}</p>}
         </form>
       )}
 
-      {/* Wallet Table */}
       <h3>Wallets</h3>
-      {fetchingWallets && <p>Loading wallets...</p>}
+
+      {fetchingWallets && (
+        <div className="loader-container">
+          <div className="loader"></div>
+        </div>
+      )}
+
       {!fetchingWallets && wallets.length === 0 && <p>No wallets found.</p>}
 
       {wallets.length > 0 && (
-        <table className="wallet-table">
-          <thead>
-            <tr>
-              <th>User Name</th>
-              <th>Wallet Amount</th>
-              <th>Image</th>
-            </tr>
-          </thead>
-          <tbody>
-            {wallets.map((w) => (
-              <tr key={w.id}>
-                <td>{w.user_name || "Unknown"}</td>
-                <td>{w.wallet_amount}</td>
-                <td>
-                  {w.image_path ? (
-                    <img
-                      src={w.image_path}
-                      alt="wallet"
-                      className="thumbnail"
-                      onClick={() => setPopupImage(w.image_path)}
-                    />
-                  ) : (
-                    "No Image"
-                  )}
-                </td>
+        <div className="table-wrapper">
+          <table className="wallet-table">
+            <thead>
+              <tr>
+                <th>User Name</th>
+                <th>Wallet Amount</th>
+                <th>Image</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {wallets.map((w) => (
+                <tr key={w.id}>
+                  <td>{w.user_name || "Unknown"}</td>
+                  <td>₹{w.wallet_amount}</td>
+                  <td>
+                    {w.image_path ? (
+                      <img
+                        src={w.image_path}
+                        alt="wallet"
+                        className="thumbnail"
+                        onClick={() => setPopupImage(w.image_path)}
+                      />
+                    ) : (
+                      "No Image"
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
-      {/* Popup Image Modal */}
       {popupImage && (
         <div className="popup-overlay" onClick={() => setPopupImage(null)}>
           <div className="popup-content">

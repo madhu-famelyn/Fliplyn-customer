@@ -1,48 +1,67 @@
-/* 🌟 Container */
-.stall-report-container {
+/* === General Container === */
+.stall-report-container-unique {
   padding: 20px;
+  max-width: 1300px;
+  margin: 0 auto;
   font-family: "Poppins", sans-serif;
   background-color: #fafafa;
-  color: #333;
+  min-height: 100vh;
 }
 
-/* 🔹 Title */
-.stall-report-title {
+.stall-report-title-unique {
   text-align: center;
   font-size: 1.8rem;
   font-weight: 600;
+  color: #222;
   margin-bottom: 25px;
-  color: #2a2a2a;
 }
 
-/* 🔹 Filter Rows */
-.stall-report-filter-row {
+/* === Filters Section === */
+.stall-report-filters-row-unique {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
   justify-content: space-between;
-  background: #ffffff;
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
-.stall-report-filter-row label {
+.stall-report-dropdown-unique,
+.stall-report-sort-unique,
+.stall-report-company-filter-unique {
+  flex: 1;
+  min-width: 250px;
+}
+
+.stall-report-dropdown-unique label,
+.stall-report-sort-unique label,
+.stall-report-company-filter-unique label {
+  display: block;
   font-weight: 500;
-  margin-right: 8px;
+  color: #333;
+  margin-bottom: 6px;
 }
 
-.stall-report-filter-row select {
-  padding: 6px 10px;
+.stall-report-dropdown-unique select,
+.stall-report-sort-unique select,
+.stall-report-company-filter-unique select {
+  width: 100%;
+  padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   background-color: #fff;
   font-size: 0.95rem;
+  transition: border-color 0.2s;
 }
 
-/* 🔹 Date Filter Buttons */
-.stall-report-date-filters {
+.stall-report-dropdown-unique select:focus,
+.stall-report-sort-unique select:focus,
+.stall-report-company-filter-unique select:focus {
+  border-color: #ff7300;
+  outline: none;
+}
+
+/* === Date Filter Buttons === */
+.stall-report-date-filters-unique {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -50,165 +69,193 @@
   justify-content: center;
 }
 
-.stall-report-date-filters button {
-  background-color: #007bff;
-  color: white;
+.stall-report-date-filters-unique button {
+  background-color: #ff7300;
+  color: #fff;
   border: none;
   padding: 8px 14px;
   border-radius: 6px;
-  cursor: pointer;
   font-size: 0.9rem;
-  transition: background 0.2s ease;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.stall-report-date-filters button:hover {
+.stall-report-date-filters-unique button:hover {
   background-color: #0056b3;
 }
 
-/* 🔹 Custom Date Range */
-.stall-report-custom-range {
+/* === Custom Date Range === */
+.stall-report-custom-range-unique {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
   justify-content: center;
+  margin-top: 10px;
 }
 
-.stall-report-custom-range input {
+.stall-report-custom-range-unique input {
   padding: 6px 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
-}
-
-/* 🔹 Action Buttons */
-.stall-report-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 25px;
-}
-
-.stall-report-actions button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 9px 16px;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.stall-report-actions button:nth-child(2) {
-  background-color: #17a2b8;
-}
-
-.stall-report-actions button:nth-child(3) {
-  background-color: #ffc107;
-  color: #333;
-}
-
-.stall-report-actions button:hover {
-  opacity: 0.9;
-}
-
-/* 🔹 Empty State */
-.stall-report-empty {
-  text-align: center;
-  background: #fff3cd;
-  color: #856404;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #ffeeba;
-  margin-top: 20px;
-}
-
-/* 🔹 Grand Total */
-.stall-report-total {
-  text-align: right;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2a2a2a;
-  margin: 15px 0;
-}
-
-/* 🔹 Table Styles */
-.stall-report-table {
-  width: 100%;
-  border-collapse: collapse;
-  overflow-x: auto;
-  display: block;
-  white-space: nowrap;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.stall-report-table thead {
-  background-color: #007bff;
-  color: white;
-}
-
-.stall-report-table th,
-.stall-report-table td {
-  padding: 10px 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
   font-size: 0.9rem;
 }
 
-.stall-report-table th {
+/* === Submit & Export Buttons === */
+.stall-report-submit-btn-container-unique,
+.stall-report-export-btn-unique {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.stall-report-submit-btn-unique,
+.stall-report-export-btn-unique button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.stall-report-submit-btn-unique:hover,
+.stall-report-export-btn-unique button:hover {
+  background-color: #218838;
+}
+
+/* === No Orders / Loading === */
+.stall-report-no-orders-unique p,
+.stall-report-container-unique p {
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* === Total Section === */
+.stall-report-total-unique {
+  text-align: right;
   font-weight: 600;
+  font-size: 1.2rem;
+  color: #333;
+  margin: 20px 0 10px;
 }
 
-.stall-report-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+/* === Orders Table === */
+.stall-report-table-unique {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
-.stall-report-table tr:hover {
-  background-color: #eef5ff;
+.stall-report-table-unique th,
+.stall-report-table-unique td {
+  padding: 10px 12px;
+  border: 1px solid #e6e6e6;
+  text-align: center;
+  font-size: 0.9rem;
 }
 
-/* ✅ Responsive Design */
-@media (max-width: 1024px) {
-  .stall-report-filter-row {
+.stall-report-table-unique th {
+  background-color: #ff7300;
+  color: #fff;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.stall-report-table-unique tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+/* === Responsive Styling === */
+
+/* 🖥️ For large screens (Windows desktop) */
+@media (min-width: 1025px) {
+  .stall-report-container-unique {
+    padding: 30px 40px;
+  }
+
+  .stall-report-title-unique {
+    font-size: 2rem;
+  }
+
+  .stall-report-table-unique th,
+  .stall-report-table-unique td {
+    font-size: 0.95rem;
+    padding: 12px 15px;
+  }
+}
+
+/* 📱 For tablets & mobile screens */
+@media (max-width: 768px) {
+  .stall-report-container-unique {
+    padding: 15px;
+  }
+
+  .stall-report-title-unique {
+    font-size: 1.5rem;
+  }
+
+  .stall-report-filters-row-unique {
     flex-direction: column;
     gap: 12px;
   }
 
-  .stall-report-date-filters {
+  .stall-report-dropdown-unique,
+  .stall-report-sort-unique,
+  .stall-report-company-filter-unique {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .stall-report-date-filters-unique {
     justify-content: center;
+    gap: 8px;
   }
 
-  .stall-report-actions {
-    flex-direction: column;
+  .stall-report-date-filters-unique button {
+    flex: 1 1 calc(50% - 10px);
   }
 
-  .stall-report-total {
+  .stall-report-custom-range-unique input {
+    width: 100%;
+  }
+
+  .stall-report-table-unique {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .stall-report-total-unique {
     text-align: center;
+    font-size: 1rem;
   }
 }
 
-@media (max-width: 600px) {
-  .stall-report-title {
-    font-size: 1.5rem;
+/* 📱 Extra small screens */
+@media (max-width: 480px) {
+  .stall-report-title-unique {
+    font-size: 1.3rem;
   }
 
-  .stall-report-filter-row select,
-  .stall-report-custom-range input {
-    width: 100%;
-  }
-
-  .stall-report-table th,
-  .stall-report-table td {
+  .stall-report-date-filters-unique button {
     font-size: 0.85rem;
-    padding: 8px;
+    padding: 6px 10px;
   }
 
-  .stall-report-actions button {
-    width: 100%;
+  .stall-report-table-unique th,
+  .stall-report-table-unique td {
+    font-size: 0.8rem;
+    padding: 8px 6px;
   }
 
-  .stall-report-date-filters button {
-    flex: 1 1 45%;
+  .stall-report-total-unique {
+    font-size: 0.95rem;
   }
 }

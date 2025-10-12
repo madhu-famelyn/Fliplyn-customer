@@ -145,16 +145,13 @@ export default function ManagerEditStall() {
           View Sales
         </button>
         <button className="mgr-btn" onClick={() => navigate("/add-stall")}>
-          Add Stall
+          Add Stall           
         </button>
         <button className="mgr-btn" onClick={() => navigate("/wallet-add-mng")}>
           Add Wallet
         </button>
         <button className="mgr-btn" onClick={() => navigate("/manager-view-vendors")}>
           Add Vendor
-        </button>
-        <button className="mgr-btn" onClick={() => navigate("/place-bulk-order")}>
-          Place Bulk Order
         </button>
         <button className="mgr-btn" onClick={() => navigate("/add-item-manager")}>
           Add Item

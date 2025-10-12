@@ -11,13 +11,13 @@ export default function StallSalesReport() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("");
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [companyFilter, setCompanyFilter] = useState("all");
   const [sortBy, setSortBy] = useState("stall");
   const [submitted, setSubmitted] = useState(false);
 
-  // Fetch stalls initially
+  // ✅ Fetch stalls initially
   useEffect(() => {
     const fetchStalls = async () => {
       if (!user?.building_id) return;
@@ -34,7 +34,7 @@ export default function StallSalesReport() {
     fetchStalls();
   }, [user]);
 
-  // Fetch orders only after clicking submit
+  // ✅ Fetch orders after submission
   useEffect(() => {
     if (!user?.building_id || !submitted) return;
 
@@ -45,31 +45,70 @@ export default function StallSalesReport() {
       try {
         let fetchedOrders = [];
 
+const fetchOrdersByStall = async (stall) => {
+  const baseUrl = "https://admin-aged-field-2794.fly.dev/orders";
+  let res;
+
+  try {
+    if (filter === "custom") {
+      if (!customRange.start || !customRange.end) return [];
+      res = await axios.get(`${baseUrl}/by-stall/${stall.id}/range`, {
+        params: {
+          start_date: customRange.start,
+          end_date: customRange.end,
+        },
+      });
+    } else {
+      const now = new Date();
+      let startDate, endDate;
+
+      if (filter === "today") {
+        startDate = new Date(now.setHours(0, 0, 0, 0)).toISOString().split("T")[0];
+        endDate = new Date().toISOString().split("T")[0];
+      } else if (filter === "week") {
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+        startDate = startOfWeek.toISOString().split("T")[0];
+        endDate = new Date().toISOString().split("T")[0];
+      } else if (filter === "month") {
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        startDate = startOfMonth.toISOString().split("T")[0];
+        endDate = new Date().toISOString().split("T")[0];
+      } else {
+        return [];
+      }
+
+      res = await axios.get(`${baseUrl}/by-stall/${stall.id}/range`, {
+        params: { start_date: startDate, end_date: endDate },
+      });
+    }
+
+    return res.data.map((order) => ({ ...order, stall_name: stall.name }));
+  } catch (err) {
+    if (err.response && err.response.status === 404) {
+      console.warn(`No orders found for stall ${stall.name} in this range.`);
+      return []; // **return empty array on 404**
+    }
+    throw err; // re-throw other errors
+  }
+};
+
+
         if (selectedStallId === "all") {
           for (let stall of stalls) {
             try {
-              const res = await axios.get(
-                `https://admin-aged-field-2794.fly.dev/orders/by-stall/${stall.id}`
-              );
-              const stallOrders = res.data.map((order) => ({
-                ...order,
-                stall_name: stall.name,
-              }));
+              const stallOrders = await fetchOrdersByStall(stall);
               fetchedOrders.push(...stallOrders);
-            } catch (err) {
-              console.error(`Failed to fetch orders for stall ${stall.name}`, err);
+            } catch {
+              console.warn(`No orders for stall ${stall.name}`);
             }
           }
         } else {
-          const res = await axios.get(
-            `https://admin-aged-field-2794.fly.dev/orders/by-stall/${selectedStallId}`
-          );
-          const stallName =
-            stalls.find((s) => s.id === selectedStallId)?.name || "";
-          fetchedOrders = res.data.map((order) => ({
-            ...order,
-            stall_name: stallName,
-          }));
+          const selectedStall = stalls.find((s) => s.id === selectedStallId);
+          if (selectedStall) {
+            const stallOrders = await fetchOrdersByStall(selectedStall);
+            fetchedOrders.push(...stallOrders);
+          }
         }
 
         setOrders(fetchedOrders);
@@ -80,88 +119,55 @@ export default function StallSalesReport() {
         setOrders([]);
       } finally {
         setLoading(false);
+        setSubmitted(false);
       }
     };
 
     fetchOrders();
-  }, [selectedStallId, stalls, user, submitted]);
+  }, [selectedStallId, stalls, user, submitted, filter, customRange]);
 
-  // Helper: Extract company name (only 'cashe' allowed)
+  // ✅ Extract company name from email
   const getCompanyName = (email) => {
     if (!email) return "Unknown";
     const domain = email.split("@")[1] || "";
-    if (domain.includes("cashe")) return "cashe";
-    return "Other";
+    return domain.includes("cashe") ? "cashe" : "Other";
   };
 
-  // Filter orders by date
-  const filteredOrders = orders.filter((order) => {
-    if (filter === "all") return true;
-    const orderDate = new Date(order.created_datetime || new Date());
-    const now = new Date();
-
-    switch (filter) {
-      case "today":
-        return orderDate.toDateString() === now.toDateString();
-      case "week":
-        const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay());
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        return orderDate >= startOfWeek && orderDate <= endOfWeek;
-      case "month":
-        return (
-          orderDate.getMonth() === now.getMonth() &&
-          orderDate.getFullYear() === now.getFullYear()
-        );
-      case "custom":
-        if (!customRange.start || !customRange.end) return true;
-        const start = new Date(customRange.start);
-        const end = new Date(customRange.end);
-        end.setHours(23, 59, 59, 999);
-        return orderDate >= start && orderDate <= end;
-      default:
-        return true;
-    }
-  });
-
-  // Apply company filter
-  let companyFilteredOrders =
+  // ✅ Company filter
+  const companyFilteredOrders =
     companyFilter === "all"
-      ? filteredOrders
-      : filteredOrders.filter(
+      ? orders
+      : orders.filter(
           (order) => getCompanyName(order.user_email) === companyFilter
         );
 
-  // Apply sorting
-  companyFilteredOrders = [...companyFilteredOrders].sort((a, b) => {
-    if (sortBy === "date") {
-      return new Date(a.created_datetime) - new Date(b.created_datetime);
-    } else {
-      return a.stall_name.localeCompare(b.stall_name);
-    }
-  });
+  // ✅ Sorting
+  const sortedOrders = [...companyFilteredOrders].sort((a, b) =>
+    sortBy === "date"
+      ? new Date(a.created_datetime) - new Date(b.created_datetime)
+      : a.stall_name.localeCompare(b.stall_name)
+  );
 
-  // Grand total sales
-  const totalSales = companyFilteredOrders.reduce((acc, order) => {
+  // ✅ Grand total
+  const totalSales = sortedOrders.reduce((acc, order) => {
     const totalPaid =
       order.order_details.reduce((sum, d) => sum + d.total, 0) +
       (order.round_off || 0);
     return acc + totalPaid;
   }, 0);
 
-  // Unique companies (only 'cashe')
+  // ✅ Unique companies (only “cashe”)
   const companies = Array.from(
     new Set(
-      filteredOrders
+      orders
         .map((o) => getCompanyName(o.user_email))
         .filter((c) => c === "cashe")
     )
   );
 
-  // Export to Excel
+  // ✅ Export to Excel
   const exportToExcel = () => {
-    const rows = companyFilteredOrders.flatMap((order) =>
+    const rows = sortedOrders.flatMap((order) =>
       order.order_details.map((item, index) => ({
         Stall: order.stall_name,
         Token: order.token_number,
@@ -182,18 +188,6 @@ export default function StallSalesReport() {
     );
 
     rows.push({
-      Stall: "",
-      Token: "",
-      Email: "",
-      Date: "",
-      Item: "",
-      Quantity: "",
-      Price: "",
-      Total: "",
-      CGST: "",
-      SGST: "",
-      GST_Total: "",
-      Round_Off: "",
       Total_Paid: "Grand Total: ₹" + totalSales.toFixed(2),
     });
 
@@ -203,11 +197,24 @@ export default function StallSalesReport() {
     XLSX.writeFile(wb, "Stall_Sales_Report.xlsx");
   };
 
+  // ✅ Handle Submit
+  const handleSubmit = () => {
+    if (!filter) {
+      alert("Please select a date filter (Today, Week, Month, or Custom)");
+      return;
+    }
+    if (filter === "custom" && (!customRange.start || !customRange.end)) {
+      alert("Please select both start and end dates for custom range.");
+      return;
+    }
+    setSubmitted(true);
+  };
+
   return (
     <div className="stall-report-container-unique">
       <h2 className="stall-report-title-unique">Stall Sales Report</h2>
 
-      {/* Filters Section */}
+      {/* Filters */}
       <div className="stall-report-filters-row-unique">
         <div className="stall-report-dropdown-unique">
           <label htmlFor="stall-select">Select Stall:</label>
@@ -260,7 +267,6 @@ export default function StallSalesReport() {
         <button onClick={() => setFilter("week")}>This Week</button>
         <button onClick={() => setFilter("month")}>This Month</button>
         <button onClick={() => setFilter("custom")}>Custom</button>
-        <button onClick={() => setFilter("all")}>All</button>
 
         {filter === "custom" && (
           <div className="stall-report-custom-range-unique">
@@ -282,42 +288,35 @@ export default function StallSalesReport() {
         )}
       </div>
 
-      {/* Submit Button */}
+      {/* Submit */}
       <div className="stall-report-submit-btn-container-unique">
         <button
           className="stall-report-submit-btn-unique"
-          onClick={() => setSubmitted(true)}
+          onClick={handleSubmit}
         >
           Submit
         </button>
       </div>
 
-      {/* Export Button */}
+      {/* Export */}
       {orders.length > 0 && (
         <div className="stall-report-export-btn-unique">
           <button onClick={exportToExcel}>Export to Excel</button>
         </div>
       )}
 
-      {/* Loading & Error */}
+      {/* Loading/Error */}
       {loading && <p>Loading orders...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Results */}
-      {!loading && !error && companyFilteredOrders.length === 0 && submitted && (
+      {!loading && !error && sortedOrders.length === 0 && submitted && (
         <div className="stall-report-no-orders-unique">
-          <p>No orders found for this range.</p>
-          {stalls.length > 0 && (
-            <ul>
-              {stalls.map((stall) => (
-                <li key={stall.id}>{stall.name} - No orders yet</li>
-              ))}
-            </ul>
-          )}
+          <p>No orders found for this date range.</p>
         </div>
       )}
 
-      {companyFilteredOrders.length > 0 && (
+      {/* Orders Table */}
+      {sortedOrders.length > 0 && (
         <>
           <h3 className="stall-report-total-unique">
             Grand Total Sales: ₹{totalSales.toFixed(2)}
@@ -330,16 +329,16 @@ export default function StallSalesReport() {
                 <th>User Email</th>
                 <th>Date</th>
                 <th>Item</th>
-                <th>Quantity</th>
+                <th>Qty</th>
                 <th>Price</th>
                 <th>Total</th>
-                <th>Total GST</th>
+                <th>GST</th>
                 <th>Round Off</th>
                 <th>Total Paid</th>
               </tr>
             </thead>
             <tbody>
-              {companyFilteredOrders.map((order) =>
+              {sortedOrders.map((order) =>
                 order.order_details.map((item, index) => {
                   const totalPaid =
                     order.order_details.reduce((sum, d) => sum + d.total, 0) +

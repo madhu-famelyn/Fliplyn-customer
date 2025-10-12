@@ -20,6 +20,9 @@
   gap: 8px;
   overflow-x: auto;
   margin-bottom: 25px;
+  align-items: center;
+  justify-content: center; /* ✅ Centers the row horizontally */
+  width: 100%;
 }
 
 .mgr-btn {
@@ -184,3 +187,12 @@
     width: 100%;
   }
 }
+
+
+
+
+
+
+
+
+
