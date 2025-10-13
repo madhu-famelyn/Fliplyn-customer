@@ -107,6 +107,35 @@
   margin: 15px 0;
 }
 
+/* Container row */
+.stall-report-date-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between label, dropdown, and inputs */
+  margin-bottom: 15px;
+  flex-wrap: wrap; /* responsive wrap on smaller screens */
+}
+
+/* Label */
+.stall-report-date-label {
+  font-weight: 500;
+  margin-right: 5px;
+}
+
+/* Dropdown and date inputs */
+.stall-report-date-dropdown {
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Custom date input container */
+.stall-report-custom-date-inputs {
+  display: flex;
+  gap: 5px;
+}
+
 .stall-report-submit-btn-unique,
 .stall-report-export-btn-unique button {
   background-color: #28a745;

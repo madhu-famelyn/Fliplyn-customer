@@ -284,42 +284,46 @@ const fetchOrdersByStall = async (stall) => {
       </div>
     </div>
 
-    <div className="stall-report-date-filters-unique">
-      <label htmlFor="date-filter-select">Select Date Filter:</label>
-      <select
-        id="date-filter-select"
-        className="stall-report-dropdown-unique"
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-      >
-        <option value="">Select Date Filter</option>
-        <option value="today">Today</option>
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-        <option value="custom">Custom</option>
-      </select>
+<div className="stall-report-date-filter-row">
+  <label htmlFor="date-filter-select" className="stall-report-date-label">
+    Select Date Filter:
+  </label>
 
-      {filter === "custom" && (
-        <div className="stall-report-dropdown-unique">
-          <input
-            type="date"
-            className="stall-report-dropdown-unique"
-            value={customRange.start}
-            onChange={(e) =>
-              setCustomRange({ ...customRange, start: e.target.value })
-            }
-          />
-          <input
-            type="date"
-            className="stall-report-dropdown-unique"
-            value={customRange.end}
-            onChange={(e) =>
-              setCustomRange({ ...customRange, end: e.target.value })
-            }
-          />
-        </div>
-      )}
+  <select
+    id="date-filter-select"
+    className="stall-report-date-dropdown"
+    value={filter}
+    onChange={(e) => setFilter(e.target.value)}
+  >
+    <option value="">Select Date Filter</option>
+    <option value="today">Today</option>
+    <option value="week">This Week</option>
+    <option value="month">This Month</option>
+    <option value="custom">Custom</option>
+  </select>
+
+  {filter === "custom" && (
+    <div className="stall-report-custom-date-inputs">
+      <input
+        type="date"
+        className="stall-report-date-dropdown"
+        value={customRange.start}
+        onChange={(e) =>
+          setCustomRange({ ...customRange, start: e.target.value })
+        }
+      />
+      <input
+        type="date"
+        className="stall-report-date-dropdown"
+        value={customRange.end}
+        onChange={(e) =>
+          setCustomRange({ ...customRange, end: e.target.value })
+        }
+      />
     </div>
+  )}
+</div>
+
 
     <div className="stall-report-submit-btn-container-unique">
       <button
