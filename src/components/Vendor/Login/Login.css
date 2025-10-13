@@ -1,117 +1,117 @@
-/* =========================
-   Vendor Login Page Styles
-   ========================= */
+/* src/pages/vendor/Login.css */
 
+/* === Page Container === */
 .vendor-login-page {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f9f9f9;
+  font-family: 'Arial', sans-serif;
   padding: 20px;
 }
 
+/* === Card === */
 .vendor-login-card {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
   padding: 40px 30px;
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* === Title === */
+.vendor-login-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 25px;
   text-align: center;
 }
 
-.vendor-login-title {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #111;
-}
-
-/* Error message */
+/* === Error Message === */
 .vendor-login-error {
-  background: #ffe5e5;
-  color: #d9534f;
+  background-color: #ffe0cc;
+  color: #d84300;
   padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 0.9rem;
 }
 
-/* Form container */
+/* === Form Container === */
 .vendor-login-container {
-  margin-top: 15px;
+  width: 100%;
 }
 
+/* === Form Fields === */
 .vendor-login-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 10px 12px;
 }
 
-/* Labels */
-.vendor-login-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 6px;
-  display: block;
-  text-align: left;
-}
-
-/* Input fields */
 .vendor-login-field {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+}
+
+.vendor-login-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #000000;
 }
 
 .vendor-login-input {
-  width: 366.32px;              /* Same as button */
-  height: 40px;                 /* Figma height */
-  border-radius: 10px;          /* Rounded corners */
-  border: 1px solid #E4E4E4;    /* Border color */
-  background: #BBBBBB26;        /* Light gray transparent bg */
-  padding: 0 12px;              /* Inner spacing */
-  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid #e65c00;
   outline: none;
-  transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+  color: #333;
 }
 
+/* Focus effect */
 .vendor-login-input:focus {
-  border: 1px solid #ff7b00; 
-  box-shadow: 0 0 0 2px rgba(255, 123, 0, 0.2);
-  outline: none;
+  border: 2px solid #ff8c00;
 }
 
-/* Submit button */
+/* === Button === */
 .vendor-login-button {
-  width: 390.32px;              /* Match inputs */
-  height: 38.61px;
-  padding: 14px 36px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-
-  background: #F17F1C;
-  color: #ffffff;
-  font-family: "Helvetica Neue", sans-serif;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 100%;
-
-  border: 1px solid #FFA455;
-  border-radius: 8px;
+  padding: 12px;
+  background-color: #ff8c00;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
   cursor: pointer;
-
-  box-shadow: 0px 8px 24px 0px #F17F1C4D;
-
-  transition: all 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .vendor-login-button:hover {
-  background: #e67214;
-  box-shadow: 0px 8px 28px 0px #F17F1C66;
+  background-color: #e65c00;
+}
+
+/* === Responsive for Mobile === */
+@media (max-width: 480px) {
+  .vendor-login-card {
+    padding: 30px 20px;
+  }
+
+  .vendor-login-title {
+    font-size: 1.5rem;
+  }
+
+  .vendor-login-button {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  .vendor-login-input {
+    font-size: 0.95rem;
+  }
 }

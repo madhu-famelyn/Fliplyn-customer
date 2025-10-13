@@ -142,7 +142,6 @@ const fetchOrdersByStall = async (stall) => {
         }
 
         setOrders(fetchedOrders);
-        localStorage.setItem("stallOrders", JSON.stringify(fetchedOrders));
       } catch (err) {
         console.error(err);
         setError("Failed to fetch orders.");
