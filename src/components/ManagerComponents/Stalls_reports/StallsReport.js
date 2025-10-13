@@ -37,17 +37,17 @@ export default function StallSalesReport() {
   }, [user]);
 
   // Helper: Convert local IST date to YYYY-MM-DD
-const getISTDateString = (date = new Date()) => {
-  // Convert to IST
-  const istDate = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+// const getISTDateString = (date = new Date()) => {
+//   // Convert to IST
+//   const istDate = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
   
-  // Format as YYYY-MM-DD
-  const year = istDate.getFullYear();
-  const month = String(istDate.getMonth() + 1).padStart(2, "0");
-  const day = String(istDate.getDate()).padStart(2, "0");
+//   // Format as YYYY-MM-DD
+//   const year = istDate.getFullYear();
+//   const month = String(istDate.getMonth() + 1).padStart(2, "0");
+//   const day = String(istDate.getDate()).padStart(2, "0");
   
-  return `${year}-${month}-${day}`;
-};
+//   return `${year}-${month}-${day}`;
+// };
 
 
   // Fetch orders based on selected filter
