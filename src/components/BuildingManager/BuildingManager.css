@@ -1,79 +1,92 @@
-/* src/pages/buildingManager/BuildingManager.css */
-
+/* Container */
 .bm-login-container {
   display: flex;
   justify-content: center;
-  align-items: start;
-  padding-top: 80px; /* pushes form down from top */
-  height: 100vh;
-  background: #ffffff; /* plain white, no gradient */
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  align-items: center;
+  min-height: 100vh;
+  background: #ffffff; /* soft orange background */
+  font-family: Arial, sans-serif;
 }
 
+/* Form */
 .bm-login-form {
-  display: grid;
-  gap: 1rem; /* grid spacing between elements */
-  background: transparent; /* no background box */
-  padding: 0; /* no padding around */
-  width: 320px; /* fixed clean width */
-}
-
-.bm-login-title {
-  text-align: center;
-  margin-bottom: 1rem;
-  color: #222222;
-  font-size: 1.4rem;
-  font-weight: 600;
-}
-
-.bm-form-group {
-  display: grid;
-  gap: 0.4rem;
-}
-
-.bm-label {
-  font-size: 0.9rem;
-  color: #444444;
-}
-
-.bm-input {
-  width: 92%;
-  padding: 10px 12px;
-  border: 1px solid #999999;
-  border-radius: 0; /* no curves */
-  outline: none;
-  font-size: 0.95rem;
-  background: #ffffff;
-}
-
-.bm-input:focus {
-  border: 1px solid #000000; /* solid black on focus */
-}
-
-.bm-login-button {
+  background-color: #ffffff; /* vibrant orange */
+  color: #000000;
+  padding: 40px;
   width: 100%;
-  padding: 12px;
-  background: #b85e14; /* flat black button */
-  color: #ffffff;
+  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(255, 115, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title */
+.bm-login-title {
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Form groups */
+.bm-form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels */
+.bm-label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+/* Inputs */
+.bm-input {
+  padding: 10px;
   border: none;
-  border-radius: 0; /* no curves */
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
+  outline: none;
+  font-size: 14px;
+  background-color: #fff; /* white input */
+  color: #333;
+  width: 100%;
 }
 
-.bm-login-button:hover {
-  background: #ac3131;
+/* Focus on input */
+.bm-input:focus {
+  border: 2px solid #ff9900; /* bright orange outline on focus */
+  background-color: #ffa836;
 }
 
-.bm-login-button:disabled {
-  background: #cccccc;
-  cursor: not-allowed;
-}
-
+/* Error message */
 .bm-error {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #cc0000;
-  font-weight: 500;
+  color: #ffcccb; /* soft red */
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Button */
+.bm-login-button {
+  padding: 12px;
+  border: none;
+  background-color: #ff8717; /* bright orange */
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-transform: uppercase;
+}
+
+/* Button hover */
+.bm-login-button:hover {
+  background-color: #e68a00; /* darker orange on hover */
+}
+
+/* Button disabled */
+.bm-login-button:disabled {
+  background-color: #ffcc80;
+  cursor: not-allowed;
 }

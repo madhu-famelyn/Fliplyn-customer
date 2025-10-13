@@ -7,6 +7,11 @@
   background-color: #fafafa;
   min-height: 100vh;
 }
+/* Apply left alignment to all <td> in all tables */
+table td {
+  text-align: left !important;
+  padding-left: 8px; /* optional, for spacing */
+}
 
 .stall-report-title-unique {
   text-align: center;
@@ -185,7 +190,7 @@
 .stall-report-table-unique td {
   padding: 10px 12px;
   border: 1px solid #e6e6e6;
-  text-align: center;
+  text-align: left;
   font-size: 0.9rem;
 }
 
@@ -199,6 +204,12 @@
 .stall-report-table-unique tr:nth-child(even) {
   background-color: #f8f9fa;
 }
+
+/* styles.css */
+.left-align {
+  text-align: left !important;
+}
+
 
 /* === Responsive Styling === */
 
