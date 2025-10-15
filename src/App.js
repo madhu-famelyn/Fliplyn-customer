@@ -22,7 +22,7 @@ import SelectCountry from "./components/LayOutComponents/SelectCountry/SelectCou
 import SelectState from "./components/LayOutComponents/SelectState/SelectState";
 import SelectCity from "./components/LayOutComponents/SelectCity/SelectCity";
 import CreateBuilding from "./components/LayOutComponents/SelectBuilding/SelectBuilding";
-import User from "./components/LayOutComponents/User/User";
+// import User from "./components/LayOutComponents/User/User";
 import Stall from "./components/LayOutComponents/stalls/Stalls";
 import AddCategory from "./components/LayOutComponents/Category/Category";
 import Item from "./components/LayOutComponents/Items/Items";

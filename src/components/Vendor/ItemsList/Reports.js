@@ -1,5 +1,5 @@
 // src/pages/vendor/ReportsPage.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./Reports.css";
@@ -16,7 +16,7 @@ const ReportsPage = () => {
   const formatDate = (date) => date.toISOString().split("T")[0];
 
   // ✅ Compute start & end date based on filter
-  const getDateRange = () => {
+  const getDateRange = useCallback(() => {
     const today = new Date();
 
     if (filter === "today") {
@@ -49,10 +49,10 @@ const ReportsPage = () => {
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
     return { start: formatDate(today), end: formatDate(tomorrow) };
-  };
+  }, [filter, customRange]);
 
   // ✅ Fetch orders from backend
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     if (!stallId) return;
     const { start, end } = getDateRange();
 
@@ -77,13 +77,13 @@ const ReportsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [stallId, getDateRange]);
 
   // ✅ Trigger fetch when filter/date changes
   useEffect(() => {
     if (filter === "custom" && (!customRange.start || !customRange.end)) return;
     fetchOrders();
-  }, [stallId, filter, customRange]);
+  }, [stallId, filter, customRange, fetchOrders]);
 
   // ✅ Total Calculations
   const totalAmount = orders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
