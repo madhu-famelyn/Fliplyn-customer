@@ -10,6 +10,30 @@
   padding: 20px;
 }
 
+/* Loader styles */
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #ffffff;
+  border-right: 3px solid #ffffff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Optional disabled button effect */
+.vendor-login-button.loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
 /* === Card === */
 .vendor-login-card {
   background-color: #ffffff;

@@ -18,13 +18,13 @@
 //     const fetchWallets = async () => {
 //       try {
 //         const buildingRes = await axios.get(
-//           `http://127.0.0.1:8000/buildings/buildings/by-admin/${adminId}`,
+//           `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
 //           { headers: { Authorization: `Bearer ${token}` } }
 //         );
 //         const buildingId = buildingRes.data.id;
 
 //         const walletRes = await axios.get(
-//           `http://127.0.0.1:8000/wallets/by-building/${buildingId}/images`,
+//           `https://admin-aged-field-2794.fly.dev/wallets/by-building/${buildingId}/images`,
 //           { headers: { Authorization: `Bearer ${token}` } }
 //         );
 

@@ -1,13 +1,13 @@
 import axios from "axios";
 
 // ✅ Use Vite environment variable
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://admin-aged-field-2794.fly.dev";
 
 
 /**
- * @param {Object} data - Form data
- * @param {string} token - Bearer token
- * @returns Axios response
+ * @param {Object} data 
+ * @param {string} token
+ * @returns 
  */
 export const uploadWalletGroupExcel = (data, token) => {
   return axios.post(`${API_BASE}wallet-group/upload-excel/`, data, {

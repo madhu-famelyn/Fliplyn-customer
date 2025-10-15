@@ -90,7 +90,11 @@ const EmployeesPage = () => {
   };
 
   // Show order history modal
-  const handleGetOrderHistory = () => setShowOrdersModal(true);
+ const handleGetOrderHistory = () => {
+  console.log("📦 Opening OrdersModal for group:", groupId);
+  setShowOrdersModal(true);
+};
+
 
   return (
     <Layout>
@@ -137,10 +141,9 @@ const EmployeesPage = () => {
                     >
                       <AiOutlinePlus size={16} className="btn-icon" /> Add Member
                     </button>
-
-                    <button className="btn-add" onClick={handleGetOrderHistory}>
-                      <AiOutlineHistory size={16} className="btn-icon" /> Order History
-                    </button>
+                        <button className="btn-add" onClick={handleGetOrderHistory}>
+                          <AiOutlineHistory size={16} className="btn-icon" /> Order History
+                        </button>
                   </div>
                 </div>
 
@@ -224,10 +227,12 @@ const EmployeesPage = () => {
 
         {showOrdersModal && (
           <OrdersModal
+            groupId={groupId}  // ✅ Pass groupId here
             userIds={employees.map((emp) => emp.user_id)}
             onClose={() => setShowOrdersModal(false)}
           />
         )}
+
       </div>
     </Layout>
   );

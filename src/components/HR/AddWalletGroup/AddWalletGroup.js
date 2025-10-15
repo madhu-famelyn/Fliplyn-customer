@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import "./AddWalletGroup.css";
 import { uploadWalletGroupExcel } from "../../Service";
 
-
 const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
   const [groupName, setGroupName] = useState("");
   const [walletAmount, setWalletAmount] = useState("");
@@ -11,6 +10,7 @@ const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
   const [excludeWeekend, setExcludeWeekend] = useState(false);
   const [dailyWallet, setDailyWallet] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("PREPAID");
+  const [asiaTimezone, setAsiaTimezone] = useState("Asia/Kolkata"); // ✅ Added timezone
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -28,11 +28,12 @@ const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
     formData.append("hr_id", hr.id);
     formData.append("group_name", groupName);
     formData.append("wallet_amount", walletAmount);
-    formData.append("carry_forward", String(carryForward)); // ✅ string form
+    formData.append("carry_forward", String(carryForward));
     formData.append("exclude_weekend", String(excludeWeekend));
     formData.append("daily_wallet", String(dailyWallet));
     formData.append("days_count", "1");
     formData.append("payment_method", paymentMethod);
+    formData.append("asia_timezone", asiaTimezone); // ✅ Added timezone
     formData.append("file", file);
 
     // ✅ Log the data before sending
@@ -47,6 +48,7 @@ const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
       daily_wallet: dailyWallet,
       days_count: 1,
       payment_method: paymentMethod,
+      asia_timezone: asiaTimezone,
       file: file?.name,
     });
 
@@ -86,8 +88,8 @@ const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-container">
-        <h3>Create Wallet Group</h3>
         <form onSubmit={handleSubmit} className="modal-form">
+              <h3>Create Wallet Group</h3>
           <input
             type="text"
             placeholder="Group Name"
@@ -137,6 +139,18 @@ const CreateWalletGroupModal = ({ onClose, hr, token, onGroupCreated }) => {
             >
               <option value="PREPAID">Prepaid</option>
               <option value="POSTPAID">Postpaid</option>
+            </select>
+          </label>
+
+          <label>
+            Timezone:
+            <select
+              value={asiaTimezone}
+              onChange={(e) => setAsiaTimezone(e.target.value)}
+              required
+            >
+              <option value="Asia/Kolkata">Asia/Kolkata</option>
+              {/* Add more timezones here if needed */}
             </select>
           </label>
 

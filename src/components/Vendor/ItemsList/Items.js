@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../AuthContex/ContextAPI";
+import { useVendorAuth } from "../../AuthContex/VendorContext";
 import axios from "axios";
 import TokenHeader from "../../LayOutComponents/PrintToken/Header";
-import { useParams, useNavigate } from "react-router-dom"; // ✅ useNavigate added
+import { useParams, useNavigate } from "react-router-dom";
 import "./Items.css";
 
 const VendorItems = () => {
-  const { id } = useParams(); // ✅ read stallId from URL
-  const { stallId: contextStallId, token } = useAuth();
-  const stallId = id || contextStallId; // ✅ URL first, then context
+  const { id } = useParams();
+  const { stallId: contextStallId, token, setStallId } = useVendorAuth();
+  const stallId = id || contextStallId;
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stallAvailable, setStallAvailable] = useState(false);
   const [stallName, setStallName] = useState("");
 
-  const navigate = useNavigate(); // ✅ navigation hook
+  const navigate = useNavigate();
 
   // Fetch stall info
   useEffect(() => {
@@ -27,7 +27,7 @@ const VendorItems = () => {
           `https://admin-aged-field-2794.fly.dev/stalls/${stallId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setStallName(response.data.name);
+        setStallName(response.data.name || "");
         if (response.data.is_available !== undefined) {
           setStallAvailable(response.data.is_available);
         }
@@ -42,7 +42,7 @@ const VendorItems = () => {
     fetchStall();
   }, [stallId, token]);
 
-  // Fetch items
+  // Fetch items under the stall
   useEffect(() => {
     if (!stallId) {
       setLoading(false);
@@ -57,8 +57,6 @@ const VendorItems = () => {
         );
         if (Array.isArray(response.data)) {
           setItems(response.data);
-          const allAvailable = response.data.every((item) => item.is_available);
-          setStallAvailable(allAvailable);
         }
       } catch (error) {
         console.error(
@@ -73,6 +71,53 @@ const VendorItems = () => {
     fetchItems();
   }, [stallId, token]);
 
+  // Save stallId in context
+  useEffect(() => {
+    if (id && setStallId) setStallId(id);
+  }, [id, setStallId]);
+
+  // Update stall availability only
+  const handleStallToggle = async () => {
+    const newStatus = !stallAvailable;
+    setStallAvailable(newStatus);
+
+    try {
+      await axios.put(
+        `https://admin-aged-field-2794.fly.dev/stalls/${stallId}/availability`,
+        { is_available: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("✅ Stall availability updated");
+    } catch (error) {
+      console.error(
+        "❌ Error updating stall availability:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  // Update individual item availability
+  const handleItemToggle = async (itemId, currentStatus) => {
+    const newStatus = !currentStatus;
+    setItems((prev) =>
+      prev.map((i) => (i.id === itemId ? { ...i, is_available: newStatus } : i))
+    );
+
+    try {
+      await axios.patch(
+        `https://admin-aged-field-2794.fly.dev/items/items/${itemId}/availability`,
+        { is_available: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(`✅ Item ${itemId} availability updated`);
+    } catch (error) {
+      console.error(
+        `❌ Error updating item ${itemId}:`,
+        error.response?.data || error.message
+      );
+    }
+  };
+
   if (!stallId) return <p className="text-red-600">No stall selected.</p>;
   if (loading) return <p>Loading items...</p>;
 
@@ -80,17 +125,18 @@ const VendorItems = () => {
     <div>
       <TokenHeader />
 
-      {/* ✅ Reports button on top */}
-      <div className="nav-bar">
+      {/* Reports button */}
+      
+
+      <div className="vendor-container">
+        <div className="nav-bar">
         <button
           className="view-reports-btn"
           onClick={() => navigate(`/stall/${stallId}/reports`)}
         >
-          📊 View Reports
+          View Reports
         </button>
       </div>
-
-      <div className="vendor-container">
         {/* Stall Card */}
         <div className="stall-container">
           <div className="stall-card">
@@ -99,20 +145,14 @@ const VendorItems = () => {
               <input
                 type="checkbox"
                 checked={stallAvailable}
-                onChange={() => {
-                  const newStatus = !stallAvailable;
-                  setStallAvailable(newStatus);
-                  setItems((prev) =>
-                    prev.map((i) => ({ ...i, is_available: newStatus }))
-                  );
-                }}
+                onChange={handleStallToggle}
               />
               <span className="slider"></span>
             </label>
           </div>
         </div>
 
-        {/* Items */}
+        {/* Items Grid */}
         {items.length === 0 ? (
           <p>No items found for this stall.</p>
         ) : (
@@ -124,20 +164,12 @@ const VendorItems = () => {
                   alt={item.name}
                 />
                 <h3>{item.name}</h3>
-                <p className="price">₹{item.final_price}</p>
+                <p className="price">price with GST₹{item.final_price}</p>
                 <label className="switch small">
                   <input
                     type="checkbox"
                     checked={item.is_available}
-                    onChange={() =>
-                      setItems((prev) =>
-                        prev.map((i) =>
-                          i.id === item.id
-                            ? { ...i, is_available: !i.is_available }
-                            : i
-                        )
-                      )
-                    }
+                    onChange={() => handleItemToggle(item.id, item.is_available)}
                   />
                   <span className="slider"></span>
                 </label>

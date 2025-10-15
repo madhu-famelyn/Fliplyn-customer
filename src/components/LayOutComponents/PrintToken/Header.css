@@ -1,20 +1,33 @@
+/* Header.css */
+/* Header.css */
 .app-header {
-  position: fixed;       /* Fixes the header to the top */
-  top: 0;                /* Sticks it to the very top */
+  position: fixed;        /* fix header at top */
+  top: 0;
   left: 0;
   width: 100%;
-  background: #ffffff;
-  border-bottom: 1px solid #d0d0d0; /* as per spec */
-  z-index: 1000;         /* keeps it above other content */
+  height: 65px;           /* header height */
+  background-color: #fff; /* solid background */
+  border-bottom: 1px solid #d0d0d0;
+  z-index: 9999;          /* keep it above all content */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Optional: create a spacer element inside the header file itself */
+.app-header::after {
+  content: "";
+  display: block;
+  height: 65px;           /* same as header height */
+  width: 100%;
+}
+
+
 .header-container {
-  max-width: 1440px;      /* max width but still responsive */
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 24px 30px;     /* top/bottom 24px, left/right 30px */
+  padding: 24px 30px;
   display: flex;
   align-items: center;
-  height: 65px;           /* fixed height from design */
+  height: 65px;          /* fixed header height */
   box-sizing: border-box;
 }
 
@@ -25,4 +38,9 @@
   line-height: 100%;
   color: #000000;
   margin: 0;
+}
+
+/* In your main CSS (Items.css or global) */
+.main-content {
+  padding-top: 65px;   /* same as header height to push content below */
 }

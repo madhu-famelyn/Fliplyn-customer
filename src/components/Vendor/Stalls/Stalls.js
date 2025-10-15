@@ -1,13 +1,13 @@
 // src/pages/vendor/VendorStalls.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useAuth } from "../../AuthContex/ContextAPI";
+import { useVendorAuth } from "../../AuthContex/VendorContext";  // ✅ use the hook
 import TokenHeader from "../../LayOutComponents/PrintToken/Header";
 import { useNavigate } from "react-router-dom";
 import "./Stalls.css";
 
 const VendorStalls = () => {
-  const { stallIds, token, setStallId } = useAuth(); // ✅ Context now has setStallId
+  const { stallIds, token, setStallId } = useVendorAuth(); // ✅ correct
   const [stalls, setStalls] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -37,10 +37,9 @@ const VendorStalls = () => {
     fetchStalls();
   }, [stallIds, token]);
 
-  // ✅ when user clicks a stall
   const handleSelectStall = (id) => {
-    setStallId(id); // still save in context if you want
-    navigate(`/items-vendor/${id}`); // ✅ pass id in URL
+    if (setStallId) setStallId(id); // ✅ optional but safe
+    navigate(`/items-vendor/${id}`);
   };
 
   if (loading) return <p>Loading stalls...</p>;

@@ -102,7 +102,7 @@
 /* ========================= */
 .submit-btn,
 .export-btn {
-  background-color: #007bff;
+  background-color: #ff8000;
   color: white;
   padding: 8px 16px;
   border-radius: 6px;
@@ -147,7 +147,7 @@
 }
 
 .orders-table th {
-  background-color: #007bff;
+  background-color: #f5901e;
   color: rgb(0, 0, 0);
   font-weight: 600;
 }
@@ -210,7 +210,7 @@
 
   .submit-btn,
   .export-btn {
-    width: 100%;
+    width: 30%;
   }
 
   .orders-table {

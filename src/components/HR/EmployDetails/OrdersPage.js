@@ -1,94 +1,64 @@
-import React, { useEffect, useState, useCallback } from "react";
+// src/pages/hr/OrdersModal.js
+import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { useHrAuth } from "../../AuthContex/HrContext";
-import { getOrdersByUserIds } from "../../Service";
 import "./OrderPage.css";
 
-const OrdersModal = ({ userIds, onClose }) => {
+const OrdersModal = ({ groupId, onClose }) => {
   const { token } = useHrAuth();
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [dateFilter, setDateFilter] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [month, setMonth] = useState("");
-  const [timeFilter, setTimeFilter] = useState("");
-  const [submitted, setSubmitted] = useState(false); // ✅ new state
+  const [submitted, setSubmitted] = useState(false);
 
-  // ✅ Fetch stall name by stall_id
-  const fetchStallName = useCallback(
-    async (stallId) => {
-      try {
-        const res = await fetch(
-          `https://admin-aged-field-2794.fly.dev/stalls/${stallId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (!res.ok) return "N/A";
-        const data = await res.json();
-        return Array.isArray(data) ? data[0]?.name || "N/A" : data?.name || "N/A";
-      } catch {
-        return "N/A";
-      }
-    },
-    [token]
-  );
-
-  const fetchStallNameFromOrder = useCallback(
-    async (order) => {
-      if (!order.order_details?.length) return "N/A";
-      const firstItemId = order.order_details[0].item_id;
-      try {
-        const res = await fetch(
-          `https://admin-aged-field-2794.fly.dev/items/items/${firstItemId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (!res.ok) return "N/A";
-        const itemData = await res.json();
-        const stallId = itemData?.stall_id;
-        return stallId ? await fetchStallName(stallId) : "N/A";
-      } catch {
-        return "N/A";
-      }
-    },
-    [token, fetchStallName]
-  );
-
-  const fetchOrders = useCallback(async () => {
-    if (!userIds?.length) return;
+  // ✅ Fetch orders (yyyy-mm-dd date format)
+  const fetchOrders = async () => {
+    if (!groupId) {
+      console.warn("⚠️ No groupId provided");
+      return;
+    }
     setLoading(true);
     try {
-      const allOrders = await getOrdersByUserIds(userIds, token);
-      const enrichedOrdersResults = await Promise.allSettled(
-        allOrders.map(async (o) => {
-          try {
-            const stallName = await fetchStallNameFromOrder(o);
-            return { ...o, stallName };
-          } catch {
-            return null;
-          }
-        })
-      );
+      // Convert to yyyy-mm-dd strings
+      let start =
+        startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0];
+      let end = endDate || new Date().toISOString().split("T")[0];
 
-      const enrichedOrders = enrichedOrdersResults
-        .filter((r) => r.status === "fulfilled" && r.value)
-        .map((r) => r.value);
+      const url = `https://admin-aged-field-2794.fly.dev/wallet-group/${groupId}/orders/?start_date=${start}&end_date=${end}`;
+      console.log("📡 Fetching:", url);
 
-      setOrders(enrichedOrders);
-      setFilteredOrders(enrichedOrders);
-    } catch {
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("🔍 Response status:", res.status);
+      const data = await res.json();
+      console.log("📦 Orders:", data);
+
+      setOrders(data || []);
+      setFilteredOrders(data || []);
+    } catch (err) {
+      console.error("❌ Error fetching orders:", err);
       setOrders([]);
       setFilteredOrders([]);
     } finally {
       setLoading(false);
     }
-  }, [userIds, token, fetchStallNameFromOrder]);
+  };
 
+  // ✅ Filter logic for day/week/month
   useEffect(() => {
-    if (!submitted) return; // ✅ fetch only after submit
-    let filtered = orders;
+    if (!submitted || !orders.length) return;
+
+    let filtered = [...orders];
     const now = new Date();
 
-    if (timeFilter === "day") {
+    if (dateFilter === "day") {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const tomorrow = new Date(today);
@@ -98,9 +68,7 @@ const OrdersModal = ({ userIds, onClose }) => {
           new Date(o.created_datetime) >= today &&
           new Date(o.created_datetime) < tomorrow
       );
-    }
-
-    if (timeFilter === "week") {
+    } else if (dateFilter === "week") {
       const startOfWeek = new Date(now);
       startOfWeek.setDate(now.getDate() - now.getDay());
       startOfWeek.setHours(0, 0, 0, 0);
@@ -111,48 +79,37 @@ const OrdersModal = ({ userIds, onClose }) => {
           new Date(o.created_datetime) >= startOfWeek &&
           new Date(o.created_datetime) < endOfWeek
       );
-    }
-
-    if (startDate) {
+    } else if (dateFilter === "month") {
+      const currentMonth = now.getMonth();
       filtered = filtered.filter(
-        (o) => new Date(o.created_datetime) >= new Date(startDate + "T00:00:00")
-      );
-    }
-
-    if (endDate) {
-      filtered = filtered.filter(
-        (o) => new Date(o.created_datetime) <= new Date(endDate + "T23:59:59")
-      );
-    }
-
-    if (month) {
-      filtered = filtered.filter(
-        (o) => new Date(o.created_datetime).getMonth() + 1 === parseInt(month)
+        (o) => new Date(o.created_datetime).getMonth() === currentMonth
       );
     }
 
     setFilteredOrders(filtered);
-  }, [orders, startDate, endDate, month, timeFilter, submitted]);
+  }, [submitted, orders, dateFilter, startDate, endDate]);
 
+  // ✅ Calculate totals
   const calculateAmounts = (order) => {
-    const itemTotal = order.order_details.reduce((sum, i) => sum + i.total, 0);
+    const itemTotal = order.order_details?.reduce((sum, i) => sum + i.total, 0);
     const totalGst = order.total_gst || 0;
-    const totalWithGst = itemTotal + totalGst;
-    const grandTotal = Math.round(totalWithGst);
+    const grandTotal = Math.round(itemTotal + totalGst);
     return { grandTotal };
   };
 
-  const totalAmount = filteredOrders.reduce(
+  const totalPaid = filteredOrders.reduce(
     (sum, o) => sum + calculateAmounts(o).grandTotal,
     0
   );
 
+  // ✅ Export to Excel
   const exportToExcel = () => {
     const rows = filteredOrders.flatMap((o) => {
       const { grandTotal } = calculateAmounts(o);
       return o.order_details.map((i) => ({
-        Stall: o.stallName,
-        Token: o.token_number,
+        Stall: o.stall_name || "N/A",
+        Stall_ID: o.stall_id || "N/A",
+        Token: o.token_number || "N/A",
         Email: o.user_email || "",
         Date: new Date(o.created_datetime).toLocaleString(),
         Item: i.name,
@@ -165,102 +122,125 @@ const OrdersModal = ({ userIds, onClose }) => {
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Orders");
-    XLSX.writeFile(wb, "orders.xlsx");
+    XLSX.writeFile(wb, "wallet_group_orders.xlsx");
   };
 
+  // ✅ Submit handler
   const handleSubmit = async () => {
     setSubmitted(true);
-    await fetchOrders(); // ✅ only fetch after submit button click
+    await fetchOrders();
   };
 
   return (
     <div className="orders-modal-overlay">
       <div className="orders-modal">
-        <button className="close-btn" onClick={onClose}>✖</button>
-        <h2>Order History</h2>
+        <button className="close-btn" onClick={onClose}>
+          ✖
+        </button>
+        <h2>Wallet Group Order History</h2>
 
-        {/* Filters */}
+        {/* ✅ Filter Section */}
         <div className="filter-section">
           <label>
-            Start Date:
-            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-          </label>
-          <label>
-            End Date:
-            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          </label>
-          <label>
-            Month:
-            <select value={month} onChange={(e) => setMonth(e.target.value)}>
-              <option value="">All</option>
-              {Array.from({ length: 12 }, (_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  {new Date(0, i).toLocaleString("default", { month: "long" })}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Quick Filter:
-            <select value={timeFilter} onChange={(e) => setTimeFilter(e.target.value)}>
+            Select Date Range:
+            <select
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+            >
               <option value="">All</option>
               <option value="day">This Day</option>
               <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="custom">Custom Dates</option>
             </select>
           </label>
+
+          {dateFilter === "custom" && (
+            <>
+              <label>
+                Start Date:
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </label>
+              <label>
+                End Date:
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </label>
+            </>
+          )}
 
           <button className="submit-btn" onClick={handleSubmit}>
             Submit
           </button>
-
-          <button className="export-btn" onClick={exportToExcel} disabled={!filteredOrders.length}>
-            Export to Excel
-          </button>
         </div>
 
+        {/* ✅ Table Section */}
         {loading && <p>Loading orders...</p>}
-        {!loading && submitted && filteredOrders.length === 0 && <p>No orders found.</p>}
-
-        {!loading && submitted && filteredOrders.length > 0 && (
-          <table className="orders-table">
-            <thead>
-              <tr>
-                <th>Token</th>
-                <th>Email</th>
-                <th>Date</th>
-                <th>Items</th>
-                <th>Grand Total (₹)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map((order) => {
-                const { grandTotal } = calculateAmounts(order);
-                return (
-                  <tr key={order.id}>
-                    <td>{order.token_number}</td>
-                    <td>{order.user_email || "N/A"}</td>
-                    <td>{new Date(order.created_datetime).toLocaleString()}</td>
-                    <td>
-                      <ul className="items-list">
-                        {order.order_details.map((item, idx) => (
-                          <li key={idx}>
-                            {item.name} × {item.quantity}
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
-                    <td><strong>{grandTotal.toFixed(2)}</strong></td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        {!loading && submitted && filteredOrders.length === 0 && (
+          <p>No orders found.</p>
         )}
 
-        {submitted && filteredOrders.length > 0 && (
-          <div className="total-section">
-            <h3>Total Paid: ₹{totalAmount.toFixed(2)}</h3>
-          </div>
+        {!loading && submitted && filteredOrders.length > 0 && (
+          <>
+            <table className="orders-table">
+              <thead>
+                <tr>
+                  <th>Stall</th>
+                  <th>Token</th>
+                  <th>Email</th>
+                  <th>Date</th>
+                  <th>Items</th>
+                  <th>Grand Total (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredOrders.map((order) => {
+                  const { grandTotal } = calculateAmounts(order);
+                  return (
+                    <tr key={order.id}>
+                      <td>{order.stall_name || "N/A"}</td>
+                      <td>{order.token_number || "N/A"}</td>
+                      <td>{order.user_email || "N/A"}</td>
+                      <td>
+                        {new Date(order.created_datetime).toLocaleString()}
+                      </td>
+                      <td>
+                        <ul className="items-list">
+                          {order.order_details?.map((item, idx) => (
+                            <li key={idx}>
+                              {item.name} × {item.quantity}
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                      <td>
+                        <strong>{grandTotal.toFixed(2)}</strong>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+
+            {/* ✅ Total & Export Section */}
+            <div className="total-section">
+              <h3>Total Paid: ₹{totalPaid.toFixed(2)}</h3>
+              <button
+                className="export-btn"
+                onClick={exportToExcel}
+                disabled={!filteredOrders.length}
+              >
+                Export to Excel
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>

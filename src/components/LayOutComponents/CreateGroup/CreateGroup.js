@@ -13,17 +13,31 @@ export default function CreateGroup({ onGroupCreated }) {
     daily_wallet: false,
     days_count: 1,
     payment_method: "prepaid", // ✅ default prepaid
+    asia_timezone: "Asia/Kolkata", // ✅ Default timezone
   });
 
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const [buildings, setBuildings] = useState([]);
-  const [missingUsers, setMissingUsers] = useState([]); // ✅ Missing users from backend
+  const [missingUsers, setMissingUsers] = useState([]);
 
   const adminId =
     localStorage.getItem("userId") || localStorage.getItem("admin_id");
   const token =
     localStorage.getItem("token") || localStorage.getItem("access_token");
+
+  // ✅ List of common Asian timezones
+  const asiaTimezones = [
+    "Asia/Kolkata",
+    "Asia/Dubai",
+    "Asia/Singapore",
+    "Asia/Bangkok",
+    "Asia/Manila",
+    "Asia/Tokyo",
+    "Asia/Hong_Kong",
+    "Asia/Kuala_Lumpur",
+    "Asia/Jakarta",
+  ];
 
   // ✅ Fetch buildings for dropdown
   useEffect(() => {
@@ -89,7 +103,6 @@ export default function CreateGroup({ onGroupCreated }) {
         }
       );
 
-      // ✅ Backend now returns missing users in response
       setMessage(response.data.message || "Group created successfully.");
       setMissingUsers(response.data.non_registered_users || []);
       onGroupCreated();
@@ -104,6 +117,7 @@ export default function CreateGroup({ onGroupCreated }) {
         daily_wallet: false,
         days_count: 1,
         payment_method: "prepaid",
+        asia_timezone: "Asia/Kolkata",
       });
       setFile(null);
     } catch (error) {
@@ -220,6 +234,23 @@ export default function CreateGroup({ onGroupCreated }) {
           </select>
         </label>
 
+        {/* ✅ Timezone Dropdown */}
+        <label>
+          Timezone:
+          <select
+            name="asia_timezone"
+            value={formData.asia_timezone}
+            onChange={handleChange}
+            required
+          >
+            {asiaTimezones.map((tz) => (
+              <option key={tz} value={tz}>
+                {tz}
+              </option>
+            ))}
+          </select>
+        </label>
+
         <input
           type="file"
           accept=".xlsx,.xls"
@@ -240,7 +271,6 @@ export default function CreateGroup({ onGroupCreated }) {
         </p>
       )}
 
-      {/* ✅ Show missing users + Download button */}
       {missingUsers.length > 0 && (
         <div className="missing-users-section">
           <h3>Missing Users</h3>
