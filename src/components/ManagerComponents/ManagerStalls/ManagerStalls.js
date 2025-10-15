@@ -191,86 +191,94 @@ export default function ManagerEditStall() {
 
       {/* Edit Modal */}
       {editingStall && (
-        <div className="mgr-modal">
-          <div className="mgr-modal-box">
-            <h3>Edit Stall</h3>
-            <form onSubmit={handleUpdate}>
-              <label>Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
+  <div className="mgr-modal">
+    <div className="mgr-modal-box">
+      <h3>Edit Stall</h3>
+      <form onSubmit={handleUpdate}>
+        <label>Name:</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          required
+        />
 
-              <label>Description:</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows="3"
-              />
+        <label>Description:</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          rows="3"
+        />
 
-              <label>Opening Time:</label>
-              <input
-                type="text"
-                name="opening_time"
-                value={formData.opening_time}
-                onChange={handleInputChange}
-                placeholder="09:00 AM"
-              />
+        <label>Opening Time:</label>
+        <input
+          type="text"
+          name="opening_time"
+          value={formData.opening_time}
+          onChange={handleInputChange}
+          placeholder="09:00 AM"
+        />
 
-              <label>Closing Time:</label>
-              <input
-                type="text"
-                name="closing_time"
-                value={formData.closing_time}
-                onChange={handleInputChange}
-                placeholder="10:00 PM"
-              />
+        <label>Closing Time:</label>
+        <input
+          type="text"
+          name="closing_time"
+          value={formData.closing_time}
+          onChange={handleInputChange}
+          placeholder="10:00 PM"
+        />
 
-              <label>Payment Type:</label>
-              <select
-                name="payment_type"
-                value={formData.payment_type}
-                onChange={handleInputChange}
-              >
-                <option value="PREPAID">PREPAID</option>
-                <option value="POSTPAID">POSTPAID</option>
-              </select>
+        <label>Payment Type:</label>
+        <select
+          name="payment_type"
+          value={formData.payment_type}
+          onChange={handleInputChange}
+        >
+          <option value="PREPAID">PREPAID</option>
+          <option value="POSTPAID">POSTPAID</option>
+        </select>
 
-              <label className="mgr-checkbox">
-                <input
-                  type="checkbox"
-                  name="is_available"
-                  checked={formData.is_available}
-                  onChange={handleInputChange}
-                />
-                <span></span>
-                Available
-              </label>
-
-
-              <label>Image:</label>
-              <input type="file" accept="image/*" onChange={handleImageChange} />
-
-              <div className="mgr-actions">
-                <button type="submit" className="mgr-btn">
-                  Update
-                </button>
-                <button
-                  type="button"
-                  className="mgr-btn cancel"
-                  onClick={() => setEditingStall(null)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
+        {/* Availability Toggle */}
+        <div className="toggle-wrapper">
+          <label className="switch">
+            <input
+              type="checkbox"
+              name="is_available"
+              checked={formData.is_available}
+              onChange={() =>
+                setFormData({
+                  ...formData,
+                  is_available: !formData.is_available,
+                })
+              }
+            />
+            <span className="slider"></span>
+          </label>
+          <span className="toggle-label">Available</span>
         </div>
-      )}
+
+        <label>Image:</label>
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+
+        <div className="mgr-actions">
+          <button type="submit" className="mgr-btn">
+            Update
+          </button>
+          <button
+            type="button"
+            className="mgr-btn cancel"
+            onClick={() => setEditingStall(null)}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

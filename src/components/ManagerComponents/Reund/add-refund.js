@@ -12,7 +12,6 @@ export default function RefundModal() {
     token_number: "",
     refund_amount: "",
     refund_reason: "",
-    user_email: "",
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -27,7 +26,17 @@ export default function RefundModal() {
     e.preventDefault();
 
     if (!user?.admin_id) {
-      setMessage("Admin ID missing from context.");
+      setMessage("❌ Admin ID missing from context.");
+      return;
+    }
+
+    if (!formData.token_number) {
+      setMessage("❌ Token number is required.");
+      return;
+    }
+
+    if (Number(formData.refund_amount) <= 0) {
+      setMessage("❌ Refund amount must be greater than 0.");
       return;
     }
 
@@ -36,11 +45,10 @@ export default function RefundModal() {
 
     const payload = {
       admin_id: user.admin_id,
-      manager_id: user?.id || null, // optional if available
+      manager_id: user?.id || null, // optional
       token_number: formData.token_number,
       refund_amount: Number(formData.refund_amount),
       refund_reason: formData.refund_reason,
-      user_email: formData.user_email,
     };
 
     try {
@@ -49,24 +57,26 @@ export default function RefundModal() {
         payload
       );
 
-      if (response.data) {
+      if (response.data?.success) {
         setMessage("✅ Refund processed successfully!");
         setFormData({
           token_number: "",
           refund_amount: "",
           refund_reason: "",
-          user_email: "",
         });
         setRefreshHistory((prev) => !prev);
       } else {
-        setMessage("⚠️ Refund request sent but backend did not confirm success.");
+        setMessage(
+          "⚠️ Refund request sent but backend did not confirm success."
+        );
       }
     } catch (err) {
       console.error(err);
-      setMessage(
+      // Display backend validation message (e.g., refund > order total)
+      const detail =
         err.response?.data?.detail ||
-          "❌ Something went wrong while processing refund"
-      );
+        "❌ Something went wrong while processing refund.";
+      setMessage(`⚠️ ${detail}`);
     } finally {
       setLoading(false);
     }
@@ -117,16 +127,6 @@ export default function RefundModal() {
                 name="refund_reason"
                 value={formData.refund_reason}
                 onChange={handleChange}
-                required
-              />
-
-              <label>User Email</label>
-              <input
-                type="email"
-                name="user_email"
-                value={formData.user_email}
-                onChange={handleChange}
-                required
               />
 
               <button

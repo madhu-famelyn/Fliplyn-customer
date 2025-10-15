@@ -8,7 +8,7 @@ import { VendorAuthProvider, useVendorAuth } from "./components/AuthContex/Vendo
 import { AuthProvider as AdminAuthProvider, useAuth as useAdminAuth } from "./components/AuthContex/AdminContext";
 import { HrAuthProvider } from "./components/AuthContex/HrContext";
 import { BuildingManagerProvider, useBuildingManagerAuth } from "./components/AuthContex/BuildingManagerContext";
-import { AuthProvider as ManagerAuthProvider, useAuth as useManagerAuth } from "./components/AuthContex/ContextAPI"; // ✅ Operational Manager
+import { AuthProvider as ManagerAuthProvider, useAuth as useManagerAuth } from "./components/AuthContex/ContextAPI"; // Operational Manager
 
 // ✅ Components
 import Dashboard from "./components/LayOutComponents/DashBoard/Dashboard";
@@ -57,25 +57,25 @@ import ViewVendors from "./components/UserCreations/VendorCreation/Vendor";
 import ManagerViewVendors from "./components/ManagerComponents/AddVendor/AddVendor";
 import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
 
-// ✅ Private Routes
+// ✅ Private Routes with persistent auth
 const AdminPrivateRoute = ({ element }) => {
-  const { token } = useAdminAuth() || {};
-  return token ? element : <Navigate to="/login" />;
+  const { token } = useAdminAuth();
+  return token ? element : <Navigate to="/login" replace />;
 };
 
 const VendorPrivateRoute = ({ element }) => {
-  const { token } = useVendorAuth() || {};
-  return token ? element : <Navigate to="/vendor" />;
+  const { token } = useVendorAuth();
+  return token ? element : <Navigate to="/vendor" replace />;
 };
 
 const BuildingManagerPrivateRoute = ({ element }) => {
-  const { token } = useBuildingManagerAuth() || {};
-  return token ? element : <Navigate to="/bld-mng" />;
+  const { token } = useBuildingManagerAuth();
+  return token ? element : <Navigate to="/bld-mng" replace />;
 };
 
 const ManagerPrivateRoute = ({ element }) => {
-  const { token } = useManagerAuth() || {};
-  return token ? element : <Navigate to="/manager-login" />;
+  const { token } = useManagerAuth();
+  return token ? element : <Navigate to="/manager-login" replace />;
 };
 
 function App() {
@@ -125,7 +125,6 @@ function App() {
                 <Route path="/hr-details" element={<HRDetails />} />
                 <Route path="/view-sales" element={<StallsReport />} />
                 <Route path="/add-item-manager" element={<AddItemManager />} />
-                
 
                 {/* 🧑‍🔧 Operational Manager Routes */}
                 <Route path="/add-refund" element={<ManagerPrivateRoute element={<AddRefund />} />} />
