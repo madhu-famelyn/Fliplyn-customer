@@ -34,6 +34,7 @@ import VendorItems from "./components/Vendor/ItemsList/Items";
 import VendorStalls from "./components/Vendor/Stalls/Stalls";
 import ReportsPage from "./components/Vendor/ItemsList/Reports";
 import OrdersByEmail from "./components/LayOutComponents/GetOrder/GetOrder";
+import WalletUploadAdmin from "./components/LayOutComponents/ManagerWallet/ManagerWallet";
 
 import HRDashboard from "./components/HR/Dashboard/Dashboard";
 import HrLogin from "./components/HR/Login/LogIn";
@@ -100,6 +101,7 @@ function App() {
                 <Route path="/create-building" element={<AdminPrivateRoute element={<CreateBuilding />} />} />
                 <Route path="/stalls" element={<AdminPrivateRoute element={<Stall />} />} />
                 <Route path="/add-category/:stallId" element={<AdminPrivateRoute element={<AddCategory />} />} />
+                <Route path="/manager-wallet" element={<AdminPrivateRoute element={<WalletUploadAdmin />} />} />
                 <Route path="/item" element={<AdminPrivateRoute element={<Item />} />} />
                 <Route path="/manager-details" element={<AdminPrivateRoute element={<ManagerDetails />} />} />
                 <Route path="/manager-items" element={<AdminPrivateRoute element={<ItemDetails />} />} />
