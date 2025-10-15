@@ -247,8 +247,10 @@ export default function ManagerEditStall() {
                   checked={formData.is_available}
                   onChange={handleInputChange}
                 />
+                <span></span>
                 Available
               </label>
+
 
               <label>Image:</label>
               <input type="file" accept="image/*" onChange={handleImageChange} />

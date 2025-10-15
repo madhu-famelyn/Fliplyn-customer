@@ -46,6 +46,7 @@ import AddRefund from "./components/ManagerComponents/Reund/add-refund";
 import StallsReport from "./components/ManagerComponents/Stalls_reports/StallsReport";
 import AddStall from "./components/ManagerComponents/CreateStall/CreateStall";
 import ManagerStallIds from "./components/ManagerComponents/ManagerStalls/ManagerStalls";
+import AddItemManager from "./components/LayOutComponents/ManagerItems/AddItems";
 
 import BuildingManagerLogin from "./components/BuildingManager/BuildingManager";
 import BuildingSalesReport from "./components/BuildingManager/BuilingMangerReport";
@@ -123,6 +124,8 @@ function App() {
                 <Route path="/order-history" element={<HROrdersPage />} />
                 <Route path="/hr-details" element={<HRDetails />} />
                 <Route path="/view-sales" element={<StallsReport />} />
+                <Route path="/add-item-manager" element={<AddItemManager />} />
+                
 
                 {/* 🧑‍🔧 Operational Manager Routes */}
                 <Route path="/add-refund" element={<ManagerPrivateRoute element={<AddRefund />} />} />
