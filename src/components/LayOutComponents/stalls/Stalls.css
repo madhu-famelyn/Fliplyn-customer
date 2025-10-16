@@ -207,3 +207,110 @@
   background: #e57373 !important; /* red for delete */
   color: white;
 }
+
+
+/* ===== Mobile Styles (max-width: 768px) ===== */
+@media screen and (max-width: 768px) {
+  .stalls-admin-stall-container {
+    padding: 10px;
+  }
+
+  .stalls-admin-stall-heading {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .stalls-admin-toggle-button {
+    font-size: 0.95rem;
+    padding: 8px 12px;
+    width: 100%;
+  }
+
+  .stalls-admin-stall-form {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .stalls-admin-stall-form input,
+  .stalls-admin-stall-form textarea,
+  .stalls-admin-stall-form select {
+    font-size: 0.9rem;
+    padding: 6px;
+  }
+
+  .stalls-admin-stall-form button {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+
+  .stalls-admin-building-block h2 {
+    font-size: 1rem;
+    padding: 6px;
+  }
+
+  .stalls-admin-stalls-grid {
+    grid-template-columns: 1fr; /* single column for mobile */
+    gap: 10px;
+  }
+
+  .stalls-admin-stall-card {
+    padding: 8px;
+  }
+
+  .stalls-admin-stall-image {
+    height: 140px;
+  }
+
+  .stalls-admin-stall-info {
+    font-size: 0.85rem;
+  }
+
+  .stalls-admin-stall-info h3 {
+    font-size: 1rem;
+  }
+
+  .stalls-admin-edit-icon {
+    top: 6px;
+    right: 6px;
+  }
+
+  .stalls-admin-toggle-switch {
+    gap: 6px;
+  }
+
+  .stalls-admin-toggle-label {
+    width: 32px;
+    height: 16px;
+  }
+
+  .stalls-admin-toggle-slider {
+    width: 12px;
+    height: 12px;
+  }
+
+  .stalls-admin-toggle-input:checked + .stalls-admin-toggle-label .stalls-admin-toggle-slider {
+    transform: translateX(16px);
+  }
+
+  .stalls-admin-toggle-text {
+    font-size: 0.8rem;
+  }
+
+  /* Popup */
+  .stalls-admin-popup-form {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .stalls-admin-popup-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .stalls-admin-popup-buttons button {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+}

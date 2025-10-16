@@ -25,13 +25,34 @@ export default function UserCreation() {
           >
             View Vendor
           </button>
-
           <button
             className="big-button"
             onClick={() => navigate("/view-building-managers")}
           >
             View Building Manager
           </button>
+
+          <button
+            className="big-button"
+            onClick={() => navigate("/change-password")}
+          >
+            Change Password
+          </button>
+
+          <button
+            className="big-button"
+            onClick={() => navigate("/change-password")}
+          >
+            Add User
+          </button>
+          <button
+            className="big-button"
+            onClick={() => navigate("/change-password")}
+          >
+            User Deactivate
+          </button>
+
+          
         </div>
       </div>
     </AdminLayout>

@@ -35,6 +35,7 @@ import VendorStalls from "./components/Vendor/Stalls/Stalls";
 import ReportsPage from "./components/Vendor/ItemsList/Reports";
 import OrdersByEmail from "./components/LayOutComponents/GetOrder/GetOrder";
 import WalletUploadAdmin from "./components/LayOutComponents/ManagerWallet/ManagerWallet";
+import ChangePassword from "./components/LayOutComponents/ChangePassword/ChangePassword";
 
 import HRDashboard from "./components/HR/Dashboard/Dashboard";
 import HrLogin from "./components/HR/Login/LogIn";
@@ -119,6 +120,8 @@ function App() {
                 <Route path="/token" element={<AdminPrivateRoute element={<EnterTokenPage />} />} />
                 <Route path="/print-token/:tokenNumber" element={<TokenReceiptPage />} />
                 <Route path="/get-order-email" element={<AdminPrivateRoute element={<OrdersByEmail />} />} />
+                <Route path="/change-password" element={<AdminPrivateRoute element={<ChangePassword />} />} />
+
 
                 {/* 🛍️ Vendor Routes */}
                 <Route path="/vendor" element={<VendorLogin />} />
