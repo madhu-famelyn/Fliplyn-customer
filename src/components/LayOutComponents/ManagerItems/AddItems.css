@@ -1,145 +1,124 @@
-/* ==============================
-   AddItemManager CSS
-============================== */
-
-/* Container */
 .add-item-manager-container {
-  padding: 20px;
-  font-family: "Inter", Arial, sans-serif;
-  color: #222;
-  background-color: #fff;
-  min-height: 100vh;
-  box-sizing: border-box;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff8f2;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(255, 140, 0, 0.2);
+  border: 1px solid #ffd4a3;
+  font-family: "Inter", sans-serif;
 }
 
-/* Heading */
 .add-item-manager-container h2 {
-  font-size: 24px;
+  text-align: center;
+  color: #e67300;
+  margin-bottom: 25px;
   font-weight: 700;
-  color: #ff7b00; /* Orange theme */
-  margin-bottom: 20px;
 }
 
-/* Form */
 .add-item-form {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Inputs and Textarea */
-.add-item-form input[type="text"],
-.add-item-form input[type="number"],
+.add-item-form label {
+  color: #a35200;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
 .add-item-form select,
-.add-item-form textarea,
-.add-item-form input[type="file"] {
+.add-item-form input,
+.add-item-form textarea {
   width: 100%;
-  padding: 10px;
+  padding: 10px 12px;
+  border: 1px solid #ffb366;
+  border-radius: 6px;
+  background-color: #fff;
   font-size: 14px;
-  border: 1px solid #ccc;
-  outline: none;
-  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.add-item-form textarea {
+  min-height: 80px;
   resize: vertical;
 }
 
-/* Textarea */
-.add-item-form textarea {
-  min-height: 80px;
+.add-item-form select:focus,
+.add-item-form input:focus,
+.add-item-form textarea:focus {
+  border-color: #ff8c1a;
+  box-shadow: 0 0 5px rgba(255, 140, 0, 0.3);
+  outline: none;
 }
 
-/* Checkbox row */
 .checkbox-row {
   display: flex;
-  gap: 15px;
+  justify-content: space-between;
   flex-wrap: wrap;
-  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
 }
 
 .checkbox-row label {
-  font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  color: #a35200;
+  font-weight: 500;
 }
 
-/* Submit button */
-.submit-btn {
-  background-color: #ff7b00;
-  color: #fff;
+.add-item-form input[type="file"] {
   border: none;
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: 600;
+  background: none;
+  padding: 5px 0;
+  color: #a35200;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #ff8c1a;
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.1s ease;
 }
 
-/* Success message */
+.submit-btn:hover {
+  background-color: #ff751a;
+  transform: scale(1.02);
+}
+
+.submit-btn:disabled {
+  background-color: #ffd1a3;
+  cursor: not-allowed;
+}
+
 .success-message {
-  margin-top: 10px;
   color: #28a745;
+  text-align: center;
+  margin-top: 15px;
   font-weight: 600;
+  font-size: 15px;
 }
 
-/* ==============================
-   Responsive Design
-============================== */
-@media (max-width: 1024px) {
-  .add-item-manager-container h2 {
-    font-size: 22px;
-  }
-
-  .submit-btn {
-    font-size: 15px;
-    padding: 10px 18px;
-  }
-}
-
-@media (max-width: 768px) {
-  .add-item-manager-container h2 {
-    font-size: 20px;
-  }
-
-  .add-item-form input[type="text"],
-  .add-item-form input[type="number"],
-  .add-item-form select,
-  .add-item-form textarea,
-  .add-item-form input[type="file"] {
-    font-size: 13px;
-    padding: 8px;
-  }
-
-  .submit-btn {
-    width: 100%;
-    font-size: 14px;
-    padding: 10px;
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .add-item-manager-container {
+    padding: 20px;
   }
 
   .checkbox-row {
     flex-direction: column;
-    gap: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .add-item-manager-container {
-    padding: 15px;
-  }
-
-  .add-item-manager-container h2 {
-    font-size: 18px;
-  }
-
-  .add-item-form input[type="text"],
-  .add-item-form input[type="number"],
-  .add-item-form select,
-  .add-item-form textarea,
-  .add-item-form input[type="file"] {
-    font-size: 12px;
-    padding: 6px;
+    align-items: flex-start;
   }
 
   .submit-btn {
     font-size: 14px;
-    padding: 10px;
   }
 }

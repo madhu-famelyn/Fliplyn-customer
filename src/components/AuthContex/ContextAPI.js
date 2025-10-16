@@ -4,8 +4,9 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null); 
+  const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true); // ⬅️ add this
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -17,13 +18,14 @@ export const AuthProvider = ({ children }) => {
       setUser(JSON.parse(storedUser));
       setRole(storedRole);
     }
+
+    setLoading(false); // ⬅️ mark done after checking
   }, []);
 
   const loginUser = (jwt, userData, userRole) => {
     setToken(jwt);
     setUser(userData);
     setRole(userRole);
-
     localStorage.setItem("token", jwt);
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("role", userRole);
@@ -38,13 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{
-        token,
-        user, // full manager details
-        role,
-        loginUser,
-        logoutUser,
-      }}
+      value={{ token, user, role, loginUser, logoutUser, loading }}
     >
       {children}
     </AuthContext.Provider>

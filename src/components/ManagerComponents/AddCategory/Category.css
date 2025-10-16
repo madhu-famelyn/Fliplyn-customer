@@ -1,0 +1,148 @@
+.category-container {
+  max-width: 500px;
+  width: 90%;
+  margin: 60px auto;
+  padding: 30px;
+  background: #fff8f2;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(255, 140, 0, 0.25);
+  border: 1px solid #ffd4a3;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(255, 140, 0, 0.3);
+}
+
+/* Heading */
+.category-container h2 {
+  text-align: center;
+  color: #e67300;
+  margin-bottom: 25px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Form groups */
+.category-form .form-group {
+  margin-bottom: 18px;
+}
+
+.category-form label {
+  display: block;
+  margin-bottom: 6px;
+  color: #a35200;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* Input and select */
+.category-form input,
+.category-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ffb366;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-form input:focus,
+.category-form select:focus {
+  border-color: #ff8c1a;
+  box-shadow: 0 0 5px rgba(255, 140, 0, 0.3);
+  outline: none;
+}
+
+/* Button */
+.category-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #ff8c1a;
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.category-form button:hover {
+  background-color: #ff751a;
+  transform: scale(1.03);
+}
+
+.category-form button:disabled {
+  background-color: #ffd1a3;
+  cursor: not-allowed;
+}
+
+/* Success and error messages */
+.success-msg {
+  color: #28a745;
+  text-align: center;
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.error-msg {
+  color: #d9534f;
+  text-align: center;
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* -------- Responsive Adjustments -------- */
+
+/* Tablets (768px and below) */
+@media (max-width: 768px) {
+  .category-container {
+    padding: 25px;
+    margin: 40px auto;
+  }
+
+  .category-container h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .category-form button {
+    font-size: 15px;
+    padding: 10px;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .category-container {
+    width: 90%;
+    align-items: center;
+    padding: 20px;
+    margin: 30px auto;
+    border-radius: 10px;
+  }
+
+  .category-container h2 {
+    font-size: 18px;
+  }
+
+  .category-form label {
+    font-size: 14px;
+  }
+
+  .category-form input,
+  .category-form select {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .category-form button {
+    font-size: 14px;
+    padding: 9px;
+  }
+}

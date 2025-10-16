@@ -48,6 +48,7 @@ import StallsReport from "./components/ManagerComponents/Stalls_reports/StallsRe
 import AddStall from "./components/ManagerComponents/CreateStall/CreateStall";
 import ManagerStallIds from "./components/ManagerComponents/ManagerStalls/ManagerStalls";
 import AddItemManager from "./components/LayOutComponents/ManagerItems/AddItems";
+import ManagerCategory from "./components/ManagerComponents/AddCategory/Category";
 
 import BuildingManagerLogin from "./components/BuildingManager/BuildingManager";
 import BuildingSalesReport from "./components/BuildingManager/BuilingMangerReport";
@@ -75,9 +76,16 @@ const BuildingManagerPrivateRoute = ({ element }) => {
 };
 
 const ManagerPrivateRoute = ({ element }) => {
-  const { token } = useManagerAuth();
+  const { token, loading } = useManagerAuth();
+
+  if (loading) {
+    // Optionally show a spinner or nothing until loading completes
+    return <div>Loading...</div>;
+  }
+
   return token ? element : <Navigate to="/manager-login" replace />;
 };
+
 
 function App() {
   return (
@@ -125,8 +133,7 @@ function App() {
                 <Route path="/wallet-group/:groupId" element={<EmployeesPage />} />
                 <Route path="/order-history" element={<HROrdersPage />} />
                 <Route path="/hr-details" element={<HRDetails />} />
-                <Route path="/view-sales" element={<StallsReport />} />
-                <Route path="/add-item-manager" element={<AddItemManager />} />
+
 
                 {/* 🧑‍🔧 Operational Manager Routes */}
                 <Route path="/add-refund" element={<ManagerPrivateRoute element={<AddRefund />} />} />
@@ -135,6 +142,11 @@ function App() {
                 <Route path="/manager-items/:stallId" element={<ManagerPrivateRoute element={<ItemListByStall />} />} />
                 <Route path="/manager-view-vendors" element={<ManagerPrivateRoute element={<ManagerViewVendors />} />} />
                 <Route path="/wallet-add-mng" element={<ManagerPrivateRoute element={<WalletUpload />} />} />
+                <Route path="/add-category" element={<ManagerPrivateRoute element={<ManagerCategory />} />} />
+                <Route path="/view-sales" element={<StallsReport />} />
+                <Route path="/add-item-manager" element={<AddItemManager />} />
+
+                
 
                 {/* 🏢 Building Manager Routes */}
                 <Route path="/bld-mng" element={<BuildingManagerLogin />} />

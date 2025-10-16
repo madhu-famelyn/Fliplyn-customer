@@ -1,20 +1,17 @@
 .add-stall-container {
   max-width: 500px;
-  margin: 50px auto;
-  padding: 30px;
-  border: 1px solid #ddd;
-  background-color: #ffffff;
-  font-family: "Geist", sans-serif;
+  margin: 40px auto;
+  padding: 25px;
+  background: #ffecde;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .add-stall-container h2 {
   text-align: center;
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 25px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .add-stall-container form {
@@ -23,60 +20,80 @@
   gap: 15px;
 }
 
+/* Input fields */
 .add-stall-container input[type="text"],
 .add-stall-container input[type="time"],
-.add-stall-container input[type="file"],
-.add-stall-container textarea {
+.add-stall-container textarea,
+.add-stall-container select {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #aaa;
-  outline: none;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   font-size: 14px;
-  background-color: #f9f9f9;
-  color: #333;
-  box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
-.add-stall-container input[type="text"]:focus,
-.add-stall-container input[type="time"]:focus,
-.add-stall-container input[type="file"]:focus,
-.add-stall-container textarea:focus {
-  border: 1px solid #000;
-  background-color: #fff;
+.add-stall-container input:focus,
+.add-stall-container textarea:focus,
+.add-stall-container select:focus {
+  border-color: #ff7a00;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.2);
 }
 
-.add-stall-container textarea {
-  min-height: 80px;
-  resize: vertical;
-}
-
+/* Labels */
 .add-stall-container label {
+  font-size: 14px;
+  color: #555;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
-  color: #333;
 }
 
+/* Checkbox styling */
 .add-stall-container input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: #ce6f21;
-  cursor: pointer;
+  accent-color: #ff7a00;
 }
 
-.add-stall-container button[type="submit"] {
-  width: 100%;
-  padding: 12px;
-  background-color: #e3871f;
-  color: #fff;
+/* File input */
+.add-stall-container input[type="file"] {
   border: none;
-  font-size: 15px;
-  font-weight: 500;
-  text-transform: uppercase;
-  cursor: pointer;
+  background: #f9f9f9;
+  padding: 8px 0;
 }
 
-.add-stall-container button[type="submit"]:hover {
-  background-color: #e78c0e;
+/* Button */
+.add-stall-container button {
+  background-color: #ff7a00;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-stall-container button:hover {
+  background-color: #e66a00;
+}
+
+.add-stall-container button:disabled {
+  background-color: #f2b280;
+  cursor: not-allowed;
+}
+
+/* Paragraphs (labels for times) */
+.add-stall-container p {
+  margin: 5px 0 3px;
+  color: #555;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .add-stall-container {
+    margin: 20px;
+    padding: 20px;
+  }
 }
