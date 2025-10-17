@@ -12,6 +12,18 @@ table td {
   text-align: left !important;
   padding-left: 8px; /* optional, for spacing */
 }
+/* === Horizontal Scroll for Table === */
+.stall-report-table-wrapper {
+  width: 100%;
+  overflow-x: auto;       /* Enables horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+}
+
+.stall-report-table-unique {
+  min-width: 900px; /* Ensures scroll appears if table is wide */
+  border-collapse: collapse;
+  width: 100%;
+}
 
 .stall-report-title-unique {
   text-align: center;

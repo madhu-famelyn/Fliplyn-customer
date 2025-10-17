@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContex/ContextAPI";
-import * as XLSX from "xlsx";
 import "./StallsReport.css";
+import * as XLSX from "xlsx-js-style";
 
 export default function StallSalesReport() {
   const { user } = useAuth();
@@ -29,7 +29,7 @@ export default function StallSalesReport() {
         setStalls(res.data);
       } catch (err) {
         console.error(err);
-        setError("Failed to fetch stalls.");
+        setError("Failed to fetch outlets.");
       }
     };
 
@@ -81,7 +81,11 @@ export default function StallSalesReport() {
             const istNow = new Date(
               now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
             );
-            const startOfMonth = new Date(istNow.getFullYear(), istNow.getMonth(), 1);
+            const startOfMonth = new Date(
+              istNow.getFullYear(),
+              istNow.getMonth(),
+              1
+            );
             startOfMonth.setHours(0, 0, 0, 0);
             const endOfMonth = new Date(istNow);
             endOfMonth.setHours(23, 59, 59, 999);
@@ -165,34 +169,115 @@ export default function StallSalesReport() {
     )
   );
 
-  const exportToExcel = () => {
-    const rows = sortedOrders.flatMap((order) =>
-      order.order_details.map((item, index) => ({
-        Stall: order.stall_name,
+  // ✅ UPDATED Excel export
+
+
+const exportToExcel = () => {
+  let totalPrice = 0;
+  let totalNetAmount = 0;
+  let totalGross = 0;
+  let totalGST = 0;
+  let totalRoundOff = 0;
+  let totalPaidAll = 0;
+
+  const rows = sortedOrders.flatMap((order) =>
+    order.order_details.map((item, index) => {
+      const totalPaid =
+        order.order_details.reduce((sum, d) => sum + d.total, 0) +
+        (order.round_off || 0);
+
+      // Accumulate totals
+      totalPrice += item.price;
+      totalNetAmount += item.quantity * item.price;
+      totalGross += item.total;
+      totalGST += order.total_gst || 0;
+      if (index === 0) totalRoundOff += order.round_off || 0;
+      if (index === 0) totalPaidAll += totalPaid;
+
+      return {
+        Outlet: order.stall_name,
         Token: order.token_number,
-        Email: order.user_email,
-        Date: new Date(order.created_datetime).toLocaleString(),
+        "User Email": order.user_email,
+        Date: new Date(order.created_datetime).toLocaleString("en-IN"),
         Item: item.name,
-        Quantity: item.quantity,
+        Qty: item.quantity,
         Price: item.price,
-        "Qty × Price": item.quantity * item.price,
-        Total: item.total,
-        GST_Total: order.total_gst,
-        Round_Off: index === 0 ? order.round_off : "",
-        Total_Paid:
-          index === 0
-            ? order.order_details.reduce((sum, d) => sum + d.total, 0) + (order.round_off || 0)
-            : "",
-      }))
-    );
+        "Net Amount": (item.quantity * item.price).toFixed(2),
+        "Gross Total": item.total,
+        GST: order.total_gst,
+        "Round Off": index === 0 ? order.round_off || 0 : "",
+        "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
+      };
+    })
+  );
 
-    rows.push({ "Total_Paid": "Grand Total: ₹" + totalSales.toFixed(2) });
+  // ✅ Add Grand Total row
+  rows.push({
+    Outlet: "",
+    Token: "",
+    "User Email": "",
+    Date: "",
+    Item: "Grand Total",
+    Qty: "",
+    Price: totalPrice.toFixed(2),
+    "Net Amount": totalNetAmount.toFixed(2),
+    "Gross Total": totalGross.toFixed(2),
+    GST: totalGST.toFixed(2),
+    "Round Off": totalRoundOff.toFixed(2),
+    "Total Paid": totalPaidAll.toFixed(2),
+  });
 
-    const ws = XLSX.utils.json_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Stall Sales Report");
-    XLSX.writeFile(wb, "Stall_Sales_Report.xlsx");
-  };
+  // ✅ Convert JSON to worksheet
+  const ws = XLSX.utils.json_to_sheet(rows);
+
+  // ✅ Apply style to header row (row index 0)
+  const header = Object.keys(rows[0]);
+  header.forEach((col, idx) => {
+    const cellRef = XLSX.utils.encode_cell({ r: 0, c: idx });
+    if (ws[cellRef]) {
+      ws[cellRef].s = {
+        font: { bold: true, color: { rgb: "000000" }, sz: 12 },
+        alignment: { horizontal: "center", vertical: "center" },
+        border: {
+          top: { style: "thin", color: { rgb: "000000" } },
+          bottom: { style: "thin", color: { rgb: "000000" } },
+          left: { style: "thin", color: { rgb: "000000" } },
+          right: { style: "thin", color: { rgb: "000000" } },
+        },
+      };
+    }
+  });
+
+  // ✅ Style for the Grand Total row (last row)
+  const lastRowIndex = rows.length; // last data row index (1-based)
+  header.forEach((col, idx) => {
+    const cellRef = XLSX.utils.encode_cell({ r: lastRowIndex, c: idx });
+    if (ws[cellRef]) {
+      ws[cellRef].s = {
+        font: { bold: true, color: { rgb: "000000" }, sz: 12 },
+        alignment: { horizontal: "center", vertical: "center" },
+        border: {
+          top: { style: "thin", color: { rgb: "000000" } },
+          bottom: { style: "thin", color: { rgb: "000000" } },
+          left: { style: "thin", color: { rgb: "000000" } },
+          right: { style: "thin", color: { rgb: "000000" } },
+        },
+      };
+    }
+  });
+
+  // ✅ Auto column widths
+  const colWidths = header.map((h) => ({ wch: Math.max(h.length + 2, 15) }));
+  ws["!cols"] = colWidths;
+
+  // ✅ Create workbook and append sheet
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
+
+  // ✅ Save Excel file
+  XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
+};
+
 
   const handleSubmit = () => {
     if (!filter) {
@@ -208,17 +293,17 @@ export default function StallSalesReport() {
 
   return (
     <div className="stall-report-container-unique">
-      <h2 className="stall-report-title-unique">Stall Sales Report</h2>
+      <h2 className="stall-report-title-unique">Outlet Sales Report</h2>
 
       <div className="stall-report-filters-row-unique">
         <div className="stall-report-dropdown-unique">
-          <label htmlFor="stall-select">Select Stall:</label>
+          <label htmlFor="stall-select">Select Outlet:</label>
           <select
             id="stall-select"
             value={selectedStallId}
             onChange={(e) => setSelectedStallId(e.target.value)}
           >
-            <option value="all">All Stalls</option>
+            <option value="all">All Outlets</option>
             {stalls.map((stall) => (
               <option key={stall.id} value={stall.id}>
                 {stall.name}
@@ -234,7 +319,7 @@ export default function StallSalesReport() {
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
           >
-            <option value="stall">Stall</option>
+            <option value="stall">Outlet</option>
             <option value="date">Date</option>
           </select>
         </div>
@@ -319,53 +404,57 @@ export default function StallSalesReport() {
           <div className="stall-report-export-btn-unique">
             <button onClick={exportToExcel}>Export to Excel</button>
           </div>
-          <table className="stall-report-table-unique">
-            <thead>
-              <tr>
-                <th>Stall</th>
-                <th>Token</th>
-                <th>User Email</th>
-                <th>Date</th>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Qty × Price</th>
-                <th>Total</th>
-                <th>GST</th>
-                <th>Round Off</th>
-                <th>Total Paid</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedOrders.map((order) =>
-                order.order_details.map((item, index) => {
-                  const totalPaid =
-                    order.order_details.reduce((sum, d) => sum + d.total, 0) +
-                    (order.round_off || 0);
-                  return (
-                    <tr key={`${order.id}-${item.item_id}`}>
-                      <td>{order.stall_name}</td>
-                      <td>{order.token_number}</td>
-                      <td>{order.user_email}</td>
-                      <td>
-                        {new Date(order.created_datetime).toLocaleString("en-IN", {
-                          timeZone: "Asia/Kolkata",
-                        })}
-                      </td>
-                      <td>{item.name}</td>
-                      <td>{item.quantity}</td>
-                      <td>₹{item.price}</td>
-                      <td>₹{(item.quantity * item.price).toFixed(2)}</td>
-                      <td>₹{item.total}</td>
-                      <td>₹{order.total_gst}</td>
-                      <td>{index === 0 ? `₹${order.round_off}` : ""}</td>
-                      <td>{index === 0 ? `₹${totalPaid.toFixed(2)}` : ""}</td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+
+          {/* ✅ Added scrollable wrapper */}
+          <div className="stall-report-table-wrapper">
+            <table className="stall-report-table-unique">
+              <thead>
+                <tr>
+                  <th>Outlet</th>
+                  <th>Token</th>
+                  <th>User Email</th>
+                  <th>Date</th>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Net Amount</th>
+                  <th>Gross Total</th>
+                  <th>GST</th>
+                  <th>Round Off</th>
+                  <th>Total Paid</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedOrders.map((order) =>
+                  order.order_details.map((item, index) => {
+                    const totalPaid =
+                      order.order_details.reduce((sum, d) => sum + d.total, 0) +
+                      (order.round_off || 0);
+                    return (
+                      <tr key={`${order.id}-${item.item_id}`}>
+                        <td>{order.stall_name}</td>
+                        <td>{order.token_number}</td>
+                        <td>{order.user_email}</td>
+                        <td>
+                          {new Date(order.created_datetime).toLocaleString("en-IN", {
+                            timeZone: "Asia/Kolkata",
+                          })}
+                        </td>
+                        <td>{item.name}</td>
+                        <td>{item.quantity}</td>
+                        <td>₹{item.price}</td>
+                        <td>₹{(item.quantity * item.price).toFixed(2)}</td>
+                        <td>₹{item.total}</td>
+                        <td>₹{order.total_gst}</td>
+                        <td>{index === 0 ? `₹${order.round_off}` : ""}</td>
+                        <td>{index === 0 ? `₹${totalPaid.toFixed(2)}` : ""}</td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>
