@@ -36,17 +36,26 @@ import ReportsPage from "./components/Vendor/ItemsList/Reports";
 import OrdersByEmail from "./components/LayOutComponents/GetOrder/GetOrder";
 import WalletUploadAdmin from "./components/LayOutComponents/ManagerWallet/ManagerWallet";
 import ChangePassword from "./components/LayOutComponents/ChangePassword/ChangePassword";
-
+import ChangeAdminPassword from "./components/LayOutComponents/ChangePassword/ChangeAdminPassword";
+import ChangeVendorPassword from "./components/LayOutComponents/ChangePassword/ChangeVendorPassword";
+import UpdateUserPassword from "./components/LayOutComponents/ChangePassword/ChangePasswordUser";
+import ChangeHrPassword from "./components/LayOutComponents/ChangePassword/ChangeHRpassword";
+import ChangeOMPassword from "./components/LayOutComponents/ChangePassword/ChangeManagerPassword";
+import ChangeBuildingManagerPassword from "./components/LayOutComponents/ChangePassword/ChangeBuildingManagerPassword";
 import HRDashboard from "./components/HR/Dashboard/Dashboard";
 import HrLogin from "./components/HR/Login/LogIn";
 import EmployeesPage from "./components/HR/EmployDetails/EmployeDetails";
 import HROrdersPage from "./components/HR/EmployDetails/OrdersPage";
 import HRDetails from "./components/HR/AddHR/AddHR";
+import CreateHR from "./components/UserCreations/HRCreation/HRCreation";
+import CreateUserAdmin from "./components/UserCreations/CreateUser/CreateUser";
+import UpdateStatus from "./components/UserCreations/DeactiveUser/DeactiveUser";
 
 import ItemListByStall from "./components/ManagerComponents/ManagerItems/ManagerItems";
 import AddRefund from "./components/ManagerComponents/Reund/add-refund";
 import StallsReport from "./components/ManagerComponents/Stalls_reports/StallsReport";
 import AddStall from "./components/ManagerComponents/CreateStall/CreateStall";
+import ViewBuildingManagers from "./components/UserCreations/BuildingManagerCreations/BuildingManager";
 import ManagerStallIds from "./components/ManagerComponents/ManagerStalls/ManagerStalls";
 import AddItemManager from "./components/LayOutComponents/ManagerItems/AddItems";
 import ManagerCategory from "./components/ManagerComponents/AddCategory/Category";
@@ -121,6 +130,20 @@ function App() {
                 <Route path="/print-token/:tokenNumber" element={<TokenReceiptPage />} />
                 <Route path="/get-order-email" element={<AdminPrivateRoute element={<OrdersByEmail />} />} />
                 <Route path="/change-password" element={<AdminPrivateRoute element={<ChangePassword />} />} />
+                <Route path="/change/admin" element={<ChangeAdminPassword />} />
+                <Route path="/change/user" element={<UpdateUserPassword/>} />
+                <Route path="/change/vendor" element={<ChangeVendorPassword/>} />
+                <Route path="/change/hr" element={<ChangeHrPassword/>} />
+                <Route path="change/om" element={<ChangeOMPassword/>} />
+                <Route path="/change/manager" element={<ChangeBuildingManagerPassword/>} />
+                <Route path="/view-building-managers" element={<ViewBuildingManagers/>} />
+                 <Route path="/create-hr" element={<CreateHR/>} />
+                 <Route path="/create-user-admin" element={<CreateUserAdmin/>} />
+                 <Route path="/deactivate-user" element={<UpdateStatus/>} />
+
+
+
+
 
 
                 {/* 🛍️ Vendor Routes */}

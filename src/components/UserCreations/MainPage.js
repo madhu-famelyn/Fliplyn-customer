@@ -31,6 +31,12 @@ export default function UserCreation() {
           >
             View Building Manager
           </button>
+           <button
+            className="big-button"
+            onClick={() => navigate("/create-hr")}
+          >
+           View HR
+          </button>
 
           <button
             className="big-button"
@@ -41,13 +47,13 @@ export default function UserCreation() {
 
           <button
             className="big-button"
-            onClick={() => navigate("/change-password")}
+            onClick={() => navigate("/create-user-admin")}
           >
             Add User
           </button>
           <button
             className="big-button"
-            onClick={() => navigate("/change-password")}
+            onClick={() => navigate("/deactivate-user")}
           >
             User Deactivate
           </button>

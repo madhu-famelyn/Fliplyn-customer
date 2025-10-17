@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import AdminLayout from "../../LayOut/AdminLayout";
 import { useAuth } from "../../AuthContex/AdminContext";
 import axios from "axios";
-import "./BuildingManager.css"; // optional, if you want styling
+import "./BuildingManager.css";
 
 export default function ViewBuildingManagers() {
   const { adminId, token } = useAuth();
@@ -52,42 +52,51 @@ export default function ViewBuildingManagers() {
         return;
       }
 
-      // 2️⃣ Fetch managers for each building
+      // 2️⃣ Fetch managers for each building (skip buildings with no managers)
       const allManagers = [];
 
       for (const building of buildingsData) {
-        const managersRes = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/api/building-managers/by-building/${building.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              accept: "application/json",
-            },
+        try {
+          const managersRes = await axios.get(
+            `https://admin-aged-field-2794.fly.dev/api/building-managers/by-building/${building.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                accept: "application/json",
+              },
+            }
+          );
+
+          let managerData = managersRes.data;
+          if (!managerData || (Array.isArray(managerData) && managerData.length === 0)) {
+            continue; // skip if no managers
           }
-        );
 
-        // ✅ Handle both single-object and list responses
-        let managerData = managersRes.data;
-        if (!managerData) continue;
-        if (!Array.isArray(managerData)) managerData = [managerData];
+          if (!Array.isArray(managerData)) managerData = [managerData];
 
-        const managersWithBuilding = managerData.map((m) => ({
-          ...m,
-          building_name: building.building_name,
-        }));
+          const managersWithBuilding = managerData.map((m) => ({
+            ...m,
+            building_name: building.building_name,
+          }));
 
-        allManagers.push(...managersWithBuilding);
+          allManagers.push(...managersWithBuilding);
+        } catch (err) {
+          console.warn(`Error fetching managers for building ${building.id}:`, err.message);
+        }
       }
 
       setManagers(allManagers);
     } catch (error) {
-      console.error("Error fetching managers:", error.response?.data || error.message);
+      console.error("Error fetching buildings or managers:", error.response?.data || error.message);
+      setManagers([]);
     } finally {
       setLoading(false);
     }
   };
 
-
+  // ===========================
+  // Create manager
+  // ===========================
   const handleCreateManager = async (e) => {
     e.preventDefault();
     try {
