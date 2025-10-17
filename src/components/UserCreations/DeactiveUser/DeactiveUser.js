@@ -27,7 +27,8 @@ export default function UpdateStatus() {
     setLoading(true);
 
     try {
-      const response = await axios.put(
+      // ✅ Await and destructure response data
+      const { data } = await axios.put(
         "https://admin-aged-field-2794.fly.dev/user/status",
         formData,
         {
@@ -35,7 +36,8 @@ export default function UpdateStatus() {
         }
       );
 
-      setMessage(
+      // Use server message if available
+      setMessage(data?.message || 
         `✅ Status updated successfully for ${formData.email} (${formData.is_active ? "Active" : "Inactive"})`
       );
     } catch (error) {
