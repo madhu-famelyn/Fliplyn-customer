@@ -1,0 +1,212 @@
+/* ===== Container ===== */
+.outlet-report-container-unique {
+  padding: 30px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===== Title ===== */
+.outlet-report-title-unique {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* ===== Filter Rows ===== */
+.outlet-report-filters-row-unique {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.outlet-report-dropdown-unique {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.outlet-report-dropdown-unique label {
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 5px;
+}
+
+.outlet-report-dropdown-unique select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  background-color: #fff;
+  transition: 0.3s;
+  width: 200px;
+}
+
+.outlet-report-dropdown-unique select:hover,
+.outlet-report-date-dropdown:hover {
+  border-color: #ff7300;
+}
+
+/* ===== Date Filter Section ===== */
+.outlet-report-date-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.outlet-report-date-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.outlet-report-date-dropdown {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  outline: none;
+  transition: 0.3s;
+}
+
+.outlet-report-custom-date-inputs {
+  display: flex;
+  gap: 10px;
+}
+
+/* ===== Submit Button ===== */
+.outlet-report-submit-btn-container-unique {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.outlet-report-submit-btn-unique {
+  background-color: #ffae00;
+  color: #fff;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.outlet-report-submit-btn-unique:hover {
+  background-color: #007bff;
+  transform: translateY(-1px);
+}
+
+/* ===== Export Button ===== */
+.outlet-report-export-btn-unique {
+  display: flex;
+  justify-content: flex-end;
+  margin: 15px 0;
+}
+
+.outlet-report-export-btn-unique button {
+  background-color: #28a745;
+  color: #fff;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.outlet-report-export-btn-unique button:hover {
+  background-color: #1f8e3d;
+  transform: translateY(-1px);
+}
+
+/* ===== Table Styles ===== */
+.outlet-report-table-unique {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.outlet-report-table-unique th,
+.outlet-report-table-unique td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.outlet-report-table-unique th {
+  background-color: #030f1c;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.outlet-report-table-unique td {
+  font-size: 14px;
+  color: #333;
+}
+
+.outlet-report-table-unique tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.outlet-report-table-unique tr:hover {
+  background-color: #eef4ff;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 1024px) {
+  .outlet-report-dropdown-unique select {
+    width: 160px;
+  }
+}
+
+@media (max-width: 768px) {
+  .outlet-report-container-unique {
+    padding: 20px;
+  }
+
+  .outlet-report-filters-row-unique {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .outlet-report-date-filter-row {
+    flex-direction: column;
+  }
+
+  .outlet-report-export-btn-unique {
+    justify-content: center;
+  }
+
+  .outlet-report-table-unique th,
+  .outlet-report-table-unique td {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .outlet-report-title-unique {
+    font-size: 22px;
+  }
+
+  .outlet-report-submit-btn-unique,
+  .outlet-report-export-btn-unique button {
+    width: 100%;
+  }
+
+  .outlet-report-date-dropdown {
+    width: 100%;
+  }
+}

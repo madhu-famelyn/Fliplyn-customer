@@ -173,7 +173,6 @@ export default function StallSalesReport() {
 
 
 const exportToExcel = () => {
-  let totalPrice = 0;
   let totalNetAmount = 0;
   let totalGross = 0;
   let totalGST = 0;
@@ -182,27 +181,27 @@ const exportToExcel = () => {
 
   const rows = sortedOrders.flatMap((order) =>
     order.order_details.map((item, index) => {
+      const netAmount = item.quantity * item.price;
       const totalPaid =
         order.order_details.reduce((sum, d) => sum + d.total, 0) +
         (order.round_off || 0);
 
       // Accumulate totals
-      totalPrice += item.price;
-      totalNetAmount += item.quantity * item.price;
+      totalNetAmount += netAmount;
       totalGross += item.total;
       totalGST += order.total_gst || 0;
       if (index === 0) totalRoundOff += order.round_off || 0;
       if (index === 0) totalPaidAll += totalPaid;
 
       return {
-        Outlet: order.stall_name,
+        Outlet: order.outlet_name,
         Token: order.token_number,
         "User Email": order.user_email,
         Date: new Date(order.created_datetime).toLocaleString("en-IN"),
         Item: item.name,
         Qty: item.quantity,
         Price: item.price,
-        "Net Amount": (item.quantity * item.price).toFixed(2),
+        "Net Amount": netAmount.toFixed(2),
         "Gross Total": item.total,
         GST: order.total_gst,
         "Round Off": index === 0 ? order.round_off || 0 : "",
@@ -211,7 +210,7 @@ const exportToExcel = () => {
     })
   );
 
-  // ✅ Add Grand Total row
+  // Add Grand Total row
   rows.push({
     Outlet: "",
     Token: "",
@@ -219,7 +218,7 @@ const exportToExcel = () => {
     Date: "",
     Item: "Grand Total",
     Qty: "",
-    Price: totalPrice.toFixed(2),
+    Price: "", // exclude Price from grand total
     "Net Amount": totalNetAmount.toFixed(2),
     "Gross Total": totalGross.toFixed(2),
     GST: totalGST.toFixed(2),
@@ -227,10 +226,9 @@ const exportToExcel = () => {
     "Total Paid": totalPaidAll.toFixed(2),
   });
 
-  // ✅ Convert JSON to worksheet
   const ws = XLSX.utils.json_to_sheet(rows);
 
-  // ✅ Apply style to header row (row index 0)
+  // Style header row
   const header = Object.keys(rows[0]);
   header.forEach((col, idx) => {
     const cellRef = XLSX.utils.encode_cell({ r: 0, c: idx });
@@ -248,8 +246,8 @@ const exportToExcel = () => {
     }
   });
 
-  // ✅ Style for the Grand Total row (last row)
-  const lastRowIndex = rows.length; // last data row index (1-based)
+  // Style Grand Total row
+  const lastRowIndex = rows.length; // 1-based
   header.forEach((col, idx) => {
     const cellRef = XLSX.utils.encode_cell({ r: lastRowIndex, c: idx });
     if (ws[cellRef]) {
@@ -266,17 +264,19 @@ const exportToExcel = () => {
     }
   });
 
-  // ✅ Auto column widths
+  // Auto column widths
   const colWidths = header.map((h) => ({ wch: Math.max(h.length + 2, 15) }));
   ws["!cols"] = colWidths;
 
-  // ✅ Create workbook and append sheet
+  // Create workbook and append sheet
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
 
-  // ✅ Save Excel file
+  // Save Excel file
   XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
 };
+
+
 
 
   const handleSubmit = () => {
