@@ -73,7 +73,11 @@ import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
 // ✅ Private Routes with persistent auth
 const AdminPrivateRoute = ({ element }) => {
   const { token } = useAdminAuth();
-  return token ? element : <Navigate to="/login" replace />;
+
+  // Try to get token from context first, then fallback to localStorage
+  const persistedToken = token || localStorage.getItem("adminToken");
+
+  return persistedToken ? element : <Navigate to="/login" replace />;
 };
 
 const VendorPrivateRoute = ({ element }) => {
