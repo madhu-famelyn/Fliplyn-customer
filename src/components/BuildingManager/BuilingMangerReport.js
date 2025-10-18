@@ -13,7 +13,7 @@ export default function StallSalesReportBM() {
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("");
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
-  const [companyFilter, setCompanyFilter] = useState("all");
+  // const [companyFilter, setCompanyFilter] = useState("all");
   const [sortBy, setSortBy] = useState("stall");
   const [submitted, setSubmitted] = useState(false);
 

@@ -12,7 +12,6 @@ import {
   FaChartPie,
 } from 'react-icons/fa';
 import { MdGroups2 } from 'react-icons/md';
-import { RiAdminLine } from 'react-icons/ri';
 import './AdminLayout.css';
 
 export default function AdminLayout({ children }) {
