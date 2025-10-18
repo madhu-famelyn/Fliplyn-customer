@@ -35,7 +35,7 @@ export default function CreateUserAdmin() {
         },
       });
 
-      setMessage("✅ User registered successfully! OTP sent to email or phone.");
+      setMessage("✅ User registered successfully!");
       console.log("Response:", response.data);
 
       // Reset form
