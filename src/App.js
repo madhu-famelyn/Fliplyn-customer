@@ -50,6 +50,7 @@ import HRDetails from "./components/HR/AddHR/AddHR";
 import CreateHR from "./components/UserCreations/HRCreation/HRCreation";
 import CreateUserAdmin from "./components/UserCreations/CreateUser/CreateUser";
 import UpdateStatus from "./components/UserCreations/DeactiveUser/DeactiveUser";
+import StallSalesReportAdmin from "./components/LayOutComponents/StallsSalesReportAdmin/StallsSalesReport";
 
 import ItemListByStall from "./components/ManagerComponents/ManagerItems/ManagerItems";
 import AddRefund from "./components/ManagerComponents/Reund/add-refund";
@@ -140,6 +141,10 @@ function App() {
                  <Route path="/create-hr" element={<CreateHR/>} />
                  <Route path="/create-user-admin" element={<CreateUserAdmin/>} />
                  <Route path="/deactivate-user" element={<UpdateStatus/>} />
+                  <Route
+                                 path="/stalls-report-admin"
+                                 element={<AdminPrivateRoute element={<StallSalesReportAdmin />} />}
+                               />
 
 
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContex/AdminContext";
-import "./HRCreation.css"; // Use the same CSS
+import "./HRCreation.css";
 
 export default function CreateHR() {
   const { adminId } = useAuth();
@@ -12,7 +12,6 @@ export default function CreateHR() {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  // Form fields
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,40 +21,59 @@ export default function CreateHR() {
     building_id: "",
   });
 
+  // === Fetch buildings and HRs ===
   useEffect(() => {
     const fetchBuildingsAndHRs = async () => {
+      console.log("🔹 Fetching Buildings and HRs...");
+      console.log("➡️ Admin ID:", adminId);
+
       if (!adminId) {
         setError("Admin ID missing. Please re-login as admin.");
+        console.error("❌ Admin ID missing in context.");
         return;
       }
+
       setLoading(true);
       try {
-        const resBuildings = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`
-        );
+        // Fetch buildings by admin
+        const buildingsURL = `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`;
+        console.log("🌐 GET Buildings API:", buildingsURL);
+
+        const resBuildings = await axios.get(buildingsURL);
+        console.log("✅ Buildings API Response:", resBuildings.data);
+
         const buildingList = resBuildings.data || [];
         setBuildings(buildingList);
 
-        const hrPromises = buildingList.map((b) =>
-          axios.get(`https://admin-aged-field-2794.fly.dev/hr/building/${b.id}`)
-        );
+        // Fetch HRs for each building
+        const hrPromises = buildingList.map((b) => {
+          const hrURL = `https://admin-aged-field-2794.fly.dev/hr/building/${b.id}`;
+          console.log("🌐 GET HRs for Building:", b.id, "| URL:", hrURL);
+          return axios.get(hrURL);
+        });
+
         const hrResults = await Promise.all(hrPromises);
+        console.log("✅ HR Results Array:", hrResults.map((res) => res.data));
 
         const allHRs = hrResults
           .flatMap((res) => res.data?.hrs || [])
           .filter((hr) => hr);
         setHrs(allHRs);
+
+        console.log("📋 Final HR List:", allHRs);
       } catch (err) {
-        console.error("Error fetching buildings or HRs:", err.response || err.message);
+        console.error("❌ Error fetching buildings or HRs:", err.response || err.message);
         setError("Failed to fetch buildings or HRs.");
       } finally {
         setLoading(false);
+        console.log("✅ Fetch complete.");
       }
     };
 
     fetchBuildingsAndHRs();
   }, [adminId]);
 
+  // === Submit new HR ===
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -63,29 +81,41 @@ export default function CreateHR() {
     setError(null);
 
     const { name, email, phone_number, company, password, building_id } = formData;
+    console.log("📝 Submitting HR Creation Form:", formData);
+    console.log("➡️ Admin ID:", adminId);
 
     if (!building_id || !name || !email || !phone_number || !company || !password) {
       setError("Please fill all fields.");
+      console.warn("⚠️ Missing required fields in form.");
       setLoading(false);
       return;
     }
 
     try {
-      const res = await axios.post(
-        "https://admin-aged-field-2794.fly.dev/hr/",
-        {
-          admin_id: adminId,
-          building_id,
-          name,
-          email,
-          phone_number,
-          company,
-          password,
-        },
-        { headers: { "Content-Type": "application/json", Accept: "application/json" } }
-      );
+      const hrCreateURL = "https://admin-aged-field-2794.fly.dev/hr/";
+      console.log("🌐 POST HR Create API:", hrCreateURL);
+
+      const payload = {
+        admin_id: adminId,
+        building_id,
+        name,
+        email,
+        phone_number,
+        company,
+        password,
+      };
+
+      console.log("📦 Payload:", payload);
+
+      const res = await axios.post(hrCreateURL, payload, {
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+      });
+
+      console.log("✅ HR Created Successfully:", res.data);
       setMessage(`HR ${res.data.name} created successfully.`);
       setShowForm(false);
+
+      // Reset form
       setFormData({
         name: "",
         email: "",
@@ -96,27 +126,34 @@ export default function CreateHR() {
       });
 
       // Refresh HR list
-      const hrPromises = buildings.map((b) =>
-        axios.get(`https://admin-aged-field-2794.fly.dev/hr/building/${b.id}`)
-      );
+      console.log("🔄 Refreshing HR list after creation...");
+      const hrPromises = buildings.map((b) => {
+        const hrURL = `https://admin-aged-field-2794.fly.dev/hr/building/${b.id}`;
+        console.log("🌐 Refetch HRs for building:", b.id);
+        return axios.get(hrURL);
+      });
+
       const hrResults = await Promise.all(hrPromises);
       const allHRs = hrResults.flatMap((res) => res.data?.hrs || []).filter((hr) => hr);
+      console.log("📋 Updated HR List:", allHRs);
+
       setHrs(allHRs);
     } catch (err) {
-      console.error("Error creating HR:", err.response || err.message);
+      console.error("❌ Error creating HR:", err.response || err.message);
       setError(err.response?.data?.detail || "Something went wrong while creating HR.");
     } finally {
       setLoading(false);
     }
   };
 
+  // === Handle form input ===
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    console.log(`✏️ Input Changed: ${name} = ${value}`);
+    setFormData({ ...formData, [name]: value });
   };
 
+  // === JSX ===
   return (
     <div className="view-managers-container">
       <div className="header-section">
@@ -189,7 +226,7 @@ export default function CreateHR() {
 
               <div className="modal-actions">
                 <button type="submit" className="save-btn">
-                  Save
+                  {loading ? "Saving..." : "Save"}
                 </button>
                 <button
                   type="button"
