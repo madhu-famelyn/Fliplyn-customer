@@ -116,22 +116,22 @@ function App() {
                 <Route path="/manager-login" element={<ManagerLogin />} />
 
                 {/* ✅ Admin Routes */}
-                <Route path="/dashboard" element={<AdminPrivateRoute element={<Dashboard />} />} />
-                <Route path="/locations" element={<AdminPrivateRoute element={<Locations />} />} />
-                <Route path="/select-country" element={<AdminPrivateRoute element={<SelectCountry />} />} />
-                <Route path="/select-state" element={<AdminPrivateRoute element={<SelectState />} />} />
-                <Route path="/select-city" element={<AdminPrivateRoute element={<SelectCity />} />} />
-                <Route path="/create-building" element={<AdminPrivateRoute element={<CreateBuilding />} />} />
-                <Route path="/stalls" element={<AdminPrivateRoute element={<Stall />} />} />
-                <Route path="/add-category/:stallId" element={<AdminPrivateRoute element={<AddCategory />} />} />
-                <Route path="/manager-wallet" element={<AdminPrivateRoute element={<WalletUploadAdmin />} />} />
-                <Route path="/item" element={<AdminPrivateRoute element={<Item />} />} />
-                <Route path="/manager-details" element={<AdminPrivateRoute element={<ManagerDetails />} />} />
-                <Route path="/manager-items" element={<AdminPrivateRoute element={<ItemDetails />} />} />
-                <Route path="/add-money" element={<AdminPrivateRoute element={<AddMoney />} />} />
-                <Route path="/items-admin" element={<AdminPrivateRoute element={<AdminItems />} />} />
-                <Route path="/create-group" element={<AdminPrivateRoute element={<Group />} />} />
-                <Route path="/token" element={<AdminPrivateRoute element={<EnterTokenPage />} />} />
+                <Route path="/dashboard" element={<Dashboard />}  />
+                <Route path="/locations" element={<Locations />}  />
+                <Route path="/select-country" element={<SelectCountry />} />
+                <Route path="/select-state"element={<SelectState />} />
+                <Route path="/select-city"  element={<SelectCity />}  />
+                <Route path="/create-building" element={<CreateBuilding />}/>
+                <Route path="/stalls"  element={<Stall />} />
+                <Route path="/add-category/:stallId" element={<AddCategory />} />
+                <Route path="/manager-wallet"  element={<WalletUploadAdmin />}  />
+                <Route path="/item"element={<Item />} />
+                <Route path="/manager-details"element={<ManagerDetails />} />
+                <Route path="/manager-items"  element={<ItemDetails />} />
+                <Route path="/add-money" element={<AddMoney />}  />
+                <Route path="/items-admin"element={<AdminItems />} />
+                <Route path="/create-group" element={<Group />} />
+                <Route path="/token"element={<EnterTokenPage />} />
                 <Route path="/print-token/:tokenNumber" element={<TokenReceiptPage />} />
                 <Route path="/get-order-email" element={<AdminPrivateRoute element={<OrdersByEmail />} />} />
                 <Route path="/change-password" element={<AdminPrivateRoute element={<ChangePassword />} />} />
@@ -147,7 +147,7 @@ function App() {
                  <Route path="/deactivate-user" element={<UpdateStatus/>} />
                   <Route
                                  path="/stalls-report-admin"
-                                 element={<AdminPrivateRoute element={<StallSalesReportAdmin />} />}
+                                 element={<StallSalesReportAdmin />}
                                />
 
 
