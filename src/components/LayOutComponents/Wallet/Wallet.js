@@ -5,7 +5,6 @@ import {
   getAllWalletsByBuildingId
 } from './Service'; // updated service import
 import { useAuth } from '../../AuthContex/AdminContext';
-import AdminLayout from '../../LayOut/AdminLayout';
 import './Wallet.css';
 
 export default function AddMoney() {
@@ -117,7 +116,6 @@ export default function AddMoney() {
 
   // ---------------------- UI ----------------------
   return (
-    <AdminLayout>
       <div className="addmoney-container">
         {/* Header */}
         <div className="addmoney-header">
@@ -232,6 +230,5 @@ export default function AddMoney() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }

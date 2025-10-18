@@ -157,6 +157,8 @@ const ReportsPage = () => {
                   <th>Token No</th>
                   <th>Item Name(s)</th>
                   <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Net Amount</th>
                   <th>CGST</th>
                   <th>SGST</th>
                   <th>Total GST</th>
@@ -167,13 +169,18 @@ const ReportsPage = () => {
               <tbody>
                 {orders.length === 0 ? (
                   <tr>
-                    <td colSpan="10" style={{ textAlign: "center" }}>
+                    <td colSpan="12" style={{ textAlign: "center" }}>
                       No orders found for selected range.
                     </td>
                   </tr>
                 ) : (
                   orders.map((order) => {
                     const date = new Date(order.created_datetime);
+                    const totalNet = order.order_details.reduce(
+                      (sum, item) => sum + item.price * item.quantity,
+                      0
+                    );
+
                     return (
                       <tr key={order.id}>
                         <td>{date.toLocaleDateString()}</td>
@@ -182,7 +189,7 @@ const ReportsPage = () => {
                         <td>
                           {order.order_details.map((item) => (
                             <div key={item.item_id}>
-                              {item.name} × {item.quantity}
+                              {item.name}
                             </div>
                           ))}
                         </td>
@@ -190,6 +197,19 @@ const ReportsPage = () => {
                           {order.order_details.map((item) => (
                             <div key={item.item_id}>₹{item.price}</div>
                           ))}
+                        </td>
+                        <td>
+                          {order.order_details.map((item) => (
+                            <div key={item.item_id}>{item.quantity}</div>
+                          ))}
+                        </td>
+                        <td>
+                          {order.order_details.map((item) => (
+                            <div key={item.item_id}>
+                              ₹{(item.price * item.quantity).toFixed(2)}
+                            </div>
+                          ))}
+                          <strong>Total: ₹{totalNet.toFixed(2)}</strong>
                         </td>
                         <td>₹{order.cgst?.toFixed(2) || "0.00"}</td>
                         <td>₹{order.sgst?.toFixed(2) || "0.00"}</td>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import * as XLSX from "xlsx"; // For Excel export
+import * as XLSX from "xlsx";
 import "./CreateGroup.css";
 
 export default function CreateGroup({ onGroupCreated }) {
@@ -12,8 +12,8 @@ export default function CreateGroup({ onGroupCreated }) {
     exclude_weekend: false,
     daily_wallet: false,
     days_count: 1,
-    payment_method: "prepaid", // ✅ default prepaid
-    asia_timezone: "Asia/Kolkata", // ✅ Default timezone
+    payment_method: "prepaid",
+    asia_timezone: "Asia/Kolkata",
   });
 
   const [file, setFile] = useState(null);
@@ -26,7 +26,6 @@ export default function CreateGroup({ onGroupCreated }) {
   const token =
     localStorage.getItem("token") || localStorage.getItem("access_token");
 
-  // ✅ List of common Asian timezones
   const asiaTimezones = [
     "Asia/Kolkata",
     "Asia/Dubai",
@@ -39,7 +38,6 @@ export default function CreateGroup({ onGroupCreated }) {
     "Asia/Jakarta",
   ];
 
-  // ✅ Fetch buildings for dropdown
   useEffect(() => {
     const fetchBuildings = async () => {
       if (!adminId) return;
@@ -61,7 +59,6 @@ export default function CreateGroup({ onGroupCreated }) {
     }
   }, [adminId, token]);
 
-  // ✅ Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -70,15 +67,12 @@ export default function CreateGroup({ onGroupCreated }) {
     }));
   };
 
-  // ✅ Handle file selection
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  // ✅ Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!file) {
       alert("Please upload an Excel file");
       return;
@@ -107,7 +101,6 @@ export default function CreateGroup({ onGroupCreated }) {
       setMissingUsers(response.data.non_registered_users || []);
       onGroupCreated();
 
-      // Reset form
       setFormData({
         building_id: "",
         wallet_amount: "",
@@ -126,14 +119,11 @@ export default function CreateGroup({ onGroupCreated }) {
     }
   };
 
-  // ✅ Download missing users as Excel
   const downloadMissingUsers = () => {
     if (missingUsers.length === 0) return;
-
     const ws = XLSX.utils.json_to_sheet(missingUsers);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Missing Users");
-
     XLSX.writeFile(wb, "Missing_Users.xlsx");
   };
 
@@ -178,35 +168,41 @@ export default function CreateGroup({ onGroupCreated }) {
           required
         />
 
-        <label>
-          <input
-            type="checkbox"
-            name="carry_forward"
-            checked={formData.carry_forward}
-            onChange={handleChange}
-          />
-          Carry Forward
-        </label>
+        <div className="toggle-row">
+          <label className="toggle-label">
+            <span>Carry Forward</span>
+            <input
+              type="checkbox"
+              name="carry_forward"
+              checked={formData.carry_forward}
+              onChange={handleChange}
+            />
+            <span className="toggle-slider"></span>
+          </label>
 
-        <label>
-          <input
-            type="checkbox"
-            name="exclude_weekend"
-            checked={formData.exclude_weekend}
-            onChange={handleChange}
-          />
-          Exclude Weekend
-        </label>
+          <label className="toggle-label">
+            <span>Exclude Weekend</span>
+            <input
+              type="checkbox"
+              name="exclude_weekend"
+              checked={formData.exclude_weekend}
+              onChange={handleChange}
+            />
+            <span className="toggle-slider"></span>
+          </label>
 
-        <label>
-          <input
-            type="checkbox"
-            name="daily_wallet"
-            checked={formData.daily_wallet}
-            onChange={handleChange}
-          />
-          Daily Wallet
-        </label>
+          <label className="toggle-label">
+            <span>Daily Wallet</span>
+            <input
+
+              type="checkbox"
+              name="daily_wallet"
+              checked={formData.daily_wallet}
+              onChange={handleChange}
+            />
+            <span className="toggle-slider"></span>
+          </label>
+        </div>
 
         <label>
           Days Count:
@@ -220,7 +216,6 @@ export default function CreateGroup({ onGroupCreated }) {
           />
         </label>
 
-        {/* ✅ Payment Method Dropdown */}
         <label>
           Payment Method:
           <select
@@ -234,7 +229,6 @@ export default function CreateGroup({ onGroupCreated }) {
           </select>
         </label>
 
-        {/* ✅ Timezone Dropdown */}
         <label>
           Timezone:
           <select

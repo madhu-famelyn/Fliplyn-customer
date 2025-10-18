@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   FaMapMarkerAlt,
-  FaBoxOpen,
-  FaStore,
+  FaBox,
+  FaStoreAlt,
   FaWallet,
   FaBars,
   FaTimes,
   FaUserPlus,
+  FaFileInvoiceDollar,
+  FaChartPie,
 } from 'react-icons/fa';
-import { MdGroupAdd } from 'react-icons/md';
-import { RiFileList2Line } from 'react-icons/ri';
+import { MdGroups2 } from 'react-icons/md';
+import { RiAdminLine } from 'react-icons/ri';
 import './AdminLayout.css';
 
 export default function AdminLayout({ children }) {
@@ -28,7 +30,9 @@ export default function AdminLayout({ children }) {
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="logo">
-          Fliplyn<br /><span>Admin Panel</span>
+          Fliplyn
+          <br />
+          <span>Admin Panel</span>
         </div>
 
         <div className="sidebar-scroll">
@@ -42,13 +46,13 @@ export default function AdminLayout({ children }) {
 
               <li>
                 <Link to="/items-admin" onClick={toggleSidebar}>
-                  <FaBoxOpen /> Items
+                  <FaBox /> Items
                 </Link>
               </li>
 
               <li>
                 <Link to="/stalls" onClick={toggleSidebar}>
-                  <FaStore /> Stalls
+                  <FaStoreAlt /> Stalls
                 </Link>
               </li>
 
@@ -60,7 +64,7 @@ export default function AdminLayout({ children }) {
 
               <li>
                 <Link to="/create-group" onClick={toggleSidebar}>
-                  <MdGroupAdd /> Wallet Groups
+                  <MdGroups2 /> Wallet Groups
                 </Link>
               </li>
 
@@ -70,22 +74,23 @@ export default function AdminLayout({ children }) {
                 </Link>
               </li>
 
-        
-                    <li>
+              <li>
                 <Link to="/manager-wallet" onClick={toggleSidebar}>
-                  <RiFileList2Line /> manager wallet
+                  <FaFileInvoiceDollar /> Manager Wallet
                 </Link>
               </li>
-                  <li>
+
+              <li>
                 <Link to="/stalls-report-admin" onClick={toggleSidebar}>
-                  <RiFileList2Line /> stalls report
+                  <FaChartPie /> Stalls Report
                 </Link>
               </li>
 
               <li className="menu-separator"></li>
 
-              {/* Admin Info */}
-
+              {/* <li className="admin-info">
+                <RiAdminLine /> Admin Dashboard
+              </li> */}
             </ul>
           </nav>
         </div>
