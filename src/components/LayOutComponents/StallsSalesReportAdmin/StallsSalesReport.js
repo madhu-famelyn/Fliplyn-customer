@@ -15,7 +15,6 @@ export default function OutletSalesReportAdmin() {
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [sortBy, setSortBy] = useState("outlet");
   const [submitted, setSubmitted] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState("all");
 
   // ✅ Fetch outlets initially
   useEffect(() => {
@@ -34,21 +33,20 @@ export default function OutletSalesReportAdmin() {
     fetchOutlets();
   }, [adminId]);
 
-  // ✅ Fetch orders after submission
+  // ✅ Fetch orders
   useEffect(() => {
     if (!adminId || !submitted) return;
 
     const fetchOrders = async () => {
       setLoading(true);
       setError("");
-
       try {
         let fetchedOrders = [];
 
         const fetchOrdersByOutlet = async (outlet) => {
           const baseUrl = "https://admin-aged-field-2794.fly.dev/orders";
-          let startDate, endDate;
           const now = new Date();
+          let startDate, endDate;
 
           const getUTCStartEndForISTDay = (date) => {
             const istDate = new Date(
@@ -58,10 +56,7 @@ export default function OutletSalesReportAdmin() {
             istStart.setHours(0, 0, 0, 0);
             const istEnd = new Date(istStart);
             istEnd.setDate(istEnd.getDate() + 1);
-            return {
-              start: istStart.toISOString(),
-              end: istEnd.toISOString(),
-            };
+            return { start: istStart.toISOString(), end: istEnd.toISOString() };
           };
 
           if (filter === "today") {
@@ -75,10 +70,8 @@ export default function OutletSalesReportAdmin() {
             const startOfWeek = new Date(istNow);
             startOfWeek.setDate(istNow.getDate() - istNow.getDay());
             startOfWeek.setHours(0, 0, 0, 0);
-
             const endOfWeek = new Date(istNow);
             endOfWeek.setHours(23, 59, 59, 999);
-
             startDate = startOfWeek.toISOString();
             endDate = endOfWeek.toISOString();
           } else if (filter === "month") {
@@ -91,10 +84,8 @@ export default function OutletSalesReportAdmin() {
               1
             );
             startOfMonth.setHours(0, 0, 0, 0);
-
             const endOfMonth = new Date(istNow);
             endOfMonth.setHours(23, 59, 59, 999);
-
             startDate = startOfMonth.toISOString();
             endDate = endOfMonth.toISOString();
           } else if (filter === "custom") {
@@ -103,15 +94,17 @@ export default function OutletSalesReportAdmin() {
             const end = new Date(customRange.end + "T23:59:59");
             startDate = start.toISOString();
             endDate = end.toISOString();
-          } else {
-            return [];
-          }
+          } else return [];
 
           try {
-            const res = await axios.get(`${baseUrl}/by-stall/${outlet.id}/range`, {
-              params: { start_date: startDate, end_date: endDate },
-            });
-            return res.data.map((order) => ({ ...order, outlet_name: outlet.name }));
+            const res = await axios.get(
+              `${baseUrl}/by-stall/${outlet.id}/range`,
+              { params: { start_date: startDate, end_date: endDate } }
+            );
+            return res.data.map((order) => ({
+              ...order,
+              outlet_name: outlet.name,
+            }));
           } catch (err) {
             if (err.response?.status === 404) return [];
             throw err;
@@ -120,15 +113,13 @@ export default function OutletSalesReportAdmin() {
 
         if (selectedOutletId === "all") {
           for (let outlet of outlets) {
-            try {
-              const outletOrders = await fetchOrdersByOutlet(outlet);
-              fetchedOrders.push(...outletOrders);
-            } catch {
-              console.warn(`No orders for outlet ${outlet.name}`);
-            }
+            const outletOrders = await fetchOrdersByOutlet(outlet);
+            fetchedOrders.push(...outletOrders);
           }
         } else {
-          const selectedOutlet = outlets.find((s) => s.id === selectedOutletId);
+          const selectedOutlet = outlets.find(
+            (s) => s.id === selectedOutletId
+          );
           if (selectedOutlet) {
             const outletOrders = await fetchOrdersByOutlet(selectedOutlet);
             fetchedOrders.push(...outletOrders);
@@ -136,7 +127,6 @@ export default function OutletSalesReportAdmin() {
         }
 
         setOrders(fetchedOrders);
-        localStorage.setItem("outletOrders", JSON.stringify(fetchedOrders));
       } catch (err) {
         console.error(err);
         setError("Failed to fetch orders.");
@@ -150,34 +140,22 @@ export default function OutletSalesReportAdmin() {
     fetchOrders();
   }, [selectedOutletId, outlets, adminId, submitted, filter, customRange]);
 
-  // ✅ Extract unique company domains from orders
-  const companyDomains = [
-    "all",
-    ...new Set(
-      orders
-        .map((order) => order.user_email?.split("@")[1]?.trim().toLowerCase())
-        .filter((domain) => domain && domain.length > 0)
-    ),
-  ];
-
-  // ✅ Filter orders by selected company
-  const companyFilteredOrders =
-    selectedCompany === "all"
-      ? orders
-      : orders.filter(
-          (order) =>
-            order.user_email &&
-            order.user_email.split("@")[1]?.trim().toLowerCase() === selectedCompany
-        );
-
-  // ✅ Sort orders by outlet or date
-  const sortedOrders = [...companyFilteredOrders].sort((a, b) =>
+  // ✅ Sorting
+  const sortedOrders = [...orders].sort((a, b) =>
     sortBy === "date"
       ? new Date(a.created_datetime) - new Date(b.created_datetime)
       : a.outlet_name.localeCompare(b.outlet_name)
   );
 
-  // ✅ Export to Excel (with grand total row)
+  // ✅ Grand Total for Display
+  const grandTotalPaid = sortedOrders.reduce((total, order) => {
+    const totalPaid =
+      order.order_details.reduce((sum, d) => sum + d.total, 0) +
+      (order.round_off || 0);
+    return total + totalPaid;
+  }, 0);
+
+  // ✅ Export to Excel
   const exportToExcel = () => {
     let totalNetAmount = 0;
     let totalGross = 0;
@@ -232,26 +210,31 @@ export default function OutletSalesReportAdmin() {
 
     const ws = XLSX.utils.json_to_sheet(rows);
     const header = Object.keys(rows[0]);
-    const lastRowIndex = rows.length;
 
     header.forEach((col, idx) => {
-      const headerRef = XLSX.utils.encode_cell({ r: 0, c: idx });
-      const totalRef = XLSX.utils.encode_cell({ r: lastRowIndex, c: idx });
-      if (ws[headerRef])
-        ws[headerRef].s = {
-          font: { bold: true, sz: 12 },
-          alignment: { horizontal: "center", vertical: "center" },
-          border: { top: { style: "thin" }, bottom: { style: "thin" } },
+      const cellRef = XLSX.utils.encode_cell({ r: 0, c: idx });
+      if (ws[cellRef]) {
+        ws[cellRef].s = {
+          font: { bold: true, color: { rgb: "000000" }, sz: 12 },
+          alignment: { horizontal: "center" },
+          border: { bottom: { style: "thin", color: { rgb: "000000" } } },
         };
-      if (ws[totalRef])
-        ws[totalRef].s = {
-          font: { bold: true, sz: 12 },
-          alignment: { horizontal: "center", vertical: "center" },
-          border: { top: { style: "thin" }, bottom: { style: "thin" } },
+      }
+    });
+
+    const lastRowIndex = rows.length;
+    header.forEach((col, idx) => {
+      const cellRef = XLSX.utils.encode_cell({ r: lastRowIndex, c: idx });
+      if (ws[cellRef]) {
+        ws[cellRef].s = {
+          font: { bold: true, color: { rgb: "000000" }, sz: 12 },
+          alignment: { horizontal: "center" },
         };
+      }
     });
 
     ws["!cols"] = header.map((h) => ({ wch: Math.max(h.length + 2, 15) }));
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
     XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
@@ -273,12 +256,11 @@ export default function OutletSalesReportAdmin() {
     <div className="outlet-report-container-unique">
       <h2 className="outlet-report-title-unique">Outlet Sales Report</h2>
 
-      {/* Filters Row */}
+      {/* Filters */}
       <div className="outlet-report-filters-row-unique">
         <div className="outlet-report-dropdown-unique">
-          <label htmlFor="outlet-select">Select Outlet:</label>
+          <label>Select Outlet:</label>
           <select
-            id="outlet-select"
             value={selectedOutletId}
             onChange={(e) => setSelectedOutletId(e.target.value)}
           >
@@ -292,45 +274,21 @@ export default function OutletSalesReportAdmin() {
         </div>
 
         <div className="outlet-report-dropdown-unique">
-          <label htmlFor="sort-select">Sort By:</label>
-          <select
-            id="sort-select"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-          >
+          <label>Sort By:</label>
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             <option value="outlet">Outlet</option>
             <option value="date">Date</option>
-          </select>
-        </div>
-
-        {/* ✅ Company Filter Dropdown */}
-        <div className="outlet-report-dropdown-unique">
-          <label htmlFor="company-filter">Filter by Company:</label>
-          <select
-            id="company-filter"
-            value={selectedCompany}
-            onChange={(e) => setSelectedCompany(e.target.value)}
-          >
-            {companyDomains.map((company) => (
-              <option key={company} value={company}>
-                {company === "all" ? "All Companies" : company}
-              </option>
-            ))}
           </select>
         </div>
       </div>
 
       {/* Date Filters */}
       <div className="outlet-report-date-filter-row">
-        <label htmlFor="date-filter-select" className="outlet-report-date-label">
-          Select Date Filter:
-        </label>
-
+        <label>Select Date Filter:</label>
         <select
-          id="date-filter-select"
-          className="outlet-report-date-dropdown"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
+          className="outlet-report-date-dropdown"
         >
           <option value="">Select Date Filter</option>
           <option value="today">Today</option>
@@ -339,11 +297,12 @@ export default function OutletSalesReportAdmin() {
           <option value="custom">Custom</option>
         </select>
 
+
+
         {filter === "custom" && (
           <div className="outlet-report-custom-date-inputs">
             <input
               type="date"
-              className="outlet-report-date-dropdown"
               value={customRange.start}
               onChange={(e) =>
                 setCustomRange({ ...customRange, start: e.target.value })
@@ -351,7 +310,6 @@ export default function OutletSalesReportAdmin() {
             />
             <input
               type="date"
-              className="outlet-report-date-dropdown"
               value={customRange.end}
               onChange={(e) =>
                 setCustomRange({ ...customRange, end: e.target.value })
@@ -362,14 +320,22 @@ export default function OutletSalesReportAdmin() {
       </div>
 
       <div className="outlet-report-submit-btn-container-unique">
-        <button className="outlet-report-submit-btn-unique" onClick={handleSubmit}>
+        <button
+          className="outlet-report-submit-btn-unique"
+          onClick={handleSubmit}
+        >
           Submit
         </button>
       </div>
+      <div className="outlet-report-total-summary">
+            <strong>Total Paid (Selected Range): </strong>
+            <span className="total-value">₹{grandTotalPaid.toFixed(2)}</span>
+          </div>
 
       {loading && <p>Loading orders...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
+      {/* Results */}
       {sortedOrders.length > 0 && (
         <>
           <div className="outlet-report-export-btn-unique">
@@ -406,9 +372,10 @@ export default function OutletSalesReportAdmin() {
                       <td>{order.token_number}</td>
                       <td>{order.user_email}</td>
                       <td>
-                        {new Date(order.created_datetime).toLocaleString("en-IN", {
-                          timeZone: "Asia/Kolkata",
-                        })}
+                        {new Date(order.created_datetime).toLocaleString(
+                          "en-IN",
+                          { timeZone: "Asia/Kolkata" }
+                        )}
                       </td>
                       <td>{item.name}</td>
                       <td>{item.quantity}</td>
@@ -424,6 +391,9 @@ export default function OutletSalesReportAdmin() {
               )}
             </tbody>
           </table>
+
+          {/* ✅ Total Paid Summary */}
+          
         </>
       )}
     </div>

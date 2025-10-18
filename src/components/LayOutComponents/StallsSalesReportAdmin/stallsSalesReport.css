@@ -99,7 +99,7 @@
 }
 
 .outlet-report-submit-btn-unique:hover {
-  background-color: #007bff;
+  background-color: #ffb300;
   transform: translateY(-1px);
 }
 
@@ -145,7 +145,7 @@
 }
 
 .outlet-report-table-unique th {
-  background-color: #030f1c;
+  background-color: #ffa639;
   color: #fff;
   font-weight: 600;
   font-size: 14px;
