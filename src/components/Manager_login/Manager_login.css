@@ -1,34 +1,36 @@
-/* 📁 src/pages/ManagerLogin.css */
-
+/* Wrapper */
 .ml-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f9f9f9; /* very light gray */
+  background-color: #f9f9f9; /* very light gray for desktop */
   font-family: Arial, sans-serif;
 }
 
+/* Card */
 .ml-card {
-  background-color: #ffffff; /* white */
+  background-color: #ffffff; /* desktop card stays white */
   padding: 40px 30px;
   width: 380px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* desktop shadow */
   transition: box-shadow 0.3s ease;
 }
 
 .ml-card:hover {
-  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.25); /* light orange shadow on hover */
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.25); /* desktop hover shadow */
 }
 
+/* Title */
 .ml-title {
   margin-bottom: 25px;
-  color: #000000; /* light orange for title */
+  color: #000000; 
   text-align: center;
   font-size: 24px;
   font-weight: bold;
 }
 
+/* Form */
 .ml-form {
   display: flex;
   flex-direction: column;
@@ -43,26 +45,27 @@
 .ml-field label {
   margin-bottom: 6px;
   font-weight: 600;
-  color: #555555; /* dark gray text */
+  color: #555555;
 }
 
 .ml-input {
   padding: 10px 12px;
-  border: 1px solid #e0e0e0; /* light gray border */
-  background-color: #fcfcfc; /* very light gray background */
+  border: 1px solid #e0e0e0;
+  background-color: #fcfcfc;
   font-size: 14px;
   transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
 .ml-input:focus {
   outline: none;
-  border-color: #ff9900; /* light orange border on focus */
+  border-color: #ff9900;
   box-shadow: 0 0 5px rgba(255, 153, 0, 0.3);
 }
 
+/* Button */
 .ml-btn {
   padding: 12px;
-  background-color: #ff9900; /* light orange */
+  background-color: #ff9900;
   color: #ffffff;
   font-weight: bold;
   cursor: pointer;
@@ -71,13 +74,42 @@
 }
 
 .ml-btn:hover {
-  background-color: #e68a00; /* slightly darker orange */
+  background-color: #e68a00;
   box-shadow: 0 2px 8px rgba(255, 153, 0, 0.3);
 }
 
+/* Error */
 .ml-error {
   margin-top: 15px;
-  color: #cc0000; /* red error message */
+  color: #cc0000;
   text-align: center;
   font-size: 13px;
+}
+
+/* 🔸 Mobile adjustments */
+@media (max-width: 480px) {
+  .ml-card {
+    width: 90%;
+    padding: 25px 20px;
+    box-shadow: none; /* remove card shadow on mobile */
+  }
+  .ml-card {
+  background-color: transparent; /* no background */
+  padding: 40px 30px;
+  width: 380px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* desktop shadow */
+  transition: box-shadow 0.3s ease;
+}
+
+  .ml-input,
+  .ml-btn {
+    box-shadow: none; /* remove shadow on inputs/buttons */
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .ml-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
 }

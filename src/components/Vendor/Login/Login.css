@@ -1,26 +1,129 @@
-/* src/pages/vendor/Login.css */
-
-/* === Page Container === */
+/* Page wrapper */
 .vendor-login-page {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  font-family: 'Arial', sans-serif;
+  background-color: #ffffff; /* soft orange background */
+  font-family: Arial, sans-serif;
   padding: 20px;
+  box-sizing: border-box;
 }
 
-/* Loader styles */
+/* Card */
+.vendor-login-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: #ffffff; /* desktop card white */
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(255, 115, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Title */
+.vendor-login-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Error Message */
+.vendor-login-error {
+  color: #cc0000;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Form container */
+.vendor-login-container {
+  width: 100%;
+}
+
+/* Form */
+.vendor-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Field wrapper */
+.vendor-login-field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Labels */
+.vendor-login-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+/* Inputs */
+.vendor-login-input {
+  padding: 12px 10px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1.5px solid #ffb366;
+  border-radius: 8px;
+  outline: none;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+.vendor-login-input:focus {
+  border-color: #ff8717;
+  box-shadow: 0 0 4px rgba(255, 135, 23, 0.4);
+  background-color: #fff8f0;
+}
+
+/* Button */
+.vendor-login-button {
+  padding: 14px;
+  background-color: #ff8717;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.1s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vendor-login-button:hover {
+  background-color: #e67a00;
+}
+
+.vendor-login-button:active {
+  transform: scale(0.98);
+}
+
+.vendor-login-button:disabled {
+  background-color: #ffcc80;
+  cursor: not-allowed;
+}
+
+/* Spinner inside button */
 .loader {
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #ffffff;
-  border-right: 3px solid #ffffff;
+  border: 4px solid #ffcc80;
+  border-top: 4px solid #fff;
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  animation: spin 0.8s linear infinite;
-  display: inline-block;
-  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -28,114 +131,24 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Optional disabled button effect */
-.vendor-login-button.loading {
-  opacity: 0.8;
-  cursor: not-allowed;
-}
-
-/* === Card === */
-.vendor-login-card {
-  background-color: #ffffff;
-  padding: 40px 30px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* === Title === */
-.vendor-login-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #000000;
-  margin-bottom: 25px;
-  text-align: center;
-}
-
-/* === Error Message === */
-.vendor-login-error {
-  background-color: #ffe0cc;
-  color: #d84300;
-  padding: 10px;
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-/* === Form Container === */
-.vendor-login-container {
-  width: 100%;
-}
-
-/* === Form Fields === */
-.vendor-login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.vendor-login-field {
-  display: flex;
-  flex-direction: column;
-}
-
-.vendor-login-label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #000000;
-}
-
-.vendor-login-input {
-  padding: 10px 12px;
-  border: 1px solid #e65c00;
-  outline: none;
-  font-size: 1rem;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: #fff;
-  color: #333;
-}
-
-/* Focus effect */
-.vendor-login-input:focus {
-  border: 2px solid #ff8c00;
-}
-
-/* === Button === */
-.vendor-login-button {
-  padding: 12px;
-  background-color: #ff8c00;
-  color: #fff;
-  font-weight: bold;
-  font-size: 1rem;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.vendor-login-button:hover {
-  background-color: #e65c00;
-}
-
-/* === Responsive for Mobile === */
+/* 🔸 Mobile adjustments */
 @media (max-width: 480px) {
   .vendor-login-card {
-    padding: 30px 20px;
+    width: 90%;
+    padding: 25px 15px;
+    background-color: transparent; /* no background on mobile */
+    box-shadow: none; /* remove shadow */
+  }
+
+  .vendor-login-input,
+  .vendor-login-button {
+    box-shadow: none; /* remove input/button shadow */
+    font-size: 14px;
+    padding: 12px;
   }
 
   .vendor-login-title {
-    font-size: 1.5rem;
-  }
-
-  .vendor-login-button {
-    font-size: 0.95rem;
-    padding: 10px;
-  }
-
-  .vendor-login-input {
-    font-size: 0.95rem;
+    font-size: 20px;
+    margin-bottom: 20px;
   }
 }

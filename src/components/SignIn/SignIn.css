@@ -1,30 +1,32 @@
-/* SignInPage.css */
-
 /* Wrapper */
 .sip-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f5f5f5; /* light grey background */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   position: relative;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 /* Card */
 .sip-card {
+  width: 100%;
+  max-width: 400px;
   background-color: #fff;
-  width: 400px;
   padding: 40px 30px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(255, 115, 0, 0.15);
+  box-sizing: border-box;
 }
 
 /* Heading */
 .sip-heading {
-  color: #333;
+  color: #000000; /* orange theme */
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 30px;
@@ -39,23 +41,7 @@
   gap: 15px;
 }
 
-/* Label */
-.sip-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-}
-
-/* Input */
-/* Input wrapper to make both inputs the same size */
-.sip-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* space between fields */
-  width: 100%;
-}
-
-/* Label and input container for consistent width */
+/* Label and input container */
 .sip-input-wrapper {
   display: flex;
   flex-direction: column;
@@ -65,19 +51,20 @@
 /* Inputs */
 .sip-input {
   padding: 12px 10px;
-  border: 1px solid #ccc;
+  border: 1.5px solid #ffb366; /* orange border */
   outline: none;
   font-size: 14px;
   color: #333;
-  width: 100%; /* Ensures inputs stretch full width of wrapper */
-  box-sizing: border-box; /* Include padding in width */
+  width: 100%;
+  box-sizing: border-box;
   background-color: #fff;
-  /* No border radius */
+  border-radius: 8px;
 }
 
 .sip-input:focus {
-  border-color: #999;
-  box-shadow: none;
+  border-color: #ff8717; /* bright orange */
+  box-shadow: 0 0 4px rgba(255, 135, 23, 0.4);
+  background-color: #fff8f0;
 }
 
 /* Password Wrapper */
@@ -97,30 +84,35 @@
 
 /* Button */
 .sip-button {
-  padding: 12px;
-  background-color: #ff6f1e; /* Orange button */
+  width: 100%;
+  padding: 14px;
+  background-color: #ff8717; /* bright orange */
   color: #fff;
   font-size: 16px;
   font-weight: 600;
   border: none;
   cursor: pointer;
   text-transform: uppercase;
-  transition: background 0.3s;
-  /* No border radius */
+  transition: background 0.3s ease, transform 0.1s ease;
+  border-radius: 8px;
 }
 
 .sip-button:hover {
-  background-color: #ff8c42;
+  background-color: #e67a00; /* darker orange */
+}
+
+.sip-button:active {
+  transform: scale(0.98);
 }
 
 .sip-button:disabled {
-  opacity: 0.6;
+  background-color: #ffcc80;
   cursor: not-allowed;
 }
 
 /* Error Message */
 .sip-error {
-  color: #ff0000;
+  color: #dc2626;
   font-size: 14px;
   text-align: center;
 }
@@ -133,7 +125,7 @@
 }
 
 .sip-links a {
-  color: #ff6f1e; /* Orange link */
+  color: #ff8717; /* orange link */
   font-weight: 600;
   text-decoration: none;
 }
@@ -169,7 +161,7 @@
 .sip-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #ff6f1e;
+  border: 4px solid #ff8717;
   border-top: 4px solid #fff;
   border-radius: 50%;
   animation: sip-spin 1s linear infinite;
@@ -187,10 +179,30 @@
   text-align: center;
 }
 
-/* Responsive */
+/* 🔸 Mobile adjustments */
 @media (max-width: 480px) {
-  .sip-card {
-    width: 90%;
-    padding: 30px 20px;
+/* Card */
+.sip-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: transparent; /* no background */
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  box-shadow: none; /* remove shadow */
+  box-sizing: border-box;
+}
+
+  .sip-input,
+  .sip-button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .sip-heading {
+    font-size: 20px;
+    margin-bottom: 20px;
   }
 }
