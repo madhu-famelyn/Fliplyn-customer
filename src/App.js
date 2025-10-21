@@ -147,7 +147,7 @@ function App() {
                  <Route path="/deactivate-user" element={<UpdateStatus/>} />
                   <Route
                                  path="/stalls-report-admin"
-                                 element={<StallSalesReportAdmin />}
+                                 element={<StallSalesReportAdmin  />}
                                />
 
 
