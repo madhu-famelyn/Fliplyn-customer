@@ -69,6 +69,7 @@ import ViewManagers from "./components/UserCreations/ManagerCreation/Manager";
 import ViewVendors from "./components/UserCreations/VendorCreation/Vendor";
 import ManagerViewVendors from "./components/ManagerComponents/AddVendor/AddVendor";
 import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
+import LoginSelectionPage from "./components/LoginSelection/LoginSelection";
 
 // ✅ Private Routes with persistent auth
 const AdminPrivateRoute = ({ element }) => {
@@ -192,9 +193,10 @@ function App() {
                 <Route path="/user-creation" element={<MainPage />} />
                 <Route path="/view-managers" element={<ViewManagers />} />
                 <Route path="/view-vendors" element={<ViewVendors />} />
+                                <Route path="/" element={<LoginSelectionPage />} />
+
 
                 {/* 🔚 Fallback */}
-                <Route path="*" element={<SignInPage />} />
               </Routes>
             </ManagerAuthProvider>
           </BuildingManagerProvider>

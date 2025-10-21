@@ -1,0 +1,45 @@
+.login-selection-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+
+.login-box {
+  padding: 40px 50px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 28px;
+  color: #ff7a00;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.login-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  margin: 10px 0;
+  background-color: #ff7a00;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Hover and focus effects */
+.login-btn:hover {
+  background-color: #ff8c1a;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+}
+
+.login-btn:active {
+  transform: scale(0.98);
+}
