@@ -149,14 +149,17 @@
 }
 
 .ils-search {
-  width: 100%;
+  width: 90%;
+  max-width: 600px; /* optional: limits width on large screens */
   padding: 8px 12px;
-  margin-bottom: 20px;
+  margin: 20px auto; /* centers horizontally + adds vertical spacing */
   border-radius: 8px;
   border: 1px solid #ff7f50; /* orange border */
   outline: none;
   font-size: 14px;
+  display: block; /* ensures margin auto works */
 }
+
 
 .ils-row {
   display: flex;

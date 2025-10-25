@@ -152,7 +152,7 @@ const toggleAvailability = async (itemId, currentStatus) => {
 
   return (
     <div className="ils-wrapper">
-      <h2 className="ils-heading">Items for Stall /</h2>   
+      <h2 className="ils-heading">Items for Stall</h2>   
 
 
     
