@@ -171,7 +171,6 @@ export default function StallSalesReport() {
 
   // ✅ UPDATED Excel export
 
-
 const exportToExcel = () => {
   let totalNetAmount = 0;
   let totalGross = 0;
@@ -186,12 +185,14 @@ const exportToExcel = () => {
         order.order_details.reduce((sum, d) => sum + d.total, 0) +
         (order.round_off || 0);
 
-      // Accumulate totals
+      // Accumulate totals (only once per order for GST, RoundOff, TotalPaid)
       totalNetAmount += netAmount;
       totalGross += item.total;
-      totalGST += order.total_gst || 0;
-      if (index === 0) totalRoundOff += order.round_off || 0;
-      if (index === 0) totalPaidAll += totalPaid;
+      if (index === 0) {
+        totalGST += order.total_gst || 0;  // ✅ only once per order
+        totalRoundOff += order.round_off || 0;
+        totalPaidAll += totalPaid;
+      }
 
       return {
         Outlet: order.outlet_name,
@@ -203,7 +204,7 @@ const exportToExcel = () => {
         Price: item.price,
         "Net Amount": netAmount.toFixed(2),
         "Gross Total": item.total,
-        GST: order.total_gst,
+        GST: index === 0 ? order.total_gst || 0 : "", // ✅ only first item shows GST
         "Round Off": index === 0 ? order.round_off || 0 : "",
         "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
       };
@@ -218,7 +219,7 @@ const exportToExcel = () => {
     Date: "",
     Item: "Grand Total",
     Qty: "",
-    Price: "", // exclude Price from grand total
+    Price: "",
     "Net Amount": totalNetAmount.toFixed(2),
     "Gross Total": totalGross.toFixed(2),
     GST: totalGST.toFixed(2),
@@ -275,7 +276,6 @@ const exportToExcel = () => {
   // Save Excel file
   XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
 };
-
 
 
 
