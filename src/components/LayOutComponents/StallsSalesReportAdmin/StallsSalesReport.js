@@ -156,89 +156,112 @@ export default function OutletSalesReportAdmin() {
   }, 0);
 
   // ✅ Export to Excel
-  const exportToExcel = () => {
-    let totalNetAmount = 0;
-    let totalGross = 0;
-    let totalGST = 0;
-    let totalRoundOff = 0;
-    let totalPaidAll = 0;
+const exportToExcel = () => {
+  let totalNetAmount = 0;
+  let totalGross = 0;
+  let totalGST = 0;
+  let totalRoundOff = 0;
+  let totalPaidAll = 0;
 
-    const rows = sortedOrders.flatMap((order) =>
-      order.order_details.map((item, index) => {
-        const netAmount = item.quantity * item.price;
-        const totalPaid =
-          order.order_details.reduce((sum, d) => sum + d.total, 0) +
-          (order.round_off || 0);
+  const rows = sortedOrders.flatMap((order) =>
+    order.order_details.map((item, index) => {
+      const netAmount = item.quantity * item.price;
+      const totalPaid =
+        order.order_details.reduce((sum, d) => sum + d.total, 0) +
+        (order.round_off || 0);
 
-        totalNetAmount += netAmount;
-        totalGross += item.total;
-        totalGST += order.total_gst || 0;
-        if (index === 0) totalRoundOff += order.round_off || 0;
-        if (index === 0) totalPaidAll += totalPaid;
-
-        return {
-          Outlet: order.outlet_name,
-          Token: order.token_number,
-          "User Email": order.user_email,
-          Date: new Date(order.created_datetime).toLocaleString("en-IN"),
-          Item: item.name,
-          Qty: item.quantity,
-          Price: item.price,
-          "Net Amount": netAmount.toFixed(2),
-          "Gross Total": item.total,
-          GST: order.total_gst,
-          "Round Off": index === 0 ? order.round_off || 0 : "",
-          "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
-        };
-      })
-    );
-
-    rows.push({
-      Outlet: "",
-      Token: "",
-      "User Email": "",
-      Date: "",
-      Item: "Grand Total",
-      Qty: "",
-      Price: "",
-      "Net Amount": totalNetAmount.toFixed(2),
-      "Gross Total": totalGross.toFixed(2),
-      GST: totalGST.toFixed(2),
-      "Round Off": totalRoundOff.toFixed(2),
-      "Total Paid": totalPaidAll.toFixed(2),
-    });
-
-    const ws = XLSX.utils.json_to_sheet(rows);
-    const header = Object.keys(rows[0]);
-
-    header.forEach((col, idx) => {
-      const cellRef = XLSX.utils.encode_cell({ r: 0, c: idx });
-      if (ws[cellRef]) {
-        ws[cellRef].s = {
-          font: { bold: true, color: { rgb: "000000" }, sz: 12 },
-          alignment: { horizontal: "center" },
-          border: { bottom: { style: "thin", color: { rgb: "000000" } } },
-        };
+      // Accumulate totals (only once per order for GST, RoundOff, TotalPaid)
+      totalNetAmount += netAmount;
+      totalGross += item.total;
+      if (index === 0) {
+        totalGST += order.total_gst || 0;  // ✅ only once per order
+        totalRoundOff += order.round_off || 0;
+        totalPaidAll += totalPaid;
       }
-    });
 
-    const lastRowIndex = rows.length;
-    header.forEach((col, idx) => {
-      const cellRef = XLSX.utils.encode_cell({ r: lastRowIndex, c: idx });
-      if (ws[cellRef]) {
-        ws[cellRef].s = {
-          font: { bold: true, color: { rgb: "000000" }, sz: 12 },
-          alignment: { horizontal: "center" },
-        };
-      }
-    });
+      return {
+        Outlet: order.outlet_name,
+        Token: order.token_number,
+        "User Email": order.user_email,
+        Date: new Date(order.created_datetime).toLocaleString("en-IN"),
+        Item: item.name,
+        Qty: item.quantity,
+        Price: item.price,
+        "Net Amount": netAmount.toFixed(2),
+        "Gross Total": item.total,
+        GST: index === 0 ? order.total_gst || 0 : "", // ✅ only first item shows GST
+        "Round Off": index === 0 ? order.round_off || 0 : "",
+        "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
+      };
+    })
+  );
 
-    ws["!cols"] = header.map((h) => ({ wch: Math.max(h.length + 2, 15) }));
+  // Add Grand Total row
+  rows.push({
+    Outlet: "",
+    Token: "",
+    "User Email": "",
+    Date: "",
+    Item: "Grand Total",
+    Qty: "",
+    Price: "",
+    "Net Amount": totalNetAmount.toFixed(2),
+    "Gross Total": totalGross.toFixed(2),
+    GST: totalGST.toFixed(2),
+    "Round Off": totalRoundOff.toFixed(2),
+    "Total Paid": totalPaidAll.toFixed(2),
+  });
 
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
-    XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
-  };
+  const ws = XLSX.utils.json_to_sheet(rows);
+
+  // Style header row
+  const header = Object.keys(rows[0]);
+  header.forEach((col, idx) => {
+    const cellRef = XLSX.utils.encode_cell({ r: 0, c: idx });
+    if (ws[cellRef]) {
+      ws[cellRef].s = {
+        font: { bold: true, color: { rgb: "000000" }, sz: 12 },
+        alignment: { horizontal: "center", vertical: "center" },
+        border: {
+          top: { style: "thin", color: { rgb: "000000" } },
+          bottom: { style: "thin", color: { rgb: "000000" } },
+          left: { style: "thin", color: { rgb: "000000" } },
+          right: { style: "thin", color: { rgb: "000000" } },
+        },
+      };
+    }
+  });
+
+  // Style Grand Total row
+  const lastRowIndex = rows.length; // 1-based
+  header.forEach((col, idx) => {
+    const cellRef = XLSX.utils.encode_cell({ r: lastRowIndex, c: idx });
+    if (ws[cellRef]) {
+      ws[cellRef].s = {
+        font: { bold: true, color: { rgb: "000000" }, sz: 12 },
+        alignment: { horizontal: "center", vertical: "center" },
+        border: {
+          top: { style: "thin", color: { rgb: "000000" } },
+          bottom: { style: "thin", color: { rgb: "000000" } },
+          left: { style: "thin", color: { rgb: "000000" } },
+          right: { style: "thin", color: { rgb: "000000" } },
+        },
+      };
+    }
+  });
+
+  // Auto column widths
+  const colWidths = header.map((h) => ({ wch: Math.max(h.length + 2, 15) }));
+  ws["!cols"] = colWidths;
+
+  // Create workbook and append sheet
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
+
+  // Save Excel file
+  XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
+};
+
 
   const handleSubmit = () => {
     if (!filter) {
