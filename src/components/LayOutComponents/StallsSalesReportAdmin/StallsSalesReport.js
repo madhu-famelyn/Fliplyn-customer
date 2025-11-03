@@ -158,7 +158,7 @@ export default function OutletSalesReportAdmin() {
   // ✅ Export to Excel
 const exportToExcel = () => {
   let totalNetAmount = 0;
-  let totalGross = 0;
+  // let totalGross = 0;
   let totalGST = 0;
   let totalRoundOff = 0;
   let totalPaidAll = 0;
@@ -188,7 +188,7 @@ const exportToExcel = () => {
         Qty: item.quantity,
         Price: item.price,
         "Net Amount": netAmount.toFixed(2),
-        "Gross Total": item.total,
+        // "Gross Total": item.total,
         GST: index === 0 ? order.total_gst || 0 : "", // ✅ only first item shows GST
         "Round Off": index === 0 ? order.round_off || 0 : "",
         "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
@@ -206,7 +206,7 @@ const exportToExcel = () => {
     Qty: "",
     Price: "",
     "Net Amount": totalNetAmount.toFixed(2),
-    "Gross Total": totalGross.toFixed(2),
+    // "Gross Total": totalGross.toFixed(2),
     GST: totalGST.toFixed(2),
     "Round Off": totalRoundOff.toFixed(2),
     "Total Paid": totalPaidAll.toFixed(2),
@@ -376,7 +376,7 @@ const exportToExcel = () => {
                 <th>Qty</th>
                 <th>Price</th>
                 <th>Net Amount</th>
-                <th>Gross Total</th>
+                {/* <th>Gross Total</th> */}
                 <th>GST</th>
                 <th>Round Off</th>
                 <th>Total Paid</th>
