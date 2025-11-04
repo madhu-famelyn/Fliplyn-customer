@@ -16,7 +16,7 @@ export default function Reports() {
 
         // Step 1: Get HR wallet groups & users
         const res = await axios.get(
-          `http://localhost:8000/hr/get-wallet/${hr.id}`,
+          `https://admin-aged-field-2794.fly.dev/hr/get-wallet/${hr.id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -28,13 +28,13 @@ export default function Reports() {
           allUsers.map(async (user) => {
             try {
               const walletRes = await axios.get(
-                `http://localhost:8000/wallets/${user.user_id}`,
+                `https://admin-aged-field-2794.fly.dev/wallets/${user.user_id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
               const wallet = walletRes.data;
 
               const historyRes = await axios.get(
-                `http://localhost:8000/wallets/${user.user_id}/history`,
+                `https://admin-aged-field-2794.fly.dev/wallets/${user.user_id}/history`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
               const history = historyRes.data || [];

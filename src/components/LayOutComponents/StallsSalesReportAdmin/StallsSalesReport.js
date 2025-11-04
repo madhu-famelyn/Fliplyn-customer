@@ -158,7 +158,6 @@ export default function OutletSalesReportAdmin() {
   // ✅ Export to Excel
 const exportToExcel = () => {
   let totalNetAmount = 0;
-  // let totalGross = 0;
   let totalGST = 0;
   let totalRoundOff = 0;
   let totalPaidAll = 0;
@@ -170,26 +169,24 @@ const exportToExcel = () => {
         order.order_details.reduce((sum, d) => sum + d.total, 0) +
         (order.round_off || 0);
 
-      // Accumulate totals (only once per order for GST, RoundOff, TotalPaid)
       totalNetAmount += netAmount;
-      totalGross += item.total;
+
       if (index === 0) {
-        totalGST += order.total_gst || 0;  // ✅ only once per order
+        totalGST += order.total_gst || 0;
         totalRoundOff += order.round_off || 0;
         totalPaidAll += totalPaid;
       }
 
       return {
+        Date: new Date(order.created_datetime).toLocaleString("en-IN"), // first column
         Outlet: order.outlet_name,
         Token: order.token_number,
         "User Email": order.user_email,
-        Date: new Date(order.created_datetime).toLocaleString("en-IN"),
         Item: item.name,
         Qty: item.quantity,
         Price: item.price,
         "Net Amount": netAmount.toFixed(2),
-        // "Gross Total": item.total,
-        GST: index === 0 ? order.total_gst || 0 : "", // ✅ only first item shows GST
+        GST: index === 0 ? order.total_gst || 0 : "",
         "Round Off": index === 0 ? order.round_off || 0 : "",
         "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
       };
@@ -198,15 +195,14 @@ const exportToExcel = () => {
 
   // Add Grand Total row
   rows.push({
+    Date: "",
     Outlet: "",
     Token: "",
     "User Email": "",
-    Date: "",
     Item: "Grand Total",
     Qty: "",
     Price: "",
     "Net Amount": totalNetAmount.toFixed(2),
-    // "Gross Total": totalGross.toFixed(2),
     GST: totalGST.toFixed(2),
     "Round Off": totalRoundOff.toFixed(2),
     "Total Paid": totalPaidAll.toFixed(2),
@@ -376,7 +372,7 @@ const exportToExcel = () => {
                 <th>Qty</th>
                 <th>Price</th>
                 <th>Net Amount</th>
-                {/* <th>Gross Total</th> */}
+                <th>Gross Total</th>
                 <th>GST</th>
                 <th>Round Off</th>
                 <th>Total Paid</th>

@@ -20,7 +20,7 @@ export default function ManagerCategory() {
   useEffect(() => {
     if (user?.building_id && token) {
       axios
-        .get(`http://localhost:8000/stalls/building/${user.building_id}`, {
+        .get(`https://admin-aged-field-2794.fly.dev/stalls/building/${user.building_id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -62,7 +62,7 @@ export default function ManagerCategory() {
     }
 
     try {
-      const res = await axios.post("http://localhost:8000/categories/", formData, {
+      const res = await axios.post("https://admin-aged-field-2794.fly.dev/categories/", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

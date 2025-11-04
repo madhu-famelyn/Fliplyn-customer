@@ -135,16 +135,25 @@ const EmployeesPage = () => {
                     Employees in Group
                   </h3>
                   <div className="employees-page-header-buttons">
-                    <button
-                      className="btn-add"
-                      onClick={() => setShowAddModal(true)}
-                    >
-                      <AiOutlinePlus size={16} className="btn-icon" /> Add Member
-                    </button>
-                        <button className="btn-add" onClick={handleGetOrderHistory}>
-                          <AiOutlineHistory size={16} className="btn-icon" /> Order History
-                        </button>
-                  </div>
+                      <button
+                        className="btn-add"
+                        onClick={() => setShowAddModal(true)}
+                      >
+                        <AiOutlinePlus size={16} className="btn-icon" /> Add Member
+                      </button>
+
+                      <button
+                        className="btn-add"
+                        onClick={() => setShowExcelModal(true)}  // 👈 show modal for Excel upload
+                      >
+                        <AiOutlinePlus size={16} className="btn-icon" /> Upload Excel
+                      </button>
+
+                      <button className="btn-add" onClick={handleGetOrderHistory}>
+                        <AiOutlineHistory size={16} className="btn-icon" /> Order History
+                      </button>
+                    </div>
+
                 </div>
 
                 {/* Employee Table */}
