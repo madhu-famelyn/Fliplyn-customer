@@ -103,27 +103,73 @@ const OrdersModal = ({ groupId, onClose }) => {
   );
 
   // ✅ Export to Excel
-  const exportToExcel = () => {
-    const rows = filteredOrders.flatMap((o) => {
-      const { grandTotal } = calculateAmounts(o);
-      return o.order_details.map((i) => ({
+const exportToExcel = () => {
+  let totalNetAmount = 0;
+  let totalAmountPaid = 0;
+
+  const rows = filteredOrders.flatMap((o) => {
+    const { grandTotal } = calculateAmounts(o);
+    totalAmountPaid += grandTotal;
+
+    // Create item rows
+    const itemRows = o.order_details.map((i, index) => {
+      const netAmount = (i.price * i.quantity);
+      totalNetAmount += netAmount;
+
+      return {
         Stall: o.stall_name || "N/A",
-        Stall_ID: o.stall_id || "N/A",
         Token: o.token_number || "N/A",
         Email: o.user_email || "",
         Date: new Date(o.created_datetime).toLocaleString(),
         Item: i.name,
         Qty: i.quantity,
-        Price: i.price.toFixed(2),
-        GrandTotal: grandTotal.toFixed(2),
-      }));
+        NetAmount: netAmount.toFixed(2),
+        AmountPaid: index === o.order_details.length - 1 ? grandTotal.toFixed(2) : ""
+      };
     });
 
-    const ws = XLSX.utils.json_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Orders");
-    XLSX.writeFile(wb, "wallet_group_orders.xlsx");
-  };
+    return itemRows;
+  });
+
+  // Add summary rows at end
+  rows.push(
+    {
+      Stall: "",
+      Token: "",
+      Email: "",
+      Date: "",
+      Item: "TOTAL NET AMOUNT",
+      Qty: "",
+      NetAmount: totalNetAmount.toFixed(2),
+      AmountPaid: ""
+    },
+    {
+      Stall: "",
+      Token: "",
+      Email: "",
+      Date: "",
+      Item: "TOTAL AMOUNT PAID",
+      Qty: "",
+      NetAmount: "",
+      AmountPaid: totalAmountPaid.toFixed(2)
+    }
+  );
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+
+  // 🔥 Make header row BOLD
+  const headerCells = ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"];
+  headerCells.forEach((cell) => {
+    if (!ws[cell]) return;
+    ws[cell].s = {
+      font: { bold: true }
+    };
+  });
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Orders");
+  XLSX.writeFile(wb, "wallet_group_orders.xlsx");
+};
 
   // ✅ Submit handler
   const handleSubmit = async () => {
