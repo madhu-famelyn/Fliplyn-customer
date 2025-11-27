@@ -111,9 +111,8 @@ const exportToExcel = () => {
     const { grandTotal } = calculateAmounts(o);
     totalAmountPaid += grandTotal;
 
-    // Create item rows
     const itemRows = o.order_details.map((i, index) => {
-      const netAmount = (i.price * i.quantity);
+      const netAmount = i.price * i.quantity;
       totalNetAmount += netAmount;
 
       return {
@@ -131,7 +130,6 @@ const exportToExcel = () => {
     return itemRows;
   });
 
-  // Add summary rows at end
   rows.push(
     {
       Stall: "",
@@ -157,12 +155,17 @@ const exportToExcel = () => {
 
   const ws = XLSX.utils.json_to_sheet(rows);
 
-  // 🔥 Make header row BOLD
+  // 🔥 Header row styling
   const headerCells = ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"];
+
   headerCells.forEach((cell) => {
     if (!ws[cell]) return;
     ws[cell].s = {
-      font: { bold: true }
+      font: { bold: true },
+      fill: {
+        patternType: "solid",
+        fgColor: { rgb: "F2F2F2" } // light gray background
+      }
     };
   });
 
@@ -170,6 +173,7 @@ const exportToExcel = () => {
   XLSX.utils.book_append_sheet(wb, ws, "Orders");
   XLSX.writeFile(wb, "wallet_group_orders.xlsx");
 };
+
 
   // ✅ Submit handler
   const handleSubmit = async () => {

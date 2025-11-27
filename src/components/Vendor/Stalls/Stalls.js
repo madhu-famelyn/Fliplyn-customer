@@ -1,13 +1,12 @@
-// src/pages/vendor/VendorStalls.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useVendorAuth } from "../../AuthContex/VendorContext";  // ✅ use the hook
+import { useVendorAuth } from "../../AuthContex/VendorContext";
 import TokenHeader from "../../LayOutComponents/PrintToken/Header";
 import { useNavigate } from "react-router-dom";
 import "./Stalls.css";
 
 const VendorStalls = () => {
-  const { stallIds, token, setStallId } = useVendorAuth(); // ✅ correct
+  const { stallIds, token, setStallId } = useVendorAuth();
   const [stalls, setStalls] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -28,7 +27,10 @@ const VendorStalls = () => {
         const results = await Promise.all(promises);
         setStalls(results.map((res) => res.data));
       } catch (error) {
-        console.error("❌ Error fetching stalls:", error.response?.data || error.message);
+        console.error(
+          "❌ Error fetching stalls:",
+          error.response?.data || error.message
+        );
       } finally {
         setLoading(false);
       }
@@ -38,8 +40,12 @@ const VendorStalls = () => {
   }, [stallIds, token]);
 
   const handleSelectStall = (id) => {
-    if (setStallId) setStallId(id); // ✅ optional but safe
+    if (setStallId) setStallId(id);
     navigate(`/items-vendor/${id}`);
+  };
+
+  const handleViewOrders = () => {
+    navigate("/orders-status"); // ✅ your ongoing & completed orders page
   };
 
   if (loading) return <p>Loading stalls...</p>;
@@ -48,6 +54,14 @@ const VendorStalls = () => {
   return (
     <div>
       <TokenHeader />
+
+      {/* ✅ View Orders Button */}
+      <div className="orders-btn-wrapper">
+        <button className="view-orders-btn" onClick={handleViewOrders}>
+          View Orders
+        </button>
+      </div>
+
       <div className="stalls-container">
         {stalls.map((stall) => (
           <div

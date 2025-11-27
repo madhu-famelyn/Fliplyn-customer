@@ -43,3 +43,122 @@
   color: #cc6600; /* light orange accent */
   margin: 12px 0;
 }
+
+
+
+/* Top-right button wrapper */
+.orders-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+}
+
+/* View Orders Button */
+.view-orders-btn {
+  background-color: #0d6efd;
+  margin-top: 20vh;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease-in-out;
+}
+
+.view-orders-btn:hover {
+  background-color: #084dc0;
+  transform: scale(1.03);
+}
+
+
+/* ✅ Mobile Devices (max-width: 768px) */
+@media screen and (max-width: 768px) {
+
+  /* Container Adjustment */
+  .stalls-container {
+    margin-top: 20vh;
+    gap: 12px;
+    padding: 5px;
+    justify-content: center;
+  }
+
+  /* Stall Card */
+  .stall-card-simple {
+    width: 90%;   /* Full width card */
+    max-width: 320px;
+    border-radius: 10px;
+  }
+
+  /* Image adjustments */
+  .stall-image-simple {
+    height: 140px;
+    padding: 8px;
+  }
+
+  /* Text */
+  .stall-text {
+    font-size: 0.95rem;
+  }
+
+  /* Button Wrapper */
+  .orders-btn-wrapper {
+    justify-content: center; /* Center button on mobile */
+    padding: 10px;
+  }
+
+  /* View Orders Button */
+  .view-orders-btn {
+    width: 90%;
+    max-width: 240px;
+    font-size: 14px;
+    padding: 12px;
+    margin-top: 10vh;
+    border-radius: 10px;
+  }
+}
+
+/* ✅ Small Mobile Devices (max-width: 480px) */
+@media screen and (max-width: 480px) {
+
+  .stalls-container {
+    margin-top: 15vh;
+    gap: 10px;
+  }
+
+  .stall-card-simple {
+    width: 95%;
+  }
+
+  .stall-image-simple {
+    height: 120px;
+  }
+
+  .view-orders-btn {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
+
+/* ✅ Extra Small Screens (max-width: 360px) */
+@media screen and (max-width: 360px) {
+
+  .stall-card-simple {
+    width: 100%;
+  }
+
+  .stall-image-simple {
+    height: 110px;
+  }
+
+  .stall-text {
+    font-size: 0.9rem;
+  }
+
+  .view-orders-btn {
+    font-size: 12px;
+    padding: 9px;
+  }
+}

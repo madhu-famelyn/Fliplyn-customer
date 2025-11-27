@@ -70,6 +70,7 @@ import ViewVendors from "./components/UserCreations/VendorCreation/Vendor";
 import ManagerViewVendors from "./components/ManagerComponents/AddVendor/AddVendor";
 import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
 import LoginSelectionPage from "./components/LoginSelection/LoginSelection";
+import OrderStatus from "./components/OrderStatus/OrderStatus";
 
 // ✅ Private Routes with persistent auth
 const AdminPrivateRoute = ({ element }) => {
@@ -162,6 +163,7 @@ function App() {
                 <Route path="/vendor-stall" element={<VendorStalls />} />
                 <Route path="/items-vendor/:id" element={<VendorPrivateRoute element={<VendorItems />} />} />
                 <Route path="/stall/:stallId/reports" element={<ReportsPage />} />
+                <Route path="/orders-status" element={<OrderStatus />} />
 
                 {/* 🧾 HR Routes */}
                 <Route path="/hr" element={<HrLogin />} />

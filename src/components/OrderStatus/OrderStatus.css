@@ -1,0 +1,172 @@
+body {
+  background: #f7f7f7;
+  margin: 0;
+  font-family: "Inter", sans-serif;
+}
+
+.order-container {
+  width: 100%;
+  padding: 0 30px 50px;
+  box-sizing: border-box;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  background: white;
+  margin: -20px -30px 0 -30px;
+  padding-left: 40px;
+  padding-right: 40px;
+  border-bottom: 1px solid #e4e4e4;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.logo img {
+  width: 30px;
+  margin-right: 10px;
+}
+
+.profile-icon {
+  font-size: 24px;
+}
+
+/* Title */
+.title {
+  margin-top: 35px;
+  margin-bottom: 25px;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+/* Filters Row */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.search-input {
+  flex: 1;
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid #dadada;
+  padding-left: 12px;
+  font-size: 15px;
+}
+
+.btn {
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 1px solid #d6d6d6;
+  font-size: 14px;
+  background: white;
+  color: black;
+  cursor: pointer;
+}
+
+.active-tab {
+  background: #ff6b1b;
+  color: white;
+  border-color: #ff6b1b;
+}
+
+/* ============================= */
+/* Table - Equal Column Widths   */
+/* ============================= */
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  table-layout: fixed;           /* ✅ Makes column widths respect set values */
+}
+
+.order-table th,
+.order-table td {
+  width: 25%;                    /* ✅ Equal width for 4 columns */
+  background: white;
+  font-size: 15px;
+  color: black;
+  text-align: left !important;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+  word-wrap: break-word;         /* ✅ Wrap long content */
+}
+
+/* Remove duplicate properties */
+.order-table th {
+  font-weight: 600;
+}
+
+.order-id {
+  font-weight: 600;
+}
+
+.item-sub {
+  color: #7e7e7e;
+  font-size: 14px;
+}
+
+/* Button */
+.complete-btn {
+  background: #ff6b1b;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 40px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Time Filter Dropdown */
+.time-dropdown {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid #dadada;
+  background: white;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+  min-width: 140px;
+}
+
+/* On focus */
+.time-dropdown:focus {
+  border-color: #ff6b1b;
+  box-shadow: 0 0 0 2px rgba(255, 107, 27, 0.15);
+}
+
+/* Dropdown options */
+.time-dropdown option {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Align nicely with search and buttons */
+.filters select {
+  margin-right: 5px;
+}
