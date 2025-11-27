@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./OrderStatus.css";
 
@@ -15,130 +15,86 @@ export default function OrderStatus() {
   const [stalls, setStalls] = useState([]);
   const [selectedStall, setSelectedStall] = useState("");
 
-  // ✅ Load vendor stall_ids from localStorage
+  // Load stallIds
   useEffect(() => {
     const ids = JSON.parse(localStorage.getItem("stallIds")) || [];
     setStallIds(ids);
-    if (ids.length > 0) {
-      setSelectedStall(ids[0]);
-    }
+    if (ids.length > 0) setSelectedStall(ids[0]);
   }, []);
 
-  // ✅ Fetch stall names
+  // Load stall names
   useEffect(() => {
     async function loadStalls() {
       try {
-        const requests = stallIds.map((id) =>
-          axios.get(`${API_BASE}/stalls/${id}`)
-        );
+        const requests = stallIds.map((id) => axios.get(`${API_BASE}/stalls/${id}`));
         const results = await Promise.all(requests);
         setStalls(results.map((res) => res.data));
       } catch (error) {
         console.error("Error fetching stalls:", error.response?.data || error.message);
       }
     }
-
-    if (stallIds.length) {
-      loadStalls();
-    }
+    if (stallIds.length) loadStalls();
   }, [stallIds]);
 
-  // ✅ Fetch orders when filters change
-  useEffect(() => {
-    if (activeTab === "ongoing") {
-      fetchOrders();
-    }
-
-    const interval = setInterval(() => {
-      if (activeTab === "ongoing") {
-        fetchOrders();
-      }
-    }, 120000);
-
-    return () => clearInterval(interval);
-  }, [activeTab, timeFilter, selectedStall]);
-
-  // ✅ Load stored data when switching tabs
-  useEffect(() => {
-    loadFromLocalStorage();
-  }, [activeTab]);
-
-  // ✅ Search filter
-  useEffect(() => {
-    handleSearch();
-  }, [searchTerm, orders]);
-
-  // ✅ Fetch Orders (Axios)
-  const fetchOrders = async () => {
+  // Fetch Orders (Pending or Completed)
+  const fetchOrders = useCallback(async () => {
+    const status = activeTab === "ongoing" ? "PENDING" : "COMPLETED";
     try {
       const res = await axios.get(`${API_BASE}/orders/status-time`, {
         params: {
-          status: "PENDING",
+          status,
           minutes: timeFilter,
-          stall_id: selectedStall
-        }
+          stall_id: selectedStall,
+        },
       });
 
       setOrders(res.data);
       setFilteredOrders(res.data);
-      localStorage.setItem("pending_orders", JSON.stringify(res.data));
+
+      const key = status === "PENDING" ? "pending_orders" : "completed_orders";
+      localStorage.setItem(key, JSON.stringify(res.data));
     } catch (error) {
       console.error("Error fetching orders:", error.response?.data || error.message);
     }
-  };
+  }, [activeTab, timeFilter, selectedStall]);
 
-  // ✅ Load localStorage data
-  const loadFromLocalStorage = () => {
-    const key =
-      activeTab === "ongoing" ? "pending_orders" : "completed_orders";
+  // When active tab changes → call API
+  useEffect(() => {
+    fetchOrders();
 
-    const stored = JSON.parse(localStorage.getItem(key)) || [];
-    setOrders(stored);
-    setFilteredOrders(stored);
-  };
+    const interval = setInterval(() => {
+      if (activeTab === "ongoing") fetchOrders();
+    }, 120000);
 
-  // ✅ Search Logic
-  const handleSearch = () => {
-    if (!searchTerm.trim()) {
-      setFilteredOrders(orders);
-      return;
-    }
+    return () => clearInterval(interval);
+  }, [activeTab, fetchOrders]);
+
+  // Search logic
+  useEffect(() => {
+    if (!searchTerm.trim()) return setFilteredOrders(orders);
 
     const lower = searchTerm.toLowerCase();
-
     const filtered = orders.filter((order) => {
       const hasToken = order.token_number?.toLowerCase().includes(lower);
       const hasOrderId = order.order_id?.toLowerCase().includes(lower);
-      const hasItem = order.items?.some((item) =>
-        item.name?.toLowerCase().includes(lower)
-      );
-
+      const hasItem = order.items?.some((item) => item.name?.toLowerCase().includes(lower));
       return hasToken || hasOrderId || hasItem;
     });
 
     setFilteredOrders(filtered);
-  };
+  }, [searchTerm, orders]);
 
-  // ✅ Complete Order (Axios)
+  // Complete Order
   const completeOrder = async (order) => {
     try {
       await axios.put(`${API_BASE}/orders/complete/${order.order_id}`);
 
-      const updatedPending = orders.filter(
-        (o) => o.order_id !== order.order_id
-      );
-
+      const updatedPending = orders.filter((o) => o.order_id !== order.order_id);
       localStorage.setItem("pending_orders", JSON.stringify(updatedPending));
 
-      const completed =
-        JSON.parse(localStorage.getItem("completed_orders")) || [];
-
+      const completed = JSON.parse(localStorage.getItem("completed_orders")) || [];
       const updatedCompleted = [...completed, order];
-
-      localStorage.setItem(
-        "completed_orders",
-        JSON.stringify(updatedCompleted)
-      );
+      localStorage.setItem("completed_orders", JSON.stringify(updatedCompleted));
 
       setOrders(updatedPending);
       setFilteredOrders(updatedPending);
@@ -152,7 +108,6 @@ export default function OrderStatus() {
       <h2 className="title">Order List</h2>
 
       <div className="filters">
-        {/* ✅ Search Input */}
         <input
           className="search-input"
           type="text"
@@ -161,7 +116,6 @@ export default function OrderStatus() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        {/* ✅ Stall Dropdown */}
         <select
           className="stall-dropdown"
           value={selectedStall}
@@ -174,19 +128,17 @@ export default function OrderStatus() {
           ))}
         </select>
 
-        {/* ✅ Time Filter */}
-        {activeTab === "ongoing" && (
-          <select
-            className="time-dropdown"
-            value={timeFilter}
-            onChange={(e) => setTimeFilter(Number(e.target.value))}
-          >
-            <option value={10}>Last 10 mins</option>
-            <option value={15}>Last 15 mins</option>
-            <option value={20}>Last 20 mins</option>
-            <option value={30}>Last 30 mins</option>
-          </select>
-        )}
+        {/* Time filter for both tabs now */}
+        <select
+          className="time-dropdown"
+          value={timeFilter}
+          onChange={(e) => setTimeFilter(Number(e.target.value))}
+        >
+          <option value={10}>Last 10 mins</option>
+          <option value={15}>Last 15 mins</option>
+          <option value={20}>Last 20 mins</option>
+          <option value={30}>Last 30 mins</option>
+        </select>
 
         <button
           className={activeTab === "ongoing" ? "btn active-tab" : "btn"}
@@ -232,9 +184,7 @@ export default function OrderStatus() {
                   ))}
                 </td>
 
-                <td>
-                  {new Date(order.created_datetime).toLocaleString()}
-                </td>
+                <td>{new Date(order.created_datetime).toLocaleString()}</td>
 
                 <td>
                   {activeTab === "ongoing" ? (

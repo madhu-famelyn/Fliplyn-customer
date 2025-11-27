@@ -170,3 +170,35 @@ body {
 .filters select {
   margin-right: 5px;
 }
+
+
+
+
+/* Stall Dropdown */
+.stall-dropdown {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+/* Hover / Focus Effect */
+.stall-dropdown:hover,
+.stall-dropdown:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .stall-dropdown {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+  }
+}
