@@ -7,7 +7,7 @@ export const getUserDetails = async (userId, token) => {
 };
 
 export const fetchBuildings = async (adminId, token) => {
-  const res = await fetch(`https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`, {
+  const res = await fetch(`/buildings/buildings/by-admin/${adminId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   if (!res.ok) throw new Error('Failed to fetch buildings');

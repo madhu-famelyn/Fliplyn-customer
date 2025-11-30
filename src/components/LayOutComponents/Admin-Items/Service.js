@@ -24,7 +24,7 @@ export const updateStallAvailability = async (stallId, isAvailable) => {
 
 export const fetchBuildingsByAdminId = async (adminId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/buildings/buildings/by-admin/${adminId}`);
+    const response = await axios.get(`${API_BASE_URL}/buildings/buildings/buildings/by-admin/${adminId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching buildings:', error);

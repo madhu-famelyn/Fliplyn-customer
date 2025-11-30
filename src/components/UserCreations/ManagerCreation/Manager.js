@@ -31,7 +31,7 @@ export default function ViewManagers() {
     try {
       // 1️⃣ Get buildings by admin_id
       const buildingsRes = await axios.get(
-        `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`,
+        `https://admin-aged-field-2794.fly.dev/buildings/buildings/buildings/by-admin/${adminId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

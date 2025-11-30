@@ -33,7 +33,7 @@ export default function Locations() {
     const fetchData = async () => {
       try {
         const [buildingsRes, countriesRes] = await Promise.all([
-          fetch(`https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${storedAdminId}`, {
+          fetch(`https://admin-aged-field-2794.fly.dev/buildings/buildings/buildings/by-admin/${storedAdminId}`, {
             headers: { Authorization: `Bearer ${storedToken}` },
           }),
           fetch(`https://admin-aged-field-2794.fly.dev/locations/countries`, {

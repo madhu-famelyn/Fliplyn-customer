@@ -14,7 +14,7 @@ export const addMoneyToWallet = async (payload, token) => {
 
 export const fetchBuildingByAdminId = async (adminId, token) => {
   try {
-    const response = await fetch(`${BASE_URL}/buildings/buildings/by-admin/${adminId}`, {
+    const response = await fetch(`${BASE_URL}/buildings/buildings/buildings/by-admin/${adminId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

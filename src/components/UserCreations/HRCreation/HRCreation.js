@@ -36,7 +36,7 @@ export default function CreateHR() {
       setLoading(true);
       try {
         // Fetch buildings by admin
-        const buildingsURL = `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`;
+        const buildingsURL = `https://admin-aged-field-2794.fly.dev/buildings/buildings/buildings/by-admin/${adminId}`;
         console.log("🌐 GET Buildings API:", buildingsURL);
 
         const resBuildings = await axios.get(buildingsURL);

@@ -23,7 +23,7 @@ export default function ChangeOMPassword() {
       }
       try {
         const res = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/buildings/buildings/by-admin/${adminId}`
+          `https://admin-aged-field-2794.fly.dev/buildings/buildings/buildings/by-admin/${adminId}`
         );
         setBuildings(res.data || []);
       } catch (err) {

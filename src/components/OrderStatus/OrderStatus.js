@@ -15,103 +15,175 @@ export default function OrderStatus() {
   const [stalls, setStalls] = useState([]);
   const [selectedStall, setSelectedStall] = useState("");
 
-  // Load stallIds
+  const [timer, setTimer] = useState(60);
+  const [loadingOrderId, setLoadingOrderId] = useState(null);
+
+  // TRACK LAST FETCH TIMES
+  const [lastPendingFetch, setLastPendingFetch] = useState(0);
+  const [lastCompletedFetch, setLastCompletedFetch] = useState(0);
+
+  // Load stall IDs
   useEffect(() => {
     const ids = JSON.parse(localStorage.getItem("stallIds")) || [];
     setStallIds(ids);
     if (ids.length > 0) setSelectedStall(ids[0]);
   }, []);
 
-  // Load stall names
+  // Fetch stall names
   useEffect(() => {
     async function loadStalls() {
       try {
-        const requests = stallIds.map((id) => axios.get(`${API_BASE}/stalls/${id}`));
-        const results = await Promise.all(requests);
+        const results = await Promise.all(
+          stallIds.map((id) => axios.get(`${API_BASE}/stalls/${id}`))
+        );
         setStalls(results.map((res) => res.data));
-      } catch (error) {
-        console.error("Error fetching stalls:", error.response?.data || error.message);
+      } catch (err) {
+        console.error("Error loading stalls:", err.message);
       }
     }
-    if (stallIds.length) loadStalls();
+    if (stallIds.length > 0) loadStalls();
   }, [stallIds]);
 
-  // Fetch Orders (Pending or Completed)
-  const fetchOrders = useCallback(async () => {
-    const status = activeTab === "ongoing" ? "PENDING" : "COMPLETED";
-    try {
-      const res = await axios.get(`${API_BASE}/orders/status-time`, {
-        params: {
-          status,
-          minutes: timeFilter,
-          stall_id: selectedStall,
-        },
-      });
+  // MAIN FETCH FUNCTION
+  const fetchOrders = useCallback(
+    async (forceFetch = false) => {
+      if (!selectedStall) return;
 
-      setOrders(res.data);
-      setFilteredOrders(res.data);
+      const now = Date.now();
+      const status = activeTab === "ongoing" ? "PENDING" : "COMPLETED";
 
-      const key = status === "PENDING" ? "pending_orders" : "completed_orders";
-      localStorage.setItem(key, JSON.stringify(res.data));
-    } catch (error) {
-      console.error("Error fetching orders:", error.response?.data || error.message);
-    }
-  }, [activeTab, timeFilter, selectedStall]);
+      // STORAGE KEYS
+      const storageKey =
+        status === "PENDING"
+          ? "pending_orders"
+          : "completed_orders";
 
-  // When active tab changes → call API
+      const lastFetch =
+        status === "PENDING"
+          ? lastPendingFetch
+          : lastCompletedFetch;
+
+      // 1️⃣ **LOAD FROM LOCAL STORAGE WHEN ALLOWED**
+      if (!forceFetch && status === "PENDING") {
+        if (now - lastFetch < 60000) {
+          const local = JSON.parse(localStorage.getItem("pending_orders")) || [];
+          setOrders(local);
+          setFilteredOrders(local);
+          return;
+        }
+      }
+
+      if (!forceFetch && status === "COMPLETED") {
+        if (now - lastFetch < 60000) {
+          const local = JSON.parse(localStorage.getItem("completed_orders")) || [];
+          setOrders(local);
+          setFilteredOrders(local);
+          return;
+        }
+      }
+
+      // 2️⃣ **CALL API IF REQUIRED**
+      try {
+        const res = await axios.get(`${API_BASE}/orders/status-time`, {
+          params: {
+            status,
+            minutes: timeFilter,
+            stall_id: selectedStall,
+          },
+        });
+
+        setOrders(res.data);
+        setFilteredOrders(res.data);
+
+        // Save to localStorage
+        localStorage.setItem(storageKey, JSON.stringify(res.data));
+
+        // Update last fetch timestamp
+        if (status === "PENDING") setLastPendingFetch(now);
+        else setLastCompletedFetch(now);
+      } catch (err) {
+        console.error("Fetch error:", err.message);
+      }
+    },
+    [activeTab, timeFilter, selectedStall, lastPendingFetch, lastCompletedFetch]
+  );
+
+  // TIMER FOR PENDING TAB
   useEffect(() => {
-    fetchOrders();
+    if (activeTab !== "ongoing") return;
 
-    const interval = setInterval(() => {
-      if (activeTab === "ongoing") fetchOrders();
-    }, 120000);
+    setTimer(60);
 
-    return () => clearInterval(interval);
+    const countdown = setInterval(() => {
+      setTimer((t) => {
+        if (t <= 1) {
+          fetchOrders(true);
+          return 60;
+        }
+        return t - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(countdown);
   }, [activeTab, fetchOrders]);
 
-  // Search logic
+  // TAB OR FILTER CHANGE
+  useEffect(() => {
+    fetchOrders();
+  }, [activeTab, timeFilter, selectedStall, fetchOrders]);
+
+  // SEARCH FILTER
   useEffect(() => {
     if (!searchTerm.trim()) return setFilteredOrders(orders);
 
     const lower = searchTerm.toLowerCase();
     const filtered = orders.filter((order) => {
-      const hasToken = order.token_number?.toLowerCase().includes(lower);
-      const hasOrderId = order.order_id?.toLowerCase().includes(lower);
-      const hasItem = order.items?.some((item) => item.name?.toLowerCase().includes(lower));
-      return hasToken || hasOrderId || hasItem;
+      return (
+        order.token_number?.toLowerCase().includes(lower) ||
+        order.order_id?.toLowerCase().includes(lower) ||
+        order.items?.some((i) => i.name.toLowerCase().includes(lower))
+      );
     });
-
     setFilteredOrders(filtered);
   }, [searchTerm, orders]);
 
-  // Complete Order
+  // COMPLETE ORDER
   const completeOrder = async (order) => {
+    setLoadingOrderId(order.order_id);
+
     try {
       await axios.put(`${API_BASE}/orders/complete/${order.order_id}`);
 
-      const updatedPending = orders.filter((o) => o.order_id !== order.order_id);
-      localStorage.setItem("pending_orders", JSON.stringify(updatedPending));
+      const updated = orders.filter((o) => o.order_id !== order.order_id);
 
-      const completed = JSON.parse(localStorage.getItem("completed_orders")) || [];
-      const updatedCompleted = [...completed, order];
-      localStorage.setItem("completed_orders", JSON.stringify(updatedCompleted));
-
-      setOrders(updatedPending);
-      setFilteredOrders(updatedPending);
-    } catch (error) {
-      console.error("Complete order failed:", error.response?.data || error.message);
+      localStorage.setItem("pending_orders", JSON.stringify(updated));
+      setOrders(updated);
+      setFilteredOrders(updated);
+    } catch (err) {
+      console.error("Complete error:", err.message);
+    } finally {
+      setLoadingOrderId(null);
     }
   };
 
   return (
     <div className="order-container">
-      <h2 className="title">Order List</h2>
+      <div className="header-row">
+        <h2 className="title">Order List</h2>
 
+        {activeTab === "ongoing" && (
+          <div className="refresh-timer">
+            Refreshing in: <strong>{timer}s</strong>
+          </div>
+        )}
+      </div>
+
+      {/* Filters */}
       <div className="filters">
         <input
           className="search-input"
           type="text"
-          placeholder="Search items, order ID, token no"
+          placeholder="Search by item, order ID, token..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -128,7 +200,6 @@ export default function OrderStatus() {
           ))}
         </select>
 
-        {/* Time filter for both tabs now */}
         <select
           className="time-dropdown"
           value={timeFilter}
@@ -155,6 +226,7 @@ export default function OrderStatus() {
         </button>
       </div>
 
+      {/* Table */}
       <table className="order-table">
         <thead>
           <tr>
@@ -191,8 +263,13 @@ export default function OrderStatus() {
                     <button
                       className="complete-btn"
                       onClick={() => completeOrder(order)}
+                      disabled={loadingOrderId === order.order_id}
                     >
-                      Complete Order
+                      {loadingOrderId === order.order_id ? (
+                        <span className="spinner"></span>
+                      ) : (
+                        "Complete Order"
+                      )}
                     </button>
                   ) : (
                     <span className="completed-text">✅ Completed</span>

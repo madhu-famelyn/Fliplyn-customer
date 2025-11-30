@@ -10,7 +10,7 @@ const API_BASE = 'https://admin-aged-field-2794.fly.dev/';
 export const fetchBuildings = async (adminId, token) => {
   try {
     // Corrected path: /stalls/buildings/by-admin/:adminId
-    const res = await axios.get(`${API_BASE}buildings/buildings/by-admin/${adminId}`, {
+    const res = await axios.get(`${API_BASE}buildings/buildings/buildings/by-admin/${adminId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
