@@ -18,7 +18,6 @@ export default function OrderStatus() {
   const [timer, setTimer] = useState(60);
   const [loadingOrderId, setLoadingOrderId] = useState(null);
 
-  // TRACK LAST FETCH TIMES
   const [lastPendingFetch, setLastPendingFetch] = useState(0);
   const [lastCompletedFetch, setLastCompletedFetch] = useState(0);
 
@@ -52,53 +51,26 @@ export default function OrderStatus() {
       const now = Date.now();
       const status = activeTab === "ongoing" ? "PENDING" : "COMPLETED";
 
-      // STORAGE KEYS
-      const storageKey =
-        status === "PENDING"
-          ? "pending_orders"
-          : "completed_orders";
+      // Avoid cache when stall or time changes
+      const storageKey = status === "PENDING" ? "pending_orders" : "completed_orders";
+      const lastFetch = status === "PENDING" ? lastPendingFetch : lastCompletedFetch;
 
-      const lastFetch =
-        status === "PENDING"
-          ? lastPendingFetch
-          : lastCompletedFetch;
-
-      // 1️⃣ **LOAD FROM LOCAL STORAGE WHEN ALLOWED**
-      if (!forceFetch && status === "PENDING") {
-        if (now - lastFetch < 60000) {
-          const local = JSON.parse(localStorage.getItem("pending_orders")) || [];
-          setOrders(local);
-          setFilteredOrders(local);
-          return;
-        }
+      if (!forceFetch && now - lastFetch < 60000) {
+        const cached = JSON.parse(localStorage.getItem(storageKey)) || [];
+        setOrders(cached);
+        setFilteredOrders(cached);
+        return;
       }
 
-      if (!forceFetch && status === "COMPLETED") {
-        if (now - lastFetch < 60000) {
-          const local = JSON.parse(localStorage.getItem("completed_orders")) || [];
-          setOrders(local);
-          setFilteredOrders(local);
-          return;
-        }
-      }
-
-      // 2️⃣ **CALL API IF REQUIRED**
       try {
         const res = await axios.get(`${API_BASE}/orders/status-time`, {
-          params: {
-            status,
-            minutes: timeFilter,
-            stall_id: selectedStall,
-          },
+          params: { status, minutes: timeFilter, stall_id: selectedStall },
         });
 
         setOrders(res.data);
         setFilteredOrders(res.data);
-
-        // Save to localStorage
         localStorage.setItem(storageKey, JSON.stringify(res.data));
 
-        // Update last fetch timestamp
         if (status === "PENDING") setLastPendingFetch(now);
         else setLastCompletedFetch(now);
       } catch (err) {
@@ -108,12 +80,11 @@ export default function OrderStatus() {
     [activeTab, timeFilter, selectedStall, lastPendingFetch, lastCompletedFetch]
   );
 
-  // TIMER FOR PENDING TAB
+  // AUTO-REFRESH every 60s on ONGOING tab
   useEffect(() => {
     if (activeTab !== "ongoing") return;
 
     setTimer(60);
-
     const countdown = setInterval(() => {
       setTimer((t) => {
         if (t <= 1) {
@@ -127,35 +98,31 @@ export default function OrderStatus() {
     return () => clearInterval(countdown);
   }, [activeTab, fetchOrders]);
 
-  // TAB OR FILTER CHANGE
+  // TRIGGER LOAD when stall / tab / time changes instantly
   useEffect(() => {
-    fetchOrders();
-  }, [activeTab, timeFilter, selectedStall, fetchOrders]);
+    fetchOrders(true);
+  }, [activeTab, timeFilter, selectedStall]);
 
   // SEARCH FILTER
   useEffect(() => {
     if (!searchTerm.trim()) return setFilteredOrders(orders);
 
     const lower = searchTerm.toLowerCase();
-    const filtered = orders.filter((order) => {
-      return (
+    const filtered = orders.filter(
+      (order) =>
         order.token_number?.toLowerCase().includes(lower) ||
         order.order_id?.toLowerCase().includes(lower) ||
         order.items?.some((i) => i.name.toLowerCase().includes(lower))
-      );
-    });
+    );
     setFilteredOrders(filtered);
   }, [searchTerm, orders]);
 
   // COMPLETE ORDER
   const completeOrder = async (order) => {
     setLoadingOrderId(order.order_id);
-
     try {
       await axios.put(`${API_BASE}/orders/complete/${order.order_id}`);
-
       const updated = orders.filter((o) => o.order_id !== order.order_id);
-
       localStorage.setItem("pending_orders", JSON.stringify(updated));
       setOrders(updated);
       setFilteredOrders(updated);
@@ -170,7 +137,6 @@ export default function OrderStatus() {
     <div className="order-container">
       <div className="header-row">
         <h2 className="title">Order List</h2>
-
         {activeTab === "ongoing" && (
           <div className="refresh-timer">
             Refreshing in: <strong>{timer}s</strong>

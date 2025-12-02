@@ -117,8 +117,6 @@ function App() {
                 <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/manager-login" element={<ManagerLogin />} />
 
-                {/* ✅ Admin Routes */}
-                <Route path="/dashboard" element={<Dashboard />}  />
                 <Route path="/locations" element={<Locations />}  />
                 <Route path="/select-country" element={<SelectCountry />} />
                 <Route path="/select-state"element={<SelectState />} />
