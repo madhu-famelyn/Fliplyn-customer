@@ -6,7 +6,7 @@
 .stalls-container {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 12vh;
+  margin-top: 6vh;
   gap: 20px;
   justify-content: center;
   max-width: 1200px;
