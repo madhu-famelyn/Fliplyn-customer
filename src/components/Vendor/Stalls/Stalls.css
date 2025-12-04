@@ -123,7 +123,7 @@
     max-width: 300px;
     padding: 18px;
     font-size: 18px;
-    margin-top: 6vh !important;
+    margin-top: 10vh !important;
     border-radius: 12px;
   }
 }
@@ -146,6 +146,7 @@
   }
 
   .view-orders-btn {
+    margin-top: 12vh;
     font-size: 16px;
     padding: 16px;
   }
@@ -169,6 +170,7 @@
   }
 
   .view-orders-btn {
+    margin-top: 12vh;
     font-size: 15px;
     padding: 14px;
   }

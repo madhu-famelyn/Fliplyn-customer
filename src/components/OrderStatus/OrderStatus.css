@@ -1,113 +1,109 @@
+/* ===============================
+   MOBILE OPTIMIZED CSS
+   =============================== */
+
+/* Body */
 body {
   background: #f7f7f7;
   margin: 0;
   font-family: "Inter", sans-serif;
 }
 
+/* Main Container */
 .order-container {
   width: 100%;
-  padding: 0 30px 50px;
+  padding: 10px 15px 50px;
   box-sizing: border-box;
 }
 
 /* Header */
-.header {
+.header-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 0;
-  background: white;
-  margin: -20px -30px 0 -30px;
-  padding-left: 40px;
-  padding-right: 40px;
-  border-bottom: 1px solid #e4e4e4;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.logo img {
-  width: 30px;
-  margin-right: 10px;
-}
-
-.profile-icon {
-  font-size: 24px;
-}
-
-/* Title */
 .title {
-  margin-top: 35px;
-  margin-bottom: 25px;
-  font-size: 34px;
+  font-size: 28px;
   font-weight: 700;
+  margin: 10px 0;
 }
 
-/* Filters Row */
+.refresh-timer {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Filters */
 .filters {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
+}
+
+.search-input,
+.stall-dropdown,
+.time-dropdown {
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  box-sizing: border-box;
 }
 
 .search-input {
-  flex: 1;
-  height: 38px;
-  border-radius: 6px;
-  border: 1px solid #dadada;
-  padding-left: 12px;
-  font-size: 15px;
+  margin-bottom: 5px;
 }
 
-.btn {
-  padding: 8px 18px;
-  border-radius: 6px;
-  border: 1px solid #d6d6d6;
-  font-size: 14px;
-  background: white;
-  color: black;
+.stall-dropdown,
+.time-dropdown {
+  background-color: #fff;
+  color: #333;
+}
+
+.filters button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
   cursor: pointer;
+  border: none;
+  margin-top: 5px;
 }
 
-.active-tab {
-  background: #ff6b1b;
+.btn.active-tab {
+  background-color: #ff6b1b;
   color: white;
-  border-color: #ff6b1b;
 }
 
-/* ============================= */
-/* Table - Equal Column Widths   */
-/* ============================= */
-
+/* Table */
 .order-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
   border-radius: 10px;
-  overflow: hidden;
-  table-layout: fixed;           /* ✅ Makes column widths respect set values */
+  overflow-x: auto;
+  display: block; /* make table scrollable horizontally */
 }
 
 .order-table th,
 .order-table td {
-  width: 25%;                    /* ✅ Equal width for 4 columns */
-  background: white;
-  font-size: 15px;
-  color: black;
-  text-align: left !important;
-  padding: 16px;
+  width: auto;
+  min-width: 120px;
+  padding: 12px 8px;
+  text-align: left;
   border-bottom: 1px solid #eee;
-  vertical-align: top;
-  word-wrap: break-word;         /* ✅ Wrap long content */
+  font-size: 14px;
 }
 
-/* Remove duplicate properties */
 .order-table th {
   font-weight: 600;
+  background: #fafafa;
 }
 
 .order-id {
@@ -115,90 +111,145 @@ body {
 }
 
 .item-sub {
-  color: #7e7e7e;
-  font-size: 14px;
+  font-size: 13px;
+  color: #555;
 }
 
-/* Button */
 .complete-btn {
   background: #ff6b1b;
-  color: rgb(0, 0, 0);
+  color: white;
   border: none;
   padding: 10px 16px;
   border-radius: 6px;
-  cursor: pointer;
   font-size: 14px;
+  cursor: pointer;
+}
+
+.completed-text {
+  font-size: 14px;
+  color: green;
+  font-weight: 600;
+}
+
+/* Spinner (Optional) */
+.spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #ff6b1b;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Pagination */
 .pagination {
-  margin-top: 18px;
   display: flex;
-  justify-content: flex-end;
-  gap: 40px;
-  font-size: 14px;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
   color: #666;
+  margin-top: 15px;
 }
 
-/* Time Filter Dropdown */
-.time-dropdown {
-  height: 38px;
-  padding: 0 12px;
-  border-radius: 6px;
-  border: 1px solid #dadada;
-  background: white;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-  outline: none;
-  min-width: 140px;
-}
+/* ===============================
+   MEDIA QUERIES FOR SMALL SCREENS
+   =============================== */
 
-/* On focus */
-.time-dropdown:focus {
-  border-color: #ff6b1b;
-  box-shadow: 0 0 0 2px rgba(255, 107, 27, 0.15);
-}
-
-/* Dropdown options */
-.time-dropdown option {
-  font-size: 14px;
-  color: #333;
-}
-
-/* Align nicely with search and buttons */
-.filters select {
-  margin-right: 5px;
-}
-
-
-
-
-/* Stall Dropdown */
-.stall-dropdown {
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-}
-
-/* Hover / Focus Effect */
-.stall-dropdown:hover,
-.stall-dropdown:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
-}
-
-/* Mobile Responsive */
 @media (max-width: 768px) {
-  .stall-dropdown {
-    width: 100%;
-    font-size: 16px;
+
+  .order-container {
     padding: 10px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .search-input,
+  .stall-dropdown,
+  .time-dropdown {
+    font-size: 15px;
+    height: 42px;
+  }
+
+  .filters button {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .order-table th,
+  .order-table td {
+    font-size: 13px;
+    padding: 10px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .title {
+    font-size: 22px;
+  }
+
+  .filters {
+    gap: 8px;
+  }
+
+  .search-input,
+  .stall-dropdown,
+  .time-dropdown {
+    font-size: 14px;
+    height: 40px;
+  }
+
+  .filters button {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .order-table th,
+  .order-table td {
+    font-size: 12px;
+    padding: 8px 5px;
+    min-width: 100px;
+  }
+
+  .complete-btn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .title {
+    font-size: 20px;
+  }
+
+  .search-input,
+  .stall-dropdown,
+  .time-dropdown {
+    font-size: 13px;
+    height: 38px;
+  }
+
+  .filters button {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .order-table th,
+  .order-table td {
+    font-size: 11px;
+    padding: 6px 4px;
+  }
+
+  .complete-btn {
+    font-size: 12px;
+    padding: 6px 10px;
   }
 }
