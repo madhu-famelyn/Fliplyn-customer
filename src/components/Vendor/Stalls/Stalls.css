@@ -6,7 +6,7 @@
 .stalls-container {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 6vh;
+  margin-top: 12vh;
   gap: 20px;
   justify-content: center;
   max-width: 1200px;
@@ -134,7 +134,7 @@
 @media screen and (max-width: 480px) {
 
   .stalls-container {
-    margin-top: 15vh;
+    margin-top: 3vh;
   }
 
   .stall-card-simple {
