@@ -67,7 +67,7 @@
 
 /* Button */
 .view-orders-btn {
-  background-color: #0d6efd;
+  background-color: #e67e23;
   margin-top: 8vh !important; /* Reduced for visibility */
   color: white;
   border: none;
@@ -82,7 +82,7 @@
 }
 
 .view-orders-btn:hover {
-  background-color: #084dc0;
+  background-color: #c06708;
   transform: scale(1.05);
 }
 
