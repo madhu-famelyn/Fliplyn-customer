@@ -1,12 +1,18 @@
+/* ================================
+   STALLS PAGE – FIXED & OPTIMIZED
+   ================================ */
+
 /* Container */
 .stalls-container {
   display: flex;
-  flex-wrap: wrap; 
-  margin-top: 10vh;
+  flex-wrap: wrap;
+  margin-top: 12vh;
   gap: 20px;
-  justify-content: center; /* Centers the stalls */
+  justify-content: center;
   max-width: 1200px;
   padding: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 /* Stall Card */
@@ -19,6 +25,8 @@
   text-align: center;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .stall-card-simple:hover {
@@ -40,92 +48,93 @@
 .stall-text {
   font-size: 1rem;
   font-weight: 600;
-  color: #cc6600; /* light orange accent */
+  color: #cc6600;
   margin: 12px 0;
 }
 
+/* ================================
+   VIEW ORDERS BUTTON
+   ================================ */
 
-
-/* Top-right button wrapper */
+/* Wrapper */
 .orders-btn-wrapper {
   display: flex;
   justify-content: flex-end;
   padding: 10px 20px;
+  position: relative;
+  z-index: 9999; /* FIX: Button now clickable on mobile */
 }
 
-/* View Orders Button */
+/* Button */
 .view-orders-btn {
   background-color: #0d6efd;
-  margin-top: 20vh;
+  margin-top: 8vh !important; /* Reduced for visibility */
   color: white;
   border: none;
-  padding: 10px 22px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 16px 32px;     /* Increased size */
+  border-radius: 12px;    /* Larger button style */
+  font-size: 18px;        /* Larger text */
+  font-weight: 600;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease-in-out;
+  z-index: 9999;          /* Ensures button stays on top */
 }
 
 .view-orders-btn:hover {
   background-color: #084dc0;
-  transform: scale(1.03);
+  transform: scale(1.05);
 }
 
-
-/* ✅ Mobile Devices (max-width: 768px) */
+/* ================================
+   MOBILE: max-width 768px
+   ================================ */
 @media screen and (max-width: 768px) {
 
-  /* Container Adjustment */
   .stalls-container {
-    margin-top: 20vh;
+    margin-top: 18vh;
     gap: 12px;
     padding: 5px;
     justify-content: center;
   }
 
-  /* Stall Card */
   .stall-card-simple {
-    width: 90%;   /* Full width card */
+    width: 90%;
     max-width: 320px;
     border-radius: 10px;
   }
 
-  /* Image adjustments */
   .stall-image-simple {
     height: 140px;
     padding: 8px;
   }
 
-  /* Text */
   .stall-text {
     font-size: 0.95rem;
   }
 
-  /* Button Wrapper */
   .orders-btn-wrapper {
-    justify-content: center; /* Center button on mobile */
+    justify-content: center;
     padding: 10px;
   }
 
-  /* View Orders Button */
   .view-orders-btn {
-    width: 90%;
-    max-width: 240px;
-    font-size: 14px;
-    padding: 12px;
-    margin-top: 10vh;
-    border-radius: 10px;
+    width: 95%;
+    max-width: 300px;
+    padding: 18px;
+    font-size: 18px;
+    margin-top: 6vh !important;
+    border-radius: 12px;
   }
 }
 
-/* ✅ Small Mobile Devices (max-width: 480px) */
+/* ================================
+   SMALL MOBILE: max-width 480px
+   ================================ */
 @media screen and (max-width: 480px) {
 
   .stalls-container {
     margin-top: 15vh;
-    gap: 10px;
   }
 
   .stall-card-simple {
@@ -137,12 +146,14 @@
   }
 
   .view-orders-btn {
-    font-size: 13px;
-    padding: 10px;
+    font-size: 16px;
+    padding: 16px;
   }
 }
 
-/* ✅ Extra Small Screens (max-width: 360px) */
+/* ================================
+   EXTRA SMALL MOBILE: max-width 360px
+   ================================ */
 @media screen and (max-width: 360px) {
 
   .stall-card-simple {
@@ -158,7 +169,7 @@
   }
 
   .view-orders-btn {
-    font-size: 12px;
-    padding: 9px;
+    font-size: 15px;
+    padding: 14px;
   }
 }
