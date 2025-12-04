@@ -96,12 +96,12 @@ export default function OrderStatus() {
     }, 1000);
 
     return () => clearInterval(countdown);
-  }, [activeTab, fetchOrders]);
+  }, [activeTab, fetchOrders]); // ✅ include fetchOrders
 
   // TRIGGER LOAD when stall / tab / time changes instantly
   useEffect(() => {
     fetchOrders(true);
-  }, [activeTab, timeFilter, selectedStall]);
+  }, [activeTab, timeFilter, selectedStall, fetchOrders]); // ✅ include fetchOrders
 
   // SEARCH FILTER
   useEffect(() => {
