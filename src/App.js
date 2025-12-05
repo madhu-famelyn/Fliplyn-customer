@@ -11,7 +11,7 @@ import { BuildingManagerProvider, useBuildingManagerAuth } from "./components/Au
 import { AuthProvider as ManagerAuthProvider, useAuth as useManagerAuth } from "./components/AuthContex/ContextAPI"; // Operational Manager
 
 // ✅ Components
-// import Dashboard from "./components/LayOutComponents/DashBoard/Dashboard";
+import Dashboard from "./components/LayOutComponents/DashBoard/Dashboard";
 import Locations from "./components/LayOutComponents/Location/Location";
 import SelectCountry from "./components/LayOutComponents/SelectCountry/SelectCountry";
 import SelectState from "./components/LayOutComponents/SelectState/SelectState";
@@ -123,6 +123,7 @@ function App() {
                 <Route path="/select-city"  element={<SelectCity />}  />
                 <Route path="/create-building" element={<CreateBuilding />}/>
                 <Route path="/stalls"  element={<Stall />} />
+                <Route path="/dashboard"  element={<Dashboard />} />
                 <Route path="/add-category/:stallId" element={<AddCategory />} />
                 <Route path="/manager-wallet"  element={<WalletUploadAdmin />}  />
                 <Route path="/item"element={<Item />} />
