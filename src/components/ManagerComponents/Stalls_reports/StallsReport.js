@@ -14,6 +14,7 @@ export default function StallSalesReport() {
   const [filter, setFilter] = useState("");
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [companyFilter, setCompanyFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
   const [sortBy, setSortBy] = useState("stall");
   const [submitted, setSubmitted] = useState(false);
 
@@ -36,7 +37,7 @@ export default function StallSalesReport() {
     fetchStalls();
   }, [user]);
 
-  // Fetch orders based on selected filter
+  // Fetch orders
   useEffect(() => {
     if (!user?.building_id || !submitted) return;
 
@@ -50,7 +51,6 @@ export default function StallSalesReport() {
         const fetchOrdersByStall = async (stall) => {
           const baseUrl = "https://admin-aged-field-2794.fly.dev/orders";
           let startDate, endDate;
-
           const now = new Date();
 
           const getUTCStartEndForISTDay = (date) => {
@@ -105,7 +105,12 @@ export default function StallSalesReport() {
             const res = await axios.get(`${baseUrl}/by-stall/${stall.id}/range`, {
               params: { start_date: startDate, end_date: endDate },
             });
-            return res.data.map((order) => ({ ...order, stall_name: stall.name }));
+
+            return res.data.map((order) => ({
+              ...order,
+              stall_name: stall.name,
+              paymentType: order.paid_with_wallet ? "Postpaid" : "Prepaid",
+            }));
           } catch (err) {
             if (err.response?.status === 404) return [];
             throw err;
@@ -139,145 +144,37 @@ export default function StallSalesReport() {
     fetchOrders();
   }, [user, stalls, submitted, filter, customRange, selectedStallId]);
 
-  // Company filter
+  // Extract company name from email
   const getCompanyName = (email) => {
     if (!email) return "Unknown";
-    const domain = email.split("@")[1] || "";
-    return domain.includes("cashe") ? "cashe" : "Other";
+    return email.split("@")[1]?.split(".")[0] || "Unknown";
   };
 
-  const companyFilteredOrders =
-    companyFilter === "all"
-      ? orders
-      : orders.filter((order) => getCompanyName(order.user_email) === companyFilter);
-
-  const sortedOrders = [...companyFilteredOrders].sort((a, b) =>
-    sortBy === "date"
-      ? new Date(a.created_datetime) - new Date(b.created_datetime)
-      : a.stall_name.localeCompare(b.stall_name)
+  // Get all unique companies for dropdown
+  const companies = Array.from(
+    new Set(orders.map((o) => getCompanyName(o.user_email)))
   );
+
+  // Apply company + payment filters
+  const filteredOrders = orders.filter((order) => {
+    const companyMatch = companyFilter === "all" || getCompanyName(order.user_email) === companyFilter;
+    const paymentMatch = paymentFilter === "all" || order.paymentType === paymentFilter;
+    return companyMatch && paymentMatch;
+  });
+
+  // Sorting
+  const sortedOrders = [...filteredOrders].sort((a, b) => {
+    if (sortBy === "date") return new Date(a.created_datetime) - new Date(b.created_datetime);
+    if (sortBy === "stall") return a.stall_name.localeCompare(b.stall_name);
+    if (sortBy === "payment") return a.paymentType.localeCompare(b.paymentType);
+    return 0;
+  });
 
   const totalSales = sortedOrders.reduce((acc, order) => {
     const totalPaid =
       order.order_details.reduce((sum, d) => sum + d.total, 0) + (order.round_off || 0);
     return acc + totalPaid;
   }, 0);
-
-  const companies = Array.from(
-    new Set(
-      orders.map((o) => getCompanyName(o.user_email)).filter((c) => c === "cashe")
-    )
-  );
-
-  // ✅ UPDATED Excel export
-
-const exportToExcel = () => {
-  let totalNetAmount = 0;
-  let totalGross = 0;
-  let totalGST = 0;
-  let totalRoundOff = 0;
-  let totalPaidAll = 0;
-
-  const rows = sortedOrders.flatMap((order) =>
-    order.order_details.map((item, index) => {
-      const netAmount = item.quantity * item.price;
-      const totalPaid =
-        order.order_details.reduce((sum, d) => sum + d.total, 0) +
-        (order.round_off || 0);
-
-      // Accumulate totals (only once per order for GST, RoundOff, TotalPaid)
-      totalNetAmount += netAmount;
-      totalGross += item.total;
-      if (index === 0) {
-        totalGST += order.total_gst || 0;  // ✅ only once per order
-        totalRoundOff += order.round_off || 0;
-        totalPaidAll += totalPaid;
-      }
-
-      return {
-        Outlet: order.outlet_name,
-        Token: order.token_number,
-        "User Email": order.user_email,
-        Date: new Date(order.created_datetime).toLocaleString("en-IN"),
-        Item: item.name,
-        Qty: item.quantity,
-        Price: item.price,
-        "Net Amount": netAmount.toFixed(2),
-        "Gross Total": item.total,
-        GST: index === 0 ? order.total_gst || 0 : "", // ✅ only first item shows GST
-        "Round Off": index === 0 ? order.round_off || 0 : "",
-        "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
-      };
-    })
-  );
-
-  // Add Grand Total row
-  rows.push({
-    Outlet: "",
-    Token: "",
-    "User Email": "",
-    Date: "",
-    Item: "Grand Total",
-    Qty: "",
-    Price: "",
-    "Net Amount": totalNetAmount.toFixed(2),
-    "Gross Total": totalGross.toFixed(2),
-    GST: totalGST.toFixed(2),
-    "Round Off": totalRoundOff.toFixed(2),
-    "Total Paid": totalPaidAll.toFixed(2),
-  });
-
-  const ws = XLSX.utils.json_to_sheet(rows);
-
-  // Style header row
-  const header = Object.keys(rows[0]);
-  header.forEach((col, idx) => {
-    const cellRef = XLSX.utils.encode_cell({ r: 0, c: idx });
-    if (ws[cellRef]) {
-      ws[cellRef].s = {
-        font: { bold: true, color: { rgb: "000000" }, sz: 12 },
-        alignment: { horizontal: "center", vertical: "center" },
-        border: {
-          top: { style: "thin", color: { rgb: "000000" } },
-          bottom: { style: "thin", color: { rgb: "000000" } },
-          left: { style: "thin", color: { rgb: "000000" } },
-          right: { style: "thin", color: { rgb: "000000" } },
-        },
-      };
-    }
-  });
-
-  // Style Grand Total row
-  const lastRowIndex = rows.length; // 1-based
-  header.forEach((col, idx) => {
-    const cellRef = XLSX.utils.encode_cell({ r: lastRowIndex, c: idx });
-    if (ws[cellRef]) {
-      ws[cellRef].s = {
-        font: { bold: true, color: { rgb: "000000" }, sz: 12 },
-        alignment: { horizontal: "center", vertical: "center" },
-        border: {
-          top: { style: "thin", color: { rgb: "000000" } },
-          bottom: { style: "thin", color: { rgb: "000000" } },
-          left: { style: "thin", color: { rgb: "000000" } },
-          right: { style: "thin", color: { rgb: "000000" } },
-        },
-      };
-    }
-  });
-
-  // Auto column widths
-  const colWidths = header.map((h) => ({ wch: Math.max(h.length + 2, 15) }));
-  ws["!cols"] = colWidths;
-
-  // Create workbook and append sheet
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
-
-  // Save Excel file
-  XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
-};
-
-
 
   const handleSubmit = () => {
     if (!filter) {
@@ -291,11 +188,110 @@ const exportToExcel = () => {
     setSubmitted(true);
   };
 
+  const exportToExcel = () => {
+    let totalNetAmount = 0;
+    let totalGross = 0;
+    let totalGST = 0;
+    let totalRoundOff = 0;
+    let totalPaidAll = 0;
+
+    const rows = sortedOrders.flatMap((order) =>
+      order.order_details.map((item, index) => {
+        const netAmount = item.quantity * item.price;
+        const totalPaid =
+          order.order_details.reduce((sum, d) => sum + d.total, 0) +
+          (order.round_off || 0);
+
+        totalNetAmount += netAmount;
+        totalGross += item.total;
+        if (index === 0) {
+          totalGST += order.total_gst || 0;
+          totalRoundOff += order.round_off || 0;
+          totalPaidAll += totalPaid;
+        }
+
+        return {
+          Outlet: order.stall_name,
+          Token: order.token_number,
+          "User Email": order.user_email,
+          Date: new Date(order.created_datetime).toLocaleString("en-IN"),
+          "Payment Type": order.paymentType,
+          Item: item.name,
+          Qty: item.quantity,
+          Price: item.price,
+          "Net Amount": netAmount.toFixed(2),
+          "Gross Total": item.total,
+          GST: index === 0 ? order.total_gst || 0 : "",
+          "Round Off": index === 0 ? order.round_off || 0 : "",
+          "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
+        };
+      })
+    );
+
+    rows.push({
+      Outlet: "",
+      Token: "",
+      "User Email": "",
+      Date: "",
+      "Payment Type": "",
+      Item: "Grand Total",
+      Qty: "",
+      Price: "",
+      "Net Amount": totalNetAmount.toFixed(2),
+      "Gross Total": totalGross.toFixed(2),
+      GST: totalGST.toFixed(2),
+      "Round Off": totalRoundOff.toFixed(2),
+      "Total Paid": totalPaidAll.toFixed(2),
+    });
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+
+    const header = Object.keys(rows[0]);
+    header.forEach((col, idx) => {
+      const cellRef = XLSX.utils.encode_cell({ r: 0, c: idx });
+      if (ws[cellRef]) {
+        ws[cellRef].s = {
+          font: { bold: true, color: { rgb: "000000" }, sz: 12 },
+          alignment: { horizontal: "center", vertical: "center" },
+          border: {
+            top: { style: "thin", color: { rgb: "000000" } },
+            bottom: { style: "thin", color: { rgb: "000000" } },
+            left: { style: "thin", color: { rgb: "000000" } },
+            right: { style: "thin", color: { rgb: "000000" } },
+          },
+        };
+      }
+    });
+
+    const lastRowIndex = rows.length;
+    header.forEach((col, idx) => {
+      const cellRef = XLSX.utils.encode_cell({ r: lastRowIndex, c: idx });
+      if (ws[cellRef]) {
+        ws[cellRef].s = {
+          font: { bold: true, color: { rgb: "000000" }, sz: 12 },
+          alignment: { horizontal: "center", vertical: "center" },
+          border: {
+            top: { style: "thin", color: { rgb: "000000" } },
+            bottom: { style: "thin", color: { rgb: "000000" } },
+            left: { style: "thin", color: { rgb: "000000" } },
+            right: { style: "thin", color: { rgb: "000000" } },
+          },
+        };
+      }
+    });
+
+    ws["!cols"] = header.map((h) => ({ wch: Math.max(h.length + 2, 15) }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
+    XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
+  };
+
   return (
     <div className="stall-report-container-unique">
       <h2 className="stall-report-title-unique">Outlet Sales Report</h2>
 
       <div className="stall-report-filters-row-unique">
+        {/* Outlet Filter */}
         <div className="stall-report-dropdown-unique">
           <label htmlFor="stall-select">Select Outlet:</label>
           <select
@@ -312,6 +308,7 @@ const exportToExcel = () => {
           </select>
         </div>
 
+        {/* Sort By */}
         <div className="stall-report-dropdown-unique">
           <label htmlFor="sort-select">Sort By:</label>
           <select
@@ -321,9 +318,25 @@ const exportToExcel = () => {
           >
             <option value="stall">Outlet</option>
             <option value="date">Date</option>
+            <option value="payment">Payment Type</option>
           </select>
         </div>
 
+        {/* Payment Filter */}
+        <div className="stall-report-dropdown-unique">
+          <label htmlFor="payment-filter-select">Filter by Payment:</label>
+          <select
+            id="payment-filter-select"
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="Prepaid">Prepaid</option>
+            <option value="Postpaid">Postpaid</option>
+          </select>
+        </div>
+
+        {/* Company Filter */}
         <div className="stall-report-dropdown-unique">
           <label htmlFor="company-select">Filter by Company:</label>
           <select
@@ -341,6 +354,7 @@ const exportToExcel = () => {
         </div>
       </div>
 
+      {/* Date Filter */}
       <div className="stall-report-date-filter-row">
         <label htmlFor="date-filter-select" className="stall-report-date-label">
           Select Date Filter:
@@ -405,7 +419,6 @@ const exportToExcel = () => {
             <button onClick={exportToExcel}>Export to Excel</button>
           </div>
 
-          {/* ✅ Added scrollable wrapper */}
           <div className="stall-report-table-wrapper">
             <table className="stall-report-table-unique">
               <thead>
@@ -414,6 +427,7 @@ const exportToExcel = () => {
                   <th>Token</th>
                   <th>User Email</th>
                   <th>Date</th>
+                  <th>Payment Type</th>
                   <th>Item</th>
                   <th>Qty</th>
                   <th>Price</th>
@@ -440,6 +454,7 @@ const exportToExcel = () => {
                             timeZone: "Asia/Kolkata",
                           })}
                         </td>
+                        <td>{order.paymentType}</td>
                         <td>{item.name}</td>
                         <td>{item.quantity}</td>
                         <td>₹{item.price}</td>

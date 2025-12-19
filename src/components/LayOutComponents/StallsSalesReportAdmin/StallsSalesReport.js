@@ -140,12 +140,34 @@ export default function OutletSalesReportAdmin() {
     fetchOrders();
   }, [selectedOutletId, outlets, adminId, submitted, filter, customRange]);
 
-  // ✅ Sorting
-  const sortedOrders = [...orders].sort((a, b) =>
-    sortBy === "date"
-      ? new Date(a.created_datetime) - new Date(b.created_datetime)
-      : a.outlet_name.localeCompare(b.outlet_name)
-  );
+
+  // ✅ Sorting (EXTENDED — no existing logic removed)
+const sortedOrders = [...orders].sort((a, b) => {
+  if (sortBy === "date") {
+    return new Date(a.created_datetime) - new Date(b.created_datetime);
+  }
+
+  if (sortBy === "outlet" || sortBy === "company") {
+    return a.outlet_name.localeCompare(b.outlet_name);
+  }
+
+  // ✅ NEW: Sort by Prepaid
+  if (sortBy === "prepaid") {
+    const aPrepaid = a.paid_with_wallet || a.payment_verified;
+    const bPrepaid = b.paid_with_wallet || b.payment_verified;
+    return Number(bPrepaid) - Number(aPrepaid);
+  }
+
+  // ✅ NEW: Sort by Postpaid
+  if (sortBy === "postpaid") {
+    const aPostpaid = !(a.paid_with_wallet || a.payment_verified);
+    const bPostpaid = !(b.paid_with_wallet || b.payment_verified);
+    return Number(bPostpaid) - Number(aPostpaid);
+  }
+
+  return 0;
+});
+
 
   // ✅ Grand Total for Display
   const grandTotalPaid = sortedOrders.reduce((total, order) => {
@@ -245,20 +267,12 @@ const exportToExcel = () => {
       };
     }
   });
-
-  // Auto column widths
   const colWidths = header.map((h) => ({ wch: Math.max(h.length + 2, 15) }));
   ws["!cols"] = colWidths;
-
-  // Create workbook and append sheet
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
-
-  // Save Excel file
   XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
 };
-
-
   const handleSubmit = () => {
     if (!filter) {
       alert("Please select a date filter (Today, Week, Month, or Custom)");
@@ -270,28 +284,20 @@ const exportToExcel = () => {
     }
     setSubmitted(true);
   };
-
   return (
     <div className="outlet-report-container-unique">
       <h2 className="outlet-report-title-unique">Outlet Sales Report</h2>
-
-      {/* Filters */}
       <div className="outlet-report-filters-row-unique">
         <div className="outlet-report-dropdown-unique">
-          <label>Select Outlet:</label>
-          <select
-            value={selectedOutletId}
-            onChange={(e) => setSelectedOutletId(e.target.value)}
-          >
-            <option value="all">All Outlets</option>
-            {outlets.map((outlet) => (
-              <option key={outlet.id} value={outlet.id}>
-                {outlet.name}
-              </option>
-            ))}
+          <label>Sort By:</label>
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="outlet">Outlet</option>
+            <option value="company">Company Name</option> {/* ✅ NEW */}
+            <option value="date">Date</option>
+            <option value="prepaid">Prepaid</option> {/* ✅ NEW */}
+            <option value="postpaid">Postpaid</option> {/* ✅ NEW */}
           </select>
         </div>
-
         <div className="outlet-report-dropdown-unique">
           <label>Sort By:</label>
           <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
@@ -300,8 +306,6 @@ const exportToExcel = () => {
           </select>
         </div>
       </div>
-
-      {/* Date Filters */}
       <div className="outlet-report-date-filter-row">
         <label>Select Date Filter:</label>
         <select
@@ -315,9 +319,6 @@ const exportToExcel = () => {
           <option value="month">This Month</option>
           <option value="custom">Custom</option>
         </select>
-
-
-
         {filter === "custom" && (
           <div className="outlet-report-custom-date-inputs">
             <input
@@ -337,7 +338,6 @@ const exportToExcel = () => {
           </div>
         )}
       </div>
-
       <div className="outlet-report-submit-btn-container-unique">
         <button
           className="outlet-report-submit-btn-unique"
@@ -350,17 +350,13 @@ const exportToExcel = () => {
             <strong>Total Paid (Selected Range): </strong>
             <span className="total-value">₹{grandTotalPaid.toFixed(2)}</span>
           </div>
-
       {loading && <p>Loading orders...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {/* Results */}
       {sortedOrders.length > 0 && (
         <>
           <div className="outlet-report-export-btn-unique">
             <button onClick={exportToExcel}>Export to Excel</button>
           </div>
-
           <table className="outlet-report-table-unique">
             <thead>
               <tr>
@@ -410,9 +406,6 @@ const exportToExcel = () => {
               )}
             </tbody>
           </table>
-
-          {/* ✅ Total Paid Summary */}
-          
         </>
       )}
     </div>
