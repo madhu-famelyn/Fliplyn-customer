@@ -10,12 +10,10 @@ const OrdersModal = ({ groupId, onClose }) => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Date filters
+  // 🔹 Date filter
   const [dateFilter, setDateFilter] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
-  // 🔹 Payment filter (NEW)
+  // 🔹 Payment filter
   const [paymentFilter, setPaymentFilter] = useState("all"); // all | prepaid | postpaid
 
   const [submitted, setSubmitted] = useState(false);
@@ -26,12 +24,11 @@ const OrdersModal = ({ groupId, onClose }) => {
 
     setLoading(true);
     try {
-      const start =
-        startDate ||
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split("T")[0];
-      const end = endDate || new Date().toISOString().split("T")[0];
+      const start = new Date(
+        Date.now() - 30 * 24 * 60 * 60 * 1000
+      ).toISOString().split("T")[0];
+
+      const end = new Date().toISOString().split("T")[0];
 
       const url = `https://admin-aged-field-2794.fly.dev/wallet-group/${groupId}/orders/?start_date=${start}&end_date=${end}`;
 
@@ -93,7 +90,7 @@ const OrdersModal = ({ groupId, onClose }) => {
       );
     }
 
-    // 🔹 Payment filter (NEW)
+    // 🔹 Payment filter
     if (paymentFilter === "postpaid") {
       filtered = filtered.filter((o) => o.paid_with_wallet === true);
     }
@@ -119,13 +116,10 @@ const OrdersModal = ({ groupId, onClose }) => {
     0
   );
 
-  // ✅ Export to Excel (unchanged)
+  // ✅ Export to Excel
   const exportToExcel = () => {
-    let totalAmountPaid = 0;
-
     const rows = filteredOrders.flatMap((o) => {
       const { grandTotal } = calculateAmounts(o);
-      totalAmountPaid += grandTotal;
 
       return o.order_details.map((i) => ({
         Stall: o.stall_name || "N/A",
@@ -191,9 +185,7 @@ const OrdersModal = ({ groupId, onClose }) => {
           </button>
         </div>
 
-        {/* ✅ Table */}
         {loading && <p>Loading orders...</p>}
-
         {!loading && submitted && filteredOrders.length === 0 && (
           <p>No orders found.</p>
         )}

@@ -7,7 +7,7 @@ import "./stallsSalesReport.css";
 export default function OutletSalesReportAdmin() {
   const { adminId } = useAuth();
   const [outlets, setOutlets] = useState([]);
-  const [selectedOutletId, setSelectedOutletId] = useState("all");
+  const [selectedOutletId] = useState("all");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
