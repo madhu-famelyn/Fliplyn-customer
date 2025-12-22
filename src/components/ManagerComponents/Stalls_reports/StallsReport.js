@@ -287,36 +287,44 @@ const exportToExcel = () => {
           </select>
         </div>
 
-        {/* Payment Filter */}
-        <div className="stall-report-dropdown-unique">
-          <label htmlFor="payment-filter-select">Filter by Payment:</label>
-          <select
-            id="payment-filter-select"
-            value={paymentFilter}
-            onChange={(e) => setPaymentFilter(e.target.value)}
-          >
-            <option value="all">All</option>
-            <option value="Prepaid">Prepaid</option>
-            <option value="Postpaid">Postpaid</option>
-          </select>
-        </div>
 
-        {/* Company Filter */}
-        <div className="stall-report-dropdown-unique">
-          <label htmlFor="company-select">Filter by Company:</label>
-          <select
-            id="company-select"
-            value={companyFilter}
-            onChange={(e) => setCompanyFilter(e.target.value)}
-          >
-            <option value="all">All Companies</option>
-            {companies.map((company) => (
-              <option key={company} value={company}>
-                {company}
-              </option>
-            ))}
-          </select>
-        </div>
+{/* Payment Filter */}
+<div className="stall-report-dropdown-unique">
+  <label htmlFor="payment-filter-select">Filter by Payment:</label>
+  <select
+    id="payment-filter-select"
+    value={paymentFilter}
+    onChange={(e) => setPaymentFilter(e.target.value)}
+    disabled={orders.length === 0}
+    className={orders.length === 0 ? "disabled-filter" : ""}
+  >
+    <option value="all">All</option>
+    <option value="Prepaid">Prepaid</option>
+    <option value="Postpaid">Postpaid</option>
+  </select>
+</div>
+
+{/* Company Filter */}
+<div className="stall-report-dropdown-unique">
+  <label htmlFor="company-select">Filter by Company:</label>
+  <select
+    id="company-select"
+    value={companyFilter}
+    onChange={(e) => setCompanyFilter(e.target.value)}
+    disabled={orders.length === 0}
+    className={orders.length === 0 ? "disabled-filter" : ""}
+  >
+    <option value="all">All Companies</option>
+    {companies.map((company) => (
+      <option key={company} value={company}>
+        {company}
+      </option>
+    ))}
+  </select>
+</div>
+
+
+
       </div>
 
       {/* Date Filter */}
@@ -388,10 +396,10 @@ const exportToExcel = () => {
             <table className="stall-report-table-unique">
               <thead>
                 <tr>
-                  <th>Outlet</th>
-                  <th>Token</th>
-                  <th>User Email</th>
                   <th>Date</th>
+                  <th>Token</th>
+                  <th>Outlet</th>
+                  <th>User Email</th>
                   <th>Payment Type</th>
                   <th>Item</th>
                   <th>Qty</th>
@@ -417,14 +425,15 @@ const exportToExcel = () => {
 
       return (
         <tr key={`${order.id}-${item.item_id}`}>
-          <td>{order.stall_name}</td>
-          <td>{order.token_number}</td>
-          <td>{order.user_email}</td>
-          <td>
+           <td>
             {new Date(order.created_datetime).toLocaleString("en-IN", {
               timeZone: "Asia/Kolkata",
             })}
           </td>
+          <td>{order.token_number}</td>
+          <td>{order.stall_name}</td>
+          <td>{order.user_email}</td>
+         
           <td>{order.paymentType}</td>
           <td>{item.name}</td>
           <td>{item.quantity}</td>

@@ -1,4 +1,3 @@
-// src/Component/Pages/StallsReport/StallSalesReportBM.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useBuildingManagerAuth } from "../AuthContex/BuildingManagerContext";
@@ -13,11 +12,17 @@ export default function StallSalesReportBM() {
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("");
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
-  // const [companyFilter, setCompanyFilter] = useState("all");
   const [sortBy, setSortBy] = useState("stall");
+  const [paymentFilter, setPaymentFilter] = useState("all"); // New filter
   const [submitted, setSubmitted] = useState(false);
 
-  // ✅ Fetch stalls for manager's building
+  const getCompanyName = (email) => {
+    if (!email) return "-";
+    const domain = email.split("@")[1];
+    if (!domain) return "-";
+    return domain.split(".")[0]; // removes .com, .in, .co.in etc
+  };
+
   useEffect(() => {
     if (!manager?.building_id || !token) return;
 
@@ -37,7 +42,6 @@ export default function StallSalesReportBM() {
     fetchStalls();
   }, [manager, token]);
 
-  // ✅ Fetch orders after submission
   useEffect(() => {
     if (!manager?.building_id || !submitted || !token) return;
 
@@ -125,6 +129,14 @@ export default function StallSalesReportBM() {
           }
         }
 
+        // Apply payment filter here
+        if (paymentFilter !== "all") {
+          fetchedOrders = fetchedOrders.filter((o) => {
+            const type = o.paid_with_wallet ? "Postpaid" : "Prepaid";
+            return type === paymentFilter;
+          });
+        }
+
         setOrders(fetchedOrders);
         localStorage.setItem("stallOrdersBM", JSON.stringify(fetchedOrders));
       } catch (err) {
@@ -138,18 +150,16 @@ export default function StallSalesReportBM() {
     };
 
     fetchOrders();
-  }, [selectedStallId, stalls, manager, submitted, filter, customRange, token]);
+  }, [selectedStallId, stalls, manager, submitted, filter, customRange, token, paymentFilter]);
 
-  const sortedOrders = [...orders].sort((a, b) =>
-    sortBy === "date"
-      ? new Date(a.created_datetime) - new Date(b.created_datetime)
-      : a.stall_name.localeCompare(b.stall_name)
-  );
+  const sortedOrders = [...orders].sort((a, b) => {
+    if (sortBy === "date") return new Date(a.created_datetime) - new Date(b.created_datetime);
+    if (sortBy === "company") return getCompanyName(a.user_email).localeCompare(getCompanyName(b.user_email));
+    return a.stall_name.localeCompare(b.stall_name); // default stall
+  });
 
   const totalSales = sortedOrders.reduce((acc, order) => {
-    const totalPaid =
-      order.order_details.reduce((sum, d) => sum + d.total, 0) +
-      (order.round_off || 0);
+    const totalPaid = order.order_details.reduce((sum, d) => sum + d.total, 0) + (order.round_off || 0);
     return acc + totalPaid;
   }, 0);
 
@@ -167,24 +177,19 @@ export default function StallSalesReportBM() {
         GST: order.total_gst,
         "Round Off": index === 0 ? order.round_off : "",
         "Total Paid": index === 0 ? order.order_details.reduce((sum, d) => sum + d.total, 0) + (order.round_off || 0) : "",
+        Payment: item.paid_with_wallet ? "Postpaid" : "Prepaid",
+        Company: getCompanyName(order.user_email),
       }))
     );
 
-    // Add grand total row
-    rows.push({
-      "Total Paid": "Grand Total: ₹" + totalSales.toFixed(2),
-    });
+    rows.push({ "Total Paid": "Grand Total: ₹" + totalSales.toFixed(2) });
 
     const ws = XLSX.utils.json_to_sheet(rows);
-
-    // Make header bold
     const range = XLSX.utils.decode_range(ws["!ref"]);
     for (let C = range.s.c; C <= range.e.c; ++C) {
       const cell = ws[XLSX.utils.encode_cell({ r: 0, c: C })];
       if (cell) cell.s = { font: { bold: true } };
     }
-
-    // Make grand total bold
     const lastRow = range.e.r + 1;
     ws[XLSX.utils.encode_cell({ r: lastRow, c: range.e.c })].s = { font: { bold: true } };
 
@@ -235,6 +240,20 @@ export default function StallSalesReportBM() {
           >
             <option value="stall">Outlet</option>
             <option value="date">Date</option>
+            <option value="company">Company</option>
+          </select>
+        </div>
+
+        <div className="stall-report-dropdown-unique">
+          <label htmlFor="payment-select">Payment Type:</label>
+          <select
+            id="payment-select"
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="Prepaid">Prepaid</option>
+            <option value="Postpaid">Postpaid</option>
           </select>
         </div>
       </div>
@@ -309,6 +328,8 @@ export default function StallSalesReportBM() {
             <thead>
               <tr>
                 <th>Outlet</th>
+                <th>Company</th>
+                <th>Payment</th>
                 <th>Token</th>
                 <th>Date</th>
                 <th>Item</th>
@@ -334,9 +355,14 @@ export default function StallSalesReportBM() {
                       ? order.order_details.reduce((sum, d) => sum + d.total, 0) +
                         (order.round_off || 0)
                       : "";
+                  const companyName = getCompanyName(order.user_email);
+                  const paymentType = order.paid_with_wallet ? "Postpaid" : "Prepaid";
+
                   return (
                     <tr key={`${order.id}-${item.item_id}`}>
                       <td>{order.stall_name}</td>
+                      <td>{companyName}</td>
+                      <td>{paymentType}</td>
                       <td>{order.token_number}</td>
                       <td>
                         {new Date(order.created_datetime).toLocaleString("en-IN", {

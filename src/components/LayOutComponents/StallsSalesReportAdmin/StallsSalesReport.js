@@ -15,6 +15,9 @@ export default function OutletSalesReportAdmin() {
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [sortBy, setSortBy] = useState("outlet");
   const [submitted, setSubmitted] = useState(false);
+  const [companyFilter, setCompanyFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
+
 
   // ✅ Fetch outlets initially
   useEffect(() => {
@@ -43,131 +46,161 @@ export default function OutletSalesReportAdmin() {
       try {
         let fetchedOrders = [];
 
-        const fetchOrdersByOutlet = async (outlet) => {
-          const baseUrl = "https://admin-aged-field-2794.fly.dev/orders";
-          const now = new Date();
-          let startDate, endDate;
 
-          const getUTCStartEndForISTDay = (date) => {
-            const istDate = new Date(
-              date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-            );
-            const istStart = new Date(istDate);
-            istStart.setHours(0, 0, 0, 0);
-            const istEnd = new Date(istStart);
-            istEnd.setDate(istEnd.getDate() + 1);
-            return { start: istStart.toISOString(), end: istEnd.toISOString() };
-          };
+      const fetchOrdersByOutlet = async (outlet) => {
+        const baseUrl = "https://admin-aged-field-2794.fly.dev/orders";
+        const now = new Date();
+        let startDate, endDate;
 
-          if (filter === "today") {
-            const { start, end } = getUTCStartEndForISTDay(now);
-            startDate = start;
-            endDate = end;
-          } else if (filter === "week") {
-            const istNow = new Date(
-              now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-            );
-            const startOfWeek = new Date(istNow);
-            startOfWeek.setDate(istNow.getDate() - istNow.getDay());
-            startOfWeek.setHours(0, 0, 0, 0);
-            const endOfWeek = new Date(istNow);
-            endOfWeek.setHours(23, 59, 59, 999);
-            startDate = startOfWeek.toISOString();
-            endDate = endOfWeek.toISOString();
-          } else if (filter === "month") {
-            const istNow = new Date(
-              now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-            );
-            const startOfMonth = new Date(
-              istNow.getFullYear(),
-              istNow.getMonth(),
-              1
-            );
-            startOfMonth.setHours(0, 0, 0, 0);
-            const endOfMonth = new Date(istNow);
-            endOfMonth.setHours(23, 59, 59, 999);
-            startDate = startOfMonth.toISOString();
-            endDate = endOfMonth.toISOString();
-          } else if (filter === "custom") {
-            if (!customRange.start || !customRange.end) return [];
-            const start = new Date(customRange.start + "T00:00:00");
-            const end = new Date(customRange.end + "T23:59:59");
-            startDate = start.toISOString();
-            endDate = end.toISOString();
-          } else return [];
-
-          try {
-            const res = await axios.get(
-              `${baseUrl}/by-stall/${outlet.id}/range`,
-              { params: { start_date: startDate, end_date: endDate } }
-            );
-            return res.data.map((order) => ({
-              ...order,
-              outlet_name: outlet.name,
-            }));
-          } catch (err) {
-            if (err.response?.status === 404) return [];
-            throw err;
-          }
+        const getUTCStartEndForISTDay = (date) => {
+          const istDate = new Date(
+            date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+          );
+          const istStart = new Date(istDate);
+          istStart.setHours(0, 0, 0, 0);
+          const istEnd = new Date(istStart);
+          istEnd.setDate(istEnd.getDate() + 1);
+          return { start: istStart.toISOString(), end: istEnd.toISOString() };
         };
 
-        if (selectedOutletId === "all") {
-          for (let outlet of outlets) {
-            const outletOrders = await fetchOrdersByOutlet(outlet);
-            fetchedOrders.push(...outletOrders);
-          }
-        } else {
-          const selectedOutlet = outlets.find(
-            (s) => s.id === selectedOutletId
+        if (filter === "today") {
+          const { start, end } = getUTCStartEndForISTDay(now);
+          startDate = start;
+          endDate = end;
+        } else if (filter === "week") {
+          const istNow = new Date(
+            now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
           );
-          if (selectedOutlet) {
-            const outletOrders = await fetchOrdersByOutlet(selectedOutlet);
-            fetchedOrders.push(...outletOrders);
-          }
+          const startOfWeek = new Date(istNow);
+          startOfWeek.setDate(istNow.getDate() - istNow.getDay());
+          startOfWeek.setHours(0, 0, 0, 0);
+          const endOfWeek = new Date(istNow);
+          endOfWeek.setHours(23, 59, 59, 999);
+          startDate = startOfWeek.toISOString();
+          endDate = endOfWeek.toISOString();
+        } else if (filter === "month") {
+          const istNow = new Date(
+            now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+          );
+          const startOfMonth = new Date(
+            istNow.getFullYear(),
+            istNow.getMonth(),
+            1
+          );
+          startOfMonth.setHours(0, 0, 0, 0);
+          const endOfMonth = new Date(istNow);
+          endOfMonth.setHours(23, 59, 59, 999);
+          startDate = startOfMonth.toISOString();
+          endDate = endOfMonth.toISOString();
+        } else if (filter === "custom") {
+          if (!customRange.start || !customRange.end) return [];
+          const start = new Date(customRange.start + "T00:00:00");
+          const end = new Date(customRange.end + "T23:59:59");
+          startDate = start.toISOString();
+          endDate = end.toISOString();
+        } else return [];
+
+        try {
+          const res = await axios.get(
+            `${baseUrl}/by-stall/${outlet.id}/range`,
+            { params: { start_date: startDate, end_date: endDate } }
+          );
+
+          return res.data.map((order) => ({
+            ...order,
+            outlet_name: outlet.name,
+
+            // ✅ ONLY ADDED LOGIC
+            paymentType: order.paid_with_wallet ? "Postpaid" : "Prepaid",
+            companyName: getCompanyName(order.user_email),
+          }));
+        } catch (err) {
+          if (err.response?.status === 404) return [];
+          throw err;
         }
-
-        setOrders(fetchedOrders);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch orders.");
-        setOrders([]);
-      } finally {
-        setLoading(false);
-        setSubmitted(false);
-      }
-    };
-
-    fetchOrders();
-  }, [selectedOutletId, outlets, adminId, submitted, filter, customRange]);
+      };
 
 
-  // ✅ Sorting (EXTENDED — no existing logic removed)
-const sortedOrders = [...orders].sort((a, b) => {
+
+
+
+
+              if (selectedOutletId === "all") {
+                for (let outlet of outlets) {
+                  const outletOrders = await fetchOrdersByOutlet(outlet);
+                  fetchedOrders.push(...outletOrders);
+                }
+              } else {
+                const selectedOutlet = outlets.find(
+                  (s) => s.id === selectedOutletId
+                );
+                if (selectedOutlet) {
+                  const outletOrders = await fetchOrdersByOutlet(selectedOutlet);
+                  fetchedOrders.push(...outletOrders);
+                }
+              }
+
+              setOrders(fetchedOrders);
+            } catch (err) {
+              console.error(err);
+              setError("Failed to fetch orders.");
+              setOrders([]);
+            } finally {
+              setLoading(false);
+              setSubmitted(false);
+            }
+          };
+
+          fetchOrders();
+        }, [selectedOutletId, outlets, adminId, submitted, filter, customRange]);
+
+
+      const getCompanyName = (email) => {
+        if (!email) return "Unknown";
+        return email.split("@")[1]?.split(".")[0] || "Unknown";
+      };
+        
+
+      const companies = [
+  ...new Set(orders.map((o) => o.companyName).filter(Boolean)),
+];
+
+
+      const filteredOrders = orders.filter((order) => {
+  const companyMatch =
+    companyFilter === "all" || order.companyName === companyFilter;
+
+  const paymentMatch =
+    paymentFilter === "all" || order.paymentType === paymentFilter;
+
+  return companyMatch && paymentMatch;
+});
+
+const sortedOrders = [...filteredOrders].sort((a, b) => {
   if (sortBy === "date") {
     return new Date(a.created_datetime) - new Date(b.created_datetime);
   }
 
-  if (sortBy === "outlet" || sortBy === "company") {
+  if (sortBy === "outlet") {
     return a.outlet_name.localeCompare(b.outlet_name);
   }
 
-  // ✅ NEW: Sort by Prepaid
-  if (sortBy === "prepaid") {
-    const aPrepaid = a.paid_with_wallet || a.payment_verified;
-    const bPrepaid = b.paid_with_wallet || b.payment_verified;
-    return Number(bPrepaid) - Number(aPrepaid);
+  if (sortBy === "company") {
+    return a.companyName.localeCompare(b.companyName);
   }
 
-  // ✅ NEW: Sort by Postpaid
+  if (sortBy === "prepaid") {
+    return a.paymentType === "Prepaid" ? -1 : 1;
+  }
+
   if (sortBy === "postpaid") {
-    const aPostpaid = !(a.paid_with_wallet || a.payment_verified);
-    const bPostpaid = !(b.paid_with_wallet || b.payment_verified);
-    return Number(bPostpaid) - Number(aPostpaid);
+    return a.paymentType === "Postpaid" ? -1 : 1;
   }
 
   return 0;
 });
 
+        // ✅ Sorting (EXTENDED — no existing logic removed
 
   // ✅ Grand Total for Display
   const grandTotalPaid = sortedOrders.reduce((total, order) => {
@@ -292,11 +325,11 @@ const exportToExcel = () => {
           <label>Sort By:</label>
           <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             <option value="outlet">Outlet</option>
-            <option value="company">Company Name</option> {/* ✅ NEW */}
             <option value="date">Date</option>
-            <option value="prepaid">Prepaid</option> {/* ✅ NEW */}
-            <option value="postpaid">Postpaid</option> {/* ✅ NEW */}
+
+
           </select>
+    
         </div>
         <div className="outlet-report-dropdown-unique">
           <label>Sort By:</label>
@@ -319,6 +352,34 @@ const exportToExcel = () => {
           <option value="month">This Month</option>
           <option value="custom">Custom</option>
         </select>
+              <div className="outlet-report-dropdown-unique">
+          <label>Filter by Company:</label>
+          <select
+            value={companyFilter}
+            onChange={(e) => setCompanyFilter(e.target.value)}
+          >
+            <option value="all">All Companies</option>
+            {companies.map((company) => (
+              <option key={company} value={company}>
+                {company}
+              </option>
+            ))}
+          </select>
+      </div>
+
+<div className="outlet-report-dropdown-unique">
+  <label>Filter by Payment:</label>
+  <select
+    value={paymentFilter}
+    onChange={(e) => setPaymentFilter(e.target.value)}
+  >
+    <option value="all">All</option>
+    <option value="Prepaid">Prepaid</option>
+    <option value="Postpaid">Postpaid</option>
+  </select>
+</div>
+
+
         {filter === "custom" && (
           <div className="outlet-report-custom-date-inputs">
             <input
@@ -360,10 +421,10 @@ const exportToExcel = () => {
           <table className="outlet-report-table-unique">
             <thead>
               <tr>
-                <th>Outlet</th>
-                <th>Token</th>
-                <th>User Email</th>
                 <th>Date</th>
+                <th>Token</th>
+                <th>Outlet</th>
+                <th>User Email</th>
                 <th>Item</th>
                 <th>Qty</th>
                 <th>Price</th>
@@ -383,15 +444,15 @@ const exportToExcel = () => {
                     (order.round_off || 0);
                   return (
                     <tr key={`${order.id}-${item.item_id}`}>
-                      <td>{order.outlet_name}</td>
-                      <td>{order.token_number}</td>
-                      <td>{order.user_email}</td>
-                      <td>
+                                            <td>
                         {new Date(order.created_datetime).toLocaleString(
                           "en-IN",
                           { timeZone: "Asia/Kolkata" }
                         )}
                       </td>
+                      <td>{order.token_number}</td>
+                      <td>{order.outlet_name}</td>
+                      <td>{order.user_email}</td>
                       <td>{item.name}</td>
                       <td>{item.quantity}</td>
                       <td>₹{item.price}</td>

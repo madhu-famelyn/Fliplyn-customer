@@ -6,19 +6,18 @@ import "./Reports.css";
 
 const ReportsPage = () => {
   const { stallId } = useParams();
+
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState("today");
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [stallName, setStallName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ NEW FILTER STATES
+  // Extra filters
   const [selectedCompany, setSelectedCompany] = useState("all");
   const [selectedPayment, setSelectedPayment] = useState("all");
 
-  // ------------------------
-  // Date helpers
-  // ------------------------
+  /* ================= DATE HELPERS ================= */
   const formatDate = (date) => date.toISOString().split("T")[0];
 
   const getDateRange = useCallback(() => {
@@ -54,14 +53,13 @@ const ReportsPage = () => {
     return { start: formatDate(today), end: formatDate(end) };
   }, [filter, customRange]);
 
-  // ------------------------
-  // Fetch Orders
-  // ------------------------
+  /* ================= FETCH ORDERS ================= */
   const fetchOrders = useCallback(async () => {
     if (!stallId) return;
-    const { start, end } = getDateRange();
 
+    const { start, end } = getDateRange();
     setLoading(true);
+
     try {
       const res = await axios.get(
         `https://admin-aged-field-2794.fly.dev/orders/by-stall/${stallId}/range`,
@@ -86,9 +84,7 @@ const ReportsPage = () => {
     fetchOrders();
   }, [stallId, filter, customRange, fetchOrders]);
 
-  // ------------------------
-  // Company List (email domain)
-  // ------------------------
+  /* ================= COMPANY LIST ================= */
   const companyList = useMemo(() => {
     const set = new Set();
     orders.forEach((o) => {
@@ -98,50 +94,55 @@ const ReportsPage = () => {
     return Array.from(set).sort();
   }, [orders]);
 
-  // ------------------------
-  // Filtered Orders
-  // ------------------------
+  /* ================= FILTERED ORDERS ================= */
   const filteredOrders = useMemo(() => {
     return orders.filter((o) => {
       const company = o.user_email?.split("@")[1];
       const paymentType = o.paid_with_wallet ? "Postpaid" : "Prepaid";
 
-      if (selectedCompany !== "all" && company !== selectedCompany) {
+      if (selectedCompany !== "all" && company !== selectedCompany) return false;
+      if (selectedPayment !== "all" && paymentType !== selectedPayment)
         return false;
-      }
-
-      if (selectedPayment !== "all" && paymentType !== selectedPayment) {
-        return false;
-      }
 
       return true;
     });
   }, [orders, selectedCompany, selectedPayment]);
 
-  // ------------------------
-  // Totals (AFTER FILTER)
-  // ------------------------
-  const totalAmount = filteredOrders.reduce(
-    (sum, o) => sum + (o.total_amount || 0),
+  /* ================= CALCULATIONS ================= */
+
+  // Net amount per order (price × qty)
+  const getOrderNetAmount = (order) =>
+    order.order_details.reduce(
+      (sum, i) => sum + i.price * i.quantity,
+      0
+    );
+
+  const totalNetAmount = filteredOrders.reduce(
+    (sum, o) => sum + getOrderNetAmount(o),
     0
   );
+
   const totalGST = filteredOrders.reduce(
     (sum, o) => sum + (o.total_gst || 0),
     0
   );
+
   const totalRoundOff = filteredOrders.reduce(
     (sum, o) => sum + (o.round_off || 0),
     0
   );
 
-  // ------------------------
-  // UI
-  // ------------------------
+  const totalAmount = filteredOrders.reduce(
+    (sum, o) => sum + (o.total_amount || 0),
+    0
+  );
+
+  /* ================= UI ================= */
   return (
     <div className="reports-container">
       <h1>Reports for Stall: {stallName || "Loading..."}</h1>
 
-      {/* Filters */}
+      {/* FILTERS */}
       <div className="filter-controls">
         <label>Date:</label>
         <select
@@ -159,7 +160,6 @@ const ReportsPage = () => {
           <option value="custom">Custom</option>
         </select>
 
-        {/* Company Filter */}
         <label>Company:</label>
         <select
           value={selectedCompany}
@@ -173,7 +173,6 @@ const ReportsPage = () => {
           ))}
         </select>
 
-        {/* Payment Filter */}
         <label>Payment:</label>
         <select
           value={selectedPayment}
@@ -218,7 +217,8 @@ const ReportsPage = () => {
                   <th>Company</th>
                   <th>Payment</th>
                   <th>Token</th>
-                  <th>Items</th>
+                  <th>Items (Price)</th>
+                  <th>Net Amount</th>
                   <th>Total GST</th>
                   <th>Round Off</th>
                   <th>Total Amount</th>
@@ -227,17 +227,20 @@ const ReportsPage = () => {
               <tbody>
                 {filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan="9" style={{ textAlign: "center" }}>
+                    <td colSpan="10" style={{ textAlign: "center" }}>
                       No orders found.
                     </td>
                   </tr>
                 ) : (
                   filteredOrders.map((o) => {
                     const d = new Date(o.created_datetime);
-                    const company = o.user_email?.split("@")[1] || "-";
+                    const company =
+                      o.user_email?.split("@")[1] || "-";
                     const payment = o.paid_with_wallet
                       ? "Postpaid"
                       : "Prepaid";
+
+                    const netAmount = getOrderNetAmount(o);
 
                     return (
                       <tr key={o.id}>
@@ -246,14 +249,21 @@ const ReportsPage = () => {
                         <td>{company}</td>
                         <td>{payment}</td>
                         <td>{o.token_number}</td>
+
+                        {/* ITEMS + PRICE */}
                         <td>
                           {o.order_details.map((i) => (
-                            <div key={i.item_id}>{i.name}</div>
+                            <div key={i.item_id}>
+                              {i.name} × {i.quantity} — ₹
+                              {i.price * i.quantity}
+                            </div>
                           ))}
                         </td>
-                        <td>₹{o.total_gst || 0}</td>
-                        <td>₹{o.round_off || 0}</td>
-                        <td>₹{o.total_amount}</td>
+
+                        <td>₹{netAmount.toFixed(2)}</td>
+                        <td>₹{o.total_gst?.toFixed(2) || "0.00"}</td>
+                        <td>₹{o.round_off?.toFixed(2) || "0.00"}</td>
+                        <td>₹{o.total_amount.toFixed(2)}</td>
                       </tr>
                     );
                   })
@@ -262,8 +272,10 @@ const ReportsPage = () => {
             </table>
           </div>
 
+          {/* TOTAL SUMMARY */}
           <div className="totals-summary">
             <h2>Total Summary</h2>
+            <p>Net Amount: ₹{totalNetAmount.toFixed(2)}</p>
             <p>Total GST: ₹{totalGST.toFixed(2)}</p>
             <p>Round Off: ₹{totalRoundOff.toFixed(2)}</p>
             <h2>Total Amount: ₹{totalAmount.toFixed(2)}</h2>
