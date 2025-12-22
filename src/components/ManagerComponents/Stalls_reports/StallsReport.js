@@ -188,103 +188,68 @@ export default function StallSalesReport() {
     setSubmitted(true);
   };
 
-  const exportToExcel = () => {
-    let totalNetAmount = 0;
-    let totalGross = 0;
-    let totalGST = 0;
-    let totalRoundOff = 0;
-    let totalPaidAll = 0;
+const exportToExcel = () => {
+  let totalNetAmount = 0;
+  let totalGross = 0;
+  let totalGST = 0;
+  let totalRoundOff = 0;
+  let totalPaidAll = 0;
 
-    const rows = sortedOrders.flatMap((order) =>
-      order.order_details.map((item, index) => {
-        const netAmount = item.quantity * item.price;
-        const totalPaid =
-          order.order_details.reduce((sum, d) => sum + d.total, 0) +
-          (order.round_off || 0);
+  const rows = sortedOrders.flatMap((order) =>
+    order.order_details.map((item, index) => {
+      const netAmount = item.quantity * item.price;
+      const totalPaid =
+        order.order_details.reduce((sum, d) => sum + d.total, 0) +
+        (order.round_off || 0);
 
-        totalNetAmount += netAmount;
-        totalGross += item.total;
-        if (index === 0) {
-          totalGST += order.total_gst || 0;
-          totalRoundOff += order.round_off || 0;
-          totalPaidAll += totalPaid;
-        }
+      totalNetAmount += netAmount;
+      totalGross += item.total;
 
-        return {
-          Outlet: order.stall_name,
-          Token: order.token_number,
-          "User Email": order.user_email,
-          Date: new Date(order.created_datetime).toLocaleString("en-IN"),
-          "Payment Type": order.paymentType,
-          Item: item.name,
-          Qty: item.quantity,
-          Price: item.price,
-          "Net Amount": netAmount.toFixed(2),
-          "Gross Total": item.total,
-          GST: index === 0 ? order.total_gst || 0 : "",
-          "Round Off": index === 0 ? order.round_off || 0 : "",
-          "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
-        };
-      })
-    );
-
-    rows.push({
-      Outlet: "",
-      Token: "",
-      "User Email": "",
-      Date: "",
-      "Payment Type": "",
-      Item: "Grand Total",
-      Qty: "",
-      Price: "",
-      "Net Amount": totalNetAmount.toFixed(2),
-      "Gross Total": totalGross.toFixed(2),
-      GST: totalGST.toFixed(2),
-      "Round Off": totalRoundOff.toFixed(2),
-      "Total Paid": totalPaidAll.toFixed(2),
-    });
-
-    const ws = XLSX.utils.json_to_sheet(rows);
-
-    const header = Object.keys(rows[0]);
-    header.forEach((col, idx) => {
-      const cellRef = XLSX.utils.encode_cell({ r: 0, c: idx });
-      if (ws[cellRef]) {
-        ws[cellRef].s = {
-          font: { bold: true, color: { rgb: "000000" }, sz: 12 },
-          alignment: { horizontal: "center", vertical: "center" },
-          border: {
-            top: { style: "thin", color: { rgb: "000000" } },
-            bottom: { style: "thin", color: { rgb: "000000" } },
-            left: { style: "thin", color: { rgb: "000000" } },
-            right: { style: "thin", color: { rgb: "000000" } },
-          },
-        };
+      if (index === 0) {
+        totalGST += order.total_gst || 0;
+        totalRoundOff += order.round_off || 0;
+        totalPaidAll += totalPaid;
       }
-    });
 
-    const lastRowIndex = rows.length;
-    header.forEach((col, idx) => {
-      const cellRef = XLSX.utils.encode_cell({ r: lastRowIndex, c: idx });
-      if (ws[cellRef]) {
-        ws[cellRef].s = {
-          font: { bold: true, color: { rgb: "000000" }, sz: 12 },
-          alignment: { horizontal: "center", vertical: "center" },
-          border: {
-            top: { style: "thin", color: { rgb: "000000" } },
-            bottom: { style: "thin", color: { rgb: "000000" } },
-            left: { style: "thin", color: { rgb: "000000" } },
-            right: { style: "thin", color: { rgb: "000000" } },
-          },
-        };
-      }
-    });
+      return {
+        Outlet: order.stall_name,
+        Token: order.token_number,
+        "User Email": order.user_email,
+        Date: new Date(order.created_datetime).toLocaleString("en-IN"),
+        "Payment Type": order.paymentType,
+        Item: item.name,
+        Qty: item.quantity,
+        Price: item.price,
+        "Net Amount": netAmount.toFixed(2),
+        "Gross Total": item.total.toFixed(2),
+        GST: index === 0 ? (order.total_gst || 0).toFixed(2) : "",
+        "Round Off": index === 0 ? (order.round_off || 0).toFixed(2) : "",
+        "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
+      };
+    })
+  );
 
-    ws["!cols"] = header.map((h) => ({ wch: Math.max(h.length + 2, 15) }));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
-    XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
-  };
+  rows.push({
+    Outlet: "",
+    Token: "",
+    "User Email": "",
+    Date: "",
+    "Payment Type": "",
+    Item: "GRAND TOTAL",
+    Qty: "",
+    Price: "",
+    "Net Amount": totalNetAmount.toFixed(2),
+    "Gross Total": totalGross.toFixed(2),
+    GST: totalGST.toFixed(2),
+    "Round Off": totalRoundOff.toFixed(2),
+    "Total Paid": totalPaidAll.toFixed(2),
+  });
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Outlet Sales Report");
+  XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
+};
 
   return (
     <div className="stall-report-container-unique">
@@ -438,36 +403,49 @@ export default function StallSalesReport() {
                   <th>Total Paid</th>
                 </tr>
               </thead>
-              <tbody>
-                {sortedOrders.map((order) =>
-                  order.order_details.map((item, index) => {
-                    const totalPaid =
-                      order.order_details.reduce((sum, d) => sum + d.total, 0) +
-                      (order.round_off || 0);
-                    return (
-                      <tr key={`${order.id}-${item.item_id}`}>
-                        <td>{order.stall_name}</td>
-                        <td>{order.token_number}</td>
-                        <td>{order.user_email}</td>
-                        <td>
-                          {new Date(order.created_datetime).toLocaleString("en-IN", {
-                            timeZone: "Asia/Kolkata",
-                          })}
-                        </td>
-                        <td>{order.paymentType}</td>
-                        <td>{item.name}</td>
-                        <td>{item.quantity}</td>
-                        <td>₹{item.price}</td>
-                        <td>₹{(item.quantity * item.price).toFixed(2)}</td>
-                        <td>₹{item.total}</td>
-                        <td>₹{order.total_gst}</td>
-                        <td>{index === 0 ? `₹${order.round_off}` : ""}</td>
-                        <td>{index === 0 ? `₹${totalPaid.toFixed(2)}` : ""}</td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
+
+
+
+
+
+<tbody>
+  {sortedOrders.map((order) =>
+    order.order_details.map((item, index) => {
+      const totalPaid =
+        order.order_details.reduce((sum, d) => sum + d.total, 0) +
+        (order.round_off || 0);
+
+      return (
+        <tr key={`${order.id}-${item.item_id}`}>
+          <td>{order.stall_name}</td>
+          <td>{order.token_number}</td>
+          <td>{order.user_email}</td>
+          <td>
+            {new Date(order.created_datetime).toLocaleString("en-IN", {
+              timeZone: "Asia/Kolkata",
+            })}
+          </td>
+          <td>{order.paymentType}</td>
+          <td>{item.name}</td>
+          <td>{item.quantity}</td>
+          <td>₹{item.price}</td>
+          <td>₹{(item.quantity * item.price).toFixed(2)}</td>
+          <td>₹{item.total.toFixed(2)}</td>
+
+          {/* ✅ GST ONLY ON FIRST ITEM */}
+          <td>{index === 0 ? `₹${order.total_gst?.toFixed(2)}` : ""}</td>
+
+          {/* ✅ ROUND OFF ONLY ON FIRST ITEM */}
+          <td>{index === 0 ? `₹${order.round_off?.toFixed(2)}` : ""}</td>
+
+          {/* ✅ TOTAL PAID ONLY ON FIRST ITEM */}
+          <td>{index === 0 ? `₹${totalPaid.toFixed(2)}` : ""}</td>
+        </tr>
+      );
+    })
+  )}
+</tbody>
+
             </table>
           </div>
         </>
