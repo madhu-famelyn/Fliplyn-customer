@@ -1,252 +1,269 @@
-/* ========================
-   General resets & fonts
-======================== */
-body {
-  font-family: "Arial", sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f5f5f5;
-  color: #333;
+.vix-root {
+  background-color: #FFFBF6;
 }
 
-p {
-  margin: 0.5rem 0;
+.vix-header {
+  margin-top: 11vh;
+  margin-bottom: 16px;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding-top: 1vh;
 }
 
-/* ========================
-   TokenHeader & Navbar
-======================== */
-.nav-bar {
+.vix-title-row {
   display: flex;
-  justify-content: flex-end;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #ddd;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.view-reports-btn {
-  padding: 0.5rem 1rem;
-  background-color: #d87a1d;
-  color: white;
-  margin-top: 12vh;
+.vix-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+}
+
+
+.vix-desc {
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.vix-timings {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.vix-open,
+.vix-close {
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+}
+
+.vix-open {
+  background: #fff3cd;
+}
+
+.vix-close {
+  background: #ffe2d6;
+  color: #b42318;
+}
+
+.vix-report-btn {
+  background: #ff6a00;
+  color: #fff;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-
-.view-reports-btn:hover {
-  background-color: #ff8000;
-}
-
-/* ========================
-   Vendor container
-======================== */
-.vendor-container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-}
-
-/* ========================
-   Stall card
-======================== */
-.stall-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.stall-card {
-  width: 100%;
-  max-width: 1200px;
-  background-color: #fff;
-  padding: 1.5rem 2rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-
-  display: flex;
-  align-items: center;           /* vertically center */
-  justify-content: space-between; /* name left, toggle right */
-  flex-wrap: nowrap;             /* always same row */
-  gap: 1rem;
-}
-
-.stall-name {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-shrink: 1;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-/* Optional smaller switch */
-.switch.small {
-  width: 35px;
-  height: 18px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 24px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-.switch input:checked + .slider {
-  background-color: #d87a1d;
-}
-
-.switch input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-.switch.small input:checked + .slider:before {
-  transform: translateX(17px);
-}
-
-.switch.small .slider:before {
-  height: 12px;
-  width: 12px;
-  bottom: 3px;
-}
-
-/* ========================
-   Items Grid
-======================== */
-.vendor-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-}
-
-.vendor-card {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 1rem;
-  text-align: center;
-  transition: transform 0.2s;
-}
-
-.vendor-card:hover {
-  transform: translateY(-5px);
-}
-
-.vendor-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
+  padding: 10px 16px;
   border-radius: 8px;
-  margin-bottom: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100px;
 }
 
-.vendor-card h3 {
-  font-size: 1.1rem;
-  margin: 0.5rem 0;
+
+/* CONTROLS */
+.vix-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 20px 0;
+  margin-left: 15px;
+  margin-right: 15px;
+  flex-wrap: nowrap; /* 🔥 IMPORTANT */
+}
+
+
+.vix-search {
+  width: 300px;
+  min-width: 300px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  flex-shrink: 0; /* 🔥 */
+}
+
+.vix-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0; /* 🔥 */
+}
+
+
+.vix-filters button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: black;
+  cursor: pointer;
+  white-space: nowrap; /* 🔥 Prevent text wrap */
+}
+
+
+.vix-filters .active {
+  font-weight: 600;
+  color: rgb(55, 8, 184);
+}
+
+.vix-filters .available.active {
+  color: #0a7f2e;
+}
+
+.vix-filters .paused.active {
+  color: #f59e0b;
+}
+
+/* TABLE */
+.vix-table {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  padding: 10px 10px 10px 10px;
+  margin: 15px 15px 15px 15px;
+}
+
+.vix-table-head {
+  display: grid;
+  grid-template-columns: 2.5fr 1.2fr 1.2fr;
+  padding: 16px 22px;
+  align-items: center;
+  background: linear-gradient(180deg, #fff7ed, #fff1e6);
+  font-weight: 700;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #f1e4d7;
+}
+.vix-row {
+  display: grid;
+  grid-template-columns: 2.5fr 1.2fr 1.2fr;
+  padding: 16px 22px;
+  align-items: center;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.2s ease;
+}
+
+.vix-row:last-child {
+  border-bottom: none;
+}
+
+.vix-row:hover {
+  background: #fafafa;
+}
+
+
+.vix-table-head,
+.vix-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  padding: 14px 20px;
+  align-items: center;
+}
+
+.vix-table-head {
+  background: #fff7ed;
   font-weight: 600;
 }
 
-.vendor-card .price {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #d87a1d;
+.vix-row {
+  border-top: 1px solid #eee;
 }
 
-/* ========================
-   Responsive design
-======================== */
-@media (max-width: 1024px) {
-  .vendor-container {
-    padding: 0 1rem;
-  }
+/* ITEM */
+.vix-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-@media (max-width: 768px) {
-  .vendor-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-
-  .stall-card {
-    flex-direction: row; /* keep name and switch in same row */
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .stall-name {
-    font-size: 1.3rem;
-  }
-
-  .view-reports-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .vendor-card img {
-    height: 120px;
-  }
-
-  .vendor-card h3 {
-    font-size: 1rem;
-  }
-
-  .vendor-card .price {
-    font-size: 0.9rem;
-  }
-
-  .stall-name {
-    font-size: 1.2rem;
-  }
-
-  .switch {
-    width: 40px;
-    height: 20px;
-  }
-  .view-reports-btn {
-  padding: 0.5rem 1rem;
-  background-color: #d87a1d;
-  color: white;
-  margin-top: 9vh;
-  border: none;
+.vix-item img {
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
+  object-fit: cover;
 }
+
+.vix-item-name {
+  font-weight: 600;
+}
+
+.vix-item-type {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* PRICE */
+.vix-price {
+  font-weight: 600;
+}
+
+.vix-price span {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* SWITCH */
+.vix-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+}
+
+.vix-switch input {
+  display: none;
+}
+
+.vix-switch span {
+  position: absolute;
+  inset: 0;
+  background: #ccc;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.vix-switch span::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: 0.2s;
+}
+
+.vix-switch input:checked + span {
+  background: #16a34a;
+}
+
+.vix-switch input:checked + span::before {
+  transform: translateX(18px);
+}
+
+/* LOADING */
+.vix-loading {
+  padding: 20px;
+  text-align: center;
+}
+
+
+@media (max-width: 640px) {
+  .vix-controls {
+    flex-wrap: wrap;
+  }
+
+  .vix-search {
+    width: 100%;
+  }
+
+  .vix-filters {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

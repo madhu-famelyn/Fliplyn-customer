@@ -1,49 +1,47 @@
-// src/pages/vendor/VendorLogin.js
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useVendorAuth } from "../../AuthContex/VendorContext";
-import TokenHeader from "../../LayOutComponents/PrintToken/Header";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./Login.css";
+
+import logo from "../../../Assets/VendorAssets/Logo.png";
+import vendorImage from "../../../Assets/VendorAssets/Vendor Login Image.png";
 
 export default function VendorLogin() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ Loader state
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const { loginUser } = useVendorAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true); // ✅ Start loader
+    setLoading(true);
 
     try {
-      const res = await axios.post("https://admin-aged-field-2794.fly.dev/vendors/auth/login", {
-        phone_number: phoneNumber,
-        password: password,
-      });
+      const res = await axios.post(
+        "https://admin-aged-field-2794.fly.dev/vendors/auth/login",
+        {
+          phone_number: phoneNumber,
+          password,
+        }
+      );
 
       const data = res.data;
-      const token = data.access_token;
-      const vendorId = data.vendor_id;
-      const stallIds = data.stall_ids || [];
-      const vendorName = data.vendor_name;
-      const vendorPhone = data.vendor_phone;
 
-      loginUser(token, vendorId, "vendor", vendorPhone, stallIds, vendorName);
-
-      setTimeout(() => {
-        console.log("=== Local Storage After Login ===");
-        console.log("token:", localStorage.getItem("token"));
-        console.log("userId:", localStorage.getItem("userId"));
-        console.log("role:", localStorage.getItem("role"));
-        console.log("vendorPhone:", localStorage.getItem("vendorPhone"));
-        console.log("stallIds:", localStorage.getItem("stallIds"));
-        console.log("vendorName:", localStorage.getItem("vendorName"));
-        console.log("=================================");
-      }, 300);
+      loginUser(
+        data.access_token,
+        data.vendor_id,
+        "vendor",
+        data.vendor_phone,
+        data.stall_ids || [],
+        data.vendor_name
+      );
 
       navigate("/vendor-stall");
     } catch (err) {
@@ -57,64 +55,75 @@ export default function VendorLogin() {
           message = detail;
         }
       }
-
       setError(message);
     } finally {
-      setLoading(false); // ✅ Stop loader after request
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-      <TokenHeader />
-      <div className="vendor-login-page">
-        <div className="vendor-login-card">
-          <h1 className="vendor-login-title">Enter your mobile number</h1>
+    <div className="vendor-login-wrapper">
+      {/* LEFT */}
+      <div className="vendor-login-left">
+        <img src={logo} alt="Fliplyn Logo" className="vendor-logo" />
 
-          {error && <div className="vendor-login-error">{error}</div>}
+        <img
+          src={vendorImage}
+          alt="Vendor Login"
+          className="vendor-illustration"
+        />
 
-          <div className="vendor-login-container">
-            <form className="vendor-login-form" onSubmit={handleLogin}>
-              <div className="vendor-login-field">
-                <label className="vendor-login-label">Phone Number</label>
-                <input
-                  type="text"
-                  className="vendor-login-input"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="Enter phone number"
-                  required
-                  disabled={loading}
-                />
-              </div>
+        <h1>Smart. Fast. Empowered.</h1>
+        <p>Manage your Fliplyn Vendor workspace with confidence.</p>
 
-              <div className="vendor-login-field">
-                <label className="vendor-login-label">Password</label>
-                <input
-                  type="password"
-                  className="vendor-login-input"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password"
-                  required
-                  disabled={loading}
-                />
-              </div>
+        <footer>©2025 Fliplyn Vendor Portal · Secure Access</footer>
+      </div>
 
-              <button
-                type="submit"
-                className={`vendor-login-button ${loading ? "loading" : ""}`}
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="loader"></div> // ✅ Spinner
-                ) : (
-                  "Sign In"
-                )}
-              </button>
-            </form>
+      {/* RIGHT */}
+      <div className="vendor-login-right">
+        <form className="vendor-login-card" onSubmit={handleLogin}>
+          <h2>Vendor Sign In</h2>
+          <p className="desc">Sign in to manage outlets and orders.</p>
+
+          {error && <div className="vendor-error">{error}</div>}
+
+          <div className="field">
+            <label>Phone number</label>
+            <input
+              type="text"
+              placeholder="+91 9392977592"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              disabled={loading}
+              required
+            />
           </div>
-        </div>
+
+          <div className="field">
+            <label>Password</label>
+            <div className="password-box">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+                required
+              />
+              <span onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
+          </div>
+
+          <button disabled={loading}>
+            {loading ? <div className="loader"></div> : "Sign in"}
+          </button>
+
+          <p className="contact">
+            Need access? <span>Contact admin</span>
+          </p>
+        </form>
       </div>
     </div>
   );

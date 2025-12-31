@@ -1,177 +1,228 @@
-/* ================================
-   STALLS PAGE – FIXED & OPTIMIZED
-   ================================ */
-
-/* Container */
-.stalls-container {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 12vh;
-  gap: 20px;
-  justify-content: center;
-  max-width: 1200px;
-  padding: 10px;
-  position: relative;
-  z-index: 1;
+.vendor-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding-bottom: 40px;
 }
 
-/* Stall Card */
-.stall-card-simple {
-  background: #fff;
+.page-header {
+  padding: 65px 48px 16px;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.page-header p {
+  font-size: 15px;
+  color: #666;
+}
+
+.outlets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 24px;
+  padding: 24px 48px;
+}
+
+.outlet-card {
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  width: 240px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.stall-card-simple:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
-}
-
-/* Stall Image */
-.stall-image-simple {
-  width: 100%;
-  height: 160px;
-  object-fit: contain;
-  background: #fafafa;
-  border-bottom: 1px solid #eee;
-  padding: 10px;
-}
-
-/* Text */
-.stall-text {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #cc6600;
-  margin: 12px 0;
-}
-
-/* ================================
-   VIEW ORDERS BUTTON
-   ================================ */
-
-/* Wrapper */
-.orders-btn-wrapper {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   display: flex;
-  justify-content: flex-end;
-  padding: 10px 20px;
-  position: relative;
-  z-index: 9999; /* FIX: Button now clickable on mobile */
+  overflow: hidden;
+  transition: transform 0.2s ease;
 }
 
-/* Button */
-.view-orders-btn {
-  background-color: #e67e23;
-  margin-top: 8vh !important; /* Reduced for visibility */
+.outlet-card:hover {
+  transform: translateY(-3px);
+}
+
+.outlet-image {
+  width: 240px;
+  height: 180px;
+  object-fit: cover;
+  padding: 10px 10px 10px 10px;
+  border-radius: 20px;
+}
+
+.outlet-content {
+  flex: 1;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.outlet-content h3 {
+  font-size: 21px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.outlet-desc {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+}
+/* Bottom row holding badges + button */
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+/* Stack open & close time vertically */
+.time-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Button alignment */
+.manage-btn {
+  background-color: #16a34a;
   color: white;
   border: none;
-  padding: 16px 32px;     /* Increased size */
-  border-radius: 12px;    /* Larger button style */
-  font-size: 18px;        /* Larger text */
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s ease-in-out;
-  z-index: 9999;          /* Ensures button stays on top */
+  white-space: nowrap;
 }
 
-.view-orders-btn:hover {
-  background-color: #c06708;
-  transform: scale(1.05);
+.manage-btn:hover {
+  background-color: #12823c;
 }
 
-/* ================================
-   MOBILE: max-width 768px
-   ================================ */
-@media screen and (max-width: 768px) {
-
-  .stalls-container {
-    margin-top: 18vh;
-    gap: 12px;
-    padding: 5px;
-    justify-content: center;
-  }
-
-  .stall-card-simple {
-    width: 90%;
-    max-width: 320px;
-    border-radius: 10px;
-  }
-
-  .stall-image-simple {
-    height: 140px;
-    padding: 8px;
-  }
-
-  .stall-text {
-    font-size: 0.95rem;
-  }
-
-  .orders-btn-wrapper {
-    justify-content: center;
-    padding: 10px;
-  }
-
-  .view-orders-btn {
-    width: 95%;
-    max-width: 300px;
-    padding: 18px;
-    font-size: 18px;
-    margin-top: 10vh !important;
-    border-radius: 12px;
-  }
+.open-time,
+.close-time {
+  font-size: 12px !important;
+  padding: 4px 10px !important;
+  border-radius: 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  border-radius: 5px !important;
+  gap: 4px;
+  font-weight: 600
 }
 
-/* ================================
-   SMALL MOBILE: max-width 480px
-   ================================ */
-@media screen and (max-width: 480px) {
+.open-time {
+  background-color: #FFF4DC;
+  color: #3B3B3B;
+}
 
-  .stalls-container {
-    margin-top: 3vh;
+.close-time {
+  background-color: #FFEAD6;
+  color: #D91A04;
+}
+
+.manage-btn {
+  align-self: flex-end ;
+  background-color: #16a34a !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 18px !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  width: 20vh !important;
+}
+
+.manage-btn:hover {
+  background-color: #12823c;
+}
+
+.loading-text {
+  padding: 40px;
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+}
+
+
+
+/* ===============================
+   MOBILE RESPONSIVE (TABLET & PHONE)
+   =============================== */
+
+@media (max-width: 768px) {
+
+  .page-header {
+    padding: 72px 16px 12px;
   }
 
-  .stall-card-simple {
-    width: 95%;
+  .page-header h1 {
+    font-size: 22px;
   }
 
-  .stall-image-simple {
-    height: 120px;
+  .page-header p {
+    font-size: 14px;
   }
 
-  .view-orders-btn {
-    margin-top: 12vh;
-    font-size: 16px;
+  .outlets-grid {
+    grid-template-columns: 1fr;
     padding: 16px;
+    gap: 16px;
   }
+
+  /* Card becomes vertical */
+  .outlet-card {
+    flex-direction: column;
+  }
+
+  /* Image full width */
+  .outlet-image {
+    width: 100%;
+    height: 180px;
+    padding: 0;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .outlet-content {
+    padding: 14px 14px 16px;
+  }
+
+  .outlet-content h3 {
+    font-size: 18px;
+  }
+
+  .outlet-desc {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  /* Bottom section stacks */
+  .bottom-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  /* Time badges side by side on mobile */
+  .time-column {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .open-time,
+  .close-time {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  /* Button full width */
+.manage-btn {
+  width: auto;              /* remove full width */
+  padding: 12px 28px;
+  font-size: 15px;
+  border-radius: 8px;
+  align-self: center;       /* centers inside flex column */
+  text-align: center;
 }
 
-/* ================================
-   EXTRA SMALL MOBILE: max-width 360px
-   ================================ */
-@media screen and (max-width: 360px) {
-
-  .stall-card-simple {
-    width: 100%;
-  }
-
-  .stall-image-simple {
-    height: 110px;
-  }
-
-  .stall-text {
-    font-size: 0.9rem;
-  }
-
-  .view-orders-btn {
-    margin-top: 12vh;
-    font-size: 15px;
-    padding: 14px;
-  }
 }

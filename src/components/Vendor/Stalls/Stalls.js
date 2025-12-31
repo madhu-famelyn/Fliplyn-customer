@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "./Stalls.css";
 
 const VendorStalls = () => {
-  const { stallIds, token, setStallId } = useVendorAuth();
+  const { stallIds, token } = useVendorAuth(); // ❌ removed setStallId
   const [stalls, setStalls] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -19,18 +19,16 @@ const VendorStalls = () => {
 
     const fetchStalls = async () => {
       try {
-        const promises = stallIds.map((id) =>
+        const requests = stallIds.map((id) =>
           axios.get(`https://admin-aged-field-2794.fly.dev/stalls/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         );
-        const results = await Promise.all(promises);
-        setStalls(results.map((res) => res.data));
-      } catch (error) {
-        console.error(
-          "❌ Error fetching stalls:",
-          error.response?.data || error.message
-        );
+
+        const responses = await Promise.all(requests);
+        setStalls(responses.map((res) => res.data));
+      } catch (err) {
+        console.error("❌ Failed to fetch stalls", err);
       } finally {
         setLoading(false);
       }
@@ -39,42 +37,53 @@ const VendorStalls = () => {
     fetchStalls();
   }, [stallIds, token]);
 
-  const handleSelectStall = (id) => {
-    if (setStallId) setStallId(id);
-    navigate(`/items-vendor/${id}`);
+  const handleManageItems = (id) => {
+    navigate(`/items-vendor/${id}`); // ✅ ID passed via route
   };
 
-  const handleViewOrders = () => {
-    navigate("/orders-status"); // ✅ your ongoing & completed orders page
-  };
-
-  if (loading) return <p>Loading stalls...</p>;
-  if (!stalls || stalls.length === 0) return <p>No stalls found.</p>;
+  if (loading) return <p className="loading-text">Loading outlets...</p>;
+  if (!stalls.length) return <p className="loading-text">No outlets found.</p>;
 
   return (
-    <div>
+    <div className="vendor-page">
       <TokenHeader />
 
-      {/* ✅ View Orders Button */}
-      <div className="orders-btn-wrapper">
-        <button className="view-orders-btn" onClick={handleViewOrders}>
-          View Orders
-        </button>
+      <div className="page-header">
+        <h1>My Outlets</h1>
+        <p>Select an outlet to manage items and update availability.</p>
       </div>
 
-      <div className="stalls-container">
+      <div className="outlets-grid">
         {stalls.map((stall) => (
-          <div
-            key={stall.id}
-            className="stall-card-simple"
-            onClick={() => handleSelectStall(stall.id)}
-          >
+          <div key={stall.id} className="outlet-card">
             <img
-              src={stall.image_url || "https://via.placeholder.com/150"}
+              src={stall.image_url || "https://via.placeholder.com/300"}
               alt={stall.name}
-              className="stall-image-simple"
+              className="outlet-image"
             />
-            <p className="stall-text">Select {stall.name}</p>
+
+            <div className="outlet-content">
+              <h3>{stall.name}</h3>
+              <p className="outlet-desc">{stall.description}</p>
+
+              <div className="bottom-row">
+                <div className="time-column">
+                  <span className="open-time">
+                    ⏰ Opens at {stall.opening_time}
+                  </span>
+                  <span className="close-time">
+                    🔴 Closes at {stall.closing_time}
+                  </span>
+                </div>
+
+                <button
+                  className="manage-btn"
+                  onClick={() => handleManageItems(stall.id)}
+                >
+                  Open
+                </button>
+              </div>
+            </div>
           </div>
         ))}
       </div>

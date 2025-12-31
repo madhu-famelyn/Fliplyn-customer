@@ -1,68 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { useVendorAuth } from "../../AuthContex/VendorContext";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import TokenHeader from "../../LayOutComponents/PrintToken/Header";
 import { useParams, useNavigate } from "react-router-dom";
+import { useVendorAuth } from "../../AuthContex/VendorContext";
+import TokenHeader from "../../LayOutComponents/PrintToken/Header";
 import "./Items.css";
 
-const VendorItems = () => {
+const VendorItemsExact = () => {
   const { id } = useParams();
-  const { stallId: contextStallId, token, setStallId } = useVendorAuth();
-  const stallId = id || contextStallId;
-
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [stallAvailable, setStallAvailable] = useState(false);
-  const [stallName, setStallName] = useState("");
-
   const navigate = useNavigate();
 
-  // Fetch stall info
+  // ✅ FIX: removed setStallId (it does NOT exist in context)
+  const { stallId: ctxStallId, token } = useVendorAuth();
+  const stallId = id || ctxStallId;
+
+  const [stall, setStall] = useState({});
+  const [items, setItems] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("ALL");
+  const [loading, setLoading] = useState(true);
+
+  /* ---------------- FETCH STALL ---------------- */
   useEffect(() => {
-    if (!stallId) return;
+    if (!stallId || !token) return;
 
     const fetchStall = async () => {
       try {
-        const response = await axios.get(
+        const res = await axios.get(
           `https://admin-aged-field-2794.fly.dev/stalls/${stallId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setStallName(response.data.name || "");
-        if (response.data.is_available !== undefined) {
-          setStallAvailable(response.data.is_available);
-        }
-      } catch (error) {
-        console.error(
-          "❌ Error fetching stall info:",
-          error.response?.data || error.message
-        );
+        setStall(res.data || {});
+      } catch (err) {
+        console.error("Error fetching stall:", err);
       }
     };
 
     fetchStall();
   }, [stallId, token]);
 
-  // Fetch items under the stall
+  /* ---------------- FETCH ITEMS ---------------- */
   useEffect(() => {
-    if (!stallId) {
-      setLoading(false);
-      return;
-    }
+    if (!stallId || !token) return;
 
     const fetchItems = async () => {
       try {
-        const response = await axios.get(
+        setLoading(true);
+        const res = await axios.get(
           `https://admin-aged-field-2794.fly.dev/items/stall/${stallId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        if (Array.isArray(response.data)) {
-          setItems(response.data);
-        }
-      } catch (error) {
-        console.error(
-          "❌ Error fetching items:",
-          error.response?.data || error.message
-        );
+        setItems(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Error fetching items:", err);
       } finally {
         setLoading(false);
       }
@@ -71,115 +60,171 @@ const VendorItems = () => {
     fetchItems();
   }, [stallId, token]);
 
-  // Save stallId in context
-  useEffect(() => {
-    if (id && setStallId) setStallId(id);
-  }, [id, setStallId]);
-
-  // Update stall availability only
-  const handleStallToggle = async () => {
-    const newStatus = !stallAvailable;
-    setStallAvailable(newStatus);
-
-    try {
-      await axios.put(
-        `https://admin-aged-field-2794.fly.dev/stalls/${stallId}/availability`,
-        { is_available: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      console.log("✅ Stall availability updated");
-    } catch (error) {
-      console.error(
-        "❌ Error updating stall availability:",
-        error.response?.data || error.message
-      );
-    }
-  };
-
-  // Update individual item availability
-  const handleItemToggle = async (itemId, currentStatus) => {
-    const newStatus = !currentStatus;
+  /* ---------------- ITEM AVAILABILITY TOGGLE ---------------- */
+  const toggleItem = async (itemId, currentStatus) => {
+    // optimistic update
     setItems((prev) =>
-      prev.map((i) => (i.id === itemId ? { ...i, is_available: newStatus } : i))
+      prev.map((item) =>
+        item.id === itemId
+          ? { ...item, is_available: !currentStatus }
+          : item
+      )
     );
 
     try {
       await axios.patch(
         `https://admin-aged-field-2794.fly.dev/items/items/${itemId}/availability`,
-        { is_available: newStatus },
+        { is_available: !currentStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(`✅ Item ${itemId} availability updated`);
-    } catch (error) {
-      console.error(
-        `❌ Error updating item ${itemId}:`,
-        error.response?.data || error.message
-      );
+    } catch (err) {
+      console.error("Error updating item:", err);
     }
   };
 
-  if (!stallId) return <p className="text-red-600">No stall selected.</p>;
-  if (loading) return <p>Loading items...</p>;
+  /* ---------------- FILTERED ITEMS ---------------- */
+  const filteredItems = useMemo(() => {
+    return items
+      .filter((item) =>
+        item.name?.toLowerCase().includes(search.toLowerCase())
+      )
+      .filter((item) => {
+        if (filter === "AVAILABLE") return item.is_available;
+        if (filter === "PAUSED") return !item.is_available;
+        return true;
+      });
+  }, [items, search, filter]);
+
+  if (!stallId) {
+    return <p style={{ padding: 20 }}>No stall selected.</p>;
+  }
 
   return (
-    <div>
+    <div className="vix-root">
       <TokenHeader />
 
-      {/* Reports button */}
-      
+      {/* HEADER */}
+      <div className="vix-header">
+<div className="vix-header">
+  <div className="vix-header-left">
+    <div className="vix-title-row">
+      <h1 className="vix-title">{stall.name || "Stall"}</h1>
 
-      <div className="vendor-container">
-        <div className="nav-bar">
-        <button
-          className="view-reports-btn"
-          onClick={() => navigate(`/stall/${stallId}/reports`)}
-        >
-          View Reports
-        </button>
+      <button
+        className="vix-report-btn"
+        onClick={() => navigate(`/stall/${stallId}/reports`)}
+      >
+        Reports
+      </button>
+    </div>
+
+    <p className="vix-desc">{stall.description || ""}</p>
+
+    <div className="vix-timings">
+      <span className="vix-open">
+        Opens at {stall.opens_at || "10:00 AM"}
+      </span>
+      <span className="vix-close">
+        Closes at {stall.closes_at || "8:00 PM"}
+      </span>
+    </div>
+  </div>
+</div>
+
+
+      
       </div>
-        {/* Stall Card */}
-        <div className="stall-container">
-          <div className="stall-card">
-            <h2 className="stall-name">{stallName || `Stall ${stallId}`}</h2>
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={stallAvailable}
-                onChange={handleStallToggle}
-              />
-              <span className="slider"></span>
-            </label>
-          </div>
+
+
+
+
+
+
+
+      {/* CONTROLS */}
+      <div className="vix-controls">
+        <input
+          className="vix-search"
+          placeholder="Search items by name..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <div className="vix-filters">
+          <button
+            className={filter === "ALL" ? "active" : ""}
+            onClick={() => setFilter("ALL")}
+          >
+            All
+          </button>
+          <button
+            className={filter === "AVAILABLE" ? "active available" : "available"}
+            onClick={() => setFilter("AVAILABLE")}
+          >
+            Available
+          </button>
+          <button
+            className={filter === "PAUSED" ? "active paused" : "paused"}
+            onClick={() => setFilter("PAUSED")}
+          >
+            Paused
+          </button>
+        </div>
+      </div>
+
+
+
+
+
+      {/* TABLE */}
+      <div className="vix-table">
+        <div className="vix-table-head">
+          <span>Item</span>
+          <span>Price</span>
+          <span>Availability</span>
         </div>
 
-        {/* Items Grid */}
-        {items.length === 0 ? (
-          <p>No items found for this stall.</p>
+        {loading ? (
+          <p className="vix-loading">Loading...</p>
+        ) : filteredItems.length === 0 ? (
+          <p className="vix-loading">No items found</p>
         ) : (
-          <div className="vendor-grid">
-            {items.map((item) => (
-              <div key={item.id} className="vendor-card">
+          filteredItems.map((item) => (
+            <div key={item.id} className="vix-row">
+              <div className="vix-item">
                 <img
-                  src={item.image_url || "https://via.placeholder.com/150"}
+                  src={item.image_url || "https://via.placeholder.com/40"}
                   alt={item.name}
                 />
-                <h3>{item.name}</h3>
-                <p className="price">price with GST₹{item.final_price}</p>
-                <label className="switch small">
-                  <input
-                    type="checkbox"
-                    checked={item.is_available}
-                    onChange={() => handleItemToggle(item.id, item.is_available)}
-                  />
-                  <span className="slider"></span>
-                </label>
+                <div>
+                  <p className="vix-item-name">{item.name}</p>
+                  <p className="vix-item-type">
+                    {item.is_veg ? "Veg" : "Non Veg"}
+                  </p>
+                </div>
               </div>
-            ))}
-          </div>
+
+              <div className="vix-price">
+                ₹{item.final_price}
+                <span>Inc. GST</span>
+              </div>
+
+              <label className="vix-switch">
+                <input
+                  type="checkbox"
+                  checked={!!item.is_available}
+                  onChange={() =>
+                    toggleItem(item.id, item.is_available)
+                  }
+                />
+                <span />
+              </label>
+            </div>
+          ))
         )}
       </div>
     </div>
   );
 };
 
-export default VendorItems;
+export default VendorItemsExact;
