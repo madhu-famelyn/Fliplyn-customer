@@ -10,12 +10,8 @@ const OrdersModal = ({ groupId, onClose }) => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Date filter
   const [dateFilter, setDateFilter] = useState("");
-
-  // 🔹 Payment filter
-  const [paymentFilter, setPaymentFilter] = useState("all"); // all | prepaid | postpaid
-
+  const [paymentFilter, setPaymentFilter] = useState("all");
   const [submitted, setSubmitted] = useState(false);
 
   // ✅ Fetch orders
@@ -26,7 +22,9 @@ const OrdersModal = ({ groupId, onClose }) => {
     try {
       const start = new Date(
         Date.now() - 30 * 24 * 60 * 60 * 1000
-      ).toISOString().split("T")[0];
+      )
+        .toISOString()
+        .split("T")[0];
 
       const end = new Date().toISOString().split("T")[0];
 
@@ -40,7 +38,7 @@ const OrdersModal = ({ groupId, onClose }) => {
       setOrders(data || []);
       setFilteredOrders(data || []);
     } catch (err) {
-      console.error("❌ Error fetching orders:", err);
+      console.error("Error fetching orders", err);
       setOrders([]);
       setFilteredOrders([]);
     } finally {
@@ -48,14 +46,13 @@ const OrdersModal = ({ groupId, onClose }) => {
     }
   };
 
-  // ✅ Apply date + payment filters
+  // ✅ Filters
   useEffect(() => {
     if (!submitted) return;
 
     let filtered = [...orders];
     const now = new Date();
 
-    // 🔹 Date filters
     if (dateFilter === "day") {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -73,6 +70,7 @@ const OrdersModal = ({ groupId, onClose }) => {
       const startOfWeek = new Date(now);
       startOfWeek.setDate(now.getDate() - now.getDay());
       startOfWeek.setHours(0, 0, 0, 0);
+
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 7);
 
@@ -90,13 +88,12 @@ const OrdersModal = ({ groupId, onClose }) => {
       );
     }
 
-    // 🔹 Payment filter
     if (paymentFilter === "postpaid") {
-      filtered = filtered.filter((o) => o.paid_with_wallet === true);
+      filtered = filtered.filter((o) => o.paid_with_wallet);
     }
 
     if (paymentFilter === "prepaid") {
-      filtered = filtered.filter((o) => o.paid_with_wallet === false);
+      filtered = filtered.filter((o) => !o.paid_with_wallet);
     }
 
     setFilteredOrders(filtered);
@@ -107,30 +104,36 @@ const OrdersModal = ({ groupId, onClose }) => {
     const itemTotal =
       order.order_details?.reduce((sum, i) => sum + i.total, 0) || 0;
     const totalGst = order.total_gst || 0;
-    const grandTotal = Math.round(itemTotal + totalGst);
-    return { grandTotal };
+    return Math.round(itemTotal + totalGst);
   };
 
   const totalPaid = filteredOrders.reduce(
-    (sum, o) => sum + calculateAmounts(o).grandTotal,
+    (sum, o) => sum + calculateAmounts(o),
     0
   );
 
-  // ✅ Export to Excel
+  // ✅ Export to Excel (item-wise, total once)
   const exportToExcel = () => {
-    const rows = filteredOrders.flatMap((o) => {
-      const { grandTotal } = calculateAmounts(o);
+    const rows = [];
 
-      return o.order_details.map((i) => ({
-        Stall: o.stall_name || "N/A",
-        Token: o.token_number || "N/A",
-        Email: o.user_email || "",
-        PaymentType: o.paid_with_wallet ? "Postpaid" : "Prepaid",
-        Date: new Date(o.created_datetime).toLocaleString(),
-        Item: i.name,
-        Qty: i.quantity,
-        AmountPaid: grandTotal.toFixed(2),
-      }));
+    filteredOrders.forEach((o) => {
+      const grandTotal = calculateAmounts(o);
+
+      o.order_details.forEach((item, index) => {
+        rows.push({
+          Stall: o.stall_name || "N/A",
+          Email: o.user_email || "",
+          Token: o.token_number || "N/A",
+          PaymentType: o.paid_with_wallet ? "Postpaid" : "Prepaid",
+          Date: new Date(o.created_datetime).toLocaleString(),
+          Item: item.name,
+          Qty: item.quantity,
+          AmountPaid:
+            index === o.order_details.length - 1
+              ? grandTotal.toFixed(2)
+              : "",
+        });
+      });
     });
 
     const ws = XLSX.utils.json_to_sheet(rows);
@@ -147,20 +150,15 @@ const OrdersModal = ({ groupId, onClose }) => {
   return (
     <div className="orders-modal-overlay">
       <div className="orders-modal">
-        <button className="close-btn" onClick={onClose}>
-          ✖
-        </button>
+        <button className="close-btn" onClick={onClose}>✖</button>
 
         <h2>Wallet Group Order History</h2>
 
-        {/* ✅ Filters */}
+        {/* Filters */}
         <div className="filter-section">
           <label>
             Date Filter:
-            <select
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-            >
+            <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}>
               <option value="">All</option>
               <option value="day">Today</option>
               <option value="week">This Week</option>
@@ -170,10 +168,7 @@ const OrdersModal = ({ groupId, onClose }) => {
 
           <label>
             Payment Type:
-            <select
-              value={paymentFilter}
-              onChange={(e) => setPaymentFilter(e.target.value)}
-            >
+            <select value={paymentFilter} onChange={(e) => setPaymentFilter(e.target.value)}>
               <option value="all">All</option>
               <option value="prepaid">Prepaid</option>
               <option value="postpaid">Postpaid</option>
@@ -186,9 +181,6 @@ const OrdersModal = ({ groupId, onClose }) => {
         </div>
 
         {loading && <p>Loading orders...</p>}
-        {!loading && submitted && filteredOrders.length === 0 && (
-          <p>No orders found.</p>
-        )}
 
         {!loading && submitted && filteredOrders.length > 0 && (
           <>
@@ -200,26 +192,31 @@ const OrdersModal = ({ groupId, onClose }) => {
                   <th>Email</th>
                   <th>Payment</th>
                   <th>Date</th>
+                  <th>Item</th>
+                  <th>Qty</th>
                   <th>Amount (₹)</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredOrders.map((order) => {
-                  const { grandTotal } = calculateAmounts(order);
-                  return (
-                    <tr key={order.id}>
+                  const grandTotal = calculateAmounts(order);
+
+                  return order.order_details.map((item, index) => (
+                    <tr key={`${order.id}-${index}`}>
                       <td>{order.stall_name}</td>
                       <td>{order.token_number}</td>
                       <td>{order.user_email}</td>
+                      <td>{order.paid_with_wallet ? "Postpaid" : "Prepaid"}</td>
+                      <td>{new Date(order.created_datetime).toLocaleString()}</td>
+                      <td>{item.name}</td>
+                      <td>{item.quantity}</td>
                       <td>
-                        {order.paid_with_wallet ? "Postpaid" : "Prepaid"}
+                        {index === order.order_details.length - 1
+                          ? grandTotal.toFixed(2)
+                          : ""}
                       </td>
-                      <td>
-                        {new Date(order.created_datetime).toLocaleString()}
-                      </td>
-                      <td>{grandTotal.toFixed(2)}</td>
                     </tr>
-                  );
+                  ));
                 })}
               </tbody>
             </table>
