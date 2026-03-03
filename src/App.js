@@ -29,10 +29,14 @@ import AdminItems from "./components/LayOutComponents/Admin-Items/Items";
 import Group from "./components/LayOutComponents/CreateGroup/Groups";
 import EnterTokenPage from "./components/LayOutComponents/PrintToken/EnterTokenPage";
 import TokenReceiptPage from "./components/LayOutComponents/PrintToken/TokenRecipetentPage";
+
+
+
 import VendorLogin from "./components/Vendor/Login/Login";
 import VendorItems from "./components/Vendor/ItemsList/Items";
 import VendorStalls from "./components/Vendor/Stalls/Stalls";
-import ReportsPage from "./components/Vendor/ItemsList/Reports";
+import StallSalesReportVendor from "./components/Vendor/SalesSummary/SalesSummary";
+// import ReportsPage from "./components/Vendor/ItemsList/Reports";
 import OrdersByEmail from "./components/LayOutComponents/GetOrder/GetOrder";
 import WalletUploadAdmin from "./components/LayOutComponents/ManagerWallet/ManagerWallet";
 import ChangePassword from "./components/LayOutComponents/ChangePassword/ChangePassword";
@@ -60,9 +64,10 @@ import ViewBuildingManagers from "./components/UserCreations/BuildingManagerCrea
 import ManagerStallIds from "./components/ManagerComponents/ManagerStalls/ManagerStalls";
 import AddItemManager from "./components/LayOutComponents/ManagerItems/AddItems";
 import ManagerCategory from "./components/ManagerComponents/AddCategory/Category";
+import StallSalesReportOM from "./components/ManagerComponents/SalesSummary/SalesSummary";
 
 import BuildingManagerLogin from "./components/BuildingManager/BuildingManager";
-import BuildingSalesReport from "./components/BuildingManager/BuilingMangerReport";
+// import BuildingSalesReport from "./components/BuildingManager/BuilingMangerReport";
 
 import MainPage from "./components/UserCreations/MainPage";
 import ViewManagers from "./components/UserCreations/ManagerCreation/Manager";
@@ -71,6 +76,11 @@ import ManagerViewVendors from "./components/ManagerComponents/AddVendor/AddVend
 import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
 import LoginSelectionPage from "./components/LoginSelection/LoginSelection";
 import OrderStatus from "./components/OrderStatus/OrderStatus";
+
+import Events from "./components/pages/Events/Events";
+import PageDashboard from "./components/pages/Dashboard/Dashboard";
+import StallSalesReportBMSummary from "./components/BuildingManager/ReportSummary";
+import SalesSummaryReport from "./components/LayOutComponents/SalesSummaryReport/SalesSummaryReport";
 
 // ✅ Private Routes with persistent auth
 const AdminPrivateRoute = ({ element }) => {
@@ -146,6 +156,7 @@ function App() {
                  <Route path="/create-hr" element={<CreateHR/>} />
                  <Route path="/create-user-admin" element={<CreateUserAdmin/>} />
                  <Route path="/deactivate-user" element={<UpdateStatus/>} />
+                 <Route path="/sales-summary" element={<SalesSummaryReport/>} />
                   <Route
                                  path="/stalls-report-admin"
                                  element={<StallSalesReportAdmin  />}
@@ -161,8 +172,10 @@ function App() {
                 <Route path="/user" element={<User />} />
                 <Route path="/vendor-stall" element={<VendorStalls />} />
                 <Route path="/items-vendor/:id" element={<VendorPrivateRoute element={<VendorItems />} />} />
-                <Route path="/stall/:stallId/reports" element={<ReportsPage />} />
+                <Route path="/stall/:stallId/reports" element={<StallSalesReportVendor />} />
                 <Route path="/orders-status" element={<OrderStatus />} />
+                <Route path="/sales-report-vendor" element={<StallSalesReportVendor />} />
+
 
                 {/* 🧾 HR Routes */}
                 <Route path="/hr" element={<HrLogin />} />
@@ -182,19 +195,27 @@ function App() {
                 <Route path="/add-category" element={<ManagerPrivateRoute element={<ManagerCategory />} />} />
                 <Route path="/view-sales" element={<StallsReport />} />
                 <Route path="/add-item-manager" element={<AddItemManager />} />
+                <Route path="/sales-summary-om" element={<StallSalesReportOM />} />
 
                 
 
                 {/* 🏢 Building Manager Routes */}
                 <Route path="/bld-mng" element={<BuildingManagerLogin />} />
                 <Route path="/bld-mng-stalls" element={<BuildingManagerPrivateRoute element={<ManagerStallIds />} />} />
-                <Route path="/bld-mng-report" element={<BuildingManagerPrivateRoute element={<BuildingSalesReport />} />} />
+                <Route path="/bld-mng-report" element={<BuildingManagerPrivateRoute element={<StallSalesReportBMSummary />} />} />
+                <Route path="/bld-report-summary" element={<BuildingManagerPrivateRoute element={<StallSalesReportBMSummary />} />} />
+
 
                 {/* 👥 User Creation Routes */}
                 <Route path="/user-creation" element={<MainPage />} />
                 <Route path="/view-managers" element={<ViewManagers />} />
                 <Route path="/view-vendors" element={<ViewVendors />} />
                                 <Route path="/" element={<LoginSelectionPage />} />
+
+
+                {/* pages */}
+                <Route path="/page-dashboard" element={<PageDashboard />} />
+                <Route path="/events" element={<Events/>} />
 
 
                 {/* 🔚 Fallback */}

@@ -84,6 +84,11 @@ export default function AdminLayout({ children }) {
                   <FaChartPie /> Stalls Report
                 </Link>
               </li>
+              <li>
+                <Link to="/sales-summary" onClick={toggleSidebar}>
+                  <FaChartPie /> Summary Report
+                </Link>
+              </li>
 
               <li className="menu-separator"></li>
 

@@ -1,0 +1,173 @@
+/* Overlay */
+
+.edit-event-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Modal */
+
+.edit-event-modal {
+  width: 720px;
+  max-width: 95%;
+  background: var(--color-white);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  padding: 32px;
+  position: relative;
+  animation: modalFade 0.25s ease;
+}
+
+/* Close Button */
+
+.edit-event-close-btn {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  border: none;
+  background: #ec7317;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.edit-event-close-btn:hover {
+  background: var(--color-border);
+}
+
+/* Title */
+
+.edit-event-title {
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Form Grid */
+
+.edit-event-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+/* Inputs */
+
+.edit-event-input,
+.edit-event-textarea,
+.edit-event-file-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-cream);
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.edit-event-input:focus,
+.edit-event-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--color-white);
+}
+
+/* Textarea */
+
+.edit-event-textarea {
+  grid-column: span 2;
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Checkbox */
+
+.edit-event-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.edit-event-checkbox input {
+  accent-color: var(--color-primary);
+  width: 16px;
+  height: 16px;
+}
+
+/* File */
+
+.edit-event-file-input {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Save Button */
+
+.edit-event-save-btn {
+  margin-top: 26px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.edit-event-save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 83, 0, 0.25);
+}
+
+/* Animation */
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 640px) {
+  .edit-event-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-event-textarea {
+    grid-column: span 1;
+  }
+
+  .edit-event-modal {
+    padding: 22px;
+  }
+}

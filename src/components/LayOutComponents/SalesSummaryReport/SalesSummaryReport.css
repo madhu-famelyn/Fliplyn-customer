@@ -1,0 +1,344 @@
+/* ---------------- CONTAINER ---------------- */
+
+.sales-container {
+  padding: 30px;
+  background: #fff7f0;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ---------------- TITLE ---------------- */
+
+.sales-container h2 {
+  margin-bottom: 25px;
+  color: #ff6b00;
+  font-weight: 600;
+}
+
+/* ---------------- FILTERS ---------------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: flex-end;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #ffd2b3;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.filters div {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+}
+
+.filters label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #555;
+}
+
+/* ---------------- INPUTS ---------------- */
+
+.filters select,
+.filters input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ffb380;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.filters select:focus,
+.filters input:focus {
+  border-color: #ff6b00;
+  box-shadow: 0 0 0 2px rgba(255,107,0,0.15);
+}
+
+/* ---------------- BUTTON ---------------- */
+
+.filters button {
+  height: 38px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 6px;
+  background: #ff6b00;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filters button:hover {
+  background: #e65f00;
+}
+
+/* ---------------- LOADER ---------------- */
+
+.loader {
+  margin-top: 20px;
+  font-weight: 500;
+  color: #ff6b00;
+}
+
+/* ---------------- TABLE ---------------- */
+
+.sales-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* makes equal column width */
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #ffd2b3;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* ---------------- HEADER ---------------- */
+
+.sales-table thead {
+  background: #ac8163;
+  color: white;
+}
+
+.sales-table thead th {
+  padding: 14px 10px;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 600;
+  border-right: 1px solid rgba(255,255,255,0.2);
+}
+
+/* sticky header */
+
+.sales-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* ---------------- BODY ---------------- */
+
+.sales-table tbody td {
+  padding: 12px 10px;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid #ffe1cc;
+}
+
+/* alternate row color */
+
+.sales-table tbody tr:nth-child(even) {
+  background: #fff6f0;
+}
+
+/* hover effect */
+
+.sales-table tbody tr:hover {
+  background: #ffe8d6;
+  transition: 0.2s;
+}
+
+/* outlet column slightly bold */
+
+.sales-table tbody td:first-child {
+  font-weight: 600;
+  color: #444;
+}
+
+/* ---------------- EMPTY DATA ---------------- */
+
+.sales-table tbody tr td[colspan] {
+  padding: 20px;
+  font-size: 14px;
+  color: #777;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+
+@media (max-width: 900px) {
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters div {
+    width: 100%;
+  }
+
+  .sales-table {
+    font-size: 13px;
+  }
+
+  .sales-table thead {
+    font-size: 12px;
+  }
+
+}
+
+/* ---------------- PAGE CONTAINER ---------------- */
+
+.sales-container {
+  padding: 25px;
+  background: #fff7f2;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ---------------- TITLE ---------------- */
+
+.sales-container h2 {
+  margin-bottom: 20px;
+  color: #ff6b00;
+  font-weight: 600;
+}
+
+/* ---------------- FILTER SECTION ---------------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #ffd6bd;
+}
+
+.filters div {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+}
+
+.filters label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* ---------------- INPUTS ---------------- */
+
+.filters select,
+.filters input {
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #ffb78a;
+  font-size: 14px;
+}
+
+.filters select:focus,
+.filters input:focus {
+  outline: none;
+  border-color: #ff6b00;
+}
+
+/* ---------------- BUTTON ---------------- */
+
+.filters button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #ff6b00;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filters button:hover {
+  background: #e45d00;
+}
+
+/* ---------------- LOADER ---------------- */
+
+.loader {
+  color: #ff6b00;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+/* ---------------- TABLE ---------------- */
+
+.sales-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* IMPORTANT for equal column width */
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #ffd6bd;
+}
+
+/* ---------------- HEADER ---------------- */
+
+.sales-table thead {
+  background: #ff6b00;
+  color: white;
+}
+
+.sales-table th {
+  width: 16.66%; /* 6 columns -> equal width */
+  padding: 12px;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ---------------- BODY ---------------- */
+
+.sales-table td {
+  width: 16.66%;
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ffe2cf;
+  font-size: 14px;
+}
+
+/* ---------------- ROW STYLING ---------------- */
+
+.sales-table tbody tr:nth-child(even) {
+  background: #fff3eb;
+}
+
+.sales-table tbody tr:hover {
+  background: #ffe3d0;
+  transition: 0.2s;
+}
+
+/* ---------------- FIRST COLUMN STYLE ---------------- */
+
+.sales-table td:first-child {
+  font-weight: 600;
+  color: #333;
+}
+
+/* ---------------- EMPTY DATA ---------------- */
+
+.sales-table td[colspan] {
+  padding: 18px;
+  color: #777;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+
+@media (max-width: 900px) {
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .sales-table th,
+  .sales-table td {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+}

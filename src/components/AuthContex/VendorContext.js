@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 
 const VendorAuthContext = createContext(null);
-
+// point here 
 export const useVendorAuth = () => {
   const context = useContext(VendorAuthContext);
   if (!context) {

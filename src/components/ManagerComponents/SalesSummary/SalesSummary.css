@@ -1,0 +1,220 @@
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+.om-sales-container {
+  padding: 30px;
+  background: #f9fafc;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+
+.om-sales-container h2 {
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #222;
+}
+
+
+/* =========================================
+   TOP BAR (FILTER + SUBMIT)
+========================================= */
+
+.om-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* FILTER SECTION */
+
+.om-filters-om {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.om-filters-om select,
+.om-filters-om input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  min-width: 140px;
+  transition: 0.2s ease;
+  background: white;
+}
+
+.om-filters-om select:focus,
+.om-filters-om input:focus {
+  outline: none;
+}
+
+
+/* =========================================
+   PRIMARY BUTTON (SUBMIT)
+========================================= */
+
+.primary-btn {
+  color: white;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: #4338ca;
+}
+
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.om-actions {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+}
+
+.om-actions button {
+  background: #e5e7eb;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.om-actions button:hover {
+  background: #d1d5db;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.om-sales-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.om-sales-table th,
+.om-sales-table td {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.om-sales-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+  color: #333;
+}
+
+.om-sales-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.om-sales-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.om-total-row {
+  background: #eef2ff;
+  font-weight: 600;
+}
+
+
+/* =========================================
+   LOADER
+========================================= */
+
+.om-loader {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 40px auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 1024px) {
+  .om-sales-container {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .om-sales-container {
+    padding: 15px;
+  }
+
+  .om-top-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .om-filters-om {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .primary-btn {
+    width: 100%;
+  }
+
+  .om-actions {
+    flex-direction: column;
+  }
+
+  .om-actions button {
+    width: 100%;
+  }
+
+  /* Make table scrollable on mobile */
+  .om-sales-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .om-sales-container h2 {
+    font-size: 18px;
+  }
+
+  .om-sales-table th,
+  .om-sales-table td {
+    font-size: 12px;
+    padding: 10px;
+  }
+}

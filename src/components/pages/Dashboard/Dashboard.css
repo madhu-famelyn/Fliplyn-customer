@@ -1,0 +1,87 @@
+:root {
+  --color-primary: #FF5300;
+  --color-secondary: #FE800A;
+  --color-bg-cream-light: #FBEAD0;
+  --color-bg-cream: #FFFAF4;
+  --color-white: #FFFFFF;
+  --color-bg-off-white: #FFFCF7;
+  --color-border-cream: #FFE2BD;
+  --color-text-primary: #000000;
+  --color-text-gray: #BBBBBB;
+  --color-shadow-light: #FFEDCE;
+  --color-shadow-dark: rgba(0, 0, 0, 0.10);
+}
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-bg-cream);
+}
+
+/* Sidebar Reserved Space */
+
+
+/* Right Content */
+.dashboard-content {
+  flex: 1;
+  padding: 40px;
+}
+
+/* Header */
+.dashboard-header h1 {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.dashboard-header p {
+  color: var(--color-text-gray);
+  margin-bottom: 40px;
+}
+
+/* Grid Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+/* Card Styling */
+.dashboard-card {
+  background: var(--color-white);
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border-cream);
+  box-shadow: 0 8px 24px var(--color-shadow-dark);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dashboard-card h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: var(--color-text-primary);
+}
+
+.dashboard-card p {
+  color: var(--color-text-gray);
+}
+
+/* Hover Effect */
+.dashboard-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--color-primary);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-space {
+    width: 80px;
+  }
+}

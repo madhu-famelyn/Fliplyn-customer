@@ -168,6 +168,10 @@ export default function ManagerEditStall() {
         <button className="mgr-btn" onClick={() => navigate("/add-category")}>
           Add Category
         </button>
+        <button className="mgr-btn" onClick={() => navigate("/sales-summary-om")}>
+          Sales Summary
+        </button>
+        
       </div>
 
       {/* Stall Grid */}
