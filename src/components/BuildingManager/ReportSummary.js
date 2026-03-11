@@ -215,6 +215,8 @@ export default function StallSalesReportBMSummary() {
       {loading ? (
         <div>Loading...</div>
       ) : (
+        <div class="om-table-wrapper">
+
         <table className="om-sales-table">
           <thead>
             <tr>
@@ -247,6 +249,7 @@ export default function StallSalesReportBMSummary() {
             )}
           </tbody>
         </table>
+         </div>
       )}
     </div>
   );

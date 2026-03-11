@@ -69,7 +69,6 @@
 }
 
 
-
 /* =========================================
    ACTION BUTTONS
 ========================================= */
@@ -96,11 +95,23 @@
 
 
 /* =========================================
+   TABLE WRAPPER (IMPORTANT FOR SCROLL)
+========================================= */
+
+.om-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================
    TABLE
 ========================================= */
 
 .om-sales-table {
-  width: 100%;
+  /* width: 100%; */
+  min-width: 750px; /* ensures horizontal scroll */
   border-collapse: collapse;
   background: white;
   border-radius: 12px;
@@ -193,13 +204,6 @@
 
   .om-actions button {
     width: 100%;
-  }
-
-  /* Make table scrollable on mobile */
-  .om-sales-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
   }
 }
 

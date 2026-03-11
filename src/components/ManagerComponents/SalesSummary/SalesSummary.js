@@ -25,6 +25,7 @@ const DateRangeFilter = ({ dateFilter, setDateFilter, startDate, setStartDate, e
 );
 
 const SalesTable = ({ salesData, totals }) => (
+  <div class="om-table-wrapper"> 
   <table className="om-sales-table">
     <thead>
       <tr>
@@ -55,6 +56,7 @@ const SalesTable = ({ salesData, totals }) => (
       </tr>
     </tbody>
   </table>
+  </div>
 );
 
 export default function StallSalesReportOM() {

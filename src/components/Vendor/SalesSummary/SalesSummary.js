@@ -180,6 +180,7 @@ export default function StallSalesReportVendor() {
       {loading ? (
         <div className="om-loader"></div>
       ) : (
+      <div class="om-table-wrapper">
         <table className="om-sales-table">
           <thead>
             <tr>
@@ -210,6 +211,7 @@ export default function StallSalesReportVendor() {
             </tr>
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );
