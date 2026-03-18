@@ -1,163 +1,128 @@
-/* =========================================
-   MAIN CONTAINER
-========================================= */
-
-.om-sales-container {
-  padding: 30px;
-  background: #f9fafc;
+.om-summary-container {
+  padding: 24px;
+  background: #fef6ee;
   min-height: 100vh;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
 
-.om-sales-container h2 {
-  margin-bottom: 20px;
+/* TITLE */
+.om-summary-title {
+  color: #c2410c;
+  font-size: 22px;
   font-weight: 600;
-  color: #222;
+  margin-bottom: 20px;
 }
 
-
-/* =========================================
-   TOP BAR (FILTER + SUBMIT)
-========================================= */
-
-.om-top-bar {
+/* HEADER LAYOUT */
+.om-summary-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
-/* FILTER SECTION */
-
-.om-filters-om {
+/* LEFT SECTION */
+.om-summary-left {
   display: flex;
-  gap: 12px;
   align-items: center;
+  gap: 12px;
 }
 
-.om-filters-om select,
-.om-filters-om input {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  min-width: 140px;
-  transition: 0.2s ease;
-  background: white;
-}
-
-.om-filters-om select:focus,
-.om-filters-om input:focus {
-  outline: none;
-}
-
-
-/* =========================================
-   PRIMARY BUTTON (SUBMIT)
-========================================= */
-
-.primary-btn {
-  color: white;
-  padding: 8px 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+/* SELECT */
+.om-summary-select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #fdba74;
+  background: #fff7ed;
   font-weight: 500;
-  white-space: nowrap;
-  transition: 0.2s ease;
 }
 
-.primary-btn:hover {
-  background: #4338ca;
-}
-
-
-/* =========================================
-   ACTION BUTTONS
-========================================= */
-
-.om-actions {
-  margin: 20px 0;
+/* FILTERS */
+.om-summary-filters {
   display: flex;
   gap: 10px;
 }
 
-.om-actions button {
-  background: #e5e7eb;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: 0.2s ease;
+.om-summary-filters select,
+.om-summary-filters input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #fdba74;
 }
 
-.om-actions button:hover {
-  background: #d1d5db;
-}
-
-
-/* =========================================
-   TABLE
-========================================= */
-
-.om-sales-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
+/* BUTTONS */
+.om-summary-btn {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: white;
+  width: 200px !important;
+  padding: 12px 26px;
   border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.om-sales-table th,
-.om-sales-table td {
-  padding: 12px 14px;
-  text-align: left;
-  font-size: 14px;
-}
-/* TABLE SCROLL WRAPPER */
-.om-table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+.om-summary-export {
+  background: #fff;
+  border: 1px solid #fdba74;
+  color: #c2410c;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 /* TABLE */
-.om-sales-table {
-  min-width: 750px; /* forces horizontal scroll if screen is small */
+.om-summary-table-wrapper {
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
 }
 
-.om-sales-table th {
-  background: #f3f4f6;
-  font-weight: 600;
-  color: #333;
+.om-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 
-.om-sales-table tbody tr {
-  border-bottom: 1px solid #eee;
+/* HEADER */
+.om-summary-table thead {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: white;
 }
 
-.om-sales-table tbody tr:hover {
-  background: #f9fafb;
+.om-summary-table th {
+  padding: 14px;
+  text-align: left;
 }
 
-.om-total-row {
-  background: #eef2ff;
-  font-weight: 600;
+/* COLUMN WIDTH FIX */
+.col-outlet {
+  width: 30%;
 }
 
+.om-summary-table th:not(.col-outlet),
+.om-summary-table td:not(.col-outlet) {
+  width: 17.5%;
+  text-align: center;
+}
 
-/* =========================================
-   LOADER
-========================================= */
+/* BODY */
+.om-summary-table td {
+  padding: 14px;
+  border-bottom: 1px solid #fde7d3;
+}
 
-.om-loader {
+/* HOVER */
+.om-summary-table tbody tr:hover {
+  background: #fff7ed;
+}
+
+/* LOADER */
+.om-summary-loader {
   width: 40px;
   height: 40px;
-  border: 4px solid #ddd;
-  border-top: 4px solid #4f46e5;
+  border: 4px solid #fde3c8;
+  border-top: 4px solid #fb923c;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 40px auto;
@@ -166,66 +131,5 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-
-/* =========================================
-   RESPONSIVE DESIGN
-========================================= */
-
-@media (max-width: 1024px) {
-  .om-sales-container {
-    padding: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-
-  .om-sales-container {
-    padding: 15px;
-  }
-
-  .om-top-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .om-filters-om {
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-  }
-
-  .primary-btn {
-    width: 100%;
-  }
-
-  .om-actions {
-    flex-direction: column;
-  }
-
-  .om-actions button {
-    width: 100%;
-  }
-
-  /* Make table scrollable on mobile */
-  .om-sales-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 480px) {
-
-  .om-sales-container h2 {
-    font-size: 18px;
-  }
-
-  .om-sales-table th,
-  .om-sales-table td {
-    font-size: 12px;
-    padding: 10px;
   }
 }

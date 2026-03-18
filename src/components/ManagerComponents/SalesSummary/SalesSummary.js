@@ -1,13 +1,17 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContex/ContextAPI";
 import "./SalesSummary.css";
 import * as XLSX from "xlsx";
 
 const API_BASE = "https://admin-aged-field-2794.fly.dev";
+const BUILDING_ID = "aedf4b77-abad-417a-af9b-b789dbf4d772";
 
+const formatAmount = (value) => (!value ? 0 : Math.floor(value));
+
+/* DATE FILTER */
 const DateRangeFilter = ({ dateFilter, setDateFilter, startDate, setStartDate, endDate, setEndDate }) => (
-  <div className="om-filters-om">
+  <div className="om-summary-filters">
     <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}>
       <option value="TODAY">Today</option>
       <option value="WEEK">This Week</option>
@@ -24,46 +28,63 @@ const DateRangeFilter = ({ dateFilter, setDateFilter, startDate, setStartDate, e
   </div>
 );
 
-const SalesTable = ({ salesData, totals }) => (
-  <div class="om-table-wrapper"> 
-  <table className="om-sales-table">
-    <thead>
-      <tr>
-        <th>Outlet</th>
-        <th>Prepaid Net</th>
-        <th>Prepaid Gross</th>
-        <th>Postpaid Net</th>
-        <th>Postpaid Gross</th>
-      </tr>
-    </thead>
-    <tbody>
-      {salesData.map((stall, index) => (
-        <tr key={index}>
-          <td>{stall.stall_name}</td>
-          <td>₹{stall.prepaid_net_after_deduction || 0}</td>
-          <td>₹{stall.prepaid_gross_amount || 0}</td>
-          <td>₹{stall.postpaid_net_amount || 0}</td>
-          <td>₹{stall.postpaid_gross_amount || 0}</td>
+/* TABLE */
+const SalesTable = ({ data, type }) => (
+  <div className="om-summary-table-wrapper">
+    <table className="om-summary-table">
+      <thead>
+        <tr>
+          <th className="col-outlet">Outlet</th>
+          {type === "stall" ? (
+            <>
+              <th>Prepaid Net</th>
+              <th>Prepaid Total</th>
+              <th>Postpaid Net</th>
+              <th>Postpaid Total</th>
+            </>
+          ) : (
+            <>
+              <th>Postpaid Net</th>
+              <th>Postpaid Total</th>
+            </>
+          )}
         </tr>
-      ))}
+      </thead>
 
-      <tr className="om-total-row">
-        <td><b>Total</b></td>
-        <td><b>₹{totals.prepaid_after.toFixed(2)}</b></td>
-        <td><b>₹{totals.prepaid_gross.toFixed(2)}</b></td>
-        <td><b>₹{totals.postpaid_net.toFixed(2)}</b></td>
-        <td><b>₹{totals.postpaid_gross.toFixed(2)}</b></td>
-      </tr>
-    </tbody>
-  </table>
+      <tbody>
+        {data.map((item, index) => (
+          <tr key={index}>
+            <td className="col-outlet">{item.outlet || item.stall_name}</td>
+
+            {type === "stall" ? (
+              <>
+                <td>₹{formatAmount(item.prepaid_after_deduction)}</td>
+                <td>₹{formatAmount(item.prepaid_total_amount)}</td>
+                <td>₹{formatAmount(item.postpaid_net_amount)}</td>
+                <td>₹{formatAmount(item.postpaid_total_amount)}</td>
+              </>
+            ) : (
+              <>
+                <td>₹{formatAmount(item.postpaid_net)}</td>
+                <td>₹{formatAmount(item.postpaid_total)}</td>
+              </>
+            )}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </div>
 );
 
-export default function StallSalesReportOM() {
+export default function SalesSummary() {
 
   const { user } = useAuth();
 
   const [stalls, setStalls] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const [mode, setMode] = useState("stall");
+
   const [salesData, setSalesData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -71,217 +92,136 @@ export default function StallSalesReportOM() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const [sortOrder, setSortOrder] = useState("AZ");
-
   const formatDate = (date) => date.toISOString().split("T")[0];
 
-  /* FETCH STALLS */
-
+  /* FETCH GROUPS */
   useEffect(() => {
+    axios.get(`${API_BASE}/wallet-groups/list?building_id=${BUILDING_ID}`)
+      .then(res => setGroups(res.data || []))
+      .catch(err => console.error(err));
+  }, []);
 
+  /* FETCH STALLS */
+  useEffect(() => {
     if (!user?.building_id) return;
 
-    const fetchStalls = async () => {
-      try {
-
-        const res = await axios.get(`${API_BASE}/stalls/building/${user.building_id}`);
-
-        if (!Array.isArray(res.data)) return;
-
-        setStalls(res.data);
-
-      } catch (err) {
-        console.error("Failed to fetch stalls:", err);
-      }
-    };
-
-    fetchStalls();
-
+    axios.get(`${API_BASE}/stalls/building/${user.building_id}`)
+      .then(res => setStalls(res.data || []))
+      .catch(err => console.error(err));
   }, [user]);
 
-  /* DATE RESOLVER */
-
   const resolveDates = useCallback(() => {
+    const today = new Date();
 
-    const getToday = () => {
-      const today = new Date();
-      return [formatDate(today), formatDate(today)];
-    };
-
-    const getWeek = () => {
-      const today = new Date();
-      const first = today.getDate() - today.getDay();
-      const start = new Date(today.setDate(first));
-      const end = new Date();
-      return [formatDate(start), formatDate(end)];
-    };
-
-    const getMonth = () => {
-      const now = new Date();
-      const start = new Date(now.getFullYear(), now.getMonth(), 1);
-      const end = new Date();
-      return [formatDate(start), formatDate(end)];
-    };
-
-    let start;
-    let end;
-
-    if (dateFilter === "TODAY") [start, end] = getToday();
-    if (dateFilter === "WEEK") [start, end] = getWeek();
-    if (dateFilter === "MONTH") [start, end] = getMonth();
-
-    if (dateFilter === "CUSTOM") {
-      start = startDate;
-      end = endDate;
+    if (dateFilter === "TODAY") {
+      const d = formatDate(today);
+      return [d, d];
     }
 
-    return [start, end];
+    if (dateFilter === "WEEK") {
+      const first = today.getDate() - today.getDay();
+      return [formatDate(new Date(today.setDate(first))), formatDate(new Date())];
+    }
 
+    if (dateFilter === "MONTH") {
+      const start = new Date(today.getFullYear(), today.getMonth(), 1);
+      return [formatDate(start), formatDate(new Date())];
+    }
+
+    return [startDate, endDate];
   }, [dateFilter, startDate, endDate]);
 
-  /* FETCH SALES */
+  const fetchData = async () => {
+    const [start, end] = resolveDates();
 
-  const fetchSalesSummary = useCallback(async () => {
+    if (!start || !end) return alert("Select date range");
+
+    setLoading(true);
 
     try {
-
-      if (!stalls.length) return;
-
-      const [start, end] = resolveDates();
-
-      if (!start || !end) {
-        alert("Please select date range");
-        return;
+      if (mode === "group" && selectedGroup) {
+        const res = await axios.get(
+          `${API_BASE}/wallet-group/${selectedGroup}/sales-summary/?start_date=${start}&end_date=${end}`
+        );
+        setSalesData(res.data || []);
+      } else {
+        const stallIds = stalls.map(s => s.id || s.stall_id).join(",");
+        const res = await axios.get(
+          `${API_BASE}/orders/sales-summary/updated?stall_ids=${stallIds}&start_date=${start}T00:00:00&end_date=${end}T23:59:59`
+        );
+        setSalesData(res.data?.stalls || []);
       }
-
-      setLoading(true);
-
-      const stallIds = stalls
-        .map((s) => s.id || s.stall_id)
-        .filter(Boolean)
-        .join(",");
-
-      const url =
-        `${API_BASE}/orders/sales-summary/updated` +
-        `?stall_ids=${stallIds}` +
-        `&start_date=${start}T00:00:00` +
-        `&end_date=${end}T23:59:59`;
-
-      const res = await axios.get(url);
-
-      if (!res.data || !res.data.stalls) {
-        setSalesData([]);
-        return;
-      }
-
-      setSalesData(res.data.stalls);
-
     } catch (err) {
-
-      console.error("Sales summary error:", err);
-
-    } finally {
-
-      setLoading(false);
-
+      console.error(err);
     }
 
-  }, [stalls, resolveDates]);
-
-  /* SORT */
-
-  const sortedSales = useMemo(() => {
-
-    const sorted = [...salesData].sort((a, b) => {
-
-      if (sortOrder === "AZ") return a.stall_name.localeCompare(b.stall_name);
-
-      return b.stall_name.localeCompare(a.stall_name);
-
-    });
-
-    return sorted;
-
-  }, [salesData, sortOrder]);
-
-  /* TOTALS */
-
-  const totals = useMemo(() => {
-
-    return sortedSales.reduce((acc, item) => {
-
-      acc.prepaid_after += item.prepaid_net_after_deduction || 0;
-      acc.prepaid_gross += item.prepaid_gross_amount || 0;
-      acc.postpaid_net += item.postpaid_net_amount || 0;
-      acc.postpaid_gross += item.postpaid_gross_amount || 0;
-
-      return acc;
-
-    }, {
-      prepaid_after: 0,
-      prepaid_gross: 0,
-      postpaid_net: 0,
-      postpaid_gross: 0
-    });
-
-  }, [sortedSales]);
-
-  /* EXPORT */
+    setLoading(false);
+  };
 
   const exportExcel = () => {
-
-    const data = sortedSales.map((s) => ({
-      Outlet: s.stall_name,
-      "Prepaid Net": s.prepaid_net_after_deduction,
-      "Prepaid Gross": s.prepaid_gross_amount,
-      "Postpaid Net": s.postpaid_net_amount,
-      "Postpaid Gross": s.postpaid_gross_amount,
+    const data = salesData.map((s) => ({
+      Outlet: s.outlet || s.stall_name,
+      "Postpaid Net": formatAmount(s.postpaid_net || s.postpaid_net_amount),
+      "Postpaid Total": formatAmount(s.postpaid_total || s.postpaid_total_amount),
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
-
     const wb = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(wb, ws, "Sales Summary");
-
-    XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
-
+    XLSX.utils.book_append_sheet(wb, ws, "Sales");
+    XLSX.writeFile(wb, "Sales_Report.xlsx");
   };
 
   return (
+    <div className="om-summary-container">
 
-    <div className="om-sales-container">
+      <h2 className="om-summary-title">Sales Summary</h2>
 
-      <h2>Outlet Sales Summary</h2>
+      {/* 🔥 TOP SECTION */}
+      <div className="om-summary-header">
 
-      <div className="om-top-bar">
+        <div className="om-summary-left">
 
-        <DateRangeFilter
-          dateFilter={dateFilter}
-          setDateFilter={setDateFilter}
-          startDate={startDate}
-          setStartDate={setStartDate}
-          endDate={endDate}
-          setEndDate={setEndDate}
-        />
+          <select
+            className="om-summary-select"
+            value={selectedGroup}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedGroup(val);
+              setMode(val ? "group" : "stall");
+            }}
+          >
+            <option value="">All Stalls</option>
+            {groups.map((g) => (
+              <option key={g.group_id} value={g.group_id}>
+                {g.group_name}
+              </option>
+            ))}
+          </select>
 
-        <button className="primary-btn" onClick={fetchSalesSummary}>
+          <DateRangeFilter
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+          />
+
+          <button className="om-summary-export" onClick={exportExcel}>
+            Export Excel
+          </button>
+
+        </div>
+
+        <button className="om-summary-btn" onClick={fetchData}>
           Submit
         </button>
 
       </div>
 
-      <div className="om-actions">
-
-        <button onClick={() => setSortOrder("AZ")}>Sort A → Z</button>
-        <button onClick={() => setSortOrder("ZA")}>Sort Z → A</button>
-        <button onClick={exportExcel}>Export Excel</button>
-
-      </div>
-
       {loading
-        ? <div className="om-loader"></div>
-        : <SalesTable salesData={sortedSales} totals={totals} />
+        ? <div className="om-summary-loader"></div>
+        : <SalesTable data={salesData} type={mode} />
       }
 
     </div>
