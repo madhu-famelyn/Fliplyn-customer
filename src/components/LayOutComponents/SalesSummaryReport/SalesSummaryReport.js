@@ -7,9 +7,13 @@ import { saveAs } from "file-saver";
 const API_BASE = "https://admin-aged-field-2794.fly.dev";
 
 const SalesSummaryReport = () => {
+
   const { adminId } = useAuth();
 
   const [stalls, setStalls] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState("");
+
   const [salesData, setSalesData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
@@ -56,10 +60,23 @@ const SalesSummaryReport = () => {
     return decimal < 0.5 ? integer : integer + 1;
   };
 
+  /* ---------------- FETCH COMPANIES ---------------- */
+
+  useEffect(() => {
+
+    fetch(`${API_BASE}/company-domains/`)
+      .then(res => res.json())
+      .then(data => setCompanies(data || []))
+      .catch(err => console.error(err));
+
+  }, []);
+
   /* ---------------- FETCH STALLS ---------------- */
 
   const fetchStalls = useCallback(async () => {
+
     try {
+
       if (!adminId) return;
 
       setLoadingStalls(true);
@@ -70,42 +87,69 @@ const SalesSummaryReport = () => {
       if (!Array.isArray(data)) return;
 
       setStalls(data);
+
     } catch (err) {
       console.error(err);
     } finally {
       setLoadingStalls(false);
     }
+
   }, [adminId]);
 
   /* ---------------- FETCH SALES ---------------- */
 
   const fetchSalesSummary = useCallback(async (start, end) => {
+
     try {
-      if (!stalls.length) return;
-
-      const stallIds = stalls.map((s) => s.id).join(",");
-
-      const url = `${API_BASE}/orders/sales-summary/updated?stall_ids=${stallIds}&start_date=${start}T00:00:00&end_date=${end}T23:59:59`;
 
       setLoadingSales(true);
 
-      const res = await fetch(url);
-      const data = await res.json();
+      /* COMPANY SALES SUMMARY */
 
-      const stallsData = data?.stalls || [];
+      if (selectedCompany) {
 
-      setSalesData(stallsData);
-      setFilteredData(stallsData);
+        const url = `${API_BASE}/company-sales-summary/?company=${selectedCompany}&start_date=${start}&end_date=${end}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        setSalesData(data || []);
+        setFilteredData(data || []);
+
+      }
+
+      /* ALL STALL SALES SUMMARY */
+
+      else {
+
+        if (!stalls.length) return;
+
+        const stallIds = stalls.map((s) => s.id).join(",");
+
+        const url = `${API_BASE}/orders/sales-summary/updated?stall_ids=${stallIds}&start_date=${start}T00:00:00&end_date=${end}T23:59:59`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const stallsData = data?.stalls || [];
+
+        setSalesData(stallsData);
+        setFilteredData(stallsData);
+
+      }
+
     } catch (err) {
       console.error(err);
     } finally {
       setLoadingSales(false);
     }
-  }, [stalls]);
+
+  }, [stalls, selectedCompany]);
 
   /* ---------------- DATE FILTER ---------------- */
 
   useEffect(() => {
+
     let start;
     let end;
 
@@ -114,39 +158,46 @@ const SalesSummaryReport = () => {
     if (dateFilter === "MONTH") [start, end] = getThisMonth();
 
     if (dateFilter !== "CUSTOM") {
+
       setStartDate(start);
       setEndDate(end);
 
-      if (stalls.length) {
-        fetchSalesSummary(start, end);
-      }
+      fetchSalesSummary(start, end);
+
     }
-  }, [dateFilter, stalls, fetchSalesSummary, getToday, getThisWeek, getThisMonth]);
+
+  }, [dateFilter, stalls, selectedCompany, fetchSalesSummary, getToday, getThisWeek, getThisMonth]);
 
   /* ---------------- SORT ---------------- */
 
   useEffect(() => {
+
     let data = [...salesData];
 
     data.sort((a, b) =>
       sortOrder === "ASC"
-        ? a.stall_name.localeCompare(b.stall_name)
-        : b.stall_name.localeCompare(a.stall_name)
+        ? (a.stall_name || a.outlet).localeCompare(b.stall_name || b.outlet)
+        : (b.stall_name || b.outlet).localeCompare(a.stall_name || a.outlet)
     );
 
     setFilteredData(data);
+
   }, [sortOrder, salesData]);
 
   /* ---------------- TOTAL CALCULATION ---------------- */
 
   const totals = useMemo(() => {
+
     return filteredData.reduce(
       (acc, item) => {
+
         acc.prepaid_after += item.prepaid_net_after_deduction || 0;
         acc.prepaid_gross += item.prepaid_gross_amount || 0;
-        acc.postpaid_net += item.postpaid_net_amount || 0;
-        acc.postpaid_gross += item.postpaid_gross_amount || 0;
+        acc.postpaid_net += item.postpaid_net_amount || item.postpaid_net || 0;
+        acc.postpaid_gross += item.postpaid_gross_amount || item.postpaid_total || 0;
+
         return acc;
+
       },
       {
         prepaid_after: 0,
@@ -155,6 +206,7 @@ const SalesSummaryReport = () => {
         postpaid_gross: 0,
       }
     );
+
   }, [filteredData]);
 
   const roundedPrepaidAfter = roundOff(totals.prepaid_after);
@@ -162,12 +214,15 @@ const SalesSummaryReport = () => {
   /* ---------------- EXPORT EXCEL ---------------- */
 
   const exportToExcel = () => {
+
     const exportData = filteredData.map((stall) => ({
-      Outlet: stall.stall_name,
+
+      Outlet: stall.stall_name || stall.outlet,
       "Prepaid Net": stall.prepaid_net_after_deduction,
       "Prepaid Gross": stall.prepaid_gross_amount,
-      "Postpaid Net": stall.postpaid_net_amount,
-      "Postpaid Gross": stall.postpaid_gross_amount,
+      "Postpaid Net": stall.postpaid_net_amount || stall.postpaid_net,
+      "Postpaid Gross": stall.postpaid_gross_amount || stall.postpaid_total,
+
     }));
 
     exportData.push({
@@ -193,6 +248,7 @@ const SalesSummaryReport = () => {
     });
 
     saveAs(fileData, `sales_report_${startDate}_to_${endDate}.xlsx`);
+
   };
 
   /* ---------------- LOAD STALLS ---------------- */
@@ -201,37 +257,68 @@ const SalesSummaryReport = () => {
     fetchStalls();
   }, [fetchStalls]);
 
-  /* ---------------- GENERATE CUSTOM REPORT ---------------- */
+  /* ---------------- CUSTOM REPORT ---------------- */
 
   const generateCustomReport = () => {
+
     if (!startDate || !endDate) {
       alert("Please select start and end date");
       return;
     }
 
     fetchSalesSummary(startDate, endDate);
+
   };
 
   /* ---------------- UI ---------------- */
 
   return (
     <div className="sales-container">
+
       <h2>Sales Summary Report</h2>
 
       {loadingStalls && <p>Loading stalls...</p>}
 
       <div className="filters">
+
+        {/* COMPANY DROPDOWN */}
+
         <div>
+          <label>Company</label>
+
+          <select
+            value={selectedCompany}
+            onChange={(e) => setSelectedCompany(e.target.value)}
+          >
+
+            <option value="">All Stalls</option>
+
+            {companies.map((c, i) => (
+              <option key={i} value={c}>{c}</option>
+            ))}
+
+          </select>
+
+        </div>
+
+        {/* DATE RANGE */}
+
+        <div>
+
           <label>Date Range</label>
+
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
           >
+
             <option value="TODAY">Today</option>
             <option value="WEEK">This Week</option>
             <option value="MONTH">This Month</option>
             <option value="CUSTOM">Custom</option>
+
           </select>
+
         </div>
 
         {dateFilter === "CUSTOM" && (
@@ -258,26 +345,36 @@ const SalesSummaryReport = () => {
           </>
         )}
 
+        {/* SORT */}
+
         <div>
+
           <label>Sort</label>
+
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
           >
+
             <option value="ASC">Outlet A → Z</option>
             <option value="DESC">Outlet Z → A</option>
+
           </select>
+
         </div>
 
         <button className="export-btn" onClick={exportToExcel}>
           Export Excel
         </button>
+
       </div>
 
       {loadingSales ? (
         <p>Generating report...</p>
       ) : (
+
         <table className="sales-table">
+
           <thead>
             <tr>
               <th>Outlet</th>
@@ -289,38 +386,40 @@ const SalesSummaryReport = () => {
           </thead>
 
           <tbody>
+
             {filteredData.map((stall, index) => (
+
               <tr key={index}>
-                <td>{stall.stall_name}</td>
+
+                <td>{stall.stall_name || stall.outlet}</td>
                 <td>₹{stall.prepaid_net_after_deduction ?? 0}</td>
                 <td>₹{stall.prepaid_gross_amount ?? 0}</td>
-                <td>₹{stall.postpaid_net_amount ?? 0}</td>
-                <td>₹{stall.postpaid_gross_amount ?? 0}</td>
+                <td>₹{stall.postpaid_net_amount ?? stall.postpaid_net ?? 0}</td>
+                <td>₹{stall.postpaid_gross_amount ?? stall.postpaid_total ?? 0}</td>
+
               </tr>
+
             ))}
 
             <tr className="total-row">
-              <td>
-                <b>Total</b>
-              </td>
-              <td>
-                <b>₹{roundedPrepaidAfter}</b>
-              </td>
-              <td>
-                <b>₹{totals.prepaid_gross.toFixed(2)}</b>
-              </td>
-              <td>
-                <b>₹{totals.postpaid_net.toFixed(2)}</b>
-              </td>
-              <td>
-                <b>₹{totals.postpaid_gross.toFixed(2)}</b>
-              </td>
+
+              <td><b>Total</b></td>
+              <td><b>₹{roundedPrepaidAfter}</b></td>
+              <td><b>₹{totals.prepaid_gross.toFixed(2)}</b></td>
+              <td><b>₹{totals.postpaid_net.toFixed(2)}</b></td>
+              <td><b>₹{totals.postpaid_gross.toFixed(2)}</b></td>
+
             </tr>
+
           </tbody>
+
         </table>
+
       )}
+
     </div>
   );
+
 };
 
 export default SalesSummaryReport;

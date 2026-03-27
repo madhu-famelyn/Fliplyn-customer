@@ -5,7 +5,6 @@ import "./SalesSummary.css";
 import * as XLSX from "xlsx";
 
 const API_BASE = "https://admin-aged-field-2794.fly.dev";
-const BUILDING_ID = "aedf4b77-abad-417a-af9b-b789dbf4d772";
 
 const formatAmount = (value) => (!value ? 0 : Math.floor(value));
 
@@ -35,6 +34,7 @@ const SalesTable = ({ data, type }) => (
       <thead>
         <tr>
           <th className="col-outlet">Outlet</th>
+
           {type === "stall" ? (
             <>
               <th>Prepaid Net</th>
@@ -81,8 +81,10 @@ export default function SalesSummary() {
   const { user } = useAuth();
 
   const [stalls, setStalls] = useState([]);
-  const [groups, setGroups] = useState([]);
-  const [selectedGroup, setSelectedGroup] = useState("");
+  const [companies, setCompanies] = useState([]);
+
+  const [selectedCompany, setSelectedCompany] = useState("");
+
   const [mode, setMode] = useState("stall");
 
   const [salesData, setSalesData] = useState([]);
@@ -94,23 +96,28 @@ export default function SalesSummary() {
 
   const formatDate = (date) => date.toISOString().split("T")[0];
 
-  /* FETCH GROUPS */
+  /* LOAD COMPANY DOMAINS */
   useEffect(() => {
-    axios.get(`${API_BASE}/wallet-groups/list?building_id=${BUILDING_ID}`)
-      .then(res => setGroups(res.data || []))
+
+    axios.get(`${API_BASE}/company-domains/`)
+      .then(res => setCompanies(res.data || []))
       .catch(err => console.error(err));
+
   }, []);
 
   /* FETCH STALLS */
   useEffect(() => {
+
     if (!user?.building_id) return;
 
     axios.get(`${API_BASE}/stalls/building/${user.building_id}`)
       .then(res => setStalls(res.data || []))
       .catch(err => console.error(err));
+
   }, [user]);
 
   const resolveDates = useCallback(() => {
+
     const today = new Date();
 
     if (dateFilter === "TODAY") {
@@ -129,9 +136,11 @@ export default function SalesSummary() {
     }
 
     return [startDate, endDate];
+
   }, [dateFilter, startDate, endDate]);
 
   const fetchData = async () => {
+
     const [start, end] = resolveDates();
 
     if (!start || !end) return alert("Select date range");
@@ -139,26 +148,42 @@ export default function SalesSummary() {
     setLoading(true);
 
     try {
-      if (mode === "group" && selectedGroup) {
+
+      /* COMPANY SALES SUMMARY */
+      if (selectedCompany) {
+
         const res = await axios.get(
-          `${API_BASE}/wallet-group/${selectedGroup}/sales-summary/?start_date=${start}&end_date=${end}`
+          `${API_BASE}/company-sales-summary/?company=${selectedCompany}&start_date=${start}&end_date=${end}`
         );
+
         setSalesData(res.data || []);
+        setMode("company");
+
       } else {
+
+        /* ALL STALLS SALES SUMMARY (UNCHANGED LOGIC) */
+
         const stallIds = stalls.map(s => s.id || s.stall_id).join(",");
+
         const res = await axios.get(
           `${API_BASE}/orders/sales-summary/updated?stall_ids=${stallIds}&start_date=${start}T00:00:00&end_date=${end}T23:59:59`
         );
+
         setSalesData(res.data?.stalls || []);
+        setMode("stall");
+
       }
+
     } catch (err) {
       console.error(err);
     }
 
     setLoading(false);
+
   };
 
   const exportExcel = () => {
+
     const data = salesData.map((s) => ({
       Outlet: s.outlet || s.stall_name,
       "Postpaid Net": formatAmount(s.postpaid_net || s.postpaid_net_amount),
@@ -166,34 +191,37 @@ export default function SalesSummary() {
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
+
     const wb = XLSX.utils.book_new();
+
     XLSX.utils.book_append_sheet(wb, ws, "Sales");
+
     XLSX.writeFile(wb, "Sales_Report.xlsx");
+
   };
 
   return (
+
     <div className="om-summary-container">
 
       <h2 className="om-summary-title">Sales Summary</h2>
 
-      {/* 🔥 TOP SECTION */}
       <div className="om-summary-header">
 
         <div className="om-summary-left">
 
+          {/* COMPANY DROPDOWN */}
+
           <select
             className="om-summary-select"
-            value={selectedGroup}
-            onChange={(e) => {
-              const val = e.target.value;
-              setSelectedGroup(val);
-              setMode(val ? "group" : "stall");
-            }}
+            value={selectedCompany}
+            onChange={(e) => setSelectedCompany(e.target.value)}
           >
             <option value="">All Stalls</option>
-            {groups.map((g) => (
-              <option key={g.group_id} value={g.group_id}>
-                {g.group_name}
+
+            {companies.map((c, index) => (
+              <option key={index} value={c}>
+                {c}
               </option>
             ))}
           </select>
