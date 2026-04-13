@@ -7,7 +7,6 @@ import * as XLSX from "xlsx";
 const API_BASE = "https://admin-aged-field-2794.fly.dev";
 
 export default function StallSalesReportVendor() {
-
   const { stallIds, token } = useVendorAuth();
 
   const [salesData, setSalesData] = useState([]);
@@ -60,21 +59,17 @@ export default function StallSalesReportVendor() {
   /* FETCH SALES */
 
   const fetchSalesSummary = useCallback(async () => {
-
     if (!stallIds || stallIds.length === 0) return;
 
     const [start, end] = resolveDates();
-
     if (!start || !end) return;
 
     try {
       setLoading(true);
 
-      const stallIdsParam = stallIds.join(",");
-
       const url =
         `${API_BASE}/orders/sales-summary/updated` +
-        `?stall_ids=${stallIdsParam}` +
+        `?stall_ids=${stallIds.join(",")}` +
         `&start_date=${start}T00:00:00` +
         `&end_date=${end}T23:59:59`;
 
@@ -84,17 +79,26 @@ export default function StallSalesReportVendor() {
         },
       });
 
-      setSalesData(res.data?.stalls || []);
+      /* 🔥 NORMALIZE DATA HERE (MAIN FIX) */
+      const normalized = (res.data?.stalls || []).map((s) => ({
+        stall_id: s.stall_id,
+        stall_name: s.stall_name,
+
+        prepaid_net: s.prepaid_after_deduction || 0,
+        prepaid_gross: s.prepaid_total_amount || 0,
+
+        postpaid_net: s.postpaid_net_amount || 0,
+        postpaid_gross: s.postpaid_total_amount || 0,
+      }));
+
+      setSalesData(normalized);
 
     } catch (err) {
       console.error("API Error:", err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
-
   }, [stallIds, token, resolveDates]);
-
-  /* AUTO FETCH ON MOUNT / stallIds change */
 
   useEffect(() => {
     fetchSalesSummary();
@@ -115,14 +119,14 @@ export default function StallSalesReportVendor() {
   const totals = useMemo(() => {
     return sortedSales.reduce(
       (acc, item) => {
-        acc.prepaid_after += item.prepaid_net_after_deduction || 0;
-        acc.prepaid_gross += item.prepaid_gross_amount || 0;
-        acc.postpaid_net += item.postpaid_net_amount || 0;
-        acc.postpaid_gross += item.postpaid_gross_amount || 0;
+        acc.prepaid_net += item.prepaid_net;
+        acc.prepaid_gross += item.prepaid_gross;
+        acc.postpaid_net += item.postpaid_net;
+        acc.postpaid_gross += item.postpaid_gross;
         return acc;
       },
       {
-        prepaid_after: 0,
+        prepaid_net: 0,
         prepaid_gross: 0,
         postpaid_net: 0,
         postpaid_gross: 0,
@@ -135,10 +139,10 @@ export default function StallSalesReportVendor() {
   const exportExcel = () => {
     const data = sortedSales.map((s) => ({
       Outlet: s.stall_name,
-      "Prepaid Net": s.prepaid_net_after_deduction,
-      "Prepaid Gross": s.prepaid_gross_amount,
-      "Postpaid Net": s.postpaid_net_amount,
-      "Postpaid Gross": s.postpaid_gross_amount,
+      "Prepaid Net": s.prepaid_net,
+      "Prepaid Gross": s.prepaid_gross,
+      "Postpaid Net": s.postpaid_net,
+      "Postpaid Gross": s.postpaid_gross,
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
@@ -180,37 +184,37 @@ export default function StallSalesReportVendor() {
       {loading ? (
         <div className="om-loader"></div>
       ) : (
-      <div class="om-table-wrapper">
-        <table className="om-sales-table">
-          <thead>
-            <tr>
-              <th>Outlet</th>
-              <th>Prepaid Net</th>
-              <th>Prepaid Gross</th>
-              <th>Postpaid Net</th>
-              <th>Postpaid Gross</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedSales.map((stall, index) => (
-              <tr key={index}>
-                <td>{stall.stall_name}</td>
-                <td>₹{stall.prepaid_net_after_deduction || 0}</td>
-                <td>₹{stall.prepaid_gross_amount || 0}</td>
-                <td>₹{stall.postpaid_net_amount || 0}</td>
-                <td>₹{stall.postpaid_gross_amount || 0}</td>
+        <div className="om-table-wrapper">
+          <table className="om-sales-table">
+            <thead>
+              <tr>
+                <th>Outlet</th>
+                <th>Prepaid Net</th>
+                <th>Prepaid Gross</th>
+                <th>Postpaid Net</th>
+                <th>Postpaid Gross</th>
               </tr>
-            ))}
+            </thead>
+            <tbody>
+              {sortedSales.map((stall, index) => (
+                <tr key={index}>
+                  <td>{stall.stall_name}</td>
+                  <td>₹{stall.prepaid_net}</td>
+                  <td>₹{stall.prepaid_gross}</td>
+                  <td>₹{stall.postpaid_net}</td>
+                  <td>₹{stall.postpaid_gross}</td>
+                </tr>
+              ))}
 
-            <tr className="om-total-row">
-              <td><b>Total</b></td>
-              <td><b>₹{totals.prepaid_after.toFixed(2)}</b></td>
-              <td><b>₹{totals.prepaid_gross.toFixed(2)}</b></td>
-              <td><b>₹{totals.postpaid_net.toFixed(2)}</b></td>
-              <td><b>₹{totals.postpaid_gross.toFixed(2)}</b></td>
-            </tr>
-          </tbody>
-        </table>
+              <tr className="om-total-row">
+                <td><b>Total</b></td>
+                <td><b>₹{totals.prepaid_net.toFixed(2)}</b></td>
+                <td><b>₹{totals.prepaid_gross.toFixed(2)}</b></td>
+                <td><b>₹{totals.postpaid_net.toFixed(2)}</b></td>
+                <td><b>₹{totals.postpaid_gross.toFixed(2)}</b></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       )}
     </div>
