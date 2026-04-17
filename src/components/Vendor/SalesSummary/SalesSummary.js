@@ -190,9 +190,9 @@ export default function StallSalesReportVendor() {
               <tr>
                 <th>Outlet</th>
                 <th>Prepaid Net</th>
-                <th>Prepaid Gross</th>
+                {/* <th>Prepaid Gross</th> */}
                 <th>Postpaid Net</th>
-                <th>Postpaid Gross</th>
+                {/* <th>Postpaid Gross</th> */}
               </tr>
             </thead>
             <tbody>
@@ -200,18 +200,18 @@ export default function StallSalesReportVendor() {
                 <tr key={index}>
                   <td>{stall.stall_name}</td>
                   <td>₹{stall.prepaid_net}</td>
-                  <td>₹{stall.prepaid_gross}</td>
+                  {/* <td>₹{stall.prepaid_gross}</td> */}
                   <td>₹{stall.postpaid_net}</td>
-                  <td>₹{stall.postpaid_gross}</td>
+                  {/* <td>₹{stall.postpaid_gross}</td> */}
                 </tr>
               ))}
 
               <tr className="om-total-row">
                 <td><b>Total</b></td>
                 <td><b>₹{totals.prepaid_net.toFixed(2)}</b></td>
-                <td><b>₹{totals.prepaid_gross.toFixed(2)}</b></td>
+                {/* <td><b>₹{totals.prepaid_gross.toFixed(2)}</b></td> */}
                 <td><b>₹{totals.postpaid_net.toFixed(2)}</b></td>
-                <td><b>₹{totals.postpaid_gross.toFixed(2)}</b></td>
+                {/* <td><b>₹{totals.postpaid_gross.toFixed(2)}</b></td> */}
               </tr>
             </tbody>
           </table>
