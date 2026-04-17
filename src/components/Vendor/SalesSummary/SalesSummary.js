@@ -11,10 +11,7 @@ export default function StallSalesReportVendor() {
 
   const [salesData, setSalesData] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const [dateFilter, setDateFilter] = useState("TODAY");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [sortOrder, setSortOrder] = useState("AZ");
 
   const formatDate = (date) => date.toISOString().split("T")[0];
@@ -41,20 +38,21 @@ export default function StallSalesReportVendor() {
     return [formatDate(start), formatDate(end)];
   }, []);
 
+  const getLastMonth = useCallback(() => {
+    const today = new Date();
+    const start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const end = new Date(today.getFullYear(), today.getMonth(), 0);
+    return [formatDate(start), formatDate(end)];
+  }, []);
+
   const resolveDates = useCallback(() => {
-    let start, end;
+    if (dateFilter === "TODAY") return getToday();
+    if (dateFilter === "WEEK") return getWeek();
+    if (dateFilter === "MONTH") return getMonth();
+    if (dateFilter === "LAST_MONTH") return getLastMonth();
 
-    if (dateFilter === "TODAY") [start, end] = getToday();
-    if (dateFilter === "WEEK") [start, end] = getWeek();
-    if (dateFilter === "MONTH") [start, end] = getMonth();
-
-    if (dateFilter === "CUSTOM") {
-      start = startDate;
-      end = endDate;
-    }
-
-    return [start, end];
-  }, [dateFilter, startDate, endDate, getToday, getWeek, getMonth]);
+    return getToday(); // fallback safety
+  }, [dateFilter, getToday, getWeek, getMonth, getLastMonth]);
 
   /* FETCH SALES */
 
@@ -79,14 +77,11 @@ export default function StallSalesReportVendor() {
         },
       });
 
-      /* 🔥 NORMALIZE DATA HERE (MAIN FIX) */
       const normalized = (res.data?.stalls || []).map((s) => ({
         stall_id: s.stall_id,
         stall_name: s.stall_name,
-
         prepaid_net: s.prepaid_after_deduction || 0,
         prepaid_gross: s.prepaid_total_amount || 0,
-
         postpaid_net: s.postpaid_net_amount || 0,
         postpaid_gross: s.postpaid_total_amount || 0,
       }));
@@ -120,16 +115,12 @@ export default function StallSalesReportVendor() {
     return sortedSales.reduce(
       (acc, item) => {
         acc.prepaid_net += item.prepaid_net;
-        acc.prepaid_gross += item.prepaid_gross;
         acc.postpaid_net += item.postpaid_net;
-        acc.postpaid_gross += item.postpaid_gross;
         return acc;
       },
       {
         prepaid_net: 0,
-        prepaid_gross: 0,
         postpaid_net: 0,
-        postpaid_gross: 0,
       }
     );
   }, [sortedSales]);
@@ -140,9 +131,7 @@ export default function StallSalesReportVendor() {
     const data = sortedSales.map((s) => ({
       Outlet: s.stall_name,
       "Prepaid Net": s.prepaid_net,
-      "Prepaid Gross": s.prepaid_gross,
       "Postpaid Net": s.postpaid_net,
-      "Postpaid Gross": s.postpaid_gross,
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
@@ -160,15 +149,8 @@ export default function StallSalesReportVendor() {
           <option value="TODAY">Today</option>
           <option value="WEEK">This Week</option>
           <option value="MONTH">This Month</option>
-          <option value="CUSTOM">Custom</option>
+          <option value="LAST_MONTH">Last Month</option>
         </select>
-
-        {dateFilter === "CUSTOM" && (
-          <>
-            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          </>
-        )}
 
         <button className="primary-btn" onClick={fetchSalesSummary}>
           Submit
@@ -190,9 +172,7 @@ export default function StallSalesReportVendor() {
               <tr>
                 <th>Outlet</th>
                 <th>Prepaid Net</th>
-                {/* <th>Prepaid Gross</th> */}
                 <th>Postpaid Net</th>
-                {/* <th>Postpaid Gross</th> */}
               </tr>
             </thead>
             <tbody>
@@ -200,18 +180,14 @@ export default function StallSalesReportVendor() {
                 <tr key={index}>
                   <td>{stall.stall_name}</td>
                   <td>₹{stall.prepaid_net}</td>
-                  {/* <td>₹{stall.prepaid_gross}</td> */}
                   <td>₹{stall.postpaid_net}</td>
-                  {/* <td>₹{stall.postpaid_gross}</td> */}
                 </tr>
               ))}
 
               <tr className="om-total-row">
                 <td><b>Total</b></td>
                 <td><b>₹{totals.prepaid_net.toFixed(2)}</b></td>
-                {/* <td><b>₹{totals.prepaid_gross.toFixed(2)}</b></td> */}
                 <td><b>₹{totals.postpaid_net.toFixed(2)}</b></td>
-                {/* <td><b>₹{totals.postpaid_gross.toFixed(2)}</b></td> */}
               </tr>
             </tbody>
           </table>
