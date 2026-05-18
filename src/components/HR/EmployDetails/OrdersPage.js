@@ -116,21 +116,23 @@ const OrdersModal = ({ groupId, onClose }) => {
     0
   );
 
-  // ✅ Export to Excel
+  // ✅ Export to Excel - Grouped by Token/Order
   const exportToExcel = () => {
-    const rows = filteredOrders.flatMap((o) => {
+    const rows = filteredOrders.map((o) => {
       const { grandTotal } = calculateAmounts(o);
-
-      return o.order_details.map((i) => ({
+      const itemsList = o.order_details.map((i) => `${i.name} (Qty: ${i.quantity})`).join(", ");
+      const totalQty = o.order_details.reduce((sum, i) => sum + i.quantity, 0);
+      
+      return {
         Stall: o.stall_name || "N/A",
         Token: o.token_number || "N/A",
         Email: o.user_email || "",
         PaymentType: o.paid_with_wallet ? "Postpaid" : "Prepaid",
         Date: new Date(o.created_datetime).toLocaleString(),
-        Item: i.name,
-        Qty: i.quantity,
-        AmountPaid: grandTotal.toFixed(2),
-      }));
+        Items: itemsList,
+        "Total Qty": totalQty,
+        "Total Amount": grandTotal.toFixed(2),
+      };
     });
 
     const ws = XLSX.utils.json_to_sheet(rows);
