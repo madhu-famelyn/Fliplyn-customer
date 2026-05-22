@@ -68,34 +68,7 @@ export default function ManagerEditStall() {
           `https://admin-aged-field-2794.fly.dev/stalls/building/${user.building_id}`
         );
         const stalls = res.data || [];
-        
-        // Fetch items for each stall to count active & inactive items
-        const stallsWithItems = await Promise.all(
-          stalls.map(async (stall) => {
-            try {
-              const itemsRes = await axios.get(
-                `https://admin-aged-field-2794.fly.dev/items/stall/${stall.id}`
-              );
-              const items = itemsRes.data || [];
-              const active = items.filter((item) => item.is_available).length;
-              const inactive = items.filter((item) => !item.is_available).length;
-              return {
-                ...stall,
-                active_items_count: active,
-                inactive_items_count: inactive,
-              };
-            } catch (err) {
-              console.error(`Error fetching items for stall ${stall.id}:`, err);
-              return {
-                ...stall,
-                active_items_count: 0,
-                inactive_items_count: 0,
-              };
-            }
-          })
-        );
-        
-        setStallData(stallsWithItems);
+        setStallData(stalls);
         setError("");
       } catch (err) {
         console.error(err);
@@ -300,9 +273,13 @@ export default function ManagerEditStall() {
                   <div className="mgr-card-info">
                     <p className="mgr-title" title={stall.name}>{stall.name}</p>
                     <div className="mgr-card-items-stat">
-                      <span className="mgr-stat-active-items">{stall.active_items_count ?? 0} Active</span>
-                      <span className="mgr-stat-divider">•</span>
-                      <span className="mgr-stat-inactive-items">{stall.inactive_items_count ?? 0} Inactive</span>
+                      <span className={`mgr-status-text ${stall.is_available ? 'mgr-stat-active-items' : 'mgr-stat-inactive-items'}`}>
+                        {stall.is_available ? "Open" : "Closed"}
+                      </span>
+                      {stall.payment_type && (
+                        <><span className="mgr-stat-divider">•</span>
+                        <span className="mgr-stat-active-items">{stall.payment_type}</span></>
+                      )}
                     </div>
                   </div>
                   <div

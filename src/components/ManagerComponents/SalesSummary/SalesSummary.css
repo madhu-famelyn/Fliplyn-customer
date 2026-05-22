@@ -553,45 +553,198 @@
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .om-summary-container {
-    padding: 18px 14px;
+    padding: 16px 12px;
+  }
+
+  .om-summary-page-header {
+    margin-bottom: 18px;
+    gap: 10px;
+  }
+
+  .om-summary-icon-badge {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .om-summary-title {
+    font-size: 18px;
+    letter-spacing: -0.2px;
+  }
+
+  .om-summary-subtitle {
+    font-size: 12px;
   }
 
   .om-summary-controls-card {
     flex-direction: column;
     align-items: stretch;
-    padding: 16px;
+    padding: 14px;
+    gap: 10px;
+    border-radius: 16px;
   }
 
   .om-summary-controls-left {
     flex-direction: column;
     align-items: stretch;
+    gap: 10px;
   }
 
   .om-summary-select,
   .om-summary-filters select,
   .om-summary-filters input[type="date"] {
     width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 10px 12px;
   }
 
   .om-summary-filters {
     flex-direction: column;
+    width: 100%;
   }
 
   .om-summary-btn {
     width: 100%;
     justify-content: center;
     padding: 13px;
+    font-size: 14px;
   }
 
+  .om-summary-export {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+
+  /* ── Stats strip: 2-column grid on mobile ── */
   .om-summary-stats-strip {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
   }
 
   .om-summary-stat-card {
     min-width: unset;
+    padding: 14px 12px;
   }
 
-  .om-summary-title {
+  .om-summary-stat-label {
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .om-summary-stat-value {
+    font-size: 17px;
+    letter-spacing: -0.3px;
+  }
+
+  .om-summary-stat-icon {
     font-size: 20px;
+    top: 10px;
+    right: 10px;
+  }
+
+  /* ── Table: proper horizontal scroll on mobile ── */
+  .om-summary-table-card {
+    border-radius: 16px;
+  }
+
+  .om-summary-table-header-bar {
+    padding: 12px 14px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .om-summary-table-title {
+    font-size: 13px;
+  }
+
+  .om-summary-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Show scrollbar hint */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(251, 146, 60, 0.4) transparent;
+  }
+
+  .om-summary-table-wrapper::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .om-summary-table-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .om-summary-table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(251, 146, 60, 0.5);
+    border-radius: 4px;
+  }
+
+  /* Remove fixed table layout on mobile so columns size to content */
+  .om-summary-table {
+    table-layout: auto;
+    min-width: 420px;
+  }
+
+  .om-summary-table th,
+  .om-summary-table td {
+    padding: 11px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .om-summary-table th {
+    font-size: 11px;
+    padding: 10px 12px;
+  }
+
+  .col-outlet {
+    width: auto;
+    min-width: 110px;
+  }
+
+  .om-summary-table th:not(.col-outlet),
+  .om-summary-table td:not(.col-outlet) {
+    width: auto;
+    min-width: 90px;
+    text-align: right;
+  }
+
+  /* Right-align amount columns on mobile for clarity */
+  .om-summary-table td:not(.col-outlet) {
+    text-align: right;
+  }
+
+  .om-summary-table th:not(.col-outlet) {
+    text-align: right;
+  }
+
+  .om-summary-total-row td {
+    font-size: 13px;
+  }
+
+  .om-summary-total-row td.col-outlet {
+    display: table-cell;
+    gap: 6px;
+  }
+
+  .om-summary-empty {
+    padding: 40px 16px;
+  }
+
+  .om-summary-empty-icon {
+    font-size: 44px;
+  }
+
+  .om-summary-empty-text {
+    font-size: 14px;
+  }
+
+  .om-summary-empty-hint {
+    font-size: 12px;
   }
 }
