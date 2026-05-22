@@ -141,6 +141,14 @@ export default function StallSalesReportVendor() {
       "Postpaid Net": s.postpaid_net,
     }));
 
+    if (totals) {
+      data.push({
+        Outlet: "Total",
+        "Prepaid Net": totals.prepaid_net,
+        "Postpaid Net": totals.postpaid_net,
+      });
+    }
+
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sales Summary");
@@ -158,7 +166,7 @@ export default function StallSalesReportVendor() {
     try {
       // Fetch individual orders to get accurate order count
       const allOrders = [];
-      
+
       for (const stallId of stallIds) {
         try {
           const res = await axios.get(
@@ -261,10 +269,10 @@ export default function StallSalesReportVendor() {
 
     try {
       setLoadingHistory(true);
-      
+
       // Fetch orders for each stall and combine
       const allOrders = [];
-      
+
       for (const stallId of stallIds) {
         try {
           const res = await axios.get(
@@ -325,8 +333,8 @@ export default function StallSalesReportVendor() {
           <h1 className="dashboard-title">Sales Dashboard</h1>
           <p className="header-subtitle">Track your outlet performance</p>
         </div>
-        <select 
-          value={dateFilter} 
+        <select
+          value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value)}
           className="date-filter-select"
         >
@@ -351,7 +359,7 @@ export default function StallSalesReportVendor() {
           <div className="stat-icon">💰</div>
           <div className="stat-content">
             <h4>Today's Sales</h4>
-            <p className="stat-value">₹{todaysSalesTotal.toLocaleString('en-IN', {maximumFractionDigits: 2})}</p>
+            <p className="stat-value">₹{todaysSalesTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
           </div>
         </div>
 
@@ -359,7 +367,7 @@ export default function StallSalesReportVendor() {
           <div className="stat-icon">💳</div>
           <div className="stat-content">
             <h4>Prepaid Net</h4>
-            <p className="stat-value">₹{totals.prepaid_net.toLocaleString('en-IN', {maximumFractionDigits: 2})}</p>
+            <p className="stat-value">₹{totals.prepaid_net.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
           </div>
         </div>
 
@@ -367,7 +375,7 @@ export default function StallSalesReportVendor() {
           <div className="stat-icon">📅</div>
           <div className="stat-content">
             <h4>Postpaid Net</h4>
-            <p className="stat-value">₹{totals.postpaid_net.toLocaleString('en-IN', {maximumFractionDigits: 2})}</p>
+            <p className="stat-value">₹{totals.postpaid_net.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
           </div>
         </div>
       </div>
@@ -375,14 +383,14 @@ export default function StallSalesReportVendor() {
       {/* SALES PERFORMANCE SECTION */}
       <div className="sales-performance-section">
         <h2 className="section-title">Outlet Performance</h2>
-        
+
         <button onClick={handleViewOrderSummary} className="view-summary-link">📊 View Order Summary</button>
-        
+
         {/* CIRCULAR SALES CARDS */}
         <div className="sales-circles-container" ref={circlesRef}>
           <div className="sales-circle-card">
             <div className="circle-content">
-              <div className="circle-amount">₹{(periodSales.today.net).toLocaleString('en-IN', {maximumFractionDigits: 0})}</div>
+              <div className="circle-amount">₹{(periodSales.today.net).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
               <div className="circle-orders">{periodSales.today.orders} orders</div>
             </div>
             <div className="circle-label">Today</div>
@@ -390,7 +398,7 @@ export default function StallSalesReportVendor() {
 
           <div className="sales-circle-card">
             <div className="circle-content">
-              <div className="circle-amount">₹{(periodSales.thisWeek.net).toLocaleString('en-IN', {maximumFractionDigits: 0})}</div>
+              <div className="circle-amount">₹{(periodSales.thisWeek.net).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
               <div className="circle-orders">{periodSales.thisWeek.orders} orders</div>
             </div>
             <div className="circle-label">Weekly</div>
@@ -398,7 +406,7 @@ export default function StallSalesReportVendor() {
 
           <div className="sales-circle-card">
             <div className="circle-content">
-              <div className="circle-amount">₹{(periodSales.thisMonth.net).toLocaleString('en-IN', {maximumFractionDigits: 0})}</div>
+              <div className="circle-amount">₹{(periodSales.thisMonth.net).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
               <div className="circle-orders">{periodSales.thisMonth.orders} orders</div>
             </div>
             <div className="circle-label">Monthly</div>
@@ -408,9 +416,9 @@ export default function StallSalesReportVendor() {
         {/* ORDER HISTORY TABS */}
         <div className="order-history-section">
           <h3 className="order-history-title">Order History</h3>
-          
+
           <div className="order-tabs">
-            <button 
+            <button
               className={`order-tab ${selectedPeriod === "daily" ? "active" : ""}`}
               onClick={() => {
                 if (selectedPeriod === "daily" && showOrderHistory) {
@@ -423,7 +431,7 @@ export default function StallSalesReportVendor() {
             >
               📅 Daily
             </button>
-            <button 
+            <button
               className={`order-tab ${selectedPeriod === "weekly" ? "active" : ""}`}
               onClick={() => {
                 if (selectedPeriod === "weekly" && showOrderHistory) {
@@ -436,7 +444,7 @@ export default function StallSalesReportVendor() {
             >
               📊 Weekly
             </button>
-            <button 
+            <button
               className={`order-tab ${selectedPeriod === "monthly" ? "active" : ""}`}
               onClick={() => {
                 if (selectedPeriod === "monthly" && showOrderHistory) {
@@ -453,9 +461,9 @@ export default function StallSalesReportVendor() {
 
           {showOrderHistory && (
             <>
-              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-                <h4 style={{margin: 0}}>Orders</h4>
-                <button 
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <h4 style={{ margin: 0 }}>Orders</h4>
+                <button
                   onClick={() => setShowOrderHistory(false)}
                   style={{
                     background: 'none',
@@ -479,97 +487,97 @@ export default function StallSalesReportVendor() {
                   <p>No orders found for this period</p>
                 </div>
               ) : (
-            <div className="order-history-list">
-              <div className="order-history-header">
-                <div className="order-history-header-item">Outlet</div>
-                <div className="order-history-header-item">Orders</div>
-                <div className="order-history-header-item">Net Amount</div>
-              </div>
-              {orderHistory.map((order, index) => {
-                const orderData = order.order_details?.[0] || order;
-                const stallName = order.stall_name || orderData.stall_name || "N/A";
-                
-                // Try to get net amount (without GST) - prioritize net amount fields
-                let netAmount = order.prepaid_after_deduction || 
-                                orderData.prepaid_after_deduction ||
-                                order.postpaid_net_amount || 
-                                orderData.postpaid_net_amount ||
-                                order.net_amount || 
-                                orderData.net_amount || 
-                                order.net_sales || 
-                                orderData.net_sales ||
-                                order.subtotal || 
-                                orderData.subtotal ||
-                                order.amount_without_gst || 
-                                orderData.amount_without_gst;
-                
-                // If still no net amount, calculate from gross - gst
-                if (!netAmount) {
-                  const grossAmount = parseFloat(order.total_amount || orderData.total_amount || order.amount || orderData.amount || order.total || orderData.total || 0);
-                  // Try to get total GST - check multiple fields
-                  const totalGst = parseFloat(order.total_gst || 0);
-                  const cgstSgst = parseFloat((order.cgst || 0) + (order.sgst || 0));
-                  const gstAmount = totalGst > 0 ? totalGst : (cgstSgst > 0 ? cgstSgst : parseFloat(order.gst || orderData.gst || order.gst_amount || orderData.gst_amount || order.tax || orderData.tax || order.tax_amount || orderData.tax_amount || 0));
-                  netAmount = grossAmount - gstAmount;
-                }
-                
-                netAmount = parseFloat(netAmount) || 0;
-                
-                return (
-                  <div key={index} className="order-history-item">
+                <div className="order-history-list">
+                  <div className="order-history-header">
+                    <div className="order-history-header-item">Outlet</div>
+                    <div className="order-history-header-item">Orders</div>
+                    <div className="order-history-header-item">Net Amount</div>
+                  </div>
+                  {orderHistory.map((order, index) => {
+                    const orderData = order.order_details?.[0] || order;
+                    const stallName = order.stall_name || orderData.stall_name || "N/A";
+
+                    // Try to get net amount (without GST) - prioritize net amount fields
+                    let netAmount = order.prepaid_after_deduction ||
+                      orderData.prepaid_after_deduction ||
+                      order.postpaid_net_amount ||
+                      orderData.postpaid_net_amount ||
+                      order.net_amount ||
+                      orderData.net_amount ||
+                      order.net_sales ||
+                      orderData.net_sales ||
+                      order.subtotal ||
+                      orderData.subtotal ||
+                      order.amount_without_gst ||
+                      orderData.amount_without_gst;
+
+                    // If still no net amount, calculate from gross - gst
+                    if (!netAmount) {
+                      const grossAmount = parseFloat(order.total_amount || orderData.total_amount || order.amount || orderData.amount || order.total || orderData.total || 0);
+                      // Try to get total GST - check multiple fields
+                      const totalGst = parseFloat(order.total_gst || 0);
+                      const cgstSgst = parseFloat((order.cgst || 0) + (order.sgst || 0));
+                      const gstAmount = totalGst > 0 ? totalGst : (cgstSgst > 0 ? cgstSgst : parseFloat(order.gst || orderData.gst || order.gst_amount || orderData.gst_amount || order.tax || orderData.tax || order.tax_amount || orderData.tax_amount || 0));
+                      netAmount = grossAmount - gstAmount;
+                    }
+
+                    netAmount = parseFloat(netAmount) || 0;
+
+                    return (
+                      <div key={index} className="order-history-item">
+                        <div className="date-column">
+                          {stallName}
+                        </div>
+                        <div className="orders-column">
+                          1
+                        </div>
+                        <div className="amount-column">
+                          ₹{netAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {/* Total Row */}
+                  <div className="order-history-item order-history-total">
                     <div className="date-column">
-                      {stallName}
+                      <strong>Total</strong>
                     </div>
                     <div className="orders-column">
-                      1
+                      <strong>{orderHistory.length}</strong>
                     </div>
                     <div className="amount-column">
-                      ₹{netAmount.toLocaleString('en-IN', {maximumFractionDigits: 2})}
+                      <strong>₹{(() => {
+                        // Use the pre-calculated sales summary total for the selected period
+                        // This ensures consistency with the sales dashboard circles
+                        let periodSalesNet = 0;
+                        if (selectedPeriod === "daily") {
+                          periodSalesNet = periodSales.today?.net || 0;
+                        } else if (selectedPeriod === "weekly") {
+                          periodSalesNet = periodSales.thisWeek?.net || 0;
+                        } else if (selectedPeriod === "monthly") {
+                          periodSalesNet = periodSales.thisMonth?.net || 0;
+                        }
+                        console.log(`Using sales-summary API total for ${selectedPeriod} (periodSales):`, periodSalesNet);
+                        return periodSalesNet.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+                      })()}</strong>
                     </div>
                   </div>
-                );
-              })}
-              {/* Total Row */}
-              <div className="order-history-item order-history-total">
-                <div className="date-column">
-                  <strong>Total</strong>
                 </div>
-                <div className="orders-column">
-                  <strong>{orderHistory.length}</strong>
-                </div>
-                <div className="amount-column">
-                  <strong>₹{(() => {
-                    // Use the pre-calculated sales summary total for the selected period
-                    // This ensures consistency with the sales dashboard circles
-                    let periodSalesNet = 0;
-                    if (selectedPeriod === "daily") {
-                      periodSalesNet = periodSales.today?.net || 0;
-                    } else if (selectedPeriod === "weekly") {
-                      periodSalesNet = periodSales.thisWeek?.net || 0;
-                    } else if (selectedPeriod === "monthly") {
-                      periodSalesNet = periodSales.thisMonth?.net || 0;
-                    }
-                    console.log(`Using sales-summary API total for ${selectedPeriod} (periodSales):`, periodSalesNet);
-                    return periodSalesNet.toLocaleString('en-IN', {maximumFractionDigits: 2});
-                  })()}</strong>
-                </div>
-              </div>
-            </div>
-          )}
+              )}
             </>
           )}
         </div>
-        
+
         {/* CONTROLS */}
         <div className="controls-bar">
           <div className="sort-buttons">
-            <button 
+            <button
               className={`sort-btn ${sortOrder === "AZ" ? "active" : ""}`}
               onClick={() => setSortOrder("AZ")}
             >
               Sort A → Z
             </button>
-            <button 
+            <button
               className={`sort-btn ${sortOrder === "ZA" ? "active" : ""}`}
               onClick={() => setSortOrder("ZA")}
             >
@@ -609,16 +617,16 @@ export default function StallSalesReportVendor() {
                 {sortedSales.map((stall, index) => (
                   <tr key={index} className="table-row">
                     <td className="outlet-name">{stall.stall_name}</td>
-                    <td className="prepaid-cell">₹{stall.prepaid_net.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
-                    <td className="postpaid-cell">₹{stall.postpaid_net.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
-                    <td className="total-cell">₹{((stall.prepaid_net + stall.postpaid_net) || 0).toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
+                    <td className="prepaid-cell">₹{stall.prepaid_net.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
+                    <td className="postpaid-cell">₹{stall.postpaid_net.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
+                    <td className="total-cell">₹{((stall.prepaid_net + stall.postpaid_net) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
                   </tr>
                 ))}
                 <tr className="total-row">
                   <td className="outlet-name"><strong>Total</strong></td>
-                  <td className="prepaid-cell"><strong>₹{totals.prepaid_net.toLocaleString('en-IN', {maximumFractionDigits: 2})}</strong></td>
-                  <td className="postpaid-cell"><strong>₹{totals.postpaid_net.toLocaleString('en-IN', {maximumFractionDigits: 2})}</strong></td>
-                  <td className="total-cell"><strong>₹{((totals.prepaid_net + totals.postpaid_net) || 0).toLocaleString('en-IN', {maximumFractionDigits: 2})}</strong></td>
+                  <td className="prepaid-cell"><strong>₹{totals.prepaid_net.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</strong></td>
+                  <td className="postpaid-cell"><strong>₹{totals.postpaid_net.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</strong></td>
+                  <td className="total-cell"><strong>₹{((totals.prepaid_net + totals.postpaid_net) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</strong></td>
                 </tr>
               </tbody>
             </table>

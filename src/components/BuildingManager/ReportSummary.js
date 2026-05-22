@@ -159,6 +159,16 @@ export default function StallSalesReportBMSummary() {
       "Postpaid Gross": s.postpaid_gross_amount || 0,
     }));
 
+    if (grandTotals) {
+      data.push({
+        Outlet: "Total",
+        "Prepaid Net": grandTotals.prepaid_after || 0,
+        "Prepaid Gross": grandTotals.prepaid_gross || 0,
+        "Postpaid Net": grandTotals.postpaid_net || 0,
+        "Postpaid Gross": grandTotals.postpaid_gross || 0,
+      });
+    }
+
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sales Summary");

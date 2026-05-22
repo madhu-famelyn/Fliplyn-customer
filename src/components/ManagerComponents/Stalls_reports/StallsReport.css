@@ -1,317 +1,718 @@
-/* === General Container === */
-.stall-report-container-unique {
-  padding: 20px;
-  max-width: 1300px;
-  margin: 0 auto;
-  font-family: "Poppins", sans-serif;
-  background-color: #fafafa;
-  min-height: 100vh;
-}
-/* Apply left alignment to all <td> in all tables */
-table td {
-  text-align: left !important;
-  padding-left: 8px; /* optional, for spacing */
-}
-/* === Horizontal Scroll for Table === */
-.stall-report-table-wrapper {
-  width: 100%;
-  overflow-x: auto;       /* Enables horizontal scrolling */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+/* ============================================
+   PROFESSIONAL OUTLET SALES REPORT STYLING
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.stall-report-table-unique {
-  min-width: 900px; /* Ensures scroll appears if table is wide */
-  border-collapse: collapse;
-  width: 100%;
+/* === Main Container === */
+.stall-report-container-unique {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+/* === Header Section === */
+.stall-report-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 40px 30px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.stall-report-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .stall-report-title-unique {
-  text-align: center;
-  font-size: 1.8rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+.stall-report-subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+}
+
+/* === Filters Card === */
+.stall-report-filters-card {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8ecf1;
+}
+
+.filters-card-title {
+  font-size: 1.3rem;
   font-weight: 600;
-  color: #222;
+  color: #333;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* === Filters Row === */
+.stall-report-filters-row-unique {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
   margin-bottom: 25px;
 }
 
-/* === Filters Section === */
-.stall-report-filters-row-unique {
+.stall-report-dropdown-unique {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.stall-report-dropdown-unique,
-.stall-report-sort-unique,
-.stall-report-company-filter-unique {
-  flex: 1;
-  min-width: 250px;
-}
-
-.stall-report-dropdown-unique label,
-.stall-report-sort-unique label,
-.stall-report-company-filter-unique label {
-  display: block;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 6px;
-}
-
-.stall-report-dropdown-unique select,
-.stall-report-sort-unique select,
-.stall-report-company-filter-unique select {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  font-size: 0.95rem;
-  transition: border-color 0.2s;
-}
-
-.stall-report-dropdown-unique select:focus,
-.stall-report-sort-unique select:focus,
-.stall-report-company-filter-unique select:focus {
-  border-color: #ff7300;
-  outline: none;
-}
-
-/* === Date Filter Buttons === */
-.stall-report-date-filters-unique {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-  justify-content: center;
-}
-
-.stall-report-date-filters-unique button {
-  background-color: #ff7300;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.stall-report-date-filters-unique button:hover {
-  background-color: #0056b3;
-}
-
-/* === Custom Date Range === */
-.stall-report-custom-range-unique {
-  display: flex;
+  flex-direction: column;
   gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 10px;
 }
 
-.stall-report-custom-range-unique input {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.9rem;
+.stall-report-dropdown-unique label {
+  font-weight: 600;
+  color: #444;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
 }
 
-/* === Submit & Export Buttons === */
-.stall-report-submit-btn-container-unique,
-.stall-report-export-btn-unique {
-  text-align: center;
-  margin: 15px 0;
-}
-
-/* Container row */
-.stall-report-date-filter-row {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* space between label, dropdown, and inputs */
-  margin-bottom: 15px;
-  flex-wrap: wrap; /* responsive wrap on smaller screens */
-}
-
-/* Label */
-.stall-report-date-label {
+.stall-report-dropdown-unique select {
+  padding: 12px 14px;
+  border: 2px solid #e0e7ff;
+  border-radius: 8px;
+  background-color: #fafbfc;
+  font-size: 0.95rem;
+  color: #333;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
   font-weight: 500;
-  margin-right: 5px;
 }
 
-/* Dropdown and date inputs */
+.stall-report-dropdown-unique select:hover {
+  border-color: #667eea;
+  background-color: #f8faff;
+}
+
+.stall-report-dropdown-unique select:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background-color: #fff;
+}
+
+.stall-report-dropdown-unique select:disabled,
+.stall-report-dropdown-unique select.disabled-filter {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f0f0f0;
+}
+
+/* === Date Filter Section === */
+.stall-report-date-filter-section {
+  background: #f8faff;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.stall-report-date-label {
+  font-weight: 600;
+  color: #444;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.date-filter-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .stall-report-date-dropdown {
-  padding: 6px 10px;
-  font-size: 14px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  padding: 11px 14px;
+  border: 2px solid #e0e7ff;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: white;
+  color: #333;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
 }
 
-/* Custom date input container */
+.stall-report-date-dropdown:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
 .stall-report-custom-date-inputs {
   display: flex;
-  gap: 5px;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.stall-report-submit-btn-unique,
-.stall-report-export-btn-unique button {
-  background-color: #28a745;
+.date-separator {
+  color: #999;
+  font-weight: 500;
+}
+
+/* === Submit Button === */
+.stall-report-submit-btn-container-unique {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.stall-report-submit-btn-unique {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  padding: 10px 18px;
+  padding: 14px 40px;
   font-size: 1rem;
+  font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  letter-spacing: 0.5px;
 }
 
-.stall-report-submit-btn-unique:hover,
-.stall-report-export-btn-unique button:hover {
-  background-color: #218838;
+.stall-report-submit-btn-unique:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
 }
 
-/* === No Orders / Loading === */
-.stall-report-no-orders-unique p,
-.stall-report-container-unique p {
+.stall-report-submit-btn-unique:active {
+  transform: translateY(0);
+}
+
+/* === Loading State === */
+.stall-report-loading-state {
   text-align: center;
-  font-size: 1rem;
-  color: #555;
+  padding: 60px 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* === Total Section === */
-.stall-report-total-unique {
-  text-align: right;
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.stall-report-loading-state p {
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* === Error State === */
+.stall-report-error-state {
+  background: #fee;
+  border: 2px solid #fcc;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  color: #c00;
+  font-weight: 500;
+}
+
+.stall-report-error-state p {
+  margin: 0;
+}
+
+/* === No Orders State === */
+.stall-report-no-orders-unique {
+  background: white;
+  border-radius: 12px;
+  padding: 60px 30px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin: 30px 0;
+}
+
+.stall-report-no-orders-unique p {
+  color: #888;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* === Metrics Grid === */
+.stall-report-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8ecf1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #667eea;
+}
+
+.metric-icon {
+  font-size: 2.5rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-content h4 {
+  color: #777;
+  font-size: 0.85rem;
   font-weight: 600;
-  font-size: 1.2rem;
-  color: #333;
-  margin: 20px 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
 }
 
-/* === Orders Table === */
+.metric-value {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* === Table Section Header === */
+.stall-report-table-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 40px 0 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.stall-report-table-section-header h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* === Export Button === */
+.stall-report-export-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  letter-spacing: 0.4px;
+}
+
+.stall-report-export-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+}
+
+.stall-report-export-btn:active {
+  transform: translateY(0);
+}
+
+/* === Table Wrapper & Styling === */
+.stall-report-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8ecf1;
+}
+
 .stall-report-table-unique {
   width: 100%;
+  min-width: 900px;
   border-collapse: collapse;
-  margin-top: 10px;
-  background: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  background: white;
 }
 
-.stall-report-table-unique th,
-.stall-report-table-unique td {
-  padding: 10px 12px;
-  border: 1px solid #e6e6e6;
-  text-align: left;
-  font-size: 0.9rem;
+.stall-report-table-unique thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .stall-report-table-unique th {
-  background-color: #ff7300;
-  color: #fff;
+  padding: 16px 14px;
+  text-align: left;
   font-weight: 600;
+  font-size: 0.9rem;
   text-transform: capitalize;
+  border-bottom: 2px solid #667eea;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
-.stall-report-table-unique tr:nth-child(even) {
-  background-color: #f8f9fa;
+.stall-report-table-unique td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #e8ecf1;
+  font-size: 0.9rem;
+  color: #333;
+  text-align: left;
 }
 
-/* styles.css */
-.left-align {
-  text-align: left !important;
+.stall-report-table-unique tbody tr {
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.stall-report-table-unique tbody tr:hover {
+  background-color: #f8faff;
+}
 
-/* === Responsive Styling === */
+.stall-report-table-unique tbody tr:nth-child(even) {
+  background-color: #fafbfc;
+}
 
-/* 🖥️ For large screens (Windows desktop) */
+.stall-report-table-unique tbody tr:nth-child(even):hover {
+  background-color: #f8faff;
+}
+
+/* === Special Cell Styling === */
+.token-cell {
+  font-weight: 600;
+  color: #667eea;
+  font-family: 'Courier New', monospace;
+}
+
+.outlet-cell {
+  font-weight: 600;
+  color: #333;
+}
+
+.email-cell {
+  font-size: 0.85rem;
+  color: #666;
+  font-family: 'Courier New', monospace;
+}
+
+.qty-cell {
+  text-align: center;
+  font-weight: 600;
+  color: #764ba2;
+}
+
+.total-paid-cell {
+  font-weight: 700;
+  color: #2d5016;
+  background: #f0fce8;
+  padding: 14px 12px;
+  border-radius: 4px;
+}
+
+/* === Payment Badges === */
+.payment-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.payment-badge.prepaid {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.payment-badge.postpaid {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+/* === Responsive Design === */
 @media (min-width: 1025px) {
   .stall-report-container-unique {
     padding: 30px 40px;
   }
 
+  .stall-report-header {
+    padding: 50px 40px;
+  }
+
   .stall-report-title-unique {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
   .stall-report-table-unique th,
   .stall-report-table-unique td {
+    padding: 16px 16px;
     font-size: 0.95rem;
-    padding: 12px 15px;
+  }
+
+  .stall-report-filters-row-unique {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .stall-report-metrics-grid {
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 
-/* 📱 For tablets & mobile screens */
+/* === Tablet & Medium Screens === */
+@media (max-width: 1024px) {
+  .stall-report-metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .stall-report-filters-row-unique {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* === Tablets & Mobile === */
 @media (max-width: 768px) {
   .stall-report-container-unique {
     padding: 15px;
+    background: #f5f7fa;
+  }
+
+  .stall-report-header {
+    padding: 30px 20px;
+    margin-bottom: 20px;
+  }
+
+  .stall-report-title-unique {
+    font-size: 1.8rem;
+  }
+
+  .stall-report-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .stall-report-filters-card {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .filters-card-title {
+    font-size: 1.1rem;
+    margin-bottom: 18px;
+  }
+
+  .stall-report-filters-row-unique {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .stall-report-date-filter-section {
+    padding: 15px;
+  }
+
+  .date-filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stall-report-date-dropdown {
+    width: 100%;
+  }
+
+  .stall-report-custom-date-inputs {
+    flex-direction: column;
+  }
+
+  .stall-report-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .metric-card {
+    padding: 18px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .metric-icon {
+    font-size: 2rem;
+    min-width: auto;
+  }
+
+  .metric-content h4 {
+    font-size: 0.8rem;
+  }
+
+  .metric-value {
+    font-size: 1.3rem;
+  }
+
+  .stall-report-table-section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stall-report-export-btn {
+    width: 100%;
+  }
+
+  .stall-report-table-unique th,
+  .stall-report-table-unique td {
+    padding: 10px 8px;
+    font-size: 0.8rem;
+  }
+
+  .stall-report-table-unique th {
+    font-size: 0.75rem;
+  }
+}
+
+/* === Extra Small Screens === */
+@media (max-width: 480px) {
+  .stall-report-container-unique {
+    padding: 10px;
+  }
+
+  .stall-report-header {
+    padding: 20px 15px;
+    border-radius: 8px;
   }
 
   .stall-report-title-unique {
     font-size: 1.5rem;
   }
 
-  .stall-report-filters-row-unique {
-    flex-direction: column;
+  .stall-report-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .stall-report-filters-card {
+    padding: 15px;
+  }
+
+  .filters-card-title {
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+
+  .stall-report-metrics-grid {
+    grid-template-columns: 1fr;
     gap: 12px;
   }
 
-  .stall-report-dropdown-unique,
-  .stall-report-sort-unique,
-  .stall-report-company-filter-unique {
-    width: 100%;
-    min-width: unset;
+  .metric-card {
+    padding: 15px;
   }
 
-  .stall-report-date-filters-unique {
-    justify-content: center;
-    gap: 8px;
+  .metric-icon {
+    font-size: 1.8rem;
   }
 
-  .stall-report-date-filters-unique button {
-    flex: 1 1 calc(50% - 10px);
-  }
-
-  .stall-report-custom-range-unique input {
-    width: 100%;
+  .metric-value {
+    font-size: 1.1rem;
   }
 
   .stall-report-table-unique {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .stall-report-total-unique {
-    text-align: center;
-    font-size: 1rem;
-  }
-}
-
-/* 📱 Extra small screens */
-@media (max-width: 480px) {
-  .stall-report-title-unique {
-    font-size: 1.3rem;
-  }
-
-  .stall-report-date-filters-unique button {
-    font-size: 0.85rem;
-    padding: 6px 10px;
+    min-width: 600px;
   }
 
   .stall-report-table-unique th,
   .stall-report-table-unique td {
-    font-size: 0.8rem;
     padding: 8px 6px;
+    font-size: 0.75rem;
   }
 
-  .stall-report-total-unique {
-    font-size: 0.95rem;
+  .stall-report-submit-btn-unique,
+  .stall-report-export-btn {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+
+  .payment-badge {
+    padding: 4px 8px;
+    font-size: 0.7rem;
   }
 }
-/* Disabled filter styling */
+
+/* === Print Styles === */
+@media print {
+  .stall-report-container-unique {
+    background: white;
+  }
+
+  .stall-report-filters-card,
+  .stall-report-submit-btn-container-unique,
+  .stall-report-export-btn {
+    display: none;
+  }
+
+  .stall-report-table-wrapper {
+    box-shadow: none;
+    border: none;
+  }
+
+  .stall-report-table-unique {
+    page-break-inside: avoid;
+  }
+
+  .stall-report-table-unique tbody tr {
+    page-break-inside: avoid;
+  }
+}
+
+/* === Utility Classes === */
+table td {
+  text-align: left !important;
+}
+
+.left-align {
+  text-align: left !important;
+}
+
+/* === Disabled Filter Styling === */
 .disabled-filter {
   background-color: #f0f0f0;
   cursor: not-allowed;

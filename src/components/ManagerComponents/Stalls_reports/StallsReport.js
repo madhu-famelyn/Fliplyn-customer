@@ -251,147 +251,219 @@ const exportToExcel = () => {
   XLSX.writeFile(wb, "Outlet_Sales_Report.xlsx");
 };
 
+  // Calculate additional metrics
+  const totalOrders = sortedOrders.length;
+  const prepaidCount = sortedOrders.filter(o => o.paymentType === "Prepaid").length;
+  const postpaidCount = sortedOrders.filter(o => o.paymentType === "Postpaid").length;
+  const totalGST = sortedOrders.reduce((acc, order) => acc + (order.total_gst || 0), 0);
+
   return (
     <div className="stall-report-container-unique">
-      <h2 className="stall-report-title-unique">Outlet Sales Report</h2>
-
-      <div className="stall-report-filters-row-unique">
-        {/* Outlet Filter */}
-        <div className="stall-report-dropdown-unique">
-          <label htmlFor="stall-select">Select Outlet:</label>
-          <select
-            id="stall-select"
-            value={selectedStallId}
-            onChange={(e) => setSelectedStallId(e.target.value)}
-          >
-            <option value="all">All Outlets</option>
-            {stalls.map((stall) => (
-              <option key={stall.id} value={stall.id}>
-                {stall.name}
-              </option>
-            ))}
-          </select>
+      {/* Header Section */}
+      <div className="stall-report-header">
+        <div className="stall-report-header-content">
+          <h1 className="stall-report-title-unique">📊 Outlet Sales Report</h1>
+          <p className="stall-report-subtitle">Comprehensive sales analytics and order management</p>
         </div>
-
-        {/* Sort By */}
-        <div className="stall-report-dropdown-unique">
-          <label htmlFor="sort-select">Sort By:</label>
-          <select
-            id="sort-select"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <option value="stall">Outlet</option>
-            <option value="date">Date</option>
-            <option value="payment">Payment Type</option>
-          </select>
-        </div>
-
-
-{/* Payment Filter */}
-<div className="stall-report-dropdown-unique">
-  <label htmlFor="payment-filter-select">Filter by Payment:</label>
-  <select
-    id="payment-filter-select"
-    value={paymentFilter}
-    onChange={(e) => setPaymentFilter(e.target.value)}
-    disabled={orders.length === 0}
-    className={orders.length === 0 ? "disabled-filter" : ""}
-  >
-    <option value="all">All</option>
-    <option value="Prepaid">Prepaid</option>
-    <option value="Postpaid">Postpaid</option>
-  </select>
-</div>
-
-{/* Company Filter */}
-<div className="stall-report-dropdown-unique">
-  <label htmlFor="company-select">Filter by Company:</label>
-  <select
-    id="company-select"
-    value={companyFilter}
-    onChange={(e) => setCompanyFilter(e.target.value)}
-    disabled={orders.length === 0}
-    className={orders.length === 0 ? "disabled-filter" : ""}
-  >
-    <option value="all">All Companies</option>
-    {companies.map((company) => (
-      <option key={company} value={company}>
-        {company}
-      </option>
-    ))}
-  </select>
-</div>
-
-
-
       </div>
 
-      {/* Date Filter */}
-      <div className="stall-report-date-filter-row">
-        <label htmlFor="date-filter-select" className="stall-report-date-label">
-          Select Date Filter:
-        </label>
-
-        <select
-          id="date-filter-select"
-          className="stall-report-date-dropdown"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="">Select Date Filter</option>
-          <option value="today">Today</option>
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-          <option value="custom">Custom</option>
-        </select>
-
-        {filter === "custom" && (
-          <div className="stall-report-custom-date-inputs">
-            <input
-              type="date"
-              className="stall-report-date-dropdown"
-              value={customRange.start}
-              onChange={(e) =>
-                setCustomRange({ ...customRange, start: e.target.value })
-              }
-            />
-            <input
-              type="date"
-              className="stall-report-date-dropdown"
-              value={customRange.end}
-              onChange={(e) =>
-                setCustomRange({ ...customRange, end: e.target.value })
-              }
-            />
+      {/* Filters Card */}
+      <div className="stall-report-filters-card">
+        <h3 className="filters-card-title">🔍 Filters & Options</h3>
+        
+        <div className="stall-report-filters-row-unique">
+          {/* Outlet Filter */}
+          <div className="stall-report-dropdown-unique">
+            <label htmlFor="stall-select">Select Outlet</label>
+            <select
+              id="stall-select"
+              value={selectedStallId}
+              onChange={(e) => setSelectedStallId(e.target.value)}
+            >
+              <option value="all">All Outlets</option>
+              {stalls.map((stall) => (
+                <option key={stall.id} value={stall.id}>
+                  {stall.name}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+
+          {/* Sort By */}
+          <div className="stall-report-dropdown-unique">
+            <label htmlFor="sort-select">Sort By</label>
+            <select
+              id="sort-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="stall">Outlet</option>
+              <option value="date">Date</option>
+              <option value="payment">Payment Type</option>
+            </select>
+          </div>
+
+          {/* Payment Filter */}
+          <div className="stall-report-dropdown-unique">
+            <label htmlFor="payment-filter-select">Payment Type</label>
+            <select
+              id="payment-filter-select"
+              value={paymentFilter}
+              onChange={(e) => setPaymentFilter(e.target.value)}
+              disabled={orders.length === 0}
+              className={orders.length === 0 ? "disabled-filter" : ""}
+            >
+              <option value="all">All Types</option>
+              <option value="Prepaid">Prepaid</option>
+              <option value="Postpaid">Postpaid</option>
+            </select>
+          </div>
+
+          {/* Company Filter */}
+          <div className="stall-report-dropdown-unique">
+            <label htmlFor="company-select">Company</label>
+            <select
+              id="company-select"
+              value={companyFilter}
+              onChange={(e) => setCompanyFilter(e.target.value)}
+              disabled={orders.length === 0}
+              className={orders.length === 0 ? "disabled-filter" : ""}
+            >
+              <option value="all">All Companies</option>
+              {companies.map((company) => (
+                <option key={company} value={company}>
+                  {company}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Date Filter Section */}
+        <div className="stall-report-date-filter-section">
+          <label htmlFor="date-filter-select" className="stall-report-date-label">Select Date Range</label>
+          <div className="date-filter-controls">
+            <select
+              id="date-filter-select"
+              className="stall-report-date-dropdown"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="">Choose Date Filter</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="custom">Custom Range</option>
+            </select>
+
+            {filter === "custom" && (
+              <div className="stall-report-custom-date-inputs">
+                <input
+                  type="date"
+                  className="stall-report-date-dropdown"
+                  value={customRange.start}
+                  onChange={(e) =>
+                    setCustomRange({ ...customRange, start: e.target.value })
+                  }
+                  placeholder="Start Date"
+                />
+                <span className="date-separator">to</span>
+                <input
+                  type="date"
+                  className="stall-report-date-dropdown"
+                  value={customRange.end}
+                  onChange={(e) =>
+                    setCustomRange({ ...customRange, end: e.target.value })
+                  }
+                  placeholder="End Date"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="stall-report-submit-btn-container-unique">
+          <button className="stall-report-submit-btn-unique" onClick={handleSubmit}>
+            ⚡ Generate Report
+          </button>
+        </div>
       </div>
 
-      <div className="stall-report-submit-btn-container-unique">
-        <button className="stall-report-submit-btn-unique" onClick={handleSubmit}>
-          Submit
-        </button>
-      </div>
-
-      {loading && <p>Loading orders...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {/* Loading & Error States */}
+      {loading && (
+        <div className="stall-report-loading-state">
+          <div className="spinner"></div>
+          <p>Generating report...</p>
+        </div>
+      )}
+      
+      {error && (
+        <div className="stall-report-error-state">
+          <p>⚠️ {error}</p>
+        </div>
+      )}
 
       {!loading && !error && sortedOrders.length === 0 && submitted && (
         <div className="stall-report-no-orders-unique">
-          <p>No orders found for this date range.</p>
+          <p>📭 No orders found for the selected date range.</p>
         </div>
       )}
 
       {sortedOrders.length > 0 && (
         <>
-          <h3 className="stall-report-total-unique">
-            Grand Total Sales: ₹{totalSales.toFixed(2)}
-          </h3>
-          <div className="stall-report-export-btn-unique">
-            <button onClick={exportToExcel}>Export to Excel</button>
+          {/* Summary Cards */}
+          <div className="stall-report-metrics-grid">
+            <div className="metric-card">
+              <div className="metric-icon">💰</div>
+              <div className="metric-content">
+                <h4>Total Sales</h4>
+                <p className="metric-value">₹{totalSales.toFixed(2)}</p>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">📦</div>
+              <div className="metric-content">
+                <h4>Total Orders</h4>
+                <p className="metric-value">{totalOrders}</p>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">💵</div>
+              <div className="metric-content">
+                <h4>Prepaid</h4>
+                <p className="metric-value">{prepaidCount}</p>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">🔄</div>
+              <div className="metric-content">
+                <h4>Postpaid</h4>
+                <p className="metric-value">{postpaidCount}</p>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">🧾</div>
+              <div className="metric-content">
+                <h4>Total GST</h4>
+                <p className="metric-value">₹{totalGST.toFixed(2)}</p>
+              </div>
+            </div>
           </div>
 
+          {/* Table Section Header */}
+          <div className="stall-report-table-section-header">
+            <h3>📋 Order Details</h3>
+            <button className="stall-report-export-btn" onClick={exportToExcel}>
+              📥 Export to Excel
+            </button>
+          </div>
+
+          {/* Data Table */}
           <div className="stall-report-table-wrapper">
             <table className="stall-report-table-unique">
               <thead>
@@ -414,46 +486,49 @@ const exportToExcel = () => {
 
 
 
-
-
 <tbody>
-  {sortedOrders.map((order) =>
-    order.order_details.map((item, index) => {
-      const totalPaid =
-        order.order_details.reduce((sum, d) => sum + d.total, 0) +
-        (order.round_off || 0);
+                  {sortedOrders.map((order) =>
+                    order.order_details.map((item, index) => {
+                      const totalPaid =
+                        order.order_details.reduce((sum, d) => sum + d.total, 0) +
+                        (order.round_off || 0);
 
-      return (
-        <tr key={`${order.id}-${item.item_id}`}>
-           <td>
-            {new Date(order.created_datetime).toLocaleString("en-IN", {
-              timeZone: "Asia/Kolkata",
-            })}
-          </td>
-          <td>{order.token_number}</td>
-          <td>{order.stall_name}</td>
-          <td>{order.user_email}</td>
-         
-          <td>{order.paymentType}</td>
-          <td>{item.name}</td>
-          <td>{item.quantity}</td>
-          <td>₹{item.price}</td>
-          <td>₹{(item.quantity * item.price).toFixed(2)}</td>
-          <td>₹{item.total.toFixed(2)}</td>
+                      return (
+                        <tr key={`${order.id}-${item.item_id}`}>
+                          <td>
+                            {new Date(order.created_datetime).toLocaleString("en-IN", {
+                              timeZone: "Asia/Kolkata",
+                            })}
+                          </td>
+                          <td className="token-cell">{order.token_number}</td>
+                          <td className="outlet-cell">{order.stall_name}</td>
+                          <td className="email-cell">{order.user_email}</td>
+                          
+                          <td>
+                            <span className={`payment-badge ${order.paymentType.toLowerCase()}`}>
+                              {order.paymentType}
+                            </span>
+                          </td>
+                          <td>{item.name}</td>
+                          <td className="qty-cell">{item.quantity}</td>
+                          <td>₹{item.price}</td>
+                          <td>₹{(item.quantity * item.price).toFixed(2)}</td>
+                          <td>₹{item.total.toFixed(2)}</td>
 
-          {/* ✅ GST ONLY ON FIRST ITEM */}
-          <td>{index === 0 ? `₹${order.total_gst?.toFixed(2)}` : ""}</td>
+                          {/* GST ONLY ON FIRST ITEM */}
+                          <td>{index === 0 ? `₹${order.total_gst?.toFixed(2)}` : ""}</td>
 
-          {/* ✅ ROUND OFF ONLY ON FIRST ITEM */}
-          <td>{index === 0 ? `₹${order.round_off?.toFixed(2)}` : ""}</td>
+                          {/* ROUND OFF ONLY ON FIRST ITEM */}
+                          <td>{index === 0 ? `₹${order.round_off?.toFixed(2)}` : ""}</td>
 
-          {/* ✅ TOTAL PAID ONLY ON FIRST ITEM */}
-          <td>{index === 0 ? `₹${totalPaid.toFixed(2)}` : ""}</td>
-        </tr>
-      );
-    })
-  )}
-</tbody>
+                          {/* TOTAL PAID ONLY ON FIRST ITEM */}
+                          <td className="total-paid-cell">{index === 0 ? `₹${totalPaid.toFixed(2)}` : ""}</td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+
 
             </table>
           </div>

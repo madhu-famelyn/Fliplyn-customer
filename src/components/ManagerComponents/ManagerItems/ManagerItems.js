@@ -152,10 +152,30 @@ const toggleAvailability = async (itemId, currentStatus) => {
 
   return (
     <div className="ils-wrapper">
-      <h2 className="ils-heading">Items for Stall</h2>   
-
-
-    
+      <div className="ils-header-section">
+        <h2 className="ils-heading">Items for Stall</h2>   
+        <div className="ils-stats">
+          <div className="ils-stat-pill">
+            <span className="stat-dot" />
+            <span className="stat-num">{loading ? "—" : items.length}</span>
+            Total Items
+          </div>
+          <div className="ils-stat-pill active">
+            <span className="stat-dot active" />
+            <span className="stat-num">
+              {loading ? "—" : items.filter((item) => item.is_available).length}
+            </span>
+            Active
+          </div>
+          <div className="ils-stat-pill inactive">
+            <span className="stat-dot inactive" />
+            <span className="stat-num">
+              {loading ? "—" : items.filter((item) => !item.is_available).length}
+            </span>
+            Inactive
+          </div>
+        </div>
+      </div>
       
       <input
         type="text"
