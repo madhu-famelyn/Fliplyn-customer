@@ -73,7 +73,10 @@ const StatsStrip = ({ data, mode }) => {
 
 /* ── SALES TABLE ── */
 const SalesTable = ({ data, type }) => {
-  const totals = data.reduce(
+  // Filter out any "Total" rows from the data
+  const filteredData = data.filter(item => (item.outlet || item.stall_name) !== "Total");
+  
+  const totals = filteredData.reduce(
     (acc, item) => {
       if (type === "stall") {
         acc.prepaidNet   += Number(item.prepaid_after_deduction || 0);
@@ -89,7 +92,7 @@ const SalesTable = ({ data, type }) => {
     { prepaidNet: 0, prepaidTotal: 0, postpaidNet: 0, postpaidTotal: 0 }
   );
 
-  if (data.length === 0) {
+  if (filteredData.length === 0) {
     return (
       <div className="om-summary-empty">
         <div className="om-summary-empty-icon">📊</div>
@@ -113,7 +116,7 @@ const SalesTable = ({ data, type }) => {
         <div className="om-summary-table-title">
           📋 Sales Report
         </div>
-        <span className="om-summary-row-count">{data.length} {data.length === 1 ? "outlet" : "outlets"}</span>
+        <span className="om-summary-row-count">{filteredData.length} {filteredData.length === 1 ? "outlet" : "outlets"}</span>
       </div>
 
       <div className="om-summary-table-wrapper">
@@ -139,7 +142,7 @@ const SalesTable = ({ data, type }) => {
           </thead>
 
           <tbody>
-            {data.map((item, index) => (
+            {filteredData.map((item, index) => (
               <tr key={index}>
                 <td className="col-outlet">{item.outlet || item.stall_name}</td>
 
@@ -263,29 +266,31 @@ export default function SalesSummary() {
   };
 
   const exportExcel = () => {
+    // Filter out any "Total" rows from the API response
+    const filteredSalesData = salesData.filter(item => (item.outlet || item.stall_name) !== "Total");
     let data;
 
     if (mode === "stall") {
-      data = salesData.map((s) => ({
+      data = filteredSalesData.map((s) => ({
         Outlet:          s.outlet || s.stall_name,
         "Prepaid Net":   formatAmount(s.prepaid_after_deduction),
         "Prepaid Total": formatAmount(s.prepaid_total_amount),
         "Postpaid Net":  formatAmount(s.postpaid_net || s.postpaid_net_amount),
         "Postpaid Total":formatAmount(s.postpaid_total || s.postpaid_total_amount),
       }));
-      const tPrepaidNet   = salesData.reduce((a, s) => a + Number(s.prepaid_after_deduction || 0), 0);
-      const tPrepaidTotal = salesData.reduce((a, s) => a + Number(s.prepaid_total_amount    || 0), 0);
-      const tPostNet      = salesData.reduce((a, s) => a + Number(s.postpaid_net || s.postpaid_net_amount   || 0), 0);
-      const tPostTotal    = salesData.reduce((a, s) => a + Number(s.postpaid_total || s.postpaid_total_amount || 0), 0);
+      const tPrepaidNet   = filteredSalesData.reduce((a, s) => a + Number(s.prepaid_after_deduction || 0), 0);
+      const tPrepaidTotal = filteredSalesData.reduce((a, s) => a + Number(s.prepaid_total_amount    || 0), 0);
+      const tPostNet      = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_net || s.postpaid_net_amount   || 0), 0);
+      const tPostTotal    = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_total || s.postpaid_total_amount || 0), 0);
       data.push({ Outlet: "Total", "Prepaid Net": formatAmount(tPrepaidNet), "Prepaid Total": formatAmount(tPrepaidTotal), "Postpaid Net": formatAmount(tPostNet), "Postpaid Total": formatAmount(tPostTotal) });
     } else {
-      data = salesData.map((s) => ({
+      data = filteredSalesData.map((s) => ({
         Outlet:           s.outlet || s.stall_name,
         "Postpaid Net":   formatAmount(s.postpaid_net || s.postpaid_net_amount),
         "Postpaid Total": formatAmount(s.postpaid_total || s.postpaid_total_amount),
       }));
-      const tPostNet   = salesData.reduce((a, s) => a + Number(s.postpaid_net   || s.postpaid_net_amount   || 0), 0);
-      const tPostTotal = salesData.reduce((a, s) => a + Number(s.postpaid_total || s.postpaid_total_amount || 0), 0);
+      const tPostNet   = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_net   || s.postpaid_net_amount   || 0), 0);
+      const tPostTotal = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_total || s.postpaid_total_amount || 0), 0);
       data.push({ Outlet: "Total", "Postpaid Net": formatAmount(tPostNet), "Postpaid Total": formatAmount(tPostTotal) });
     }
 
