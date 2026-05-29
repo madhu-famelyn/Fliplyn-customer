@@ -29,7 +29,10 @@ const DateRangeFilter = ({ dateFilter, setDateFilter, startDate, setStartDate, e
 
 /* ── STAT CARDS ── */
 const StatsStrip = ({ data, mode }) => {
-  const totals = data.reduce(
+  // Filter out any "Total" rows from the data
+  const filteredData = data.filter(item => (item.outlet || item.stall_name) !== "Total");
+  
+  const totals = filteredData.reduce(
     (acc, item) => {
       if (mode === "stall") {
         acc.prepaidNet   += Number(item.prepaid_after_deduction || 0);
