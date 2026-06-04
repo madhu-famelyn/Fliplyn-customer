@@ -31,7 +31,7 @@ export default function B2CPaymentSuccess() {
     if (showToken && orderDetails) {
       const printTimer = setTimeout(() => {
         window.print();
-      }, 500);
+      }, 1500);
       return () => clearTimeout(printTimer);
     }
   }, [showToken, orderDetails]);

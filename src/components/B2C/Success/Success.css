@@ -462,28 +462,82 @@
 
 /* Print Styling */
 @media print {
+  /* Force color printing and disable all transitions/animations */
+  *, *:before, *:after {
+    transition: none !important;
+    animation: none !important;
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   body, html {
     background: white !important;
+    color: #000000 !important;
     margin: 0 !important;
     padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
   }
+
   .receipt-wrapper {
+    display: block !important;
     background: white !important;
     min-height: auto !important;
+    height: auto !important;
     padding: 0 !important;
-    justify-content: flex-start !important;
+    margin: 0 !important;
   }
+
   .download-btn,
   .payment-success-header,
-  .back-to-stalls-btn {
+  .back-to-stalls-btn,
+  .order-validity-box {
     display: none !important;
   }
+
   .receipt-card {
+    display: block !important;
     box-shadow: none !important;
     border: none !important;
     width: 100% !important;
     max-width: 100% !important;
     padding: 10px !important;
-    animation: none !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  /* Force high contrast text and borders for physical printing */
+  .stall-name {
+    color: #000000 !important;
+  }
+
+  .token-hero-badge {
+    background: #f5f5f5 !important;
+    border: 1px dashed #000000 !important;
+    max-width: 100% !important;
+    padding: 10px !important;
+  }
+
+  .token-hero-label {
+    color: #000000 !important;
+  }
+
+  .token-hero-number {
+    color: #000000 !important;
+    font-size: 38px !important;
+    font-weight: 900 !important;
+  }
+
+  .order-date,
+  .token-table,
+  .token-summary,
+  .grand-total,
+  .token-row,
+  .item-name {
+    color: #000000 !important;
   }
 }
