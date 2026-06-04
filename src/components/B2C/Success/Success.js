@@ -16,6 +16,15 @@ export default function B2CPaymentSuccess() {
   const view = "receipt";
   const [showToken, setShowToken] = useState(false);
   const receiptRef = useRef(null);
+  const [clientToken, setClientToken] = useState(null);
+
+  // Generate a simple 4‑digit token if none exists from the backend
+  useEffect(() => {
+    if (!orderDetails?.token_number && orderDetails?.id) {
+      const fallback = Math.floor(1000 + Math.random() * 9000).toString();
+      setClientToken(fallback);
+    }
+  }, [orderDetails]);
 
   // Show token as soon as order details are available and trigger print
   useEffect(() => {
@@ -74,18 +83,9 @@ export default function B2CPaymentSuccess() {
   if (!orderDetails) return <p className="loading-text">Loading...</p>;
 
   // Token number – use server‑provided value or generate a fallback locally
-  const [clientToken, setClientToken] = useState(null);
   const tokenNo = orderDetails.token_number
     ? orderDetails.token_number
     : clientToken || orderDetails.id.slice(0, 4);
-
-  // Generate a simple 4‑digit token if none exists from the backend
-  useEffect(() => {
-    if (!orderDetails?.token_number && orderDetails?.id) {
-      const fallback = Math.floor(1000 + Math.random() * 9000).toString();
-      setClientToken(fallback);
-    }
-  }, [orderDetails]);
   const createdAt = new Date(orderDetails.created_datetime).toLocaleString(
     "en-IN",
     { hour12: true, timeZone: "Asia/Kolkata" }
