@@ -33,6 +33,7 @@ export default function B2CPaymentSuccess() {
       // Print automatically once the token is ready
       handlePrint();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderDetails]);
 
   const handlePrint = () => {
