@@ -17,14 +17,14 @@ export default function B2CPaymentSuccess() {
   const [showToken, setShowToken] = useState(false);
   const receiptRef = useRef(null);
 
-  // ⏱ Show token after 10 seconds
+  // Show token as soon as order details are available and trigger print
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (orderDetails) {
       setShowToken(true);
-    }, 10000);
-
-    return () => clearTimeout(timer);
-  }, []);
+      // Print automatically once the token is ready
+      handlePrint();
+    }
+  }, [orderDetails]);
 
   const handlePrint = () => {
     if (window.Android && typeof window.Android.printToken === "function") {
@@ -36,16 +36,8 @@ export default function B2CPaymentSuccess() {
     }
   };
 
-  // 🖨️ Auto-print token once it is generated and visible
-  useEffect(() => {
-    if (showToken && orderDetails) {
-      const printTimer = setTimeout(() => {
-        handlePrint();
-      }, 300);
-      return () => clearTimeout(printTimer);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showToken, orderDetails]);
+  // Auto‑print is now triggered directly when the token becomes visible
+  // (see the token‑show useEffect above). The previous separate auto‑print effect has been removed.
 
 
   useEffect(() => {
@@ -81,7 +73,19 @@ export default function B2CPaymentSuccess() {
 
   if (!orderDetails) return <p className="loading-text">Loading...</p>;
 
-  const tokenNo = orderDetails.token_number ?? orderDetails.id.slice(0, 4);
+  // Token number – use server‑provided value or generate a fallback locally
+  const [clientToken, setClientToken] = useState(null);
+  const tokenNo = orderDetails.token_number
+    ? orderDetails.token_number
+    : clientToken || orderDetails.id.slice(0, 4);
+
+  // Generate a simple 4‑digit token if none exists from the backend
+  useEffect(() => {
+    if (!orderDetails?.token_number && orderDetails?.id) {
+      const fallback = Math.floor(1000 + Math.random() * 9000).toString();
+      setClientToken(fallback);
+    }
+  }, [orderDetails]);
   const createdAt = new Date(orderDetails.created_datetime).toLocaleString(
     "en-IN",
     { hour12: true, timeZone: "Asia/Kolkata" }
