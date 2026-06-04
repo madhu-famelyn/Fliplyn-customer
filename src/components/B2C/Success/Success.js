@@ -26,11 +26,21 @@ export default function B2CPaymentSuccess() {
     return () => clearTimeout(timer);
   }, []);
 
+  const handlePrint = () => {
+    if (window.Android && typeof window.Android.printToken === "function") {
+      window.Android.printToken(JSON.stringify(orderDetails));
+    } else if (window.iMinPrinter && typeof window.iMinPrinter.printReceipt === "function") {
+      window.iMinPrinter.printReceipt(JSON.stringify(orderDetails));
+    } else {
+      window.print();
+    }
+  };
+
   // 🖨️ Auto-print token once it is generated and visible
   useEffect(() => {
     if (showToken && orderDetails) {
       const printTimer = setTimeout(() => {
-        window.print();
+        handlePrint();
       }, 300);
       return () => clearTimeout(printTimer);
     }
@@ -157,7 +167,7 @@ export default function B2CPaymentSuccess() {
                 </div>
               </div>
 
-              <button className="download-btn" onClick={() => window.print()}>
+              <button className="download-btn" onClick={handlePrint}>
                 Print Token
               </button>
             </>
