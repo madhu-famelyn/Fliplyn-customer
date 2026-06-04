@@ -44,6 +44,7 @@ export default function B2CPaymentSuccess() {
       }, 300);
       return () => clearTimeout(printTimer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showToken, orderDetails]);
 
 
