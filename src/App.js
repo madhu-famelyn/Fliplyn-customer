@@ -1,13 +1,22 @@
 // src/App.js
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import SignInPage from "./components/SignIn/SignIn";
 import SignUpPage from "./components/SignUp/SignUp";
+
+import icon1 from "./Assets/image1.png";
+import icon2 from "./Assets/image2.png";
+import icon3 from "./Assets/image3.png";
+import icon4 from "./Assets/image4.png";
+import icon5 from "./Assets/image5.png";
+import icon6 from "./Assets/image6.png";
+// ✅ Private Routes with persistent auth
 
 // ✅ Auth Contexts
 import { VendorAuthProvider, useVendorAuth } from "./components/AuthContex/VendorContext";
 import { AuthProvider as AdminAuthProvider, useAuth as useAdminAuth } from "./components/AuthContex/AdminContext";
 import { HrAuthProvider } from "./components/AuthContex/HrContext";
 import { BuildingManagerProvider, useBuildingManagerAuth } from "./components/AuthContex/BuildingManagerContext";
+import { B2CAuthProvider, useB2CAuth } from "./components/AuthContex/B2CContext";
 import { AuthProvider as ManagerAuthProvider, useAuth as useManagerAuth } from "./components/AuthContex/ContextAPI"; // Operational Manager
 
 // ✅ Components
@@ -76,11 +85,30 @@ import ManagerViewVendors from "./components/ManagerComponents/AddVendor/AddVend
 import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
 import LoginSelectionPage from "./components/LoginSelection/LoginSelection";
 import OrderStatus from "./components/OrderStatus/OrderStatus";
+import B2CLogin from "./components/B2C/Login/Login";
+import B2CStalls from "./components/B2C/Stalls/Stalls";
+import B2CCategory from "./components/B2C/Category/Category";
+import B2CCart from "./components/B2C/Cart/Cart";
+import B2CPayment from "./components/B2C/PaymentPage/Payment";
+import B2CPaymentSuccess from "./components/B2C/Success/Success";
 
 import Events from "./components/pages/Events/Events";
 import PageDashboard from "./components/pages/Dashboard/Dashboard";
 import StallSalesReportBMSummary from "./components/BuildingManager/ReportSummary";
 import SalesSummaryReport from "./components/LayOutComponents/SalesSummaryReport/SalesSummaryReport";
+
+function BackgroundImages() {
+  return (
+    <div className="bg-images">
+      <img src={icon1} className="bg-img img-1" alt="" />
+      <img src={icon2} className="bg-img img-2" alt="" />
+      <img src={icon3} className="bg-img img-3" alt="" />
+      <img src={icon4} className="bg-img img-4" alt="" />
+      <img src={icon5} className="bg-img img-5" alt="" />
+      <img src={icon6} className="bg-img img-6" alt="" />
+    </div>
+  );
+}
 
 // ✅ Private Routes with persistent auth
 const AdminPrivateRoute = ({ element }) => {
@@ -113,14 +141,24 @@ const ManagerPrivateRoute = ({ element }) => {
   return token ? element : <Navigate to="/manager-login" replace />;
 };
 
+const B2CPrivateRoute = ({ element }) => {
+  const { token } = useB2CAuth();
+  return token ? element : <Navigate to="/b2c-login" replace />;
+};
+
 
 function App() {
+  const location = useLocation();
+  const showBg = location.pathname.startsWith("/b2c");
+
   return (
     <AdminAuthProvider>
       <VendorAuthProvider>
         <HrAuthProvider>
           <BuildingManagerProvider>
+            <B2CAuthProvider>
             <ManagerAuthProvider>
+              {showBg && <BackgroundImages />}
               <Routes>
                 {/* 🔓 Public Routes */}
                 <Route path="/login" element={<SignInPage />} />
@@ -206,6 +244,15 @@ function App() {
                 <Route path="/bld-report-summary" element={<BuildingManagerPrivateRoute element={<StallSalesReportBMSummary />} />} />
 
 
+                {/* 🛒 B2C Routes */}
+                <Route path="/b2c-login" element={<B2CLogin />} />
+                <Route path="/b2c/stalls" element={<B2CPrivateRoute element={<B2CStalls />} />} />
+                <Route path="/b2c/categories/:stallId" element={<B2CPrivateRoute element={<B2CCategory />} />} />
+                <Route path="/b2c/cart" element={<B2CPrivateRoute element={<B2CCart />} />} />
+                <Route path="/b2c/payment" element={<B2CPrivateRoute element={<B2CPayment />} />} />
+                <Route path="/b2c/success" element={<B2CPrivateRoute element={<B2CPaymentSuccess />} />} />
+
+
                 {/* 👥 User Creation Routes */}
                 <Route path="/user-creation" element={<MainPage />} />
                 <Route path="/view-managers" element={<ViewManagers />} />
@@ -221,6 +268,7 @@ function App() {
                 {/* 🔚 Fallback */}
               </Routes>
             </ManagerAuthProvider>
+            </B2CAuthProvider>
           </BuildingManagerProvider>
         </HrAuthProvider>
       </VendorAuthProvider>

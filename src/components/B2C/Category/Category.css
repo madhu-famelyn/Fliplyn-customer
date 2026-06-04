@@ -1,0 +1,103 @@
+/* ---------- MAIN WRAPPER ---------- */
+.category-wrapper {
+  display: flex;
+  padding-bottom: 48px;
+}
+
+/* ---------- RIGHT SIDE CONTENT (ITEMS AREA) ---------- */
+.items-section-main {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  height: 100%;
+  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.items-section-main.sidebar-open {
+  padding-left: 240px; /* Shift to make room for fixed sidebar */
+}
+
+.items-section-main.sidebar-closed {
+  padding-left: 56px; /* Space for the toggle button when closed */
+}
+
+/* ---------- MENU HEADER ---------- */
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  margin-left: 0;
+}
+
+.menu-title {
+  font-family: "Outfit", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+  color: #1a1a2e;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- CART BUTTON ---------- */
+.view-cart-btn {
+  background: #e0d9ff;
+  color: #6f2cff;
+  border: none;
+  padding: 0 16px;
+  height: 44px;
+  font-size: 14px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: "Outfit", sans-serif;
+  transition: background 0.2s, transform 0.15s;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.view-cart-btn:active {
+  transform: scale(0.96);
+}
+
+.view-cart-btn.has-items {
+  background: linear-gradient(90deg, #f84d25, #ff9047);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(248, 77, 37, 0.35);
+}
+
+/* ---------- SCROLLBAR HIDE FOR CLEAN UI ---------- */
+.category-sidebar::-webkit-scrollbar,
+.items-section-main::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-sidebar::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.items-section-main::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+/* ---------- MOBILE RESPONSIVE --------- */
+@media (max-width: 768px) {
+  .menu-title {
+    font-size: 18px;
+  }
+
+  .menu-header {
+    margin-left: 0;
+    padding: 0 4px;
+  }
+
+  .items-section-main {
+    padding: 12px;
+    padding-left: 48px;
+  }
+}

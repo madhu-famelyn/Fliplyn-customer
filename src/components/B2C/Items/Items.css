@@ -1,0 +1,451 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+
+/* =================== POPUP =================== */
+.stall-popup {
+  position: fixed;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #f84d25, #ff7043);
+  color: white;
+  padding: 11px 22px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Outfit", sans-serif;
+  z-index: 9999;
+  box-shadow: 0 6px 20px rgba(248, 77, 37, 0.35);
+  animation: popupSlide 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+}
+
+@keyframes popupSlide {
+  from { opacity: 0; transform: translateX(-50%) translateY(-14px) scale(0.92); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+/* =================== SEARCH BAR =================== */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 440px;
+  margin: 14px auto 12px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1.5px solid #f0f0f4;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-bar:focus-within {
+  border-color: rgba(248, 77, 37, 0.4);
+  box-shadow: 0 2px 14px rgba(248, 77, 37, 0.12), 0 0 0 3px rgba(248, 77, 37, 0.06);
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  color: #1a1a2e;
+  background: transparent;
+}
+
+.search-bar input::placeholder {
+  color: #b0b8cc;
+  font-weight: 400;
+}
+
+.search-icon {
+  font-size: 16px;
+  color: #f97316;
+  flex-shrink: 0;
+}
+
+/* =================== FILTER BUTTONS =================== */
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 16px;
+}
+
+.filter-btn {
+  padding: 7px 18px;
+  border-radius: 999px;
+  border: 1.5px solid #ede8e4;
+  background: #ffffff;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "Outfit", sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+}
+
+.filter-btn:hover {
+  background: #fff5f0;
+  border-color: rgba(248, 77, 37, 0.25);
+  color: #f84d25;
+}
+
+.filter-btn.active {
+  background: linear-gradient(90deg, #f84d25 0%, #ff9047 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(248, 77, 37, 0.3);
+  transform: scale(1.04);
+}
+
+/* =================== PAGE CONTAINER =================== */
+.page-container {
+  display: flex;
+  position: relative;
+}
+
+/* =================== ITEM GRID WRAPPER =================== */
+.item-grid-wrapper {
+  margin-left: 260px;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-hidden .item-grid-wrapper {
+  margin-left: 0;
+}
+
+/* =================== GRID SYSTEM =================== */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .item-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* =================== ITEM CARD =================== */
+.item-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0,0,0,0.04);
+  border: 1px solid #f5f5f7;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.item-card:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 12px 32px rgba(248, 77, 37, 0.14), 0 4px 10px rgba(0,0,0,0.07);
+}
+
+/* Mobile tap feedback */
+.item-card:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* =================== IMAGE WRAPPER =================== */
+.item-img-wrapper {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+  border-radius: 16px;
+  margin: 10px 10px 0;
+}
+
+/* Shine on hover */
+.item-img-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.item-card:hover .item-img-wrapper::after {
+  left: 130%;
+}
+
+.item-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  transition: transform 0.35s ease;
+}
+
+.item-card:hover .item-img {
+  transform: scale(1.05);
+}
+
+/* =================== VEG / NON-VEG BADGE =================== */
+.food-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.food-icon .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.food-icon.veg {
+  border: 2px solid #22c55e;
+}
+
+.food-icon.veg .dot {
+  background: #22c55e;
+}
+
+.food-icon.nonveg {
+  border: 2px solid #ef4444;
+}
+
+.food-icon.nonveg .dot {
+  background: #ef4444;
+}
+
+/* =================== ITEM INFO =================== */
+.item-info {
+  padding: 10px 12px 12px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.item-name {
+  font-family: "Outfit", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #1a1a2e;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.item-desc {
+  font-size: 12px;
+  color: #a0a8b8;
+  margin-top: 2px;
+  margin-bottom: 8px;
+  font-family: "Inter", sans-serif;
+  line-height: 1.4;
+}
+
+/* =================== PRICE + BUTTON ROW =================== */
+.price-add-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.price {
+  font-family: "Outfit", sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+
+/* =================== ADD BUTTON =================== */
+.add-btn-btn {
+  background: linear-gradient(90deg, #f84d25 0%, #ff9047 100%);
+  border: none;
+  padding: 6px 13px;
+  border-radius: 10px;
+  color: white;
+  font-family: "Outfit", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 3px 10px rgba(248, 77, 37, 0.35);
+  touch-action: manipulation;
+}
+
+.add-btn-btn:hover {
+  transform: scale(1.07);
+  box-shadow: 0 5px 14px rgba(248, 77, 37, 0.45);
+}
+
+.add-btn-btn:active {
+  transform: scale(0.96);
+}
+
+/* =================== QUANTITY BOX =================== */
+.qty-box {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #fff5f0;
+  border: 1.5px solid rgba(248, 77, 37, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.qty-btn {
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #f84d25;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  touch-action: manipulation;
+}
+
+.qty-btn:active {
+  background: rgba(248, 77, 37, 0.15);
+}
+
+.qty-value {
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #1a1a2e;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* =================== EMPTY STATE =================== */
+.no-items {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  text-align: center;
+  padding: 24px;
+}
+
+.no-items p {
+  font-family: "Outfit", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #a0a8b8;
+  background: #fff9f5;
+  border: 1.5px dashed rgba(248, 77, 37, 0.2);
+  padding: 14px 24px;
+  border-radius: 14px;
+}
+
+/* =================== MOBILE RESPONSIVE =================== */
+@media (max-width: 480px) {
+  .item-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .item-img-wrapper {
+    height: 120px;
+  }
+
+  .item-name {
+    font-size: 13px;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+
+  .add-btn-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .filter-btn {
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+
+  .stall-popup {
+    font-size: 13px;
+    padding: 10px 16px;
+    max-width: 85vw;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .item-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .item-img-wrapper {
+    height: 100px;
+  }
+}
+.filter-selector {
+  display: flex;
+  gap: 10px;
+  margin: 12px 0 18px;
+}
+
+.filter-option {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-option.active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.filter-option.veg.active {
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+.filter-option.nonveg.active {
+  background: #dc2626;
+  border-color: #dc2626;
+}

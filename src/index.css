@@ -1,13 +1,47 @@
-/* body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ---------- BACKGROUND IMAGE CONTAINER ---------- */
+.bg-images {
+  position: fixed;
+  inset: 0;
+  z-index: -1;             /* 🔑 FORCE IT BEHIND EVERYTHING */
+  pointer-events: none;   /* No blocking clicks */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-} */
+/* ---------- COMMON IMAGE STYLE ---------- */
+.bg-img {
+  position: absolute;
+  width: 90px;
+
+  /* Reduce image strength */
+  opacity: 0.25 !important;
+
+  animation: fadeUp 0.6s ease forwards;
+  animation-delay: var(--enter-delay);
+}
+
+/* ---------- IMAGE POSITIONS ---------- */
+.img-1 { top: 15%; left: 20%; --enter-delay: 0.1s; }
+.img-2 { top: 15%; right: 20%; --enter-delay: 0.15s; }
+.img-3 { top: 40%; left: 10%; --enter-delay: 0.2s; }
+.img-4 { top: 40%; right: 10%; --enter-delay: 0.25s; }
+.img-5 { bottom: 20%; left: 25%; --enter-delay: 0.3s; }
+.img-6 { bottom: 20%; right: 25%; --enter-delay: 0.35s; }
+
+/* ---------- ANIMATION ---------- */
+@keyframes fadeUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ---------- APP CONTENT LAYER ---------- */
+#root {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  overflow-x: hidden;
+}

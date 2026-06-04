@@ -1,0 +1,414 @@
+.payment-methods {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.payment-methods::-webkit-scrollbar {
+  display: none;
+}
+
+.method-btn {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 101px;
+  height: 65px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.method-btn.selected {
+  background-color: #EB4D26;
+  color: #fff;
+  border-color: #f17f1c;
+  box-shadow: 0px 8px 24px 0px rgba(241, 127, 28, 0.3);
+}
+
+.phonepe-icon-style {
+  font-size: 24px;
+  color: #fff;
+  margin-right: 4px;
+}
+
+.payment-page-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 16px;
+  padding-bottom: 20vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.payment-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #222;
+}
+
+/* Payment action buttons */
+.payment-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  margin-top: 24px;
+}
+
+.continue-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #fff;
+  border: 2px solid #ff7a00;
+  color: #ff7a00;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.continue-btn:hover {
+  background-color: #fff4e8;
+}
+
+.confirm-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #EB4D26;
+  color: #fff;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-btn:hover {
+  background-color: #e86c00;
+}
+
+@media (max-width: 480px) {
+  .payment-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.error-msg {
+  color: #d9534f;
+  background-color: #f9d6d5;
+  border: 1px solid #f5c6c6;
+  padding: 10px 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.confirm-btn[disabled],
+.continue-btn[disabled],
+.method-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirm-btn::after {
+  content: '';
+  display: inline-block;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  border-top: 3px solid transparent;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  animation: spin 0.9s linear infinite;
+  visibility: hidden;
+}
+
+.confirm-btn:disabled::after {
+  visibility: visible;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cart-summary-box {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 18px 20px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 15px;
+  box-sizing: border-box;
+}
+
+.cart-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.empty-cart-msg {
+  text-align: center;
+  color: #888;
+  font-size: 15px;
+  font-style: italic;
+  padding: 10px 0;
+}
+
+.cart-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 15px;
+  border-bottom: 1px dashed #e4e4e4;
+}
+
+.cart-item-row:last-child {
+  border-bottom: none;
+}
+
+.cart-item-row span {
+  color: #444;
+}
+
+.cart-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  margin-top: 12px;
+}
+
+.cart-total-row strong {
+  color: #222;
+}
+
+/* Premium QR Code Modal Overlay */
+.qr-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Centering helper for scrolling content */
+  overflow-y: auto; /* Enable vertical scroll if content exceeds screen height */
+  z-index: 10000;
+  backdrop-filter: blur(8px);
+  padding: 30px 0; /* Gutters so the modal card doesn't touch screen edges when scrolling */
+  box-sizing: border-box;
+  animation: fadeInModal 0.3s ease-out;
+}
+
+/* Modal Card */
+.qr-modal-card {
+  background: #ffffff;
+  padding: 24px 20px; /* Symmetrical, optimized padding for mobile viewports */
+  border-radius: 28px;
+  width: 90%;
+  max-width: 380px;
+  margin: auto; /* Automatic vertical alignment: centers if small, starts from top if tall! */
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+  box-sizing: border-box;
+}
+
+.qr-modal-card h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.payee-name-sub {
+  font-size: 14px;
+  color: #555 !important;
+  margin: 14px 0 6px 0 !important;
+}
+
+.payee-name-sub strong {
+  color: #111;
+  font-weight: 700;
+}
+
+.qr-modal-card p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+/* Canvas container */
+.qr-canvas-container {
+  display: inline-block;
+  background: #f7f7f7;
+  padding: 18px;
+  border-radius: 20px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.qr-amount {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ff7a00 !important;
+  margin: 10px 0 24px 0 !important;
+}
+
+.qr-timer-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568; /* Slate gray color for "Expires in:" */
+  margin: 10px 0 18px 0 !important;
+  text-align: center;
+  display: block;
+}
+
+.timer-count {
+  color: #dc2626; /* Highlighted warning red color for the ticking time */
+  font-weight: 700;
+}
+
+/* Cancel Button */
+.qr-close-btn {
+  background: #f1e7df;
+  color: #555;
+  border: none;
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.qr-close-btn:hover {
+  background: #e8dbd0;
+  color: #222;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Premium UPI Grid (Cashfree Checkout Style) */
+.upi-payment-section {
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid #eef0f2;
+  border-radius: 20px;
+  padding: 18px 14px;
+  margin-bottom: 24px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.02);
+}
+
+.upi-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8a8d91;
+  margin-bottom: 14px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.upi-apps-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.upi-app-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  min-width: 65px;
+}
+
+.upi-app-btn:hover {
+  transform: translateY(-2px);
+}
+
+.upi-app-btn:active {
+  transform: translateY(0);
+}
+
+.upi-icon-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  border: 1.5px solid #edf0f2;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.upi-app-btn:hover .upi-icon-wrapper {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+.upi-app-btn span {
+  font-size: 10px;
+  font-weight: 600;
+  color: #4a5568;
+  text-align: center;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+/* Individual Brand Customizations */
+.upi-icon-wrapper.generic-upi {
+  background: #ffffff;
+}
+
+.upi-icon-wrapper.gpay {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.upi-icon-wrapper.phonepe {
+  background: #5f259f;
+  border-color: #5f259f;
+}
+
+.upi-icon-wrapper.paytm {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}

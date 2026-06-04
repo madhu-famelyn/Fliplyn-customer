@@ -1,0 +1,170 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap');
+
+/* ================= HEADER ================= */
+.simple-header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  width: 100%;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
+  background-color: #FDF6F6;
+  border-bottom: 1px solid #ecddd8;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+
+  font-family: 'Inter', sans-serif;
+}
+
+/* ================= LEFT ================= */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.header-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+}
+
+.header-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.b2c-header-badge {
+  font-size: 10px;
+  background: linear-gradient(135deg, #f84d25, #ff9047);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ================= RIGHT ================= */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Cart icon wrapper */
+.cart-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Cart icon */
+.cart-icon {
+  font-size: 22px;
+  color: #1a1a2e;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s;
+}
+
+.cart-icon:hover {
+  transform: scale(1.15);
+  color: #f84d25;
+}
+
+/* Cart badge */
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -7px;
+  background: linear-gradient(135deg, #f84d25, #ff9047);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 6px rgba(248, 77, 37, 0.4);
+  animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes badgePop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 600px) {
+  .simple-header {
+    padding: 0 16px;
+  }
+
+  .header-brand {
+    font-size: 18px;
+  }
+
+  .cart-icon {
+    font-size: 20px;
+  }
+}
+
+/* ===========================
+   Running Announcement Banner
+=========================== */
+
+.announcement-banner {
+  width: 100%;
+  background-color: #ff6b00;
+  color: #ffffff;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 1px solid #1e293b;
+}
+
+.announcement-track {
+  display: inline-flex;
+  align-items: center;
+  animation: scroll-left 24s linear infinite;
+}
+
+.announcement-track span {
+  padding: 10px 40px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Animation */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .announcement-track span {
+    font-size: 13px;
+    padding: 8px 30px;
+  }
+}
