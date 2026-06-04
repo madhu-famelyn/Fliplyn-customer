@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import "./Success.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BsCheck } from "react-icons/bs";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import axios from "axios";
 
 const API_BASE =
@@ -67,17 +65,7 @@ export default function B2CPaymentSuccess() {
     }
   }, [location]);
 
-  const downloadPDF = () => {
-    const input = receiptRef.current;
-    html2canvas(input, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`receipt_${orderDetails.id.slice(0, 6)}.pdf`);
-    });
-  };
+
 
   if (!orderDetails) return <p className="loading-text">Loading...</p>;
 
@@ -168,8 +156,8 @@ export default function B2CPaymentSuccess() {
                 </div>
               </div>
 
-              <button className="download-btn" onClick={downloadPDF}>
-                Download Receipt
+              <button className="download-btn" onClick={() => window.print()}>
+                Print Token
               </button>
             </>
           )}
