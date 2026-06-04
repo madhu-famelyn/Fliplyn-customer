@@ -481,6 +481,14 @@
     min-height: auto !important;
   }
 
+  #root {
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
   .receipt-wrapper {
     display: block !important;
     background: white !important;
@@ -493,21 +501,36 @@
   .download-btn,
   .payment-success-header,
   .back-to-stalls-btn,
-  .order-validity-box {
+  .order-validity-box,
+  .bg-images {
     display: none !important;
   }
 
+  #print-area,
   .receipt-card {
     display: block !important;
     box-shadow: none !important;
     border: none !important;
     width: 100% !important;
     max-width: 100% !important;
-    padding: 10px !important;
+    padding: 16px !important;
     margin: 0 !important;
     opacity: 1 !important;
     visibility: visible !important;
     transform: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-sizing: border-box !important;
+  }
+
+  .separator::before,
+  .separator::after {
+    display: none !important;
+  }
+
+  #print-area *,
+  .receipt-card * {
+    visibility: visible !important;
   }
 
   /* Force high contrast text and borders for physical printing */
@@ -534,10 +557,16 @@
 
   .order-date,
   .token-table,
+  .token-table *,
   .token-summary,
+  .token-summary *,
   .grand-total,
-  .token-row,
-  .item-name {
+  .grand-total * {
     color: #000000 !important;
   }
+}
+
+@page {
+  size: auto;
+  margin: 6mm;
 }

@@ -31,10 +31,11 @@ export default function B2CPaymentSuccess() {
     if (showToken && orderDetails) {
       const printTimer = setTimeout(() => {
         window.print();
-      }, 1500);
+      }, 300);
       return () => clearTimeout(printTimer);
     }
   }, [showToken, orderDetails]);
+
 
   useEffect(() => {
     const order = location.state?.order;
@@ -114,7 +115,7 @@ export default function B2CPaymentSuccess() {
         <>
           {view === "receipt" && (
             <>
-              <div className="receipt-card compact-token" ref={receiptRef}>
+              <div id="print-area" className="receipt-card compact-token" ref={receiptRef}>
                 <h2 className="stall-name">
                   {orderDetails.order_details[0]?.stall_name || "Stall Name"}
                 </h2>
