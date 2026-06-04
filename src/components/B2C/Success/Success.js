@@ -28,6 +28,16 @@ export default function B2CPaymentSuccess() {
     return () => clearTimeout(timer);
   }, []);
 
+  // 🖨️ Auto-print token once it is generated and visible
+  useEffect(() => {
+    if (showToken && orderDetails) {
+      const printTimer = setTimeout(() => {
+        window.print();
+      }, 500);
+      return () => clearTimeout(printTimer);
+    }
+  }, [showToken, orderDetails]);
+
   useEffect(() => {
     const order = location.state?.order;
     if (order?.id) {

@@ -240,7 +240,7 @@ export default function B2CPayment() {
             <h2>Scan & Pay</h2>
             <p>Scan using any UPI App (GPay, PhonePe, Paytm)</p>
             <div className="qr-canvas-container">
-              <QRCodeCanvas value={qrValue} size={200} includeMargin={true} level="H" />
+              <QRCodeCanvas value={qrValue} size={280} includeMargin={true} level="H" />
             </div>
             <p className="payee-name-sub">Paying to: <strong>{getPayeeName()}</strong></p>
             <p className="qr-amount">Amount: ₹ {calculateTotalAmount().toFixed(2)}</p>
