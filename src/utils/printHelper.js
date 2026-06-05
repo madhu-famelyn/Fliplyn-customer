@@ -4,9 +4,43 @@ export const printViaRawBT = (orderDetails) => {
   const stallName = orderDetails.order_details?.[0]?.stall_name || "Stall Name";
   const tokenNo = orderDetails.token_number || orderDetails.id?.slice(0, 4) || "0000";
   
-  const createdAt = orderDetails.created_datetime 
-    ? new Date(orderDetails.created_datetime).toLocaleString("en-IN", { hour12: true, timeZone: "Asia/Kolkata" })
-    : new Date().toLocaleString();
+  // Static GSTIN as requested
+  const gstin = "36AAVFN1793L1ZE";
+
+  // Helper to format Date exactly as DD/MM/YYYY hh:mm AM/PM
+  const formatDate = (dateStr) => {
+    try {
+      const d = dateStr ? new Date(dateStr) : new Date();
+      const options = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "Asia/Kolkata"
+      };
+      
+      const formatter = new Intl.DateTimeFormat("en-IN", options);
+      const parts = formatter.formatToParts(d);
+      
+      let day = "", month = "", year = "", hour = "", minute = "", period = "";
+      parts.forEach(p => {
+        if (p.type === "day") day = p.value;
+        else if (p.type === "month") month = p.value;
+        else if (p.type === "year") year = p.value;
+        else if (p.type === "hour") hour = p.value;
+        else if (p.type === "minute") minute = p.value;
+        else if (p.type === "dayPeriod") period = p.value.toUpperCase();
+      });
+      
+      return `${day}/${month}/${year} ${hour}:${minute} ${period}`;
+    } catch (e) {
+      return new Date().toLocaleString();
+    }
+  };
+
+  const createdAt = formatDate(orderDetails.created_datetime);
 
   const items = orderDetails.order_details || [];
   const totalCgst = orderDetails.cgst ?? 0;
@@ -33,59 +67,73 @@ export const printViaRawBT = (orderDetails) => {
     commands.push(...bytes);
   };
 
-  // 1. Stall Name (Center, Bold, Normal Size)
-  addBytes(ESC, 0x61, 0x01); // Center alignment
-  addBytes(ESC, 0x45, 0x01); // Bold on
-  addText(stallName + "\n");
-  addBytes(ESC, 0x45, 0x00); // Bold off
-  addText("--------------------------------\n");
-
-  // 2. Token Number (Normal Size, Bold, Centered)
-  addText("YOUR TOKEN NUMBER\n");
-  addBytes(ESC, 0x45, 0x01); // Bold on
-  addText(tokenNo + "\n");
-  addBytes(ESC, 0x45, 0x00); // Bold off
-
-  // 3. Date
-  addBytes(ESC, 0x61, 0x00); // Align left
-  addText(`Date: ${createdAt}\n`);
-  addText("--------------------------------\n");
-
-  // 4. Items Header (Bold)
-  addBytes(ESC, 0x45, 0x01);
-  addText("Item                 Qty   Price\n");
-  addBytes(ESC, 0x45, 0x00);
-  addText("--------------------------------\n");
-
-  // 5. Items
-  items.forEach(item => {
-    const name = item.name.substring(0, 18).padEnd(18, ' ');
-    const qty = item.quantity.toString().padStart(3, ' ');
-    const priceVal = item.price !== undefined ? item.price : (item.total !== undefined ? item.total : 0);
-    const price = priceVal.toFixed(2).padStart(8, ' ');
-    addText(`${name}${qty}${price}\n`);
-  });
-  addText("--------------------------------\n");
-
-  // 6. Summary Rows (Only print taxes and roundoff if they are non-zero to save paper)
   const formatRow = (label, val) => {
     const spaces = 32 - label.length - val.length;
     return label + " ".repeat(spaces > 0 ? spaces : 1) + val + "\n";
   };
-  if (totalCgst > 0) addText(formatRow("CGST", totalCgst.toFixed(2)));
-  if (totalSgst > 0) addText(formatRow("SGST", totalSgst.toFixed(2)));
-  if (totalGst > 0) addText(formatRow("Total GST", totalGst.toFixed(2)));
-  addText(formatRow("Subtotal", subtotal.toFixed(2)));
-  if (roundOff !== 0) addText(formatRow("Round Off", roundOff.toFixed(2)));
+
+  // 1. Dining Option & Payment Mode (Dine-In | Paid (UPI))
+  const payMethod = orderDetails.payment_group || orderDetails.payment_method || "UPI";
+  addBytes(ESC, 0x61, 0x01); // Center alignment
+  addBytes(ESC, 0x45, 0x01); // Bold on
+  addText(`Dine-In | Paid (${payMethod.toUpperCase()})\n`);
+  addBytes(ESC, 0x45, 0x00); // Bold off
   addText("--------------------------------\n");
 
-  // 7. Grand Total (Bold)
-  addBytes(ESC, 0x45, 0x01);
-  addText(formatRow("GRAND TOTAL", `Rs ${grandTotal.toFixed(2)}`));
-  addBytes(ESC, 0x45, 0x00);
+  // 2. Stall Name
+  addBytes(ESC, 0x45, 0x01); // Bold on
+  addText(stallName + "\n");
+  
+  // 3. Token No
+  addText(`Token No: ${tokenNo}\n`);
+  addBytes(ESC, 0x45, 0x00); // Bold off
   addText("--------------------------------\n");
 
-  // 8. Footer & Feed Paper (Reduced feed to save paper)
+  // 4. Date and GSTIN
+  addBytes(ESC, 0x61, 0x00); // Align left
+  addText(`Date: ${createdAt}\n`);
+  addText(`GSTIN: ${gstin}\n`);
+  addText("--------------------------------\n");
+
+  // 5. Column Headers
+  addBytes(ESC, 0x45, 0x01); // Bold on
+  addText("Item Name            Qty. Price(Rs)\n");
+  addBytes(ESC, 0x45, 0x00); // Bold off
+  addText("--------------------------------\n");
+
+  // 6. Items
+  items.forEach(item => {
+    // 32 Columns layout: Name (18 chars) | Qty (4 chars) | Price (10 chars)
+    const name = item.name.substring(0, 18).padEnd(18, ' ');
+    const qty = item.quantity.toString().padStart(4, ' ');
+    const priceVal = item.price !== undefined ? item.price : (item.total !== undefined ? item.total : 0);
+    const price = priceVal.toFixed(2).padStart(10, ' ');
+    addText(`${name}${qty}${price}\n`);
+  });
+  addText("--------------------------------\n");
+
+  // 7. Taxes (Always print even if 0)
+  addText(formatRow("CGST:", totalCgst.toFixed(2)));
+  addText(formatRow("SGST:", totalSgst.toFixed(2)));
+  addText(formatRow("Total GST:", totalGst.toFixed(2)));
+  addText("--------------------------------\n");
+
+  // 8. Total (Rs)
+  addText(formatRow("Total (Rs):", subtotal.toFixed(2)));
+  addText("--------------------------------\n");
+
+  // 9. Round Off (Rs)
+  const roundOffVal = roundOff >= 0 ? `(+) ${roundOff.toFixed(2)}` : `(-) ${Math.abs(roundOff).toFixed(2)}`;
+  addText(formatRow("Round Off (Rs):", roundOffVal));
+  addText("--------------------------------\n");
+
+  // 10. Grand Total (Rs) (Bold)
+  addBytes(ESC, 0x45, 0x01); // Bold on
+  addText(formatRow("Grand Total (Rs):", grandTotal.toFixed(2)));
+  addBytes(ESC, 0x45, 0x00); // Bold off
+  addText("--------------------------------\n");
+
+  // 11. Footer (Reduced feed)
   addBytes(ESC, 0x61, 0x01); // Center
   addText("Thank You!\n\n\n");
 
