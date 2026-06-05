@@ -27,12 +27,19 @@ export default function B2CPaymentSuccess() {
     }
   }, [orderDetails]);
 
-  // Show token as soon as order details are available and trigger print
+  // Show token as soon as order details are available, trigger print, and redirect
   useEffect(() => {
     if (orderDetails) {
       setShowToken(true);
       // Print automatically once the token is ready
       handlePrint();
+
+      // Automatically navigate back to stalls page after 3.5 seconds
+      const timer = setTimeout(() => {
+        navigate("/b2c/stalls");
+      }, 3500);
+
+      return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderDetails]);

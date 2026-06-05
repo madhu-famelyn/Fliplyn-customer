@@ -34,20 +34,18 @@ export const printViaRawBT = (orderDetails) => {
     commands.push(...bytes);
   };
 
-  // 1. Stall Name (Center, Bold, Double Size)
+  // 1. Stall Name (Center, Bold, Normal Size)
   addBytes(ESC, 0x61, 0x01); // Center alignment
-  addBytes(GS, 0x21, 0x11);  // Double width & height
   addBytes(ESC, 0x45, 0x01); // Bold on
   addText(stallName + "\n");
-  addBytes(GS, 0x21, 0x00);  // Reset size
   addBytes(ESC, 0x45, 0x00); // Bold off
   addText("--------------------------------\n");
 
-  // 2. Large Token Number
-  addText("YOUR TOKEN NUMBER\n\n");
-  addBytes(GS, 0x21, 0x22);  // Quad size (extra large)
+  // 2. Token Number (Double size, Centered)
+  addText("YOUR TOKEN NUMBER\n");
+  addBytes(GS, 0x21, 0x11);  // Double size (width & height)
   addBytes(ESC, 0x45, 0x01); // Bold
-  addText(tokenNo + "\n\n");
+  addText(tokenNo + "\n");
   addBytes(GS, 0x21, 0x00);  // Normal size
   addBytes(ESC, 0x45, 0x00); // Bold off
 
@@ -88,11 +86,11 @@ export const printViaRawBT = (orderDetails) => {
   addBytes(ESC, 0x45, 0x01);
   addText(formatRow("GRAND TOTAL", `Rs ${grandTotal.toFixed(2)}`));
   addBytes(ESC, 0x45, 0x00);
-  addText("--------------------------------\n\n");
+  addText("--------------------------------\n");
 
   // 8. Footer & Feed Paper
   addBytes(ESC, 0x61, 0x01); // Center
-  addText("Thank You!\n\n\n\n");
+  addText("Thank You!\n\n\n");
 
   // Convert to Base64 and invoke RawBT Intent
   const uint8Array = new Uint8Array(commands);
