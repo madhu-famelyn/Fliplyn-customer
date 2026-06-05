@@ -41,12 +41,10 @@ export const printViaRawBT = (orderDetails) => {
   addBytes(ESC, 0x45, 0x00); // Bold off
   addText("--------------------------------\n");
 
-  // 2. Token Number (Double Height, Normal Width, Centered)
+  // 2. Token Number (Normal Size, Bold, Centered)
   addText("YOUR TOKEN NUMBER\n");
-  addBytes(GS, 0x21, 0x01);  // Double height, normal width (uses less paper!)
-  addBytes(ESC, 0x45, 0x01); // Bold
+  addBytes(ESC, 0x45, 0x01); // Bold on
   addText(tokenNo + "\n");
-  addBytes(GS, 0x21, 0x00);  // Normal size
   addBytes(ESC, 0x45, 0x00); // Bold off
 
   // 3. Date
@@ -92,22 +90,12 @@ export const printViaRawBT = (orderDetails) => {
   addBytes(ESC, 0x61, 0x01); // Center
   addText("Thank You!\n\n\n");
 
-  // Convert to Base64 and trigger via hidden iframe
+  // Convert to Base64 and trigger redirect
   const uint8Array = new Uint8Array(commands);
   let binaryString = "";
   for (let i = 0; i < uint8Array.length; i++) {
     binaryString += String.fromCharCode(uint8Array[i]);
   }
   const base64Data = window.btoa(binaryString);
-  const rawbtUrl = "rawbt:base64," + base64Data;
-
-  // Use a hidden iframe to trigger the scheme so the browser doesn't navigate away or close
-  let iframe = document.getElementById("rawbt-print-iframe");
-  if (!iframe) {
-    iframe = document.createElement("iframe");
-    iframe.id = "rawbt-print-iframe";
-    iframe.style.display = "none";
-    document.body.appendChild(iframe);
-  }
-  iframe.src = rawbtUrl;
+  window.location.href = "rawbt:base64," + base64Data;
 };
