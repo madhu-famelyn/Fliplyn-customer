@@ -1,6 +1,7 @@
 // src/pages/token/TokenReceiptPage.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { printViaRawBT } from "../../../utils/printHelper";
 import { useParams } from "react-router-dom";
 import "./PrintToken.css";
 import TokenHeader from "./Header";
@@ -29,7 +30,7 @@ export default function TokenReceiptPage() {
   }, [tokenNumber]);
 
   const handlePrint = () => {
-    window.print();
+    printViaRawBT(order);
   };
 
   if (loading) return <p>Loading...</p>;

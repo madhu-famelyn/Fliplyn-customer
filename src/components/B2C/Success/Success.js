@@ -3,6 +3,7 @@ import "./Success.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BsCheck } from "react-icons/bs";
 import axios from "axios";
+import { printViaRawBT } from "../../../utils/printHelper";
 
 const API_BASE =
   window.location.hostname === "localhost"
@@ -42,7 +43,7 @@ export default function B2CPaymentSuccess() {
     } else if (window.iMinPrinter && typeof window.iMinPrinter.printReceipt === "function") {
       window.iMinPrinter.printReceipt(JSON.stringify(orderDetails));
     } else {
-      window.print();
+      printViaRawBT(orderDetails);
     }
   };
 
