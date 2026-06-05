@@ -140,18 +140,17 @@ export const printViaRawBT = (orderDetails) => {
 
   // Convert to Base64 and trigger redirect/websocket print
   const uint8Array = new Uint8Array(commands);
-  
+  let binaryString = "";
+  for (let i = 0; i < uint8Array.length; i++) {
+    binaryString += String.fromCharCode(uint8Array[i]);
+  }
+  const base64Data = window.btoa(binaryString);
+
   let fallbackTriggered = false;
   const triggerFallback = () => {
     if (fallbackTriggered) return;
     fallbackTriggered = true;
-    
-    let binaryString = "";
-    for (let i = 0; i < uint8Array.length; i++) {
-      binaryString += String.fromCharCode(uint8Array[i]);
-    }
-    const base64Data = window.btoa(binaryString);
-    window.location.href = "rawbt:base64," + encodeURIComponent(base64Data);
+    window.location.href = "rawbt:base64," + base64Data;
   };
 
   // Try background WebSocket printing first to prevent opening the RawBT popup/screen
