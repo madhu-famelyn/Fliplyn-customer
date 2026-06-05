@@ -3,7 +3,7 @@ export const printViaRawBT = (orderDetails) => {
 
   const stallName = orderDetails.order_details?.[0]?.stall_name || "Stall Name";
   const tokenNo = orderDetails.token_number || orderDetails.id?.slice(0, 4) || "0000";
-  
+
   // Static GSTIN as requested
   const gstin = "36AAVFN1793L1ZE";
 
@@ -20,10 +20,10 @@ export const printViaRawBT = (orderDetails) => {
         hour12: true,
         timeZone: "Asia/Kolkata"
       };
-      
+
       const formatter = new Intl.DateTimeFormat("en-IN", options);
       const parts = formatter.formatToParts(d);
-      
+
       let day = "", month = "", year = "", hour = "", minute = "", period = "";
       parts.forEach(p => {
         if (p.type === "day") day = p.value;
@@ -33,7 +33,7 @@ export const printViaRawBT = (orderDetails) => {
         else if (p.type === "minute") minute = p.value;
         else if (p.type === "dayPeriod") period = p.value.toUpperCase();
       });
-      
+
       return `${day}/${month}/${year} ${hour}:${minute} ${period}`;
     } catch (e) {
       return new Date().toLocaleString();
@@ -43,11 +43,11 @@ export const printViaRawBT = (orderDetails) => {
   const createdAt = formatDate(orderDetails.created_datetime);
 
   const items = orderDetails.order_details || [];
-  const totalCgst = orderDetails.cgst ?? 0;
-  const totalSgst = orderDetails.sgst ?? 0;
-  const totalGst = orderDetails.total_gst ?? (totalCgst + totalSgst);
-  const roundOff = orderDetails.round_off ?? 0;
-  const grandTotal = orderDetails.total_amount ?? 0;
+  const totalCgst = Number(orderDetails.cgst ?? 0);
+  const totalSgst = Number(orderDetails.sgst ?? 0);
+  const totalGst = Number(orderDetails.total_gst ?? (totalCgst + totalSgst));
+  const roundOff = Number(orderDetails.round_off ?? 0);
+  const grandTotal = Number(orderDetails.total_amount ?? 0);
   const subtotal = grandTotal - roundOff;
 
   // ESC/POS Command Constants
@@ -83,7 +83,7 @@ export const printViaRawBT = (orderDetails) => {
   // 2. Stall Name
   addBytes(ESC, 0x45, 0x01); // Bold on
   addText(stallName + "\n");
-  
+
   // 3. Token No
   addText(`Token No: ${tokenNo}\n`);
   addBytes(ESC, 0x45, 0x00); // Bold off
@@ -104,9 +104,10 @@ export const printViaRawBT = (orderDetails) => {
   // 6. Items
   items.forEach(item => {
     // 32 Columns layout: Name (18 chars) | Qty (4 chars) | Price (10 chars)
-    const name = item.name.substring(0, 18).padEnd(18, ' ');
-    const qty = item.quantity.toString().padStart(4, ' ');
-    const priceVal = item.price !== undefined ? item.price : (item.total !== undefined ? item.total : 0);
+    const name = (item.name || "").substring(0, 18).padEnd(18, ' ');
+    const qty = (item.quantity ?? "").toString().padStart(4, ' ');
+    const rawPriceVal = item.price !== undefined ? item.price : (item.total !== undefined ? item.total : 0);
+    const priceVal = Number(rawPriceVal ?? 0);
     const price = priceVal.toFixed(2).padStart(10, ' ');
     addText(`${name}${qty}${price}\n`);
   });
@@ -137,12 +138,47 @@ export const printViaRawBT = (orderDetails) => {
   addBytes(ESC, 0x61, 0x01); // Center
   addText("Thank You!\n\n\n");
 
-  // Convert to Base64 and trigger redirect
+  // Convert to Base64 and trigger redirect/websocket print
   const uint8Array = new Uint8Array(commands);
-  let binaryString = "";
-  for (let i = 0; i < uint8Array.length; i++) {
-    binaryString += String.fromCharCode(uint8Array[i]);
+  
+  let fallbackTriggered = false;
+  const triggerFallback = () => {
+    if (fallbackTriggered) return;
+    fallbackTriggered = true;
+    
+    let binaryString = "";
+    for (let i = 0; i < uint8Array.length; i++) {
+      binaryString += String.fromCharCode(uint8Array[i]);
+    }
+    const base64Data = window.btoa(binaryString);
+    window.location.href = "rawbt:base64," + encodeURIComponent(base64Data);
+  };
+
+  // Try background WebSocket printing first to prevent opening the RawBT popup/screen
+  try {
+    const ws = new WebSocket("ws://127.0.0.1:40213/");
+    ws.binaryType = "arraybuffer";
+    
+    const timeout = setTimeout(() => {
+      console.warn("WebSocket print timeout, falling back to intent link...");
+      ws.close();
+      triggerFallback();
+    }, 400);
+
+    ws.onopen = () => {
+      clearTimeout(timeout);
+      ws.send(uint8Array.buffer);
+      ws.close();
+      console.log("Printed silently via WebSocket");
+    };
+
+    ws.onerror = (err) => {
+      clearTimeout(timeout);
+      console.warn("WebSocket print error, falling back to intent link:", err);
+      triggerFallback();
+    };
+  } catch (e) {
+    console.warn("WebSocket print setup error, falling back to intent link:", e);
+    triggerFallback();
   }
-  const base64Data = window.btoa(binaryString);
-  window.location.href = "rawbt:base64," + base64Data;
 };
