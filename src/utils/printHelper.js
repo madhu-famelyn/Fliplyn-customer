@@ -18,7 +18,6 @@ export const printViaRawBT = (orderDetails) => {
 
   // ESC/POS Command Constants
   const ESC = 0x1B;
-  const GS = 0x1D;
   const commands = [];
 
   // Initialize printer
