@@ -41,9 +41,9 @@ export const printViaRawBT = (orderDetails) => {
   addBytes(ESC, 0x45, 0x00); // Bold off
   addText("--------------------------------\n");
 
-  // 2. Token Number (Double size, Centered)
+  // 2. Token Number (Double Height, Normal Width, Centered)
   addText("YOUR TOKEN NUMBER\n");
-  addBytes(GS, 0x21, 0x11);  // Double size (width & height)
+  addBytes(GS, 0x21, 0x01);  // Double height, normal width (uses less paper!)
   addBytes(ESC, 0x45, 0x01); // Bold
   addText(tokenNo + "\n");
   addBytes(GS, 0x21, 0x00);  // Normal size
@@ -70,16 +70,16 @@ export const printViaRawBT = (orderDetails) => {
   });
   addText("--------------------------------\n");
 
-  // 6. Summary Rows
+  // 6. Summary Rows (Only print taxes and roundoff if they are non-zero to save paper)
   const formatRow = (label, val) => {
     const spaces = 32 - label.length - val.length;
     return label + " ".repeat(spaces > 0 ? spaces : 1) + val + "\n";
   };
-  addText(formatRow("CGST", totalCgst.toFixed(2)));
-  addText(formatRow("SGST", totalSgst.toFixed(2)));
-  addText(formatRow("Total GST", totalGst.toFixed(2)));
+  if (totalCgst > 0) addText(formatRow("CGST", totalCgst.toFixed(2)));
+  if (totalSgst > 0) addText(formatRow("SGST", totalSgst.toFixed(2)));
+  if (totalGst > 0) addText(formatRow("Total GST", totalGst.toFixed(2)));
   addText(formatRow("Subtotal", subtotal.toFixed(2)));
-  addText(formatRow("Round Off", roundOff.toFixed(2)));
+  if (roundOff !== 0) addText(formatRow("Round Off", roundOff.toFixed(2)));
   addText("--------------------------------\n");
 
   // 7. Grand Total (Bold)
@@ -88,17 +88,26 @@ export const printViaRawBT = (orderDetails) => {
   addBytes(ESC, 0x45, 0x00);
   addText("--------------------------------\n");
 
-  // 8. Footer & Feed Paper
+  // 8. Footer & Feed Paper (Reduced feed to save paper)
   addBytes(ESC, 0x61, 0x01); // Center
   addText("Thank You!\n\n\n");
 
-  // Convert to Base64 and invoke RawBT Intent
+  // Convert to Base64 and trigger via hidden iframe
   const uint8Array = new Uint8Array(commands);
   let binaryString = "";
   for (let i = 0; i < uint8Array.length; i++) {
     binaryString += String.fromCharCode(uint8Array[i]);
   }
   const base64Data = window.btoa(binaryString);
+  const rawbtUrl = "rawbt:base64," + base64Data;
 
-  window.location.href = "rawbt:base64," + base64Data;
+  // Use a hidden iframe to trigger the scheme so the browser doesn't navigate away or close
+  let iframe = document.getElementById("rawbt-print-iframe");
+  if (!iframe) {
+    iframe = document.createElement("iframe");
+    iframe.id = "rawbt-print-iframe";
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+  }
+  iframe.src = rawbtUrl;
 };
