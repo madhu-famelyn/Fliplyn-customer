@@ -102,6 +102,5 @@ export const printViaRawBT = (orderDetails) => {
   }
   const base64Data = window.btoa(binaryString);
 
-  const rawbtIntent = `intent:rawbt:base64,${base64Data}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;`;
-  window.location.href = rawbtIntent;
+  window.location.href = "rawbt:base64," + base64Data;
 };
