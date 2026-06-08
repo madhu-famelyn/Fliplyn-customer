@@ -50,16 +50,21 @@ export default function B2CPaymentSuccess() {
 
   const handlePrint = () => {
     setIsPrinting(true);
-    if (window.Android && typeof window.Android.printToken === "function") {
-      window.Android.printToken(JSON.stringify(orderDetails));
-    } else if (window.iMinPrinter && typeof window.iMinPrinter.printReceipt === "function") {
-      window.iMinPrinter.printReceipt(JSON.stringify(orderDetails));
-    } else {
-      printViaRawBT(orderDetails);
-    }
+    
+    // Defer the print trigger to give the browser time to render and paint the overlay
+    setTimeout(() => {
+      if (window.Android && typeof window.Android.printToken === "function") {
+        window.Android.printToken(JSON.stringify(orderDetails));
+      } else if (window.iMinPrinter && typeof window.iMinPrinter.printReceipt === "function") {
+        window.iMinPrinter.printReceipt(JSON.stringify(orderDetails));
+      } else {
+        printViaRawBT(orderDetails);
+      }
+    }, 100);
+
     setTimeout(() => {
       setIsPrinting(false);
-    }, 3000);
+    }, 3500);
   };
 
   // Auto‑print is now triggered directly when the token becomes visible
