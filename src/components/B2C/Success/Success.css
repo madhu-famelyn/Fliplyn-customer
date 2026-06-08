@@ -502,7 +502,8 @@
   .payment-success-header,
   .back-to-stalls-btn,
   .order-validity-box,
-  .bg-images {
+  .bg-images,
+  .print-overlay-backdrop {
     display: none !important;
   }
 
