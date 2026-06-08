@@ -7,14 +7,15 @@ import "./ManagerStalls.css";
 
 /* ── icon map for action buttons ── */
 const ACTION_BUTTONS = [
-  { label: "Add Refund",    route: "/add-refund",            icon: "↩" },
-  { label: "View Sales",    route: "/view-sales",            icon: "📊" },
-  { label: "Add Stall",     route: "/add-stall",             icon: "＋" },
-  { label: "Add Wallet",    route: "/wallet-add-mng",        icon: "💳" },
-  { label: "Add Vendor",    route: "/manager-view-vendors",  icon: "🤝" },
-  { label: "Add Item",      route: "/add-item-manager",      icon: "🍽" },
-  { label: "Add Category",  route: "/add-category",          icon: "🏷" },
-  { label: "Sales Summary", route: "/sales-summary-om",      icon: "📈" },
+  { label: "Add Refund",         route: "/add-refund",           icon: "↩" },
+  { label: "View Sales",         route: "/view-sales",           icon: "📊" },
+  { label: "Add Stall",          route: "/add-stall",            icon: "＋" },
+  { label: "Add Wallet",         route: "/wallet-add-mng",       icon: "💳" },
+  { label: "Add Vendor",         route: "/manager-view-vendors", icon: "🤝" },
+  { label: "Add Item",           route: "/add-item-manager",     icon: "🍽" },
+  { label: "Add Category",       route: "/add-category",         icon: "🏷" },
+  { label: "Sales Summary",      route: "/sales-summary-om",     icon: "📈" },
+  { label: "B2C Transactions",   route: "/b2c-transactions",     icon: "🛒" },
 ];
 
 /* ── Skeleton placeholder cards while loading ── */

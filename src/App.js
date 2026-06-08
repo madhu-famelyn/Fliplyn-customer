@@ -74,6 +74,7 @@ import ManagerStallIds from "./components/ManagerComponents/ManagerStalls/Manage
 import AddItemManager from "./components/LayOutComponents/ManagerItems/AddItems";
 import ManagerCategory from "./components/ManagerComponents/AddCategory/Category";
 import StallSalesReportOM from "./components/ManagerComponents/SalesSummary/SalesSummary";
+import B2CTransactions from "./components/ManagerComponents/B2CTransactions/B2CTransactions";
 
 import BuildingManagerLogin from "./components/BuildingManager/BuildingManager";
 // import BuildingSalesReport from "./components/BuildingManager/BuilingMangerReport";
@@ -234,6 +235,7 @@ function App() {
                 <Route path="/view-sales" element={<StallsReport />} />
                 <Route path="/add-item-manager" element={<AddItemManager />} />
                 <Route path="/sales-summary-om" element={<StallSalesReportOM />} />
+                <Route path="/b2c-transactions" element={<ManagerPrivateRoute element={<B2CTransactions />} />} />
 
                 
 
