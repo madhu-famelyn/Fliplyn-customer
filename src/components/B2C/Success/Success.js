@@ -38,10 +38,10 @@ export default function B2CPaymentSuccess() {
       // Print automatically once the token is ready
       handlePrint();
 
-      // Automatically navigate back to stalls page after 3.5 seconds
+      // Automatically navigate back to stalls page after 8 seconds
       const timer = setTimeout(() => {
         navigate("/b2c/stalls");
-      }, 3500);
+      }, 8000);
 
       return () => clearTimeout(timer);
     }
@@ -64,7 +64,7 @@ export default function B2CPaymentSuccess() {
 
     setTimeout(() => {
       setIsPrinting(false);
-    }, 3500);
+    }, 8000);
   };
 
   // Auto‑print is now triggered directly when the token becomes visible
