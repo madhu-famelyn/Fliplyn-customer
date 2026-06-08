@@ -27,9 +27,12 @@ export default function B2CPaymentSuccess() {
     }
   }, [orderDetails]);
 
+  const hasPrintedRef = useRef(false);
+
   // Show token as soon as order details are available, trigger print, and redirect
   useEffect(() => {
-    if (orderDetails) {
+    if (orderDetails && !hasPrintedRef.current) {
+      hasPrintedRef.current = true;
       setShowToken(true);
       // Print automatically once the token is ready
       handlePrint();

@@ -437,7 +437,6 @@ export default function B2CTransactions() {
                         <div style={{ fontWeight: 600, fontSize: 13 }}>
                           {order.user_phone || "—"}
                         </div>
-                        <div className="b2c-tx-email">{order.user_email || ""}</div>
                       </td>
                       <td>
                         <span className="b2c-tx-amount">

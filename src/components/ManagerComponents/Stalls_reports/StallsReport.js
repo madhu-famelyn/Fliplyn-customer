@@ -214,7 +214,6 @@ const exportToExcel = () => {
       return {
         Outlet: order.stall_name,
         Token: order.token_number,
-        "User Email": order.user_email,
         Date: new Date(order.created_datetime).toLocaleString("en-IN"),
         "Payment Type": order.paymentType,
         Item: item.name,
@@ -232,7 +231,6 @@ const exportToExcel = () => {
   rows.push({
     Outlet: "",
     Token: "",
-    "User Email": "",
     Date: "",
     "Payment Type": "",
     Item: "GRAND TOTAL",
@@ -471,7 +469,6 @@ const exportToExcel = () => {
                   <th>Date</th>
                   <th>Token</th>
                   <th>Outlet</th>
-                  <th>User Email</th>
                   <th>Payment Type</th>
                   <th>Item</th>
                   <th>Qty</th>
@@ -502,7 +499,6 @@ const exportToExcel = () => {
                           </td>
                           <td className="token-cell">{order.token_number}</td>
                           <td className="outlet-cell">{order.stall_name}</td>
-                          <td className="email-cell">{order.user_email}</td>
                           
                           <td>
                             <span className={`payment-badge ${order.paymentType.toLowerCase()}`}>
