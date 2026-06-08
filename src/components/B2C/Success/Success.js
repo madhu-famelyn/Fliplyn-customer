@@ -60,7 +60,7 @@ export default function B2CPaymentSuccess() {
       } else {
         printViaRawBT(orderDetails);
       }
-    }, 100);
+    }, 1000);
 
     setTimeout(() => {
       setIsPrinting(false);
