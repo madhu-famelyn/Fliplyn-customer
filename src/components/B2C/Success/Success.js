@@ -38,10 +38,10 @@ export default function B2CPaymentSuccess() {
       // Print automatically once the token is ready
       handlePrint();
 
-      // Automatically navigate back to stalls page after 5 seconds
+      // Automatically navigate back to stalls page after 15 seconds
       const timer = setTimeout(() => {
         navigate("/b2c/stalls");
-      }, 5000);
+      }, 15000);
 
       return () => clearTimeout(timer);
     }
