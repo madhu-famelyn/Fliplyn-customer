@@ -18,6 +18,7 @@ export default function B2CPaymentSuccess() {
   const [showToken, setShowToken] = useState(false);
   const receiptRef = useRef(null);
   const [clientToken, setClientToken] = useState(null);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   // Generate a simple 4‑digit token if none exists from the backend
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function B2CPaymentSuccess() {
   }, [orderDetails]);
 
   const handlePrint = () => {
+    setIsPrinting(true);
     if (window.Android && typeof window.Android.printToken === "function") {
       window.Android.printToken(JSON.stringify(orderDetails));
     } else if (window.iMinPrinter && typeof window.iMinPrinter.printReceipt === "function") {
@@ -55,6 +57,9 @@ export default function B2CPaymentSuccess() {
     } else {
       printViaRawBT(orderDetails);
     }
+    setTimeout(() => {
+      setIsPrinting(false);
+    }, 3000);
   };
 
   // Auto‑print is now triggered directly when the token becomes visible
@@ -131,7 +136,7 @@ export default function B2CPaymentSuccess() {
             <p className="token-alert-subtitle">Please do not close this window or refresh the page.</p>
           </div>
           <p className="order-validity-text" style={{ marginTop: "12px", borderTop: "1px solid #fde68a", paddingTop: "8px" }}>
-            This order is valid for <strong>30 minutes</strong>.  
+            This order is valid for <strong>30 minutes</strong>.
             After 30 minutes, the order will not be processed and the amount will not be refunded.
           </p>
         </div>
@@ -146,7 +151,7 @@ export default function B2CPaymentSuccess() {
                 <h2 className="stall-name">
                   {orderDetails.order_details[0]?.stall_name || "Stall Name"}
                 </h2>
-                
+
                 <div className="token-hero-badge">
                   <span className="token-hero-label">YOUR TOKEN NUMBER</span>
                   <h3 className="token-hero-number">{tokenNo}</h3>
@@ -198,6 +203,16 @@ export default function B2CPaymentSuccess() {
             Back to Stalls
           </button>
         </>
+      )}
+
+      {isPrinting && (
+        <div className="print-overlay-backdrop">
+          <div className="print-overlay-box">
+            <div className="print-overlay-spinner"></div>
+            <p className="print-overlay-title">Please Wait</p>
+            <p className="print-overlay-subtitle">Printing your token receipt...</p>
+          </div>
+        </div>
       )}
     </div>
   );
