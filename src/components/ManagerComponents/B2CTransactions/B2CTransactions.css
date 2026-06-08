@@ -44,15 +44,21 @@
   filter: blur(80px);
   opacity: 0.35;
 }
+
 .b2c-tx-container::before {
-  width: 420px; height: 420px;
+  width: 420px;
+  height: 420px;
   background: radial-gradient(circle, #fdba74, transparent 70%);
-  top: -120px; right: -100px;
+  top: -120px;
+  right: -100px;
 }
+
 .b2c-tx-container::after {
-  width: 320px; height: 320px;
+  width: 320px;
+  height: 320px;
   background: radial-gradient(circle, #fb923c, transparent 70%);
-  bottom: -80px; left: -80px;
+  bottom: -80px;
+  left: -80px;
 }
 
 /* ── Page Header ── */
@@ -66,7 +72,8 @@
 }
 
 .b2c-tx-icon-badge {
-  width: 48px; height: 48px;
+  width: 48px;
+  height: 48px;
   border-radius: 14px;
   background: linear-gradient(135deg, #fb923c, #f97316);
   display: flex;
@@ -79,8 +86,15 @@
 }
 
 @keyframes b2c-badge-pulse {
-  0%, 100% { box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4); }
-  50%       { box-shadow: 0 4px 28px rgba(249, 115, 22, 0.7); }
+
+  0%,
+  100% {
+    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 4px 28px rgba(249, 115, 22, 0.7);
+  }
 }
 
 .b2c-tx-title {
@@ -90,6 +104,7 @@
   letter-spacing: -0.4px;
   margin: 0;
 }
+
 .b2c-tx-subtitle {
   color: #a16207;
   font-size: 13px;
@@ -118,6 +133,7 @@
   transition: all var(--b2c-transition);
   box-shadow: var(--b2c-shadow-sm);
 }
+
 .b2c-tx-back-btn:hover {
   background: var(--b2c-orange-100);
   border-color: var(--b2c-orange-400);
@@ -199,10 +215,12 @@
   gap: 7px;
   white-space: nowrap;
 }
+
 .b2c-tx-fetch-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(249, 115, 22, 0.50);
 }
+
 .b2c-tx-fetch-btn:disabled {
   opacity: 0.65;
   cursor: not-allowed;
@@ -233,6 +251,7 @@
   position: relative;
   overflow: hidden;
 }
+
 .b2c-tx-stat-card::before {
   content: '';
   position: absolute;
@@ -241,10 +260,12 @@
   background: linear-gradient(135deg, rgba(251, 146, 60, 0.07), transparent 60%);
   pointer-events: none;
 }
+
 .b2c-tx-stat-card:hover {
   transform: translateY(-3px);
   box-shadow: var(--b2c-shadow-md);
 }
+
 .b2c-tx-stat-label {
   font-size: 11.5px;
   font-weight: 600;
@@ -253,15 +274,18 @@
   color: #a16207;
   margin-bottom: 6px;
 }
+
 .b2c-tx-stat-value {
   font-size: 22px;
   font-weight: 800;
   color: var(--b2c-orange-700);
   letter-spacing: -0.5px;
 }
+
 .b2c-tx-stat-icon {
   position: absolute;
-  top: 16px; right: 16px;
+  top: 16px;
+  right: 16px;
   font-size: 26px;
   opacity: 0.18;
 }
@@ -279,9 +303,17 @@
   z-index: 1;
   animation: b2c-card-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 @keyframes b2c-card-in {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .b2c-tx-table-header-bar {
@@ -294,6 +326,7 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
 .b2c-tx-table-title {
   font-size: 14px;
   font-weight: 700;
@@ -303,6 +336,7 @@
   align-items: center;
   gap: 8px;
 }
+
 .b2c-tx-row-count {
   font-size: 12px;
   font-weight: 600;
@@ -318,13 +352,16 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
+
 .b2c-tx-table {
   width: 100%;
   border-collapse: collapse;
 }
+
 .b2c-tx-table thead tr {
   background: linear-gradient(135deg, #fb923c 0%, #f97316 60%, #ea6808 100%);
 }
+
 .b2c-tx-table th {
   padding: 14px 16px;
   text-align: left;
@@ -335,6 +372,7 @@
   color: rgba(255, 255, 255, 0.95);
   white-space: nowrap;
 }
+
 .b2c-tx-table td {
   padding: 13px 16px;
   font-size: 13.5px;
@@ -343,12 +381,15 @@
   transition: background var(--b2c-transition);
   vertical-align: middle;
 }
+
 .b2c-tx-table tbody tr:hover td {
   background: rgba(254, 215, 170, 0.25);
 }
+
 .b2c-tx-table tbody tr:nth-child(even) td {
   background: rgba(255, 247, 237, 0.5);
 }
+
 .b2c-tx-table tbody tr:nth-child(even):hover td {
   background: rgba(254, 215, 170, 0.25);
 }
@@ -380,16 +421,19 @@
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
+
 .b2c-tx-status.success {
   background: #dcfce7;
   color: #166534;
   border: 1px solid #bbf7d0;
 }
+
 .b2c-tx-status.pending {
   background: #fef9c3;
   color: #854d0e;
   border: 1px solid #fef08a;
 }
+
 .b2c-tx-status.failed {
   background: #fee2e2;
   color: #991b1b;
@@ -430,6 +474,7 @@
   transition: all var(--b2c-transition);
   box-shadow: var(--b2c-shadow-sm);
 }
+
 .b2c-tx-print-btn:hover {
   background: var(--b2c-orange-100);
   border-color: var(--b2c-orange-400);
@@ -449,18 +494,27 @@
   z-index: 1000;
   padding: 16px;
 }
+
 .b2c-tx-modal-box {
   background: white;
   border-radius: var(--b2c-radius-xl);
   width: 100%;
   max-width: 400px;
   overflow: hidden;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.25);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.25);
   animation: b2c-modal-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
 @keyframes b2c-modal-in {
-  from { opacity: 0; transform: scale(0.88) translateY(20px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 /* receipt area */
@@ -468,6 +522,7 @@
   padding: 24px 24px 0;
   background: white;
 }
+
 .b2c-tx-receipt-stall {
   text-align: center;
   font-size: 16px;
@@ -476,6 +531,7 @@
   margin-bottom: 12px;
   letter-spacing: 0.3px;
 }
+
 .b2c-tx-receipt-token-hero {
   background: linear-gradient(135deg, #fb923c, #f97316);
   border-radius: 16px;
@@ -484,15 +540,17 @@
   margin-bottom: 16px;
   box-shadow: 0 4px 16px rgba(249, 115, 22, 0.38);
 }
+
 .b2c-tx-receipt-token-label {
   font-size: 10px;
   font-weight: 700;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
   letter-spacing: 1px;
   display: block;
   margin-bottom: 4px;
 }
+
 .b2c-tx-receipt-token-num {
   font-size: 42px;
   font-weight: 900;
@@ -500,23 +558,27 @@
   letter-spacing: 4px;
   line-height: 1.1;
 }
+
 .b2c-tx-receipt-date {
   text-align: center;
   font-size: 12px;
   color: #78716c;
   margin-bottom: 12px;
 }
+
 .b2c-tx-receipt-divider {
   border: none;
   border-top: 1px dashed rgba(251, 146, 60, 0.4);
   margin: 12px 0;
 }
+
 .b2c-tx-receipt-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 10px;
   font-size: 13px;
 }
+
 .b2c-tx-receipt-table th {
   font-size: 11px;
   font-weight: 700;
@@ -525,17 +587,21 @@
   padding: 4px 2px;
   border-bottom: 1px solid rgba(251, 146, 60, 0.2);
 }
+
 .b2c-tx-receipt-table td {
   padding: 5px 2px;
   color: #44403c;
   font-size: 13px;
 }
+
 .b2c-tx-receipt-table td:last-child {
   text-align: right;
 }
+
 .b2c-tx-receipt-table th:last-child {
   text-align: right;
 }
+
 .b2c-tx-receipt-summary {
   font-size: 12.5px;
   color: #78716c;
@@ -543,6 +609,7 @@
   display: flex;
   justify-content: space-between;
 }
+
 .b2c-tx-receipt-grand {
   display: flex;
   justify-content: space-between;
@@ -559,6 +626,7 @@
   gap: 10px;
   padding: 16px 24px 20px;
 }
+
 .b2c-tx-modal-close-btn {
   flex: 1;
   padding: 11px;
@@ -572,10 +640,12 @@
   cursor: pointer;
   transition: all var(--b2c-transition);
 }
+
 .b2c-tx-modal-close-btn:hover {
   background: var(--b2c-orange-100);
   border-color: var(--b2c-orange-400);
 }
+
 .b2c-tx-modal-print-btn {
   flex: 2;
   padding: 11px;
@@ -594,6 +664,7 @@
   justify-content: center;
   gap: 7px;
 }
+
 .b2c-tx-modal-print-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 24px rgba(249, 115, 22, 0.5);
@@ -605,9 +676,25 @@
   padding: 64px 24px;
   color: #a16207;
 }
-.b2c-tx-empty-icon { font-size: 56px; opacity: 0.4; margin-bottom: 16px; }
-.b2c-tx-empty-text { font-size: 16px; font-weight: 600; color: var(--b2c-orange-700); margin-bottom: 6px; }
-.b2c-tx-empty-hint { font-size: 13px; color: #a16207; opacity: 0.7; }
+
+.b2c-tx-empty-icon {
+  font-size: 56px;
+  opacity: 0.4;
+  margin-bottom: 16px;
+}
+
+.b2c-tx-empty-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--b2c-orange-700);
+  margin-bottom: 6px;
+}
+
+.b2c-tx-empty-hint {
+  font-size: 13px;
+  color: #a16207;
+  opacity: 0.7;
+}
 
 /* ── Loader ── */
 .b2c-tx-loader-wrap {
@@ -618,14 +705,21 @@
   padding: 80px 24px;
   gap: 18px;
 }
+
 .b2c-tx-loader {
-  width: 44px; height: 44px;
+  width: 44px;
+  height: 44px;
   border: 4px solid rgba(251, 146, 60, 0.18);
   border-top: 4px solid #fb923c;
   border-radius: 50%;
   animation: b2c-spin 0.85s linear infinite;
 }
-@keyframes b2c-spin { to { transform: rotate(360deg); } }
+
+@keyframes b2c-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .b2c-tx-loader-text {
   font-size: 13.5px;
@@ -633,9 +727,17 @@
   color: #a16207;
   animation: b2c-fade-pulse 1.5s ease-in-out infinite;
 }
+
 @keyframes b2c-fade-pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* ── Error ── */
@@ -657,37 +759,61 @@
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  .b2c-tx-container { padding: 16px 12px; }
-  .b2c-tx-title { font-size: 20px; }
+  .b2c-tx-container {
+    padding: 16px 12px;
+  }
+
+  .b2c-tx-title {
+    font-size: 20px;
+  }
+
   .b2c-tx-controls-card {
     flex-direction: column;
     align-items: stretch;
     padding: 14px;
     gap: 10px;
   }
+
   .b2c-tx-controls-left {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
+
   .b2c-tx-select,
   .b2c-tx-date-input {
     width: 100%;
     box-sizing: border-box;
   }
+
   .b2c-tx-fetch-btn {
     width: 100%;
     justify-content: center;
     padding: 13px;
   }
+
   .b2c-tx-stats-strip {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
-  .b2c-tx-stat-card { min-width: unset; padding: 14px 12px; }
-  .b2c-tx-stat-value { font-size: 17px; }
+
+  .b2c-tx-stat-card {
+    min-width: unset;
+    padding: 14px 12px;
+  }
+
+  .b2c-tx-stat-value {
+    font-size: 17px;
+  }
+
   .b2c-tx-table th,
-  .b2c-tx-table td { padding: 10px 10px; font-size: 12.5px; }
-  .b2c-tx-email { max-width: 100px; }
+  .b2c-tx-table td {
+    padding: 10px 10px;
+    font-size: 12.5px;
+  }
+
+  .b2c-tx-email {
+    max-width: 100px;
+  }
 }
