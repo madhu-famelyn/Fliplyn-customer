@@ -151,7 +151,7 @@ export const printViaRawBT = (orderDetails) => {
       binaryString += String.fromCharCode(uint8Array[i]);
     }
     const base64Data = window.btoa(binaryString);
-    window.location.href = `intent:base64,${base64Data}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;`;
+    window.location.href = "rawbt:base64," + encodeURIComponent(base64Data);
   };
 
   // Try background WebSocket printing first to prevent opening the RawBT popup/screen
