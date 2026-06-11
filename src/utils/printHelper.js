@@ -153,25 +153,8 @@ export const printViaRawBT = (orderDetails) => {
     }
     const base64Data = window.btoa(binaryString);
     
-    // Check if running inside Fully Kiosk Browser and use the native API to bypass user gesture blocks
-    if (typeof window.fully !== "undefined" && typeof window.fully.startIntent === "function") {
-      try {
-        window.fully.startIntent("intent:#Intent;action=android.intent.action.VIEW;data=rawbt:base64," + base64Data + ";package=ru.a402d.rawbtprinter;end");
-        console.log("Printed automatically via Fully Kiosk Intent API");
-        return;
-      } catch (e) {
-        console.warn("Fully Kiosk startIntent failed, falling back to iframe:", e);
-      }
-    }
-
-    // Create an invisible iframe to trigger the RawBT intent without redirecting/unloading the page (for standard browsers)
-    const iframe = document.createElement("iframe");
-    iframe.style.display = "none";
-    iframe.src = "rawbt:base64," + base64Data;
-    document.body.appendChild(iframe);
-    setTimeout(() => {
-      document.body.removeChild(iframe);
-    }, 100);
+    // Redirect window location (Fully Kiosk allows this automatically on load)
+    window.location.href = "rawbt:base64," + base64Data;
   };
 
   // Try background WebSocket printing first to prevent opening the RawBT popup/screen
