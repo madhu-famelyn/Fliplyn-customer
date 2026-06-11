@@ -48,6 +48,29 @@ export default function B2CPaymentSuccess() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderDetails]);
 
+  // Navigate back to stalls immediately if returning to the browser after printing (for RawBT popup fallback)
+  useEffect(() => {
+    const handleFocus = () => {
+      if (hasPrintedRef.current) {
+        navigate("/b2c/stalls");
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && hasPrintedRef.current) {
+        navigate("/b2c/stalls");
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [navigate]);
+
   const handlePrint = () => {
     setIsPrinting(true);
     

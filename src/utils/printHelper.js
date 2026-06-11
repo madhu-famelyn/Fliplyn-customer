@@ -151,7 +151,15 @@ export const printViaRawBT = (orderDetails) => {
       binaryString += String.fromCharCode(uint8Array[i]);
     }
     const base64Data = window.btoa(binaryString);
-    window.location.href = "rawbt:base64," + encodeURIComponent(base64Data);
+    
+    // Create an invisible iframe to trigger the RawBT intent without redirecting/unloading the page
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = "rawbt:base64," + base64Data;
+    document.body.appendChild(iframe);
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 100);
   };
 
   // Try background WebSocket printing first to prevent opening the RawBT popup/screen
