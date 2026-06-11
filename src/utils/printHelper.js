@@ -152,7 +152,18 @@ export const printViaRawBT = (orderDetails) => {
     }
     const base64Data = window.btoa(binaryString);
     
-    // Create an invisible iframe to trigger the RawBT intent without redirecting/unloading the page
+    // Check if running inside Fully Kiosk Browser and use the native API to bypass user gesture blocks
+    if (typeof window.fully !== "undefined" && typeof window.fully.startIntent === "function") {
+      try {
+        window.fully.startIntent("intent:#Intent;action=android.intent.action.VIEW;data=rawbt:base64," + base64Data + ";package=ru.a402d.rawbtprinter;end");
+        console.log("Printed automatically via Fully Kiosk Intent API");
+        return;
+      } catch (e) {
+        console.warn("Fully Kiosk startIntent failed, falling back to iframe:", e);
+      }
+    }
+
+    // Create an invisible iframe to trigger the RawBT intent without redirecting/unloading the page (for standard browsers)
     const iframe = document.createElement("iframe");
     iframe.style.display = "none";
     iframe.src = "rawbt:base64," + base64Data;
