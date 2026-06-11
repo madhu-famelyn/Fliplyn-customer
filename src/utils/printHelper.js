@@ -145,6 +145,7 @@ export const printViaRawBT = (orderDetails) => {
   const triggerFallback = () => {
     if (fallbackTriggered) return;
     fallbackTriggered = true;
+    window.rawbtFallbackTriggered = true;
 
     let binaryString = "";
     for (let i = 0; i < uint8Array.length; i++) {

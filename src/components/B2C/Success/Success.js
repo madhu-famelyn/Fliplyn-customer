@@ -29,13 +29,13 @@ export default function B2CPaymentSuccess() {
   }, [orderDetails]);
 
   const hasPrintedRef = useRef(false);
-  const printLaunchedRef = useRef(false);
-
   // Show token as soon as order details are available, trigger print, and redirect
   useEffect(() => {
     if (orderDetails && !hasPrintedRef.current) {
       hasPrintedRef.current = true;
       setShowToken(true);
+      // Reset the fallback global flag when printing a new token
+      window.rawbtFallbackTriggered = false;
       // Print automatically once the token is ready
       handlePrint();
 
@@ -52,7 +52,8 @@ export default function B2CPaymentSuccess() {
   // Navigate back to stalls immediately if returning to the browser after printing (for RawBT popup fallback)
   useEffect(() => {
     const handleFocus = () => {
-      if (printLaunchedRef.current) {
+      if (window.rawbtFallbackTriggered) {
+        window.rawbtFallbackTriggered = false; // reset
         navigate("/b2c/stalls");
       }
     };
@@ -60,7 +61,8 @@ export default function B2CPaymentSuccess() {
     window.addEventListener("focus", handleFocus);
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && printLaunchedRef.current) {
+      if (document.visibilityState === "visible" && window.rawbtFallbackTriggered) {
+        window.rawbtFallbackTriggered = false; // reset
         navigate("/b2c/stalls");
       }
     };
@@ -79,13 +81,10 @@ export default function B2CPaymentSuccess() {
     setTimeout(() => {
       if (window.Android && typeof window.Android.printToken === "function") {
         window.Android.printToken(JSON.stringify(orderDetails));
-        printLaunchedRef.current = true;
       } else if (window.iMinPrinter && typeof window.iMinPrinter.printReceipt === "function") {
         window.iMinPrinter.printReceipt(JSON.stringify(orderDetails));
-        printLaunchedRef.current = true;
       } else {
         printViaRawBT(orderDetails);
-        printLaunchedRef.current = true;
       }
     }, 1000);
 
