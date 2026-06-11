@@ -29,6 +29,7 @@ export default function B2CPaymentSuccess() {
   }, [orderDetails]);
 
   const hasPrintedRef = useRef(false);
+  const printLaunchedRef = useRef(false);
 
   // Show token as soon as order details are available, trigger print, and redirect
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function B2CPaymentSuccess() {
   // Navigate back to stalls immediately if returning to the browser after printing (for RawBT popup fallback)
   useEffect(() => {
     const handleFocus = () => {
-      if (hasPrintedRef.current) {
+      if (printLaunchedRef.current) {
         navigate("/b2c/stalls");
       }
     };
@@ -59,7 +60,7 @@ export default function B2CPaymentSuccess() {
     window.addEventListener("focus", handleFocus);
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && hasPrintedRef.current) {
+      if (document.visibilityState === "visible" && printLaunchedRef.current) {
         navigate("/b2c/stalls");
       }
     };
@@ -78,10 +79,13 @@ export default function B2CPaymentSuccess() {
     setTimeout(() => {
       if (window.Android && typeof window.Android.printToken === "function") {
         window.Android.printToken(JSON.stringify(orderDetails));
+        printLaunchedRef.current = true;
       } else if (window.iMinPrinter && typeof window.iMinPrinter.printReceipt === "function") {
         window.iMinPrinter.printReceipt(JSON.stringify(orderDetails));
+        printLaunchedRef.current = true;
       } else {
         printViaRawBT(orderDetails);
+        printLaunchedRef.current = true;
       }
     }, 1000);
 
