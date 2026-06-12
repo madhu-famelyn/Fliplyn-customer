@@ -2,18 +2,18 @@ import React, { useState, useEffect, useCallback } from "react";
 import "../Category/Category.css";
 import "./Items.css";
 import { useB2CAuth } from "../../AuthContex/B2CContext";
-import { FiSearch } from "react-icons/fi";
 
 const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
+const FOOD_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' style='background:%23f8fafc;width:100%25;height:100%25;'><rect x='3' y='3' width='18' height='18' rx='2' ry='2'/><circle cx='8.5' cy='8.5' r='1.5'/><polyline points='21 15 16 10 5 21'/></svg>";
 
-export default function B2CItemList({ items, itemsLoaded }) {
+export default function B2CItemList({ items, itemsLoaded, searchTerm, setSearchTerm }) {
   const { b2cUser } = useB2CAuth();
 
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [filterType, setFilterType] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [failedImages, setFailedImages] = useState({});
 
   /* Load cart */
   const loadLocalCart = useCallback(() => {
@@ -125,16 +125,6 @@ export default function B2CItemList({ items, itemsLoaded }) {
       {/* POPUP */}
       {showPopup && <div className="stall-popup">{popupMessage}</div>}
 
-      {/* SEARCH BAR */}
-      <div className="search-bar">
-        <FiSearch className="search-icon" />
-        <input
-          type="text"
-          placeholder="Search items..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
 
       {/* FILTER BUTTONS */}
       <div className="filter-buttons">
@@ -177,26 +167,27 @@ export default function B2CItemList({ items, itemsLoaded }) {
             const cartItem = cartItems.find((c) => c.id === item.id);
             const isInCart = !!cartItem;
 
+            const hasFailed = failedImages[item.id];
+            const isInvalidImg = !item.image_url || item.image_url === "None" || item.image_url === "null";
+            const imageUrl = (hasFailed || isInvalidImg)
+              ? FOOD_PLACEHOLDER
+              : (item.image_url.startsWith("http") ? item.image_url : `${S3_BASE_URL}${item.image_url}`);
+
             return (
               <div className="item-card" key={item.id}>
                 <div className="item-img-wrapper">
                   <img
-                    src={
-                      item.image_url?.startsWith("http")
-                        ? item.image_url
-                        : `${S3_BASE_URL}${item.image_url}`
-                    }
+                    src={imageUrl}
                     alt={item.name}
                     className="item-img"
-                    onError={(e) => {
-                      e.target.src = "/fallback-item.jpg";
+                    onError={() => {
+                      setFailedImages((prev) => ({ ...prev, [item.id]: true }));
                     }}
                   />
 
                   <div
-                    className={`food-icon ${
-                      item.is_veg ? "veg" : "nonveg"
-                    }`}
+                    className={`food-icon ${item.is_veg ? "veg" : "nonveg"
+                      }`}
                   >
                     <div className="dot"></div>
                   </div>

@@ -1,4 +1,5 @@
 // src/App.js
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import SignInPage from "./components/SignIn/SignIn";
 import SignUpPage from "./components/SignUp/SignUp";
@@ -151,6 +152,67 @@ const B2CPrivateRoute = ({ element }) => {
 function App() {
   const location = useLocation();
   const showBg = location.pathname.startsWith("/b2c");
+
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+
+    const handleTouchStart = (e) => {
+      // Record the starting position and time of the touch
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+    };
+
+    const handleTouchEnd = (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const touchEndTime = Date.now();
+
+      const diffX = touchEndX - touchStartX;
+      const diffY = Math.abs(touchEndY - touchStartY);
+      const duration = touchEndTime - touchStartTime;
+
+      // Swipe detection criteria (kept intact for future use):
+      // 1. Swipe started within 120px from the left edge of the screen
+      // 2. Horizontal swipe distance is at least 70px to the right
+      // 3. Gesture is primarily horizontal (vertical drift < 60% of horizontal distance)
+      // 4. Swipe completed within 500ms (quick gesture)
+      const isSwipeBack =
+        touchStartX < 120 &&
+        diffX > 70 &&
+        diffY < diffX * 0.6 &&
+        duration < 500;
+
+      if (isSwipeBack) {
+        const path = window.location.pathname;
+
+        // Route check: only consider B2C pages that are not the stalls landing or login page
+        const isEligibleRoute =
+          path.startsWith("/b2c") &&
+          path !== "/b2c/stalls" &&
+          path !== "/b2c-login";
+
+        if (isEligibleRoute) {
+          // ✅ Swipe detected — back navigation intentionally disabled.
+          // To re-enable, uncomment the line below:
+          // navigate(-1);
+          console.log("👉 Swipe-back gesture detected (navigation disabled).");
+        }
+      }
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    // Cleanup listeners on unmount to avoid memory leaks
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  // No dependency on `navigate` since it is no longer called inside the effect
+  }, []);
 
   return (
     <AdminAuthProvider>

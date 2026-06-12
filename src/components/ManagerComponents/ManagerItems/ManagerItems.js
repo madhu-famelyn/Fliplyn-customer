@@ -49,37 +49,35 @@ export default function ItemListByStall() {
     fetchItems();
   }, [stallId]);
 
+  const [filterTab, setFilterTab] = useState("all"); // "all" | "active" | "inactive"
+
   useEffect(() => {
-    const filtered = items.filter((item) =>
+    let filtered = items.filter((item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    if (filterTab === "active") filtered = filtered.filter((i) => i.is_available);
+    if (filterTab === "inactive") filtered = filtered.filter((i) => !i.is_available);
     setFilteredItems(filtered);
-  }, [searchTerm, items]);
+  }, [searchTerm, items, filterTab]);
 
   // ✅ Toggle Availability
-const toggleAvailability = async (itemId, currentStatus) => {
-  try {
-    // Backend base URL (you can move this to a config file or .env)
-    const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
-
-    // Send PATCH request to backend
-    await axios.patch(
-      `${API_BASE_URL}/items/items/${itemId}/availability`,
-      { is_available: !currentStatus }
-    );
-
-    // Update UI after success
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === itemId ? { ...item, is_available: !currentStatus } : item
-      )
-    );
-  } catch (err) {
-    console.error("❌ Error updating availability:", err);
-    alert("Failed to update availability. Please try again.");
-  }
-};
-
+  const toggleAvailability = async (itemId, currentStatus) => {
+    try {
+      const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
+      await axios.patch(
+        `${API_BASE_URL}/items/items/${itemId}/availability`,
+        { is_available: !currentStatus }
+      );
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === itemId ? { ...item, is_available: !currentStatus } : item
+        )
+      );
+    } catch (err) {
+      console.error("❌ Error updating availability:", err);
+      alert("Failed to update availability. Please try again.");
+    }
+  };
 
   // ✅ Open Edit Modal
   const openEditModal = (item) => {
@@ -127,18 +125,13 @@ const toggleAvailability = async (itemId, currentStatus) => {
       const response = await axios.put(
         `https://admin-aged-field-2794.fly.dev/items/${editingItem.id}/update-image-details`,
         formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-
-      // ✅ Update UI
       setItems((prev) =>
         prev.map((item) =>
           item.id === editingItem.id ? { ...item, ...response.data } : item
         )
       );
-
       setEditingItem(null);
       alert("Item updated successfully!");
     } catch (err) {
@@ -155,22 +148,34 @@ const toggleAvailability = async (itemId, currentStatus) => {
       <div className="ils-header-section">
         <h2 className="ils-heading">Items for Stall</h2>   
         <div className="ils-stats">
-          <div className="ils-stat-pill">
+          <div
+            className={`ils-stat-pill${filterTab === "all" ? " selected" : ""}`}
+            onClick={() => setFilterTab("all")}
+            style={{ cursor: "pointer" }}
+          >
             <span className="stat-dot" />
-            <span className="stat-num">{loading ? "—" : items.length}</span>
+            <span className="stat-num">{items.length}</span>
             Total Items
           </div>
-          <div className="ils-stat-pill active">
+          <div
+            className={`ils-stat-pill active${filterTab === "active" ? " selected" : ""}`}
+            onClick={() => setFilterTab("active")}
+            style={{ cursor: "pointer" }}
+          >
             <span className="stat-dot active" />
             <span className="stat-num">
-              {loading ? "—" : items.filter((item) => item.is_available).length}
+              {items.filter((item) => item.is_available).length}
             </span>
             Active
           </div>
-          <div className="ils-stat-pill inactive">
+          <div
+            className={`ils-stat-pill inactive${filterTab === "inactive" ? " selected" : ""}`}
+            onClick={() => setFilterTab("inactive")}
+            style={{ cursor: "pointer" }}
+          >
             <span className="stat-dot inactive" />
             <span className="stat-num">
-              {loading ? "—" : items.filter((item) => !item.is_available).length}
+              {items.filter((item) => !item.is_available).length}
             </span>
             Inactive
           </div>

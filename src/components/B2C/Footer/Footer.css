@@ -2,6 +2,7 @@
 
 /* =================== Footer Container =================== */
 .footer-container {
+  display: none !important;
   position: fixed;
   bottom: 0;
   left: 0;

@@ -244,7 +244,8 @@ export default function B2CCart() {
                           alt={item.name}
                           className="item-image"
                           onError={(e) => {
-                            e.target.src = "/fallback-item.jpg";
+                            e.target.onerror = null;
+                            e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' style='background:%23f8fafc;width:100%25;height:100%25;'><rect x='3' y='3' width='18' height='18' rx='2' ry='2'/><circle cx='8.5' cy='8.5' r='1.5'/><polyline points='21 15 16 10 5 21'/></svg>";
                           }}
                         />
 

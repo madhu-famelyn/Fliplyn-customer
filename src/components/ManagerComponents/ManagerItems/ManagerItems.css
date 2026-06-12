@@ -236,6 +236,26 @@
   box-shadow: 0 0 6px #dc3545;
 }
 
+/* ===== Selected (active filter) state ===== */
+.ils-stat-pill.selected {
+  background: rgba(255, 127, 80, 0.12);
+  border-color: #ff7f50;
+  font-weight: 600;
+  color: #ff7f50;
+}
+
+.ils-stat-pill.active.selected {
+  background: rgba(40, 167, 69, 0.12);
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.ils-stat-pill.inactive.selected {
+  background: rgba(220, 53, 69, 0.12);
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
 @media (max-width: 600px) {
   .ils-header-section {
     flex-direction: column;

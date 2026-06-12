@@ -156,12 +156,24 @@ export default function B2CStalls() {
                   onClick={() => stall.is_available && handleStallClick(stall.id)}
                 >
                   {/* Image wrapper with shine + open badge */}
-                  <div className="stall-image-wrapper">
+                  <div
+                    className="stall-image-wrapper"
+                    style={
+                      stall.name?.toLowerCase().includes("tea topia")
+                        ? { background: "#ffffff" }
+                        : {}
+                    }
+                  >
                     <img
                       src={stall.image_url}
                       alt={stall.name}
                       className="stall-image"
                       loading="lazy"
+                      style={
+                        stall.name?.toLowerCase().includes("tea topia")
+                          ? { objectFit: "contain", objectPosition: "center" }
+                          : {}
+                      }
                     />
 
                     {!stall.is_available && (
