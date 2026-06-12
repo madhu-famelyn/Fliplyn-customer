@@ -76,7 +76,7 @@ export default function B2CPaymentSuccess() {
 
   const handlePrint = () => {
     setIsPrinting(true);
-    
+
     // Defer the print trigger to give the browser time to render and paint the overlay
     setTimeout(() => {
       if (window.Android && typeof window.Android.printToken === "function") {

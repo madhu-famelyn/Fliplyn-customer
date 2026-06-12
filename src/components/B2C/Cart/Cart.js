@@ -23,6 +23,7 @@ export default function B2CCart() {
   /* ---------------- PHONEPE QR MODAL STATES ---------------- */
   const [showQrModal, setShowQrModal] = useState(false);
   const [qrValue, setQrValue] = useState("");
+  const [qrLoading, setQrLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180);
   const [modalError, setModalError] = useState("");
   const [cfOrderId, setCfOrderId] = useState("");
@@ -135,25 +136,13 @@ export default function B2CCart() {
 
     setLoading(true);
     setError("");
+    setQrValue("");
+    setQrLoading(true);
+    setModalError("");
+    setShowQrModal(true); // Open modal immediately with spinner
 
     try {
-      // Step 1: Sync cart with backend
-      const cartPayload = {
-        user_id: b2cUser.id,
-        items: cartItems.map((i) => ({
-          item_id: i.id,
-          quantity: i.quantity,
-          Gst_precentage: i.Gst_precentage || 0,
-        })),
-      };
-
-      console.log("📦 B2C Basket sync payload:", cartPayload);
-
-      await axios.post(`${API_BASE_URL}/cart/add-multiple`, cartPayload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Step 2: Create order on backend directly requesting PhonePe
+      // Place order directly on backend with PhonePe
       const itemsPayload = cartItems.map((item) => ({
         item_id: item.id,
         quantity: item.quantity,
@@ -169,7 +158,7 @@ export default function B2CCart() {
         cashfree_return_url: `${window.location.origin}/b2c/success`,
       };
 
-      console.log("📦 Placing PhonePe order directly from basket:", orderPayload);
+      console.log("📦 Placing PhonePe order from basket:", orderPayload);
 
       const orderRes = await axios.post(`${API_BASE_URL}/orders/place`, orderPayload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -178,18 +167,21 @@ export default function B2CCart() {
       const backendOrder = orderRes.data;
 
       if (!backendOrder.payment_session_id) {
+        setShowQrModal(false);
         setError("Failed to generate payment QR code");
         return;
       }
 
+      // QR ready — populate and start timer
       setQrValue(backendOrder.payment_session_id);
       setCfOrderId(backendOrder.cashfree_order_id);
       setTimeLeft(180);
-      setModalError("");
-      setShowQrModal(true);
+      setQrLoading(false);
 
     } catch (err) {
       console.error("❌ B2C Checkout direct payment failed:", err);
+      setShowQrModal(false);
+      setQrLoading(false);
       setError(err?.response?.data?.detail || "Checkout failed. Please try again.");
     } finally {
       setLoading(false);
@@ -316,32 +308,40 @@ export default function B2CCart() {
           <div className="qr-modal-card">
             <h2>Scan & Pay</h2>
             <p>Scan using any UPI App (GPay, PhonePe, Paytm)</p>
-            <div className="qr-canvas-container">
-              <QRCodeCanvas value={qrValue} size={280} includeMargin={true} level="H" />
-            </div>
-            <p className="payee-name-sub">Paying to: <strong>{getPayeeName()}</strong></p>
-            <p className="qr-amount">Amount: ₹ {finalTotal.toFixed(2)}</p>
 
-            {modalError && (
-              <div className="modal-error-callout" style={{
-                background: "#fff9db",
-                border: "1px solid #ffe066",
-                color: "#856404",
-                padding: "10px 14px",
-                borderRadius: "14px",
-                fontSize: "12px",
-                fontWeight: "600",
-                marginBottom: "16px",
-                textAlign: "left",
-                lineHeight: "1.4"
-              }}>
-                ⚠️ {modalError}
+            {qrLoading ? (
+              <div className="qr-canvas-container" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "280px", gap: "16px" }}>
+                <div className="qr-spinner"></div>
+                <p style={{ color: "#6b7280", fontSize: "14px", fontWeight: "500", margin: 0 }}>Generating your QR code...</p>
               </div>
+            ) : (
+              <>
+                <div className="qr-canvas-container">
+                  <QRCodeCanvas value={qrValue} size={280} includeMargin={true} level="H" />
+                </div>
+                <p className="payee-name-sub">Paying to: <strong>{getPayeeName()}</strong></p>
+                <p className="qr-amount">Amount: ₹ {finalTotal.toFixed(2)}</p>
+                {modalError && (
+                  <div className="modal-error-callout" style={{
+                    background: "#fff9db",
+                    border: "1px solid #ffe066",
+                    color: "#856404",
+                    padding: "10px 14px",
+                    borderRadius: "14px",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    marginBottom: "16px",
+                    textAlign: "left",
+                    lineHeight: "1.4"
+                  }}>
+                    ⚠️ {modalError}
+                  </div>
+                )}
+                <p className="qr-timer-text">Expires in: <span className="timer-count">{formatTime(timeLeft)}</span></p>
+              </>
             )}
 
-            <p className="qr-timer-text">Expires in: <span className="timer-count">{formatTime(timeLeft)}</span></p>
-
-            <button className="qr-close-btn" onClick={() => setShowQrModal(false)}>Cancel Payment</button>
+            <button className="qr-close-btn" onClick={() => { setShowQrModal(false); setQrLoading(false); }}>Cancel Payment</button>
           </div>
         </div>
       )}
