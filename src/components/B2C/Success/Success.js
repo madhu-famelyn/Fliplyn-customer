@@ -39,9 +39,9 @@ export default function B2CPaymentSuccess() {
       // Print automatically once the token is ready
       handlePrint();
 
-      // Automatically navigate back to stalls page after 5 seconds
+      // Automatically navigate back to home page after 5 seconds
       const timer = setTimeout(() => {
-        navigate("/b2c/stalls");
+        navigate("/b2c-home");
       }, 5000);
 
       return () => clearTimeout(timer);
@@ -49,12 +49,19 @@ export default function B2CPaymentSuccess() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderDetails]);
 
-  // Navigate back to stalls immediately if returning to the browser after printing (for RawBT popup fallback)
+  // Reset hasPrintedRef when component unmounts so multiple orders work correctly
+  useEffect(() => {
+    return () => {
+      hasPrintedRef.current = false;
+    };
+  }, []);
+
+  // Navigate back to home page immediately if returning to the browser after printing (for RawBT popup fallback)
   useEffect(() => {
     const handleFocus = () => {
       if (window.rawbtFallbackTriggered) {
         window.rawbtFallbackTriggered = false; // reset
-        navigate("/b2c/stalls");
+        navigate("/b2c-home");
       }
     };
 
@@ -63,7 +70,7 @@ export default function B2CPaymentSuccess() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible" && window.rawbtFallbackTriggered) {
         window.rawbtFallbackTriggered = false; // reset
-        navigate("/b2c/stalls");
+        navigate("/b2c-home");
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -226,12 +233,12 @@ export default function B2CPaymentSuccess() {
             </>
           )}
 
-          {/* 🔙 Back to Stalls */}
+          {/* 🏠 Back to Home */}
           <button
             className="back-to-stalls-btn"
-            onClick={() => navigate("/b2c/stalls")}
+            onClick={() => navigate("/b2c-home")}
           >
-            Back to Stalls
+            Back to Home
           </button>
         </>
       )}

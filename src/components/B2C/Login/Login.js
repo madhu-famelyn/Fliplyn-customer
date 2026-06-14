@@ -30,7 +30,7 @@ const B2CLogin = () => {
       console.log("✅ B2C Login success:", data);
 
       // ✅ Navigate to stalls page after login
-      navigate("/b2c/stalls");
+      navigate("/b2c-home");
     } catch (err) {
       setError(err.message);
     } finally {

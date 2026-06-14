@@ -88,6 +88,7 @@ import WalletUpload from "./components/ManagerComponents/AddWallet/AddWallet";
 import LoginSelectionPage from "./components/LoginSelection/LoginSelection";
 import OrderStatus from "./components/OrderStatus/OrderStatus";
 import B2CLogin from "./components/B2C/Login/Login";
+import B2CHome from "./components/B2C/Home/Home";
 import B2CStalls from "./components/B2C/Stalls/Stalls";
 import B2CCategory from "./components/B2C/Category/Category";
 import B2CCart from "./components/B2C/Cart/Cart";
@@ -151,7 +152,7 @@ const B2CPrivateRoute = ({ element }) => {
 
 function App() {
   const location = useLocation();
-  const showBg = location.pathname.startsWith("/b2c");
+  const showBg = location.pathname.startsWith("/b2c") || location.pathname === "/b2c-home";
 
   useEffect(() => {
     let touchStartX = 0;
@@ -309,6 +310,7 @@ function App() {
 
 
                 {/* 🛒 B2C Routes */}
+                <Route path="/b2c-home" element={<B2CPrivateRoute element={<B2CHome />} />} />
                 <Route path="/b2c-login" element={<B2CLogin />} />
                 <Route path="/b2c/stalls" element={<B2CPrivateRoute element={<B2CStalls />} />} />
                 <Route path="/b2c/categories/:stallId" element={<B2CPrivateRoute element={<B2CCategory />} />} />

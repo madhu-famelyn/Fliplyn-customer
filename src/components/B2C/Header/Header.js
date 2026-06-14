@@ -62,7 +62,7 @@ export default function B2CHeader() {
 
           <div
             className="header-left"
-            onClick={() => navigate("/b2c/stalls")}
+          onClick={() => navigate("/b2c-home")}
           >
             <img src={logo} alt="Fliplyn Logo" className="header-logo" />
             <span className="header-brand"><span className="b2c-header-badge">B2C</span></span>
