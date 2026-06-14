@@ -21,8 +21,22 @@ function SkeletonCard() {
 }
 
 export default function B2CStalls() {
-  const [stalls, setStalls] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // ── Init stalls from prefetch cache for instant render ──────────────────
+  const getCachedStalls = () => {
+    try {
+      const cached = sessionStorage.getItem("b2c_stalls_cache");
+      const cacheTime = parseInt(sessionStorage.getItem("b2c_stalls_cache_time") || "0");
+      const TWO_MINUTES = 2 * 60 * 1000;
+      if (cached && Date.now() - cacheTime < TWO_MINUTES) {
+        return JSON.parse(cached);
+      }
+    } catch (e) {}
+    return null;
+  };
+
+  const cachedStalls = getCachedStalls();
+  const [stalls, setStalls] = useState(cachedStalls || []);
+  const [loading, setLoading] = useState(!cachedStalls); // skip skeleton if cached
   const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
@@ -66,7 +80,7 @@ export default function B2CStalls() {
           return;
         }
 
-        // ------------------ FETCH STALLS ------------------
+        // ------------------ FETCH STALLS (background refresh) ------------------
         console.log("🔄 Fetching fresh stalls from API...");
 
         const res = await axios.get(
@@ -76,6 +90,9 @@ export default function B2CStalls() {
 
         let fetched = res.data || [];
         setStalls(fetched);
+        // Update cache with fresh data
+        sessionStorage.setItem("b2c_stalls_cache", JSON.stringify(fetched));
+        sessionStorage.setItem("b2c_stalls_cache_time", Date.now().toString());
       } catch (err) {
         console.error("❌ Stall fetch error:", err);
       } finally {

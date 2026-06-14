@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useB2CAuth } from "../../AuthContex/B2CContext";
+import axios from "axios";
 import "./Home.css";
 
 // ─── Media Slides Configuration ───────────────────────────────────────────────
-// Add your image URLs or video URLs here.
-// type: "image" | "video"
-// For videos: use a direct .mp4 link or a local file from public folder
 const SLIDES = [
   {
     type: "image",
@@ -51,11 +50,16 @@ const SLIDES = [
   },
 ];
 
-
 const SLIDE_DURATION = 4000; // ms per slide
+
+const API_BASE =
+  window.location.hostname === "localhost"
+    ? `http://${window.location.hostname}:8000`
+    : "https://admin-aged-field-2794.fly.dev";
 
 export default function B2CHome() {
   const navigate = useNavigate();
+  const { b2cUser, token } = useB2CAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const timerRef = useRef(null);
@@ -87,6 +91,46 @@ export default function B2CHome() {
     }
   }, [currentIndex]);
 
+  // ── 🚀 Prefetch stalls in background while user views home page ──────────
+  useEffect(() => {
+    if (!token || !b2cUser?.id) return;
+
+    const prefetch = async () => {
+      try {
+        const userId = b2cUser.id;
+
+        // Use cached buildingId if available
+        let buildingId = localStorage.getItem("b2c_selectedBuildingId");
+
+        if (!buildingId) {
+          const userRes = await axios.get(`${API_BASE}/user/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          buildingId = userRes.data?.building_id;
+          if (buildingId) {
+            localStorage.setItem("b2c_selectedBuildingId", buildingId);
+          }
+        }
+
+        if (!buildingId) return;
+
+        // Fetch stalls and cache in sessionStorage
+        const res = await axios.get(`${API_BASE}/stalls/building/${buildingId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const stalls = res.data || [];
+        sessionStorage.setItem("b2c_stalls_cache", JSON.stringify(stalls));
+        sessionStorage.setItem("b2c_stalls_cache_time", Date.now().toString());
+        console.log("✅ Stalls prefetched:", stalls.length, "stalls ready");
+      } catch (err) {
+        console.warn("⚠️ Prefetch failed (will load on stalls page):", err.message);
+      }
+    };
+
+    // Small delay so the page renders first, then prefetch starts
+    const t = setTimeout(prefetch, 500);
+    return () => clearTimeout(t);
+  }, [token, b2cUser]);
 
   const handleOrderClick = () => {
     navigate("/b2c/stalls");

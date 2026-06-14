@@ -212,7 +212,7 @@ function App() {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchend", handleTouchEnd);
     };
-  // No dependency on `navigate` since it is no longer called inside the effect
+    // No dependency on `navigate` since it is no longer called inside the effect
   }, []);
 
   return (
@@ -221,119 +221,119 @@ function App() {
         <HrAuthProvider>
           <BuildingManagerProvider>
             <B2CAuthProvider>
-            <ManagerAuthProvider>
-              {showBg && <BackgroundImages />}
-              <Routes>
-                {/* 🔓 Public Routes */}
-                <Route path="/login" element={<SignInPage />} />
-                <Route path="/signup" element={<SignUpPage />} />
-                <Route path="/manager-login" element={<ManagerLogin />} />
+              <ManagerAuthProvider>
+                {showBg && <BackgroundImages />}
+                <Routes>
+                  {/* 🔓 Public Routes */}
+                  <Route path="/login" element={<SignInPage />} />
+                  <Route path="/signup" element={<SignUpPage />} />
+                  <Route path="/manager-login" element={<ManagerLogin />} />
 
-                <Route path="/locations" element={<Locations />}  />
-                <Route path="/select-country" element={<SelectCountry />} />
-                <Route path="/select-state"element={<SelectState />} />
-                <Route path="/select-city"  element={<SelectCity />}  />
-                <Route path="/create-building" element={<CreateBuilding />}/>
-                <Route path="/stalls"  element={<Stall />} />
-                <Route path="/dashboard"  element={<Dashboard />} />
-                <Route path="/add-category/:stallId" element={<AddCategory />} />
-                <Route path="/manager-wallet"  element={<WalletUploadAdmin />}  />
-                <Route path="/item"element={<Item />} />
-                <Route path="/manager-details"element={<ManagerDetails />} />
-                <Route path="/manager-items"  element={<ItemDetails />} />
-                <Route path="/add-money" element={<AddMoney />}  />
-                <Route path="/items-admin"element={<AdminItems />} />
-                <Route path="/create-group" element={<Group />} />
-                <Route path="/token"element={<EnterTokenPage />} />
-                <Route path="/print-token/:tokenNumber" element={<TokenReceiptPage />} />
-                <Route path="/get-order-email" element={<AdminPrivateRoute element={<OrdersByEmail />} />} />
-                <Route path="/change-password" element={<AdminPrivateRoute element={<ChangePassword />} />} />
-                <Route path="/change/admin" element={<ChangeAdminPassword />} />
-                <Route path="/change/user" element={<UpdateUserPassword/>} />
-                <Route path="/change/vendor" element={<ChangeVendorPassword/>} />
-                <Route path="/change/hr" element={<ChangeHrPassword/>} />
-                <Route path="change/om" element={<ChangeOMPassword/>} />
-                <Route path="/change/manager" element={<ChangeBuildingManagerPassword/>} />
-                <Route path="/view-building-managers" element={<ViewBuildingManagers/>} />
-                 <Route path="/create-hr" element={<CreateHR/>} />
-                 <Route path="/create-user-admin" element={<CreateUserAdmin/>} />
-                 <Route path="/deactivate-user" element={<UpdateStatus/>} />
-                 <Route path="/sales-summary" element={<SalesSummaryReport/>} />
+                  <Route path="/locations" element={<Locations />} />
+                  <Route path="/select-country" element={<SelectCountry />} />
+                  <Route path="/select-state" element={<SelectState />} />
+                  <Route path="/select-city" element={<SelectCity />} />
+                  <Route path="/create-building" element={<CreateBuilding />} />
+                  <Route path="/stalls" element={<Stall />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/add-category/:stallId" element={<AddCategory />} />
+                  <Route path="/manager-wallet" element={<WalletUploadAdmin />} />
+                  <Route path="/item" element={<Item />} />
+                  <Route path="/manager-details" element={<ManagerDetails />} />
+                  <Route path="/manager-items" element={<ItemDetails />} />
+                  <Route path="/add-money" element={<AddMoney />} />
+                  <Route path="/items-admin" element={<AdminItems />} />
+                  <Route path="/create-group" element={<Group />} />
+                  <Route path="/token" element={<EnterTokenPage />} />
+                  <Route path="/print-token/:tokenNumber" element={<TokenReceiptPage />} />
+                  <Route path="/get-order-email" element={<AdminPrivateRoute element={<OrdersByEmail />} />} />
+                  <Route path="/change-password" element={<AdminPrivateRoute element={<ChangePassword />} />} />
+                  <Route path="/change/admin" element={<ChangeAdminPassword />} />
+                  <Route path="/change/user" element={<UpdateUserPassword />} />
+                  <Route path="/change/vendor" element={<ChangeVendorPassword />} />
+                  <Route path="/change/hr" element={<ChangeHrPassword />} />
+                  <Route path="change/om" element={<ChangeOMPassword />} />
+                  <Route path="/change/manager" element={<ChangeBuildingManagerPassword />} />
+                  <Route path="/view-building-managers" element={<ViewBuildingManagers />} />
+                  <Route path="/create-hr" element={<CreateHR />} />
+                  <Route path="/create-user-admin" element={<CreateUserAdmin />} />
+                  <Route path="/deactivate-user" element={<UpdateStatus />} />
+                  <Route path="/sales-summary" element={<SalesSummaryReport />} />
                   <Route
-                                 path="/stalls-report-admin"
-                                 element={<StallSalesReportAdmin  />}
-                               />
+                    path="/stalls-report-admin"
+                    element={<StallSalesReportAdmin />}
+                  />
 
 
 
 
 
 
-                {/* 🛍️ Vendor Routes */}
-                <Route path="/vendor" element={<VendorLogin />} />
-                <Route path="/user" element={<User />} />
-                <Route path="/vendor-stall" element={<VendorStalls />} />
-                <Route path="/items-vendor/:id" element={<VendorPrivateRoute element={<VendorItems />} />} />
-                <Route path="/stall/:stallId/reports" element={<StallSalesReportVendor />} />
-                <Route path="/orders-status" element={<OrderStatus />} />
-                <Route path="/sales-report-vendor" element={<StallSalesReportVendor />} />
+                  {/* 🛍️ Vendor Routes */}
+                  <Route path="/vendor" element={<VendorLogin />} />
+                  <Route path="/user" element={<User />} />
+                  <Route path="/vendor-stall" element={<VendorStalls />} />
+                  <Route path="/items-vendor/:id" element={<VendorPrivateRoute element={<VendorItems />} />} />
+                  <Route path="/stall/:stallId/reports" element={<StallSalesReportVendor />} />
+                  <Route path="/orders-status" element={<OrderStatus />} />
+                  <Route path="/sales-report-vendor" element={<StallSalesReportVendor />} />
 
 
-                {/* 🧾 HR Routes */}
-                <Route path="/hr" element={<HrLogin />} />
-                <Route path="/hr-dashboard" element={<HRDashboard />} />
-                <Route path="/wallet-group/:groupId" element={<EmployeesPage />} />
-                <Route path="/order-history" element={<HROrdersPage />} />
-                <Route path="/hr-details" element={<HRDetails />} />
+                  {/* 🧾 HR Routes */}
+                  <Route path="/hr" element={<HrLogin />} />
+                  <Route path="/hr-dashboard" element={<HRDashboard />} />
+                  <Route path="/wallet-group/:groupId" element={<EmployeesPage />} />
+                  <Route path="/order-history" element={<HROrdersPage />} />
+                  <Route path="/hr-details" element={<HRDetails />} />
 
 
-                {/* 🧑‍🔧 Operational Manager Routes */}
-                <Route path="/add-refund" element={<ManagerPrivateRoute element={<AddRefund />} />} />
-                <Route path="/add-stall" element={<ManagerPrivateRoute element={<AddStall />} />} />
-                <Route path="/manager-stalls" element={<ManagerPrivateRoute element={<ManagerStallIds />} />} />
-                <Route path="/manager-items/:stallId" element={<ManagerPrivateRoute element={<ItemListByStall />} />} />
-                <Route path="/manager-view-vendors" element={<ManagerPrivateRoute element={<ManagerViewVendors />} />} />
-                <Route path="/wallet-add-mng" element={<ManagerPrivateRoute element={<WalletUpload />} />} />
-                <Route path="/add-category" element={<ManagerPrivateRoute element={<ManagerCategory />} />} />
-                <Route path="/view-sales" element={<StallsReport />} />
-                <Route path="/add-item-manager" element={<AddItemManager />} />
-                <Route path="/sales-summary-om" element={<StallSalesReportOM />} />
-                <Route path="/b2c-transactions" element={<ManagerPrivateRoute element={<B2CTransactions />} />} />
-
-                
-
-                {/* 🏢 Building Manager Routes */}
-                <Route path="/bld-mng" element={<BuildingManagerLogin />} />
-                <Route path="/bld-mng-stalls" element={<BuildingManagerPrivateRoute element={<ManagerStallIds />} />} />
-                <Route path="/bld-mng-report" element={<BuildingManagerPrivateRoute element={<StallSalesReportBMSummary />} />} />
-                <Route path="/bld-report-summary" element={<BuildingManagerPrivateRoute element={<StallSalesReportBMSummary />} />} />
+                  {/* 🧑‍🔧 Operational Manager Routes */}
+                  <Route path="/add-refund" element={<ManagerPrivateRoute element={<AddRefund />} />} />
+                  <Route path="/add-stall" element={<ManagerPrivateRoute element={<AddStall />} />} />
+                  <Route path="/manager-stalls" element={<ManagerPrivateRoute element={<ManagerStallIds />} />} />
+                  <Route path="/manager-items/:stallId" element={<ManagerPrivateRoute element={<ItemListByStall />} />} />
+                  <Route path="/manager-view-vendors" element={<ManagerPrivateRoute element={<ManagerViewVendors />} />} />
+                  <Route path="/wallet-add-mng" element={<ManagerPrivateRoute element={<WalletUpload />} />} />
+                  <Route path="/add-category" element={<ManagerPrivateRoute element={<ManagerCategory />} />} />
+                  <Route path="/view-sales" element={<StallsReport />} />
+                  <Route path="/add-item-manager" element={<AddItemManager />} />
+                  <Route path="/sales-summary-om" element={<StallSalesReportOM />} />
+                  <Route path="/b2c-transactions" element={<ManagerPrivateRoute element={<B2CTransactions />} />} />
 
 
-                {/* 🛒 B2C Routes */}
-                <Route path="/b2c-home" element={<B2CPrivateRoute element={<B2CHome />} />} />
-                <Route path="/b2c-login" element={<B2CLogin />} />
-                <Route path="/b2c/stalls" element={<B2CPrivateRoute element={<B2CStalls />} />} />
-                <Route path="/b2c/categories/:stallId" element={<B2CPrivateRoute element={<B2CCategory />} />} />
-                <Route path="/b2c/cart" element={<B2CPrivateRoute element={<B2CCart />} />} />
-                <Route path="/b2c/payment" element={<B2CPrivateRoute element={<B2CPayment />} />} />
-                <Route path="/b2c/success" element={<B2CPrivateRoute element={<B2CPaymentSuccess />} />} />
+
+                  {/* 🏢 Building Manager Routes */}
+                  <Route path="/bld-mng" element={<BuildingManagerLogin />} />
+                  <Route path="/bld-mng-stalls" element={<BuildingManagerPrivateRoute element={<ManagerStallIds />} />} />
+                  <Route path="/bld-mng-report" element={<BuildingManagerPrivateRoute element={<StallSalesReportBMSummary />} />} />
+                  <Route path="/bld-report-summary" element={<BuildingManagerPrivateRoute element={<StallSalesReportBMSummary />} />} />
 
 
-                {/* 👥 User Creation Routes */}
-                <Route path="/user-creation" element={<MainPage />} />
-                <Route path="/view-managers" element={<ViewManagers />} />
-                <Route path="/view-vendors" element={<ViewVendors />} />
-                                <Route path="/" element={<LoginSelectionPage />} />
+                  {/* 🛒 B2C Routes */}
+                  <Route path="/b2c-home" element={<B2CPrivateRoute element={<B2CHome />} />} />
+                  <Route path="/b2c-login" element={<B2CLogin />} />
+                  <Route path="/b2c/stalls" element={<B2CPrivateRoute element={<B2CStalls />} />} />
+                  <Route path="/b2c/categories/:stallId" element={<B2CPrivateRoute element={<B2CCategory />} />} />
+                  <Route path="/b2c/cart" element={<B2CPrivateRoute element={<B2CCart />} />} />
+                  <Route path="/b2c/payment" element={<B2CPrivateRoute element={<B2CPayment />} />} />
+                  <Route path="/b2c/success" element={<B2CPrivateRoute element={<B2CPaymentSuccess />} />} />
 
 
-                {/* pages */}
-                <Route path="/page-dashboard" element={<PageDashboard />} />
-                <Route path="/events" element={<Events/>} />
+                  {/* 👥 User Creation Routes */}
+                  <Route path="/user-creation" element={<MainPage />} />
+                  <Route path="/view-managers" element={<ViewManagers />} />
+                  <Route path="/view-vendors" element={<ViewVendors />} />
+                  <Route path="/" element={<LoginSelectionPage />} />
 
 
-                {/* 🔚 Fallback */}
-              </Routes>
-            </ManagerAuthProvider>
+                  {/* pages */}
+                  <Route path="/page-dashboard" element={<PageDashboard />} />
+                  <Route path="/events" element={<Events />} />
+
+
+                  {/* 🔚 Fallback */}
+                </Routes>
+              </ManagerAuthProvider>
             </B2CAuthProvider>
           </BuildingManagerProvider>
         </HrAuthProvider>
