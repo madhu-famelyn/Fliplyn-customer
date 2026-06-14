@@ -10,9 +10,6 @@
   overflow: hidden;
   font-family: 'Outfit', sans-serif;
   background: #000;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -147,9 +144,11 @@
 
 /* ── Main content ────────────────────────────────────────────────────────── */
 .b2c-home-content {
-  position: relative;
+  position: absolute;
+  bottom: 60px;
+  left: 10px;
+  right: 10px;
   z-index: 5;
-  padding: 0 20px 0px 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -183,52 +182,99 @@
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
 }
 
-/* ── CTA Card (kiosk style) ──────────────────────────────────────────────── */
+/* ── CTA Card — Premium ────────────────────────────────────────────────────── */
 .b2c-cta-card {
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 20px 24px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);
+  border-radius: 24px;
+  padding: 28px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.15);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.35),
-    0 0 0 1.5px rgba(255, 255, 255, 0.25);
+    0 12px 48px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255,255,255,0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   -webkit-tap-highlight-color: transparent;
+  animation: cta-glow 2.5s ease-in-out infinite;
 }
 
 .b2c-cta-card:active {
   transform: scale(0.97);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
-/* Left side text */
+/* Shimmer sweep animation */
+.b2c-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 60%
+  );
+  animation: shimmer-sweep 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer-sweep {
+  0%   { left: -100%; }
+  60%  { left: 150%; }
+  100% { left: 150%; }
+}
+
+/* Left side */
 .b2c-cta-left {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 4px;
+}
+
+.b2c-cta-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(253, 224, 71, 0.9);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0;
 }
 
 .b2c-cta-text {
-  font-size: 36px;
+  font-size: 40px;
   font-weight: 900;
-  color: #1e40af;
+  color: #ffffff;
   margin: 0;
   line-height: 1.1;
   letter-spacing: -0.5px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+@keyframes cta-glow {
+  0%, 100% {
+    box-shadow:
+      0 12px 48px rgba(0, 0, 0, 0.6),
+      0 0 0 2px rgba(99, 179, 237, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 16px 60px rgba(30, 64, 175, 0.7),
+      0 0 0 4px rgba(99, 179, 237, 0.6);
+  }
 }
 
 /* Right side */
 .b2c-cta-right {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
 }
 
 /* UPI badge */
@@ -236,8 +282,9 @@
   display: flex;
   align-items: center;
   gap: 3px;
-  background: linear-gradient(135deg, #6c3fc5, #4f46e5);
-  padding: 4px 10px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 5px 12px;
   border-radius: 8px;
 }
 
@@ -245,47 +292,64 @@
   font-size: 13px;
   font-weight: 800;
   color: #fff;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .upi-arrow {
   font-size: 9px;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.7);
 }
 
-/* Tap icon */
-.b2c-tap-icon {
+/* Tap ring */
+.b2c-tap-ring {
+  position: relative;
+  width: 56px;
+  height: 56px;
   display: flex;
-  animation: tap-bounce 1.5s ease-in-out infinite;
+  align-items: center;
+  justify-content: center;
+}
+
+.b2c-tap-ring::before,
+.b2c-tap-ring::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(253, 224, 71, 0.6);
+  animation: tap-ripple 2s ease-out infinite;
+}
+
+.b2c-tap-ring::after {
+  animation-delay: 1s;
+}
+
+@keyframes tap-ripple {
+  0%   { width: 30px; height: 30px; opacity: 1; }
+  100% { width: 60px; height: 60px; opacity: 0; }
+}
+
+.tap-ring-inner {
+  width: 44px;
+  height: 44px;
+  background: rgba(253, 224, 71, 0.15);
+  border: 2px solid rgba(253, 224, 71, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: tap-bounce 1.6s ease-in-out infinite;
+}
+
+.tap-finger {
+  font-size: 22px;
+  line-height: 1;
 }
 
 @keyframes tap-bounce {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-6px);
-  }
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-5px) scale(1.08); }
 }
 
-/* Ripple effect */
-.b2c-ripple {
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  pointer-events: none;
-}
-
-.b2c-cta-card:active .b2c-ripple::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  background: rgba(30, 64, 175, 0.08);
-}
 
 /* ── Progress bar ─────────────────────────────────────────────────────────── */
 .b2c-progress-bar {
@@ -326,21 +390,10 @@
 }
 
 @media (min-width: 600px) {
-
-  /* Wider screens: center content like a kiosk */
   .b2c-home-content {
-    max-width: 520px;
-    margin: 0 auto;
-    width: 100%;
-    padding: 0 0 0 0;
-  }
-
-  .b2c-home-wrapper {
-    align-items: center;
-  }
-
-  .b2c-home-content {
-    padding-left: 0;
-    padding-right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 520px;
+    right: auto;
   }
 }

@@ -58,7 +58,6 @@ export default function B2CHome() {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef(null);
   const videoRefs = useRef({});
 
@@ -72,10 +71,9 @@ export default function B2CHome() {
   }, []);
 
   useEffect(() => {
-    if (isPaused) return;
     timerRef.current = setInterval(goToNext, SLIDE_DURATION);
     return () => clearInterval(timerRef.current);
-  }, [isPaused, goToNext]);
+  }, [goToNext]);
 
   // Auto-play video when active
   useEffect(() => {
@@ -89,17 +87,6 @@ export default function B2CHome() {
     }
   }, [currentIndex]);
 
-  // ── Manual dot navigation ────────────────────────────────────────────────
-  const goToSlide = (index) => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentIndex(index);
-      setIsTransitioning(false);
-    }, 300);
-    // Reset timer
-    clearInterval(timerRef.current);
-    timerRef.current = setInterval(goToNext, SLIDE_DURATION);
-  };
 
   const handleOrderClick = () => {
     navigate("/b2c/stalls");
@@ -138,90 +125,31 @@ export default function B2CHome() {
       {/* ── Main content ─────────────────────────────────────────────── */}
       <div className="b2c-home-content">
 
-        {/* CTA card — like the kiosk image */}
+        {/* CTA card — Premium kiosk style */}
         <div className="b2c-cta-card" onClick={handleOrderClick}>
+          {/* Shimmer sweep */}
+          <div className="b2c-shimmer" />
+
           <div className="b2c-cta-left">
-            <p className="b2c-cta-text">Order &amp;</p>
-            <p className="b2c-cta-text">Pay here</p>
+            <p className="b2c-cta-label">👆 TAP TO START</p>
+            <p className="b2c-cta-text">Order &amp; Pay Here</p>
           </div>
+
           <div className="b2c-cta-right">
             {/* UPI badge */}
             <div className="b2c-upi-badge">
               <span className="upi-text">UPI</span>
               <span className="upi-arrow">▶</span>
             </div>
-            {/* Tap hand icon */}
-            <div className="b2c-tap-icon">
-              <svg
-                viewBox="0 0 64 64"
-                width="52"
-                height="52"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* Palm */}
-                <path
-                  d="M28 44V24a3 3 0 016 0v12"
-                  stroke="#f59e0b"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M34 32a3 3 0 016 0v8"
-                  stroke="#f59e0b"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M22 34a3 3 0 016 0v10"
-                  stroke="#f59e0b"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M16 38a3 3 0 016 0v6c0 6 5 11 11 11h2c5 0 10-4 10-11v-6"
-                  stroke="#f59e0b"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                {/* Tap rings */}
-                <circle
-                  cx="32"
-                  cy="16"
-                  r="4"
-                  stroke="#f59e0b"
-                  strokeWidth="2"
-                  opacity="0.5"
-                />
-                <circle
-                  cx="32"
-                  cy="16"
-                  r="8"
-                  stroke="#f59e0b"
-                  strokeWidth="1.5"
-                  opacity="0.3"
-                />
-              </svg>
+            {/* Animated tap ring */}
+            <div className="b2c-tap-ring">
+              <div className="tap-ring-inner">
+                <span className="tap-finger">👆</span>
+              </div>
             </div>
           </div>
-
-          {/* Ripple animation on tap */}
-          <div className="b2c-ripple" />
         </div>
 
-        {/* Slide progress bar */}
-        <div className="b2c-progress-bar">
-          <div
-            className="b2c-progress-fill"
-            style={{
-              animationDuration: `${SLIDE_DURATION}ms`,
-              animationPlayState: isPaused ? "paused" : "running",
-              animationName: "progress-fill",
-            }}
-            key={currentIndex} /* Restart animation on slide change */
-          />
-        </div>
       </div>
     </div>
   );
