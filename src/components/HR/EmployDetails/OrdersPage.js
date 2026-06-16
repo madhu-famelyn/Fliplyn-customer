@@ -126,7 +126,7 @@ const OrdersModal = ({ groupId, onClose }) => {
       return {
         Stall: o.stall_name || "N/A",
         Token: o.token_number || "N/A",
-        Email: o.user_email || "",
+        "Customer Email": o.user_email || "",
         PaymentType: o.paid_with_wallet ? "Postpaid" : "Prepaid",
         Date: new Date(o.created_datetime).toLocaleString(),
         Items: itemsList,
@@ -199,7 +199,7 @@ const OrdersModal = ({ groupId, onClose }) => {
                 <tr>
                   <th>Stall</th>
                   <th>Token</th>
-                  <th>Email</th>
+                  <th>Customer Email</th>
                   <th>Payment</th>
                   <th>Date</th>
                   <th>Amount (₹)</th>
