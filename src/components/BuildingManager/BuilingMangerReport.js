@@ -159,7 +159,10 @@ export default function StallSalesReportBM() {
   });
 
   const totalSales = sortedOrders.reduce((acc, order) => {
-    const totalPaid = order.order_details.reduce((sum, d) => sum + d.total, 0) + (order.round_off || 0);
+    const totalPaid =
+      order.order_details.reduce((sum, d) => sum + d.total, 0) +
+      (order.total_gst || 0) +
+      (order.round_off || 0);
     return acc + totalPaid;
   }, 0);
 
@@ -176,7 +179,7 @@ export default function StallSalesReportBM() {
         "Gross Total": index === 0 ? order.order_details.reduce((sum, d) => sum + d.total, 0) : "",
         GST: order.total_gst,
         "Round Off": index === 0 ? order.round_off : "",
-        "Total Paid": index === 0 ? order.order_details.reduce((sum, d) => sum + d.total, 0) + (order.round_off || 0) : "",
+        "Total Paid": index === 0 ? order.order_details.reduce((sum, d) => sum + d.total, 0) + (order.total_gst || 0) + (order.round_off || 0) : "",
         Payment: item.paid_with_wallet ? "Postpaid" : "Prepaid",
         Company: getCompanyName(order.user_email),
       }))
@@ -353,6 +356,7 @@ export default function StallSalesReportBM() {
                   const totalPaid =
                     index === 0
                       ? order.order_details.reduce((sum, d) => sum + d.total, 0) +
+                        (order.total_gst || 0) +
                         (order.round_off || 0)
                       : "";
                   const companyName = getCompanyName(order.user_email);

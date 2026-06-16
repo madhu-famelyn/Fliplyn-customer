@@ -206,6 +206,7 @@ const sortedOrders = [...filteredOrders].sort((a, b) => {
   const grandTotalPaid = sortedOrders.reduce((total, order) => {
     const totalPaid =
       order.order_details.reduce((sum, d) => sum + d.total, 0) +
+      (order.total_gst || 0) +
       (order.round_off || 0);
     return total + totalPaid;
   }, 0);
@@ -222,6 +223,7 @@ const exportToExcel = () => {
       const netAmount = item.quantity * item.price;
       const totalPaid =
         order.order_details.reduce((sum, d) => sum + d.total, 0) +
+        (order.total_gst || 0) +
         (order.round_off || 0);
 
       totalNetAmount += netAmount;
@@ -441,6 +443,7 @@ const exportToExcel = () => {
                   const netAmount = item.quantity * item.price;
                   const totalPaid =
                     order.order_details.reduce((sum, d) => sum + d.total, 0) +
+                    (order.total_gst || 0) +
                     (order.round_off || 0);
                   return (
                     <tr key={`${order.id}-${item.item_id}`}>

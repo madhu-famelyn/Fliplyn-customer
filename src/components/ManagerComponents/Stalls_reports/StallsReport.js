@@ -172,7 +172,9 @@ export default function StallSalesReport() {
 
   const totalSales = sortedOrders.reduce((acc, order) => {
     const totalPaid =
-      order.order_details.reduce((sum, d) => sum + d.total, 0) + (order.round_off || 0);
+      order.order_details.reduce((sum, d) => sum + d.total, 0) +
+      (order.total_gst || 0) +
+      (order.round_off || 0);
     return acc + totalPaid;
   }, 0);
 
@@ -200,6 +202,7 @@ const exportToExcel = () => {
       const netAmount = item.quantity * item.price;
       const totalPaid =
         order.order_details.reduce((sum, d) => sum + d.total, 0) +
+        (order.total_gst || 0) +
         (order.round_off || 0);
 
       totalNetAmount += netAmount;
@@ -488,6 +491,7 @@ const exportToExcel = () => {
                     order.order_details.map((item, index) => {
                       const totalPaid =
                         order.order_details.reduce((sum, d) => sum + d.total, 0) +
+                        (order.total_gst || 0) +
                         (order.round_off || 0);
 
                       return (

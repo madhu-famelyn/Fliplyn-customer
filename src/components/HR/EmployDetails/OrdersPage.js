@@ -12,6 +12,7 @@ const OrdersModal = ({ groupId, onClose }) => {
 
   // 🔹 Date filter
   const [dateFilter, setDateFilter] = useState("");
+  const [customRange, setCustomRange] = useState({ start: "", end: "" });
 
   // 🔹 Payment filter
   const [paymentFilter, setPaymentFilter] = useState("all"); // all | prepaid | postpaid
@@ -22,13 +23,38 @@ const OrdersModal = ({ groupId, onClose }) => {
   const fetchOrders = async () => {
     if (!groupId) return;
 
+    if (dateFilter === "custom" && (!customRange.start || !customRange.end)) {
+      alert("Please select both start and end dates.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const start = new Date(
-        Date.now() - 30 * 24 * 60 * 60 * 1000
-      ).toISOString().split("T")[0];
+      let start, end;
+      const now = new Date();
 
-      const end = new Date().toISOString().split("T")[0];
+      if (dateFilter === "day") {
+        start = now.toISOString().split("T")[0];
+        end = now.toISOString().split("T")[0];
+      } else if (dateFilter === "week") {
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - now.getDay());
+        start = weekStart.toISOString().split("T")[0];
+        end = now.toISOString().split("T")[0];
+      } else if (dateFilter === "month") {
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        start = monthStart.toISOString().split("T")[0];
+        end = now.toISOString().split("T")[0];
+      } else if (dateFilter === "custom") {
+        start = customRange.start;
+        end = customRange.end;
+      } else {
+        // Default: 30 days
+        start = new Date(
+          Date.now() - 30 * 24 * 60 * 60 * 1000
+        ).toISOString().split("T")[0];
+        end = now.toISOString().split("T")[0];
+      }
 
       const url = `https://admin-aged-field-2794.fly.dev/wallet-group/${groupId}/orders/?start_date=${start}&end_date=${end}`;
 
@@ -90,6 +116,16 @@ const OrdersModal = ({ groupId, onClose }) => {
       );
     }
 
+    if (dateFilter === "custom" && customRange.start && customRange.end) {
+      const startLimit = new Date(customRange.start + "T00:00:00");
+      const endLimit = new Date(customRange.end + "T23:59:59");
+      filtered = filtered.filter(
+        (o) =>
+          new Date(o.created_datetime) >= startLimit &&
+          new Date(o.created_datetime) <= endLimit
+      );
+    }
+
     // 🔹 Payment filter
     if (paymentFilter === "postpaid") {
       filtered = filtered.filter((o) => o.paid_with_wallet === true);
@@ -100,7 +136,7 @@ const OrdersModal = ({ groupId, onClose }) => {
     }
 
     setFilteredOrders(filtered);
-  }, [submitted, orders, dateFilter, paymentFilter]);
+  }, [submitted, orders, dateFilter, customRange, paymentFilter]);
 
   // ✅ Amount calculation
   const calculateAmounts = (order) => {
@@ -135,6 +171,26 @@ const OrdersModal = ({ groupId, onClose }) => {
       };
     });
 
+    // Calculate totals for Excel sheet
+    const totalQtySum = filteredOrders.reduce((sum, o) => {
+      return sum + o.order_details.reduce((s, i) => s + i.quantity, 0);
+    }, 0);
+
+    const totalAmountSum = filteredOrders.reduce((sum, o) => {
+      return sum + calculateAmounts(o).grandTotal;
+    }, 0);
+
+    rows.push({
+      Stall: "TOTAL",
+      Token: "",
+      "Customer Email": "",
+      PaymentType: "",
+      Date: "",
+      Items: "",
+      "Total Qty": totalQtySum,
+      "Total Amount": totalAmountSum.toFixed(2),
+    });
+
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Orders");
@@ -167,8 +223,34 @@ const OrdersModal = ({ groupId, onClose }) => {
               <option value="day">Today</option>
               <option value="week">This Week</option>
               <option value="month">This Month</option>
+              <option value="custom">Custom Range</option>
             </select>
           </label>
+
+          {dateFilter === "custom" && (
+            <>
+              <label>
+                Start Date:
+                <input
+                  type="date"
+                  value={customRange.start}
+                  onChange={(e) =>
+                    setCustomRange({ ...customRange, start: e.target.value })
+                  }
+                />
+              </label>
+              <label>
+                End Date:
+                <input
+                  type="date"
+                  value={customRange.end}
+                  onChange={(e) =>
+                    setCustomRange({ ...customRange, end: e.target.value })
+                  }
+                />
+              </label>
+            </>
+          )}
 
           <label>
             Payment Type:
