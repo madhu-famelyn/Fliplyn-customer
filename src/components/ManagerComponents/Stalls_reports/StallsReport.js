@@ -18,6 +18,7 @@ export default function StallSalesReport() {
   const [sortBy, setSortBy] = useState("stall");
   const [submitted, setSubmitted] = useState(false);
   const [includeEmail, setIncludeEmail] = useState(false);
+  const [initialCompanies, setInitialCompanies] = useState([]);
 
   // Fetch stalls
   useEffect(() => {
@@ -36,6 +37,28 @@ export default function StallSalesReport() {
     };
 
     fetchStalls();
+  }, [user]);
+
+  // Fetch initial companies list from HRs
+  useEffect(() => {
+    if (!user?.building_id) return;
+
+    const fetchInitialCompanies = async () => {
+      try {
+        const res = await axios.get(
+          `https://admin-aged-field-2794.fly.dev/hr/building/${user.building_id}`
+        );
+        const hrList = res.data?.hrs || [];
+        const uniqueCompanies = Array.from(
+          new Set(hrList.map((hr) => hr.company).filter(Boolean))
+        );
+        setInitialCompanies(uniqueCompanies);
+      } catch (err) {
+        console.error("Failed to fetch initial companies:", err);
+      }
+    };
+
+    fetchInitialCompanies();
   }, [user]);
 
   // Fetch orders
@@ -153,7 +176,10 @@ export default function StallSalesReport() {
 
   // Get all unique companies for dropdown
   const companies = Array.from(
-    new Set(orders.map((o) => getCompanyName(o.user_email)))
+    new Set([
+      ...initialCompanies,
+      ...orders.map((o) => getCompanyName(o.user_email))
+    ])
   );
 
   // Apply company + payment filters
@@ -174,7 +200,6 @@ export default function StallSalesReport() {
   const totalSales = sortedOrders.reduce((acc, order) => {
     const totalPaid =
       order.order_details.reduce((sum, d) => sum + d.total, 0) +
-      (order.total_gst || 0) +
       (order.round_off || 0);
     return acc + totalPaid;
   }, 0);
@@ -203,7 +228,6 @@ const exportToExcel = () => {
       const netAmount = item.quantity * item.price;
       const totalPaid =
         order.order_details.reduce((sum, d) => sum + d.total, 0) +
-        (order.total_gst || 0) +
         (order.round_off || 0);
 
       totalNetAmount += netAmount;
@@ -524,7 +548,6 @@ const exportToExcel = () => {
                     order.order_details.map((item, index) => {
                       const totalPaid =
                         order.order_details.reduce((sum, d) => sum + d.total, 0) +
-                        (order.total_gst || 0) +
                         (order.round_off || 0);
 
                       return (
