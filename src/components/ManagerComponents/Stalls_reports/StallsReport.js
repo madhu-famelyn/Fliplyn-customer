@@ -17,6 +17,7 @@ export default function StallSalesReport() {
   const [paymentFilter, setPaymentFilter] = useState("all");
   const [sortBy, setSortBy] = useState("stall");
   const [submitted, setSubmitted] = useState(false);
+  const [includeEmail, setIncludeEmail] = useState(false);
 
   // Fetch stalls
   useEffect(() => {
@@ -214,10 +215,17 @@ const exportToExcel = () => {
         totalPaidAll += totalPaid;
       }
 
-      return {
+      const row = {
         Outlet: order.stall_name,
         Token: order.token_number,
         Date: new Date(order.created_datetime).toLocaleString("en-IN"),
+      };
+
+      if (includeEmail) {
+        row["Email ID"] = order.user_email || "N/A";
+      }
+
+      Object.assign(row, {
         "Payment Type": order.paymentType,
         Item: item.name,
         Qty: item.quantity,
@@ -227,14 +235,23 @@ const exportToExcel = () => {
         GST: index === 0 ? (order.total_gst || 0).toFixed(2) : "",
         "Round Off": index === 0 ? (order.round_off || 0).toFixed(2) : "",
         "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
-      };
+      });
+
+      return row;
     })
   );
 
-  rows.push({
+  const grandTotalRow = {
     Outlet: "",
     Token: "",
     Date: "",
+  };
+
+  if (includeEmail) {
+    grandTotalRow["Email ID"] = "";
+  }
+
+  Object.assign(grandTotalRow, {
     "Payment Type": "",
     Item: "GRAND TOTAL",
     Qty: "",
@@ -245,6 +262,8 @@ const exportToExcel = () => {
     "Round Off": totalRoundOff.toFixed(2),
     "Total Paid": totalPaidAll.toFixed(2),
   });
+
+  rows.push(grandTotalRow);
 
   const ws = XLSX.utils.json_to_sheet(rows);
   const wb = XLSX.utils.book_new();
@@ -311,8 +330,6 @@ const exportToExcel = () => {
               id="payment-filter-select"
               value={paymentFilter}
               onChange={(e) => setPaymentFilter(e.target.value)}
-              disabled={orders.length === 0}
-              className={orders.length === 0 ? "disabled-filter" : ""}
             >
               <option value="all">All Types</option>
               <option value="Prepaid">Prepaid</option>
@@ -327,8 +344,6 @@ const exportToExcel = () => {
               id="company-select"
               value={companyFilter}
               onChange={(e) => setCompanyFilter(e.target.value)}
-              disabled={orders.length === 0}
-              className={orders.length === 0 ? "disabled-filter" : ""}
             >
               <option value="all">All Companies</option>
               {companies.map((company) => (
@@ -380,6 +395,23 @@ const exportToExcel = () => {
                 />
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Additional Options */}
+        <div className="stall-report-additional-options">
+          <div className="stall-report-toggle-container">
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={includeEmail}
+                onChange={(e) => setIncludeEmail(e.target.checked)}
+              />
+              <span className="slider"></span>
+            </label>
+            <span className="stall-report-toggle-label" onClick={() => setIncludeEmail(!includeEmail)}>
+              Include Employee Email ID
+            </span>
           </div>
         </div>
 
@@ -472,6 +504,7 @@ const exportToExcel = () => {
                   <th>Date</th>
                   <th>Token</th>
                   <th>Outlet</th>
+                  {includeEmail && <th>Email ID</th>}
                   <th>Payment Type</th>
                   <th>Item</th>
                   <th>Qty</th>
@@ -503,7 +536,11 @@ const exportToExcel = () => {
                           </td>
                           <td className="token-cell">{order.token_number}</td>
                           <td className="outlet-cell">{order.stall_name}</td>
-                          
+                          {includeEmail && (
+                            <td className="email-cell">
+                              {order.user_email || "N/A"}
+                            </td>
+                          )}
                           <td>
                             <span className={`payment-badge ${order.paymentType.toLowerCase()}`}>
                               {order.paymentType}

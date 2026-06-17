@@ -79,52 +79,6 @@ const OrdersModal = ({ groupId, onClose }) => {
     if (!submitted) return;
 
     let filtered = [...orders];
-    const now = new Date();
-
-    // 🔹 Date filters
-    if (dateFilter === "day") {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
-
-      filtered = filtered.filter(
-        (o) =>
-          new Date(o.created_datetime) >= today &&
-          new Date(o.created_datetime) < tomorrow
-      );
-    }
-
-    if (dateFilter === "week") {
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay());
-      startOfWeek.setHours(0, 0, 0, 0);
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 7);
-
-      filtered = filtered.filter(
-        (o) =>
-          new Date(o.created_datetime) >= startOfWeek &&
-          new Date(o.created_datetime) < endOfWeek
-      );
-    }
-
-    if (dateFilter === "month") {
-      const currentMonth = now.getMonth();
-      filtered = filtered.filter(
-        (o) => new Date(o.created_datetime).getMonth() === currentMonth
-      );
-    }
-
-    if (dateFilter === "custom" && customRange.start && customRange.end) {
-      const startLimit = new Date(customRange.start + "T00:00:00");
-      const endLimit = new Date(customRange.end + "T23:59:59");
-      filtered = filtered.filter(
-        (o) =>
-          new Date(o.created_datetime) >= startLimit &&
-          new Date(o.created_datetime) <= endLimit
-      );
-    }
 
     // 🔹 Payment filter
     if (paymentFilter === "postpaid") {
@@ -136,7 +90,7 @@ const OrdersModal = ({ groupId, onClose }) => {
     }
 
     setFilteredOrders(filtered);
-  }, [submitted, orders, dateFilter, customRange, paymentFilter]);
+  }, [submitted, orders, paymentFilter]);
 
   // ✅ Amount calculation
   const calculateAmounts = (order) => {

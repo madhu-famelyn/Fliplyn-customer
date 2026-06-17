@@ -56,7 +56,7 @@ const StatsStrip = ({ data, mode }) => {
       : [
           { label: "Postpaid Net",   value: totals.postpaidNet,  icon: "📦" },
           { label: "Postpaid Total", value: totals.postpaidTotal,icon: "💰" },
-          { label: "Outlets",        value: data.length,         icon: "🏪", raw: true },
+          { label: "Outlets",        value: filteredData.length, icon: "🏪", raw: true },
         ];
 
   return (
