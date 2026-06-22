@@ -79,6 +79,19 @@ export default function ItemListByStall() {
     }
   };
 
+  // ✅ Delete Item
+  const deleteItem = async (itemId, itemName) => {
+    if (!window.confirm(`Are you sure you want to delete "${itemName}"? This cannot be undone.`)) return;
+    try {
+      const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
+      await axios.delete(`${API_BASE_URL}/items/${itemId}`);
+      setItems((prev) => prev.filter((item) => item.id !== itemId));
+    } catch (err) {
+      console.error("❌ Error deleting item:", err);
+      alert("Failed to delete item. Please try again.");
+    }
+  };
+
   // ✅ Open Edit Modal
   const openEditModal = (item) => {
     setEditingItem(item);
@@ -232,6 +245,12 @@ export default function ItemListByStall() {
                   onClick={() => openEditModal(item)}
                 >
                   Edit
+                </button>
+                <button
+                  className="ils-delete-btn"
+                  onClick={() => deleteItem(item.id, item.name)}
+                >
+                  Delete
                 </button>
               </div>
             </div>
