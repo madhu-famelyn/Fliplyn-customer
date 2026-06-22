@@ -58,7 +58,7 @@ export const fetchItemsByStallId = async (stallId) => {
 export const updateItemAvailability = async (itemId, isAvailable) => {
   try {
     const response = await axios.patch(
-      `${API_BASE_URL}/items/items/${itemId}/availability`,
+      `${API_BASE_URL}/items/${itemId}/availability`,
       { is_available: isAvailable }
     );
     return response.data;

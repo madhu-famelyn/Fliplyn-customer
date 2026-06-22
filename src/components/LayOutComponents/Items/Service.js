@@ -20,7 +20,7 @@ export const createItem = async (formData) => {
 
 export const getItemsByCategoryId = async (categoryId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/items/items/category/${categoryId}`);
+    const response = await axios.get(`${BASE_URL}/items/category/${categoryId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching items by category:', error);
@@ -51,7 +51,7 @@ export const updateItemDetailsWithImage = async (itemId, formData) => {
 export const updateItemAvailability = async (itemId, isAvailable) => {
   try {
     const response = await axios.patch(
-      `${BASE_URL}/items/items/${itemId}/availability`,
+      `${BASE_URL}/items/${itemId}/availability`,
       { is_available: isAvailable }
     );
     return response.data;
@@ -63,7 +63,7 @@ export const updateItemAvailability = async (itemId, isAvailable) => {
 
 export const deleteItemById = async (itemId) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/items/items/${itemId}`);
+    const response = await axios.delete(`${BASE_URL}/items/${itemId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting item:', error);
@@ -75,7 +75,7 @@ export const deleteItemById = async (itemId) => {
 // Bulk upload items via Excel
 export const uploadItemsExcel = async (formData) => {
   const { data } = await axios.post(
-    'https://admin-aged-field-2794.fly.dev/items/items/bulk-upload', // ✅ full backend route
+    'https://admin-aged-field-2794.fly.dev/items/bulk-upload',
     formData,
     {
       headers: {
@@ -125,7 +125,7 @@ export const updateItemImage = async (itemId, file) => {
   formData.append("file", file);
 
   const response = await fetch(
-    `${BASE_URL}/items/items/${itemId}/upload-image`,
+    `${BASE_URL}/items/${itemId}/upload-image`,
     {
       method: "PUT",
       body: formData,

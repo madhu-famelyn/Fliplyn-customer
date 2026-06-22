@@ -128,7 +128,7 @@ export default function B2CCategory() {
     // 🔹 CATEGORY ITEMS
     axios
       .get(
-        `${BASE_URL}/items/items/category/${selectedCategoryId}/availability?is_available=true`
+        `${BASE_URL}/items/category/${selectedCategoryId}/availability?is_available=true`
       )
       .then((res) => {
         setItems(res.data);

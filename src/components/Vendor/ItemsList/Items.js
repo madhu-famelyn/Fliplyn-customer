@@ -73,7 +73,7 @@ const VendorItemsExact = () => {
 
     try {
       await axios.patch(
-        `https://admin-aged-field-2794.fly.dev/items/items/${itemId}/availability`,
+        `https://admin-aged-field-2794.fly.dev/items/${itemId}/availability`,
         { is_available: !currentStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

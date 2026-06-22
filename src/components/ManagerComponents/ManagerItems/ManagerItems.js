@@ -65,7 +65,7 @@ export default function ItemListByStall() {
     try {
       const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
       await axios.patch(
-        `${API_BASE_URL}/items/items/${itemId}/availability`,
+        `${API_BASE_URL}/items/${itemId}/availability`,
         { is_available: !currentStatus }
       );
       setItems((prevItems) =>
