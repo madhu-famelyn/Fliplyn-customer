@@ -111,9 +111,16 @@ export default function ItemListByStall() {
     if (!editingItem) return;
 
     const formData = new FormData();
-    formData.append("name", updateForm.name);
-    formData.append("price", updateForm.price);
-    formData.append("Gst_precentage", updateForm.Gst_precentage);
+
+    // Only append fields with actual values (skip empty strings)
+    if (updateForm.name) formData.append("name", updateForm.name);
+    if (updateForm.price !== "" && updateForm.price !== null) {
+      formData.append("price", updateForm.price);
+    }
+    // Only send GST if not tax-included and a value is provided
+    if (!updateForm.tax_included && updateForm.Gst_precentage !== "" && updateForm.Gst_precentage !== null) {
+      formData.append("Gst_precentage", updateForm.Gst_precentage);
+    }
     formData.append("tax_included", updateForm.tax_included);
     formData.append("is_available", updateForm.is_available);
     formData.append("is_veg", updateForm.is_veg);
