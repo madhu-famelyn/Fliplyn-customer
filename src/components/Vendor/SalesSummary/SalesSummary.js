@@ -17,6 +17,7 @@ export default function StallSalesReportVendor() {
   const [orderHistory, setOrderHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showOrderHistory, setShowOrderHistory] = useState(false);
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
   const circlesRef = useRef(null);
 
   const formatDate = (date) => date.toISOString().split("T")[0];
@@ -386,6 +387,7 @@ export default function StallSalesReportVendor() {
 
         <button onClick={handleViewOrderSummary} className="view-summary-link">📊 View Order Summary</button>
 
+
         {/* CIRCULAR SALES CARDS */}
         <div className="sales-circles-container" ref={circlesRef}>
           <div className="sales-circle-card">
@@ -431,6 +433,7 @@ export default function StallSalesReportVendor() {
             >
               📅 Daily
             </button>
+            {/* 
             <button
               className={`order-tab ${selectedPeriod === "weekly" ? "active" : ""}`}
               onClick={() => {
@@ -457,6 +460,7 @@ export default function StallSalesReportVendor() {
             >
               📈 Monthly
             </button>
+            */}
           </div>
 
           {showOrderHistory && (
@@ -488,77 +492,126 @@ export default function StallSalesReportVendor() {
                 </div>
               ) : (
                 <div className="order-history-list">
-                  <div className="order-history-header">
+                  {/* ── HEADER ── */}
+                  <div className={`order-history-header ${selectedPeriod === "daily" ? "oh-grid" : "oh-grid-4col"}`}>
+                    {selectedPeriod === "daily" && <div className="order-history-header-item">Token #</div>}
+                    <div className="order-history-header-item">Date &amp; Time</div>
                     <div className="order-history-header-item">Outlet</div>
-                    <div className="order-history-header-item">Orders</div>
-                    <div className="order-history-header-item">Net Amount</div>
+                    <div className="order-history-header-item">Items</div>
+                    <div className="order-history-header-item oh-right">Net Amount</div>
                   </div>
+
+                  {/* ── ROWS ── */}
                   {orderHistory.map((order, index) => {
-                    const orderData = order.order_details?.[0] || order;
-                    const stallName = order.stall_name || orderData.stall_name || "N/A";
+                    const items = order.order_details || [];
+                    const stallName = items[0]?.stall_name || order.stall_name || "N/A";
+                    const tokenNumber = order.token_number || "—";
 
-                    // Try to get net amount (without GST) - prioritize net amount fields
-                    let netAmount = order.prepaid_after_deduction ||
-                      orderData.prepaid_after_deduction ||
-                      order.postpaid_net_amount ||
-                      orderData.postpaid_net_amount ||
-                      order.net_amount ||
-                      orderData.net_amount ||
-                      order.net_sales ||
-                      orderData.net_sales ||
-                      order.subtotal ||
-                      orderData.subtotal ||
-                      order.amount_without_gst ||
-                      orderData.amount_without_gst;
-
-                    // If still no net amount, calculate from gross - gst
-                    if (!netAmount) {
-                      const grossAmount = parseFloat(order.total_amount || orderData.total_amount || order.amount || orderData.amount || order.total || orderData.total || 0);
-                      // Try to get total GST - check multiple fields
-                      const totalGst = parseFloat(order.total_gst || 0);
-                      const cgstSgst = parseFloat((order.cgst || 0) + (order.sgst || 0));
-                      const gstAmount = totalGst > 0 ? totalGst : (cgstSgst > 0 ? cgstSgst : parseFloat(order.gst || orderData.gst || order.gst_amount || orderData.gst_amount || order.tax || orderData.tax || order.tax_amount || orderData.tax_amount || 0));
-                      netAmount = grossAmount - gstAmount;
+                    // Format date
+                    const rawDate = order.created_datetime;
+                    let formattedDate = "—";
+                    if (rawDate) {
+                      const d = new Date(rawDate);
+                      formattedDate = d.toLocaleDateString("en-IN", {
+                        day: "2-digit", month: "short", year: "numeric"
+                      }) + ", " + d.toLocaleTimeString("en-IN", {
+                        hour: "2-digit", minute: "2-digit", hour12: true
+                      });
                     }
 
-                    netAmount = parseFloat(netAmount) || 0;
+                    // Items summary
+                    const itemsSummary = items.length > 0
+                      ? items.map(it => `${it.name} ×${it.quantity}`).join(", ")
+                      : "No items";
+
+                    // Net amount = total_amount - total_gst
+                    const gross = parseFloat(order.total_amount || 0);
+                    const gst = parseFloat(order.total_gst || 0) ||
+                      (parseFloat(order.cgst || 0) + parseFloat(order.sgst || 0));
+                    const netAmount = gross - gst;
+
+                    const isExpanded = expandedOrderId === (order.id || index);
 
                     return (
-                      <div key={index} className="order-history-item">
-                        <div className="date-column">
-                          {stallName}
+                      <React.Fragment key={order.id || index}>
+                        <div
+                          className={`order-history-item ${selectedPeriod === "daily" ? "oh-grid" : "oh-grid-4col"} oh-clickable${isExpanded ? " oh-expanded-row" : ""}`}
+                          onClick={() => setExpandedOrderId(isExpanded ? null : (order.id || index))}
+                        >
+                          {/* Token # (Daily Only) */}
+                          {selectedPeriod === "daily" && (
+                            <div className="oh-col">
+                              <span className="oh-token-badge">#{tokenNumber}</span>
+                            </div>
+                          )}
+
+                          {/* Date */}
+                          <div className="oh-col oh-date">{formattedDate}</div>
+
+                          {/* Outlet */}
+                          <div className="oh-col oh-outlet">{stallName}</div>
+
+                          {/* Items summary */}
+                          <div className="oh-col oh-items-summary">{itemsSummary}</div>
+
+                          {/* Amount */}
+                          <div className="oh-col oh-right oh-amount">
+                            ₹{netAmount.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
+                          </div>
                         </div>
-                        <div className="orders-column">
-                          1
-                        </div>
-                        <div className="amount-column">
-                          ₹{netAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-                        </div>
-                      </div>
+
+                        {/* ── EXPANDED ITEM DETAILS ── */}
+                        {isExpanded && (
+                          <div className="oh-expanded-details">
+                            <table className="oh-items-table">
+                              <thead>
+                                <tr>
+                                  <th>Item</th>
+                                  <th className="oh-right">Qty</th>
+                                  <th className="oh-right">Price</th>
+                                  <th className="oh-right">Total</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {items.map((it, i) => (
+                                  <tr key={i}>
+                                    <td>{it.name}</td>
+                                    <td className="oh-right">{it.quantity}</td>
+                                    <td className="oh-right">₹{parseFloat(it.price || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</td>
+                                    <td className="oh-right">₹{parseFloat(it.total || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                              <tfoot>
+                                <tr className="oh-items-footer">
+                                  <td colSpan="3">GST (CGST + SGST)</td>
+                                  <td className="oh-right">₹{gst.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</td>
+                                </tr>
+                                <tr className="oh-items-footer oh-items-net">
+                                  <td colSpan="3"><strong>Net Amount</strong></td>
+                                  <td className="oh-right"><strong>₹{netAmount.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        )}
+                      </React.Fragment>
                     );
                   })}
-                  {/* Total Row */}
-                  <div className="order-history-item order-history-total">
-                    <div className="date-column">
-                      <strong>Total</strong>
-                    </div>
-                    <div className="orders-column">
-                      <strong>{orderHistory.length}</strong>
-                    </div>
-                    <div className="amount-column">
+
+                  {/* ── TOTAL ROW ── */}
+                  <div className={`order-history-item order-history-total ${selectedPeriod === "daily" ? "oh-grid" : "oh-grid-4col"}`}>
+                    <div className="oh-col"><strong>Total</strong></div>
+                    {selectedPeriod === "daily" && <div className="oh-col"></div>}
+                    <div className="oh-col"></div>
+                    <div className="oh-col"><strong>{orderHistory.length} orders</strong></div>
+                    <div className="oh-col oh-right">
                       <strong>₹{(() => {
-                        // Use the pre-calculated sales summary total for the selected period
-                        // This ensures consistency with the sales dashboard circles
                         let periodSalesNet = 0;
-                        if (selectedPeriod === "daily") {
-                          periodSalesNet = periodSales.today?.net || 0;
-                        } else if (selectedPeriod === "weekly") {
-                          periodSalesNet = periodSales.thisWeek?.net || 0;
-                        } else if (selectedPeriod === "monthly") {
-                          periodSalesNet = periodSales.thisMonth?.net || 0;
-                        }
-                        console.log(`Using sales-summary API total for ${selectedPeriod} (periodSales):`, periodSalesNet);
-                        return periodSalesNet.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+                        if (selectedPeriod === "daily") periodSalesNet = periodSales.today?.net || 0;
+                        else if (selectedPeriod === "weekly") periodSalesNet = periodSales.thisWeek?.net || 0;
+                        else if (selectedPeriod === "monthly") periodSalesNet = periodSales.thisMonth?.net || 0;
+                        return periodSalesNet.toLocaleString("en-IN", { maximumFractionDigits: 2 });
                       })()}</strong>
                     </div>
                   </div>

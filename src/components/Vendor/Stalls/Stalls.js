@@ -57,7 +57,7 @@ const VendorStalls = () => {
         {stalls.map((stall) => (
           <div key={stall.id} className="outlet-card">
             <img
-              src={stall.image_url || "https://via.placeholder.com/300"}
+              src={stall.image_url || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23e0e0e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%23999'%3ENo Image%3C/text%3E%3C/svg%3E"}
               alt={stall.name}
               className="outlet-image"
             />
