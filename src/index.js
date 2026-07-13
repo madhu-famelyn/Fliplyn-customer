@@ -8,7 +8,7 @@ import axios from 'axios';
 // Global Axios interceptor to dynamically rewrite the production API URL to the local backend URL in development
 axios.interceptors.request.use(
   (config) => {
-    const targetBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const targetBaseUrl = process.env.REACT_APP_API_URL || 'https://admin-aged-field-2794.fly.dev';
     if (config.baseURL && config.baseURL.includes('admin-aged-field-2794.fly.dev')) {
       config.baseURL = config.baseURL.replace('https://admin-aged-field-2794.fly.dev', targetBaseUrl);
     }
@@ -25,7 +25,7 @@ axios.interceptors.request.use(
 // Global Fetch interceptor to dynamically rewrite the production API URL to the local backend URL in development
 const originalFetch = window.fetch;
 window.fetch = function (input, init) {
-  const targetBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+  const targetBaseUrl = process.env.REACT_APP_API_URL || 'https://admin-aged-field-2794.fly.dev';
   let modifiedInput = input;
   if (typeof input === 'string') {
     if (input.includes('admin-aged-field-2794.fly.dev')) {
