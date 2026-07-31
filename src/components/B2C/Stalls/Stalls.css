@@ -273,10 +273,12 @@
   line-height: 1.3;
   letter-spacing: -0.01em;
   display: -webkit-box;
-  -webkit-line-clamp: 2;        /* show up to 2 lines */
+  -webkit-line-clamp: 2;
+  /* show up to 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: calc(14px * 1.3 * 2); /* reserve space for 2 lines always */
+  min-height: calc(14px * 1.3 * 2);
+  /* reserve space for 2 lines always */
 }
 
 /* =================== Available Badge =================== */
@@ -412,7 +414,8 @@
   .stall-names {
     font-size: 12px;
     margin-top: 8px;
-    min-height: calc(12px * 1.3 * 2); /* recalculate for smaller font */
+    min-height: calc(12px * 1.3 * 2);
+    /* recalculate for smaller font */
   }
 
   .page-title {

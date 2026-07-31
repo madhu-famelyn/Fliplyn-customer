@@ -30,7 +30,7 @@ export default function B2CStalls() {
       if (cached && Date.now() - cacheTime < TWO_MINUTES) {
         return JSON.parse(cached);
       }
-    } catch (e) {}
+    } catch (e) { }
     return null;
   };
 

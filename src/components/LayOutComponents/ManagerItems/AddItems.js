@@ -4,6 +4,8 @@ import { useAuth } from "../../AuthContex/ContextAPI";
 import { useNavigate } from "react-router-dom";
 import "./AddItems.css";
 
+const API_BASE_URL = 'http://localhost:8000';
+
 export default function AddItemManager() {
   const navigate = useNavigate();
   const { token, user } = useAuth();
@@ -35,14 +37,14 @@ export default function AddItemManager() {
       try {
         setLoading(true);
         const managerRes = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/managers/${user.id}`,
+          `${API_BASE_URL}/managers/${user.id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setManager(managerRes.data);
 
         const buildingId = managerRes.data.building_id;
         const stallRes = await axios.get(
-          `https://admin-aged-field-2794.fly.dev/stalls/building/${buildingId}`,
+          `${API_BASE_URL}/stalls/building/${buildingId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setStalls(stallRes.data || []);
@@ -60,7 +62,7 @@ export default function AddItemManager() {
   const fetchCategories = async (stallId) => {
     try {
       const res = await axios.get(
-        `https://admin-aged-field-2794.fly.dev/categories/stall/${stallId}`,
+        `${API_BASE_URL}/categories/stall/${stallId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCategories(Array.isArray(res.data) ? res.data : [res.data]);
@@ -109,7 +111,7 @@ export default function AddItemManager() {
     payload.append("description", formData.description);
     payload.append("price", formData.price);
     if (!formData.tax_included) {
-      payload.append("Gst_precentage", formData.gst_percentage);
+      payload.append("Gst_precentage", formData.gst_percentage || 0);
     }
     payload.append("tax_included", formData.tax_included);
     payload.append("is_available", formData.is_available);
@@ -117,19 +119,20 @@ export default function AddItemManager() {
     payload.append("building_id", manager.building_id);
     payload.append("stall_id", selectedStallId);
     payload.append("category_id", selectedCategoryId);
-    payload.append("admin_id", manager.admin_id);
-    payload.append("manager_id", manager.id);
+    if (manager?.admin_id) payload.append("admin_id", manager.admin_id);
+    if (manager?.id) payload.append("manager_id", manager.id);
     if (formData.file) payload.append("file", formData.file);
 
     try {
-      await axios.post(`https://admin-aged-field-2794.fly.dev/items/`, payload, {
+      await axios.post(`${API_BASE_URL}/items/`, payload, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
       setSuccessMessage("Item created successfully!");
       setTimeout(() => navigate("/manager-stalls"), 1000);
     } catch (err) {
-      console.error("❌ Error creating item:", err.response?.data || err.message);
-      alert("Failed to create item");
+      const errorDetail = err.response?.data?.detail || JSON.stringify(err.response?.data) || err.message;
+      console.error("❌ Error creating item:", errorDetail);
+      alert(`Failed to create item: ${typeof errorDetail === "string" ? errorDetail : "Server Error"}`);
     } finally {
       setSubmitting(false);
     }
