@@ -291,7 +291,7 @@ const SalesSummaryReport = () => {
             onChange={(e) => setSelectedCompany(e.target.value)}
           >
 
-            <option value="">All Stalls</option>
+            <option value="">All Companies</option>
 
             {companies.map((c, i) => (
               <option key={i} value={c}>{c}</option>

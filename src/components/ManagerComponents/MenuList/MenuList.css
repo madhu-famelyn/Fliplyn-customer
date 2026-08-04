@@ -1,0 +1,386 @@
+.om-ml-wrapper {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  margin-top: 80px;
+}
+
+.om-ml-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.om-ml-back-btn {
+  background: transparent;
+  border: none;
+  color: #ff6a00;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.om-ml-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.om-ml-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.om-ml-export-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.om-ml-export-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.om-ml-export-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.om-ml-export-btn.pdf {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.om-ml-export-btn.excel {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+/* OUTLETS CARD */
+.om-ml-outlets-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.om-ml-outlets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.om-ml-outlets-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.om-ml-select-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff6a00;
+  cursor: pointer;
+}
+
+.om-ml-select-all input {
+  accent-color: #ff6a00;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.om-ml-stalls-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.om-ml-stall-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.om-ml-stall-chip:hover {
+  border-color: #ff6a00;
+  background: #fff7ed;
+}
+
+.om-ml-stall-chip.checked {
+  background: #fff7ed;
+  border-color: #ff6a00;
+  color: #ea580c;
+  font-weight: 600;
+}
+
+.om-ml-stall-chip input {
+  accent-color: #ff6a00;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+/* CONTROLS CARD */
+.om-ml-controls-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.om-ml-search-input {
+  flex: 1;
+  min-width: 280px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  background: #ffffff;
+}
+
+.om-ml-filter-group {
+  display: flex;
+  gap: 12px;
+}
+
+.om-ml-select {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 13px;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+}
+
+/* TABLE CARD */
+.om-ml-table-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.om-ml-table-summary {
+  padding: 14px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.om-ml-grouped-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+}
+
+.om-ml-stall-section {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.om-ml-stall-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: #fff7ed;
+  border-bottom: 1px solid #ffedd5;
+}
+
+.om-ml-stall-section-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ea580c;
+  margin: 0;
+}
+
+.om-ml-count-badge {
+  background: #ff6a00;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.om-ml-table-responsive {
+  overflow-x: auto;
+}
+
+.om-ml-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.om-ml-table th {
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.om-ml-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+.om-ml-table tr:hover {
+  background: #f8fafc;
+}
+
+.om-ml-stall-tag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.om-ml-item-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.om-ml-item-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.om-ml-veg-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.om-ml-veg-badge.veg {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.om-ml-veg-badge.nonveg {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.om-ml-price-bold {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.om-ml-status-pill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.om-ml-status-pill.active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.om-ml-status-pill.paused {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.om-ml-loading-text {
+  padding: 20px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.om-ml-empty-state {
+  padding: 30px;
+  text-align: center;
+  color: #64748b;
+}
+
+.om-ml-empty-state p {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+@media (max-width: 768px) {
+  .om-ml-wrapper {
+    padding: 14px;
+  }
+
+  .om-ml-export-buttons {
+    width: 100%;
+  }
+
+  .om-ml-export-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .om-ml-stalls-grid {
+    flex-direction: column;
+  }
+
+  .om-ml-stall-chip {
+    width: 100%;
+  }
+
+  .om-ml-controls-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .om-ml-filter-group {
+    flex-direction: column;
+  }
+}

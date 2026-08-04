@@ -19,6 +19,8 @@ const VendorItemsExact = () => {
   const [filter, setFilter] = useState("ALL");
   const [loading, setLoading] = useState(true);
 
+  const [uploadingId, setUploadingId] = useState(null);
+
   /* ---------------- FETCH STALL ---------------- */
   useEffect(() => {
     if (!stallId || !token) return;
@@ -79,6 +81,41 @@ const VendorItemsExact = () => {
       );
     } catch (err) {
       console.error("Error updating item:", err);
+    }
+  };
+
+  /* ---------------- UPLOAD / CHANGE IMAGE ---------------- */
+  const handleImageUpload = async (itemId, file) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setUploadingId(itemId);
+      const res = await axios.put(
+        `https://admin-aged-field-2794.fly.dev/items/${itemId}/upload-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data && res.data.image_url) {
+        setItems((prev) =>
+          prev.map((item) =>
+            item.id === itemId ? { ...item, image_url: res.data.image_url } : item
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Error uploading image:", err);
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setUploadingId(null);
     }
   };
 
@@ -192,10 +229,78 @@ const VendorItemsExact = () => {
           filteredItems.map((item) => (
             <div key={item.id} className="vix-row">
               <div className="vix-item">
-                <img
-                  src={item.image_url || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23e0e0e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='10' fill='%23999'%3ENo Img%3C/text%3E%3C/svg%3E"}
-                  alt={item.name}
-                />
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <input
+                    type="file"
+                    id={`edit-img-${item.id}`}
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        handleImageUpload(item.id, e.target.files[0]);
+                      }
+                    }}
+                  />
+                  <label
+                    htmlFor={`edit-img-${item.id}`}
+                    style={{ cursor: "pointer", display: "block", position: "relative" }}
+                    title="Tap to change image"
+                  >
+                    <img
+                      src={
+                        item.image_url ||
+                        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23e0e0e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='10' fill='%23999'%3ENo Img%3C/text%3E%3C/svg%3E"
+                      }
+                      alt={item.name}
+                      style={{
+                        width: 42,
+                        height: 42,
+                        borderRadius: 6,
+                        objectFit: "cover",
+                        opacity: uploadingId === item.id ? 0.4 : 1,
+                      }}
+                    />
+                    {uploadingId === item.id ? (
+                      <span
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 10,
+                          fontWeight: "bold",
+                          color: "#333",
+                          background: "rgba(255,255,255,0.7)",
+                          borderRadius: 6,
+                        }}
+                      >
+                        ...
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: -3,
+                          right: -3,
+                          background: "#ff6a00",
+                          color: "#fff",
+                          borderRadius: "50%",
+                          width: 18,
+                          height: 18,
+                          fontSize: 10,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          border: "1.5px solid #fff",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
+                        }}
+                      >
+                        ✏️
+                      </span>
+                    )}
+                  </label>
+                </div>
                 <div>
                   <p className="vix-item-name">{item.name}</p>
                   <p className="vix-item-type">

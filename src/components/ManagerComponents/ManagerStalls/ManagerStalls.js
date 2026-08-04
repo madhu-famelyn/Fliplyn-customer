@@ -16,6 +16,7 @@ const ACTION_BUTTONS = [
   { label: "Add Category",       route: "/add-category",         icon: "🏷" },
   { label: "Sales Summary",      route: "/sales-summary-om",     icon: "📈" },
   { label: "B2C Transactions",   route: "/b2c-transactions",     icon: "🛒" },
+  { label: "Menu List",          route: "/om-menu-list",         icon: "📋" },
 ];
 
 /* ── Skeleton placeholder cards while loading ── */

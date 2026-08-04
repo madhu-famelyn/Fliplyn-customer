@@ -21,7 +21,7 @@ const DateRangeFilter = ({ dateFilter, setDateFilter, startDate, setStartDate, e
     {dateFilter === "CUSTOM" && (
       <>
         <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-        <input type="date" value={endDate}   onChange={(e) => setEndDate(e.target.value)}   />
+        <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
       </>
     )}
   </div>
@@ -31,14 +31,14 @@ const DateRangeFilter = ({ dateFilter, setDateFilter, startDate, setStartDate, e
 const StatsStrip = ({ data, mode }) => {
   // Filter out any "Total" rows from the data
   const filteredData = data.filter(item => (item.outlet || item.stall_name) !== "Total");
-  
+
   const totals = filteredData.reduce(
     (acc, item) => {
       if (mode === "stall") {
-        acc.prepaidNet   += Number(item.prepaid_after_deduction || 0);
-        acc.prepaidTotal += Number(item.prepaid_total_amount    || 0);
+        acc.prepaidNet += Number(item.prepaid_after_deduction || 0);
+        acc.prepaidTotal += Number(item.prepaid_total_amount || 0);
       }
-      acc.postpaidNet   += Number(item.postpaid_net   || item.postpaid_net_amount   || 0);
+      acc.postpaidNet += Number(item.postpaid_net || item.postpaid_net_amount || 0);
       acc.postpaidTotal += Number(item.postpaid_total || item.postpaid_total_amount || 0);
       return acc;
     },
@@ -48,16 +48,16 @@ const StatsStrip = ({ data, mode }) => {
   const cards =
     mode === "stall"
       ? [
-          { label: "Prepaid Net",    value: totals.prepaidNet,   icon: "💳" },
-          { label: "Prepaid Total",  value: totals.prepaidTotal, icon: "🧾" },
-          { label: "Postpaid Net",   value: totals.postpaidNet,  icon: "📦" },
-          { label: "Postpaid Total", value: totals.postpaidTotal,icon: "💰" },
-        ]
+        { label: "Prepaid Net", value: totals.prepaidNet, icon: "💳" },
+        { label: "Prepaid Total", value: totals.prepaidTotal, icon: "🧾" },
+        { label: "Postpaid Net", value: totals.postpaidNet, icon: "📦" },
+        { label: "Postpaid Total", value: totals.postpaidTotal, icon: "💰" },
+      ]
       : [
-          { label: "Postpaid Net",   value: totals.postpaidNet,  icon: "📦" },
-          { label: "Postpaid Total", value: totals.postpaidTotal,icon: "💰" },
-          { label: "Outlets",        value: filteredData.length, icon: "🏪", raw: true },
-        ];
+        { label: "Postpaid Net", value: totals.postpaidNet, icon: "📦" },
+        { label: "Postpaid Total", value: totals.postpaidTotal, icon: "💰" },
+        { label: "Outlets", value: filteredData.length, icon: "🏪", raw: true },
+      ];
 
   return (
     <div className="om-summary-stats-strip">
@@ -78,17 +78,17 @@ const StatsStrip = ({ data, mode }) => {
 const SalesTable = ({ data, type }) => {
   // Filter out any "Total" rows from the data
   const filteredData = data.filter(item => (item.outlet || item.stall_name) !== "Total");
-  
+
   const totals = filteredData.reduce(
     (acc, item) => {
       if (type === "stall") {
-        acc.prepaidNet   += Number(item.prepaid_after_deduction || 0);
-        acc.prepaidTotal += Number(item.prepaid_total_amount    || 0);
-        acc.postpaidNet  += Number(item.postpaid_net_amount || item.postpaid_net || 0);
-        acc.postpaidTotal+= Number(item.postpaid_total_amount || item.postpaid_total || 0);
+        acc.prepaidNet += Number(item.prepaid_after_deduction || 0);
+        acc.prepaidTotal += Number(item.prepaid_total_amount || 0);
+        acc.postpaidNet += Number(item.postpaid_net_amount || item.postpaid_net || 0);
+        acc.postpaidTotal += Number(item.postpaid_total_amount || item.postpaid_total || 0);
       } else {
-        acc.postpaidNet  += Number(item.postpaid_net || item.postpaid_net_amount   || 0);
-        acc.postpaidTotal+= Number(item.postpaid_total || item.postpaid_total_amount || 0);
+        acc.postpaidNet += Number(item.postpaid_net || item.postpaid_net_amount || 0);
+        acc.postpaidTotal += Number(item.postpaid_total || item.postpaid_total_amount || 0);
       }
       return acc;
     },
@@ -152,13 +152,13 @@ const SalesTable = ({ data, type }) => {
                 {type === "stall" ? (
                   <>
                     <td><AmountCell value={item.prepaid_after_deduction} /></td>
-                    <td><AmountCell value={item.prepaid_total_amount}    /></td>
-                    <td><AmountCell value={item.postpaid_net_amount}     /></td>
-                    <td><AmountCell value={item.postpaid_total_amount}   /></td>
+                    <td><AmountCell value={item.prepaid_total_amount} /></td>
+                    <td><AmountCell value={item.postpaid_net_amount} /></td>
+                    <td><AmountCell value={item.postpaid_total_amount} /></td>
                   </>
                 ) : (
                   <>
-                    <td><AmountCell value={item.postpaid_net}   /></td>
+                    <td><AmountCell value={item.postpaid_net} /></td>
                     <td><AmountCell value={item.postpaid_total} /></td>
                   </>
                 )}
@@ -174,14 +174,14 @@ const SalesTable = ({ data, type }) => {
 
               {type === "stall" ? (
                 <>
-                  <td><AmountCell value={totals.prepaidNet}    /></td>
-                  <td><AmountCell value={totals.prepaidTotal}  /></td>
-                  <td><AmountCell value={totals.postpaidNet}   /></td>
+                  <td><AmountCell value={totals.prepaidNet} /></td>
+                  <td><AmountCell value={totals.prepaidTotal} /></td>
+                  <td><AmountCell value={totals.postpaidNet} /></td>
                   <td><AmountCell value={totals.postpaidTotal} /></td>
                 </>
               ) : (
                 <>
-                  <td><AmountCell value={totals.postpaidNet}   /></td>
+                  <td><AmountCell value={totals.postpaidNet} /></td>
                   <td><AmountCell value={totals.postpaidTotal} /></td>
                 </>
               )}
@@ -197,15 +197,15 @@ const SalesTable = ({ data, type }) => {
 export default function SalesSummary() {
   const { user } = useAuth();
 
-  const [stalls,          setStalls]          = useState([]);
-  const [companies,       setCompanies]       = useState([]);
+  const [stalls, setStalls] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState("");
-  const [mode,            setMode]            = useState("stall");
-  const [salesData,       setSalesData]       = useState([]);
-  const [loading,         setLoading]         = useState(false);
-  const [dateFilter,      setDateFilter]      = useState("TODAY");
-  const [startDate,       setStartDate]       = useState("");
-  const [endDate,         setEndDate]         = useState("");
+  const [mode, setMode] = useState("stall");
+  const [salesData, setSalesData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [dateFilter, setDateFilter] = useState("TODAY");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const formatDate = (date) => date.toISOString().split("T")[0];
 
@@ -275,24 +275,24 @@ export default function SalesSummary() {
 
     if (mode === "stall") {
       data = filteredSalesData.map((s) => ({
-        Outlet:          s.outlet || s.stall_name,
-        "Prepaid Net":   formatAmount(s.prepaid_after_deduction),
+        Outlet: s.outlet || s.stall_name,
+        "Prepaid Net": formatAmount(s.prepaid_after_deduction),
         "Prepaid Total": formatAmount(s.prepaid_total_amount),
-        "Postpaid Net":  formatAmount(s.postpaid_net || s.postpaid_net_amount),
-        "Postpaid Total":formatAmount(s.postpaid_total || s.postpaid_total_amount),
+        "Postpaid Net": formatAmount(s.postpaid_net || s.postpaid_net_amount),
+        "Postpaid Total": formatAmount(s.postpaid_total || s.postpaid_total_amount),
       }));
-      const tPrepaidNet   = filteredSalesData.reduce((a, s) => a + Number(s.prepaid_after_deduction || 0), 0);
-      const tPrepaidTotal = filteredSalesData.reduce((a, s) => a + Number(s.prepaid_total_amount    || 0), 0);
-      const tPostNet      = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_net || s.postpaid_net_amount   || 0), 0);
-      const tPostTotal    = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_total || s.postpaid_total_amount || 0), 0);
+      const tPrepaidNet = filteredSalesData.reduce((a, s) => a + Number(s.prepaid_after_deduction || 0), 0);
+      const tPrepaidTotal = filteredSalesData.reduce((a, s) => a + Number(s.prepaid_total_amount || 0), 0);
+      const tPostNet = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_net || s.postpaid_net_amount || 0), 0);
+      const tPostTotal = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_total || s.postpaid_total_amount || 0), 0);
       data.push({ Outlet: "Total", "Prepaid Net": formatAmount(tPrepaidNet), "Prepaid Total": formatAmount(tPrepaidTotal), "Postpaid Net": formatAmount(tPostNet), "Postpaid Total": formatAmount(tPostTotal) });
     } else {
       data = filteredSalesData.map((s) => ({
-        Outlet:           s.outlet || s.stall_name,
-        "Postpaid Net":   formatAmount(s.postpaid_net || s.postpaid_net_amount),
+        Outlet: s.outlet || s.stall_name,
+        "Postpaid Net": formatAmount(s.postpaid_net || s.postpaid_net_amount),
         "Postpaid Total": formatAmount(s.postpaid_total || s.postpaid_total_amount),
       }));
-      const tPostNet   = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_net   || s.postpaid_net_amount   || 0), 0);
+      const tPostNet = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_net || s.postpaid_net_amount || 0), 0);
       const tPostTotal = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_total || s.postpaid_total_amount || 0), 0);
       data.push({ Outlet: "Total", "Postpaid Net": formatAmount(tPostNet), "Postpaid Total": formatAmount(tPostTotal) });
     }
@@ -325,7 +325,7 @@ export default function SalesSummary() {
             value={selectedCompany}
             onChange={(e) => setSelectedCompany(e.target.value)}
           >
-            <option value="">🏪 All Stalls</option>
+            <option value="">🏢 All Companies</option>
             {companies.map((c, i) => (
               <option key={i} value={c}>{c}</option>
             ))}
