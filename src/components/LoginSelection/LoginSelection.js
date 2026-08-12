@@ -51,6 +51,13 @@ export default function LoginSelectionPage() {
         >
           Login as B2C
         </button>
+
+        <button
+          className="login-btn"
+          onClick={() => navigate("/management")}
+        >
+          Login as Management
+        </button>
       </div>
     </div>
   );

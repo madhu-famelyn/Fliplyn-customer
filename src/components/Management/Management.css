@@ -1,0 +1,377 @@
+/* Management Portal Shared Styles */
+
+/* ── Login ────────────────────────────────────────────────── */
+.mgmt-login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+.mgmt-login-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.mgmt-login-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.mgmt-login-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 6px;
+}
+
+.mgmt-login-header p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ── Form ────────────────────────────────────────────────── */
+.mgmt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mgmt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mgmt-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.mgmt-field input,
+.mgmt-field select,
+.mgmt-field textarea {
+  padding: 10px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.mgmt-field input:focus,
+.mgmt-field select:focus,
+.mgmt-field textarea:focus {
+  border-color: #0f3460;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.mgmt-btn-primary {
+  background: #0f3460;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mgmt-btn-primary:hover:not(:disabled) {
+  background: #16213e;
+}
+
+.mgmt-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mgmt-btn-secondary {
+  background: transparent;
+  color: #0f3460;
+  border: 1.5px solid #0f3460;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mgmt-btn-secondary:hover {
+  background: #0f3460;
+  color: #fff;
+}
+
+.mgmt-btn-danger {
+  background: transparent;
+  color: #ef4444;
+  border: 1.5px solid #ef4444;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ── Error / Success ─────────────────────────────────────── */
+.mgmt-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.mgmt-success {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+/* ── Dashboard Layout ────────────────────────────────────── */
+.mgmt-page {
+  min-height: 100vh;
+  background: #f3f4f6;
+  padding: 24px;
+}
+
+.mgmt-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.mgmt-topbar h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.mgmt-nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.mgmt-nav a,
+.mgmt-nav button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1.5px solid #0f3460;
+  color: #0f3460;
+  background: #fff;
+  transition: all 0.2s;
+}
+
+.mgmt-nav a:hover,
+.mgmt-nav button:hover,
+.mgmt-nav a.active {
+  background: #0f3460;
+  color: #fff;
+}
+
+/* ── KPI Cards ───────────────────────────────────────────── */
+.mgmt-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.mgmt-kpi-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.mgmt-kpi-card .kpi-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mgmt-kpi-card .kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 6px 0 0;
+}
+
+.kpi-income  { color: #16a34a; }
+.kpi-outgo   { color: #dc2626; }
+.kpi-profit  { color: #0f3460; }
+.kpi-loss    { color: #dc2626; }
+
+/* ── Section Card ────────────────────────────────────────── */
+.mgmt-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.mgmt-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 16px;
+}
+
+/* ── Date Filter ─────────────────────────────────────────── */
+.mgmt-date-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.mgmt-date-row label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.mgmt-date-row input {
+  padding: 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.mgmt-table-wrapper {
+  overflow-x: auto;
+}
+
+.mgmt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mgmt-table th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 700;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.mgmt-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+}
+
+.mgmt-table tr:hover td {
+  background: #f9fafb;
+}
+
+.badge-income {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge-outgo {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ── Breakdown Grid ──────────────────────────────────────── */
+.mgmt-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.mgmt-breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 13px;
+  color: #374151;
+}
+
+.mgmt-breakdown-item span:last-child {
+  font-weight: 700;
+}
+
+/* ── Inline Add-dropdown form ────────────────────────────── */
+.mgmt-inline-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.mgmt-inline-form input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.mgmt-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mgmt-tag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mgmt-tag button {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+
+.mgmt-tag button:hover { color: #dc2626; }

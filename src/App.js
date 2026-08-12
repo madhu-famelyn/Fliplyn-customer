@@ -19,6 +19,15 @@ import { HrAuthProvider } from "./components/AuthContex/HrContext";
 import { BuildingManagerProvider, useBuildingManagerAuth } from "./components/AuthContex/BuildingManagerContext";
 import { B2CAuthProvider, useB2CAuth } from "./components/AuthContex/B2CContext";
 import { AuthProvider as ManagerAuthProvider, useAuth as useManagerAuth } from "./components/AuthContex/ContextAPI"; // Operational Manager
+import { ManagementAuthProvider, useManagementAuth } from "./components/AuthContex/ManagementContext";
+
+// Management screens
+import ManagementLogin from "./components/Management/ManagementLogin";
+import ManagementDashboard from "./components/Management/ManagementDashboard";
+import IncomeForm from "./components/Management/IncomeForm";
+import OutgoForm from "./components/Management/OutgoForm";
+import LedgerReport from "./components/Management/LedgerReport";
+import DropdownSettings from "./components/Management/DropdownSettings";
 
 // ✅ Components
 import Dashboard from "./components/LayOutComponents/DashBoard/Dashboard";
@@ -150,6 +159,21 @@ const B2CPrivateRoute = ({ element }) => {
   return token ? element : <Navigate to="/b2c-login" replace />;
 };
 
+const ManagementPrivateRoute = ({ element }) => {
+  const { token } = useManagementAuth();
+  const omToken = localStorage.getItem("token");
+  return (token || omToken) ? element : <Navigate to="/manager-login" replace />;
+};
+
+const ManagementRoute = () => {
+  const { token } = useManagementAuth();
+  const omToken = localStorage.getItem("token");
+  if (token || omToken) {
+    return <Navigate to="/management/dashboard" replace />;
+  }
+  return <ManagementLogin />;
+};
+
 
 function App() {
   const location = useLocation();
@@ -223,6 +247,7 @@ function App() {
           <BuildingManagerProvider>
             <B2CAuthProvider>
               <ManagerAuthProvider>
+                <ManagementAuthProvider>
                 {showBg && <BackgroundImages />}
                 <Routes>
                   {/* 🔓 Public Routes */}
@@ -332,9 +357,17 @@ function App() {
                   <Route path="/page-dashboard" element={<PageDashboard />} />
                   <Route path="/events" element={<Events />} />
 
+                  {/* 📊 Management Routes */}
+                  <Route path="/management" element={<ManagementRoute />} />
+                  <Route path="/management/dashboard" element={<ManagementPrivateRoute element={<ManagementDashboard />} />} />
+                  <Route path="/management/income" element={<ManagementPrivateRoute element={<IncomeForm />} />} />
+                  <Route path="/management/outgo" element={<ManagementPrivateRoute element={<OutgoForm />} />} />
+                  <Route path="/management/report" element={<ManagementPrivateRoute element={<LedgerReport />} />} />
+                  <Route path="/management/settings" element={<ManagementPrivateRoute element={<DropdownSettings />} />} />
 
                   {/* 🔚 Fallback */}
                 </Routes>
+              </ManagementAuthProvider>
               </ManagerAuthProvider>
             </B2CAuthProvider>
           </BuildingManagerProvider>
