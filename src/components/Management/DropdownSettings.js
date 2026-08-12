@@ -8,7 +8,7 @@ import {
 import "./Management.css";
 
 export default function DropdownSettings() {
-  const { token } = useManagementAuth();
+  const { token, logout } = useManagementAuth();
   const navigate = useNavigate();
 
   const [sources, setSources] = useState([]);
@@ -67,7 +67,7 @@ export default function DropdownSettings() {
     <div className="mgmt-page">
       <div className="mgmt-topbar">
         <h1>Manage Dropdowns</h1>
-        <button className="mgmt-btn-secondary" onClick={() => navigate("/manager-stalls")}>Back to OM Dashboard</button>
+        <button className="mgmt-btn-secondary" onClick={() => { logout(); navigate("/management"); }}>Logout</button>
       </div>
 
       <div className="mgmt-nav">

@@ -8,7 +8,7 @@ const fmt = (n) =>
   new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
 
 export default function ManagementDashboard() {
-  const { token, user } = useManagementAuth();
+  const { token, logout } = useManagementAuth();
   const navigate = useNavigate();
 
   const today = new Date().toISOString().slice(0, 10);
@@ -35,14 +35,18 @@ export default function ManagementDashboard() {
 
   useEffect(() => { load(); }, []); // eslint-disable-line
 
+  const handleLogout = () => {
+    logout();
+    navigate("/management");
+  };
+
   return (
     <div className="mgmt-page">
       {/* Top bar */}
       <div className="mgmt-topbar">
         <h1>Management Dashboard</h1>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 13, color: "#6b7280" }}>Hello, {user?.name || "Manager"}</span>
-          <button className="mgmt-btn-secondary" onClick={() => navigate("/manager-stalls")}>Back to OM Dashboard</button>
+          <button className="mgmt-btn-secondary" onClick={handleLogout}>Logout</button>
         </div>
       </div>
 

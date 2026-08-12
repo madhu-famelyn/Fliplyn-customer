@@ -162,16 +162,8 @@ const B2CPrivateRoute = ({ element }) => {
 const ManagementPrivateRoute = ({ element }) => {
   const { token } = useManagementAuth();
   const omToken = localStorage.getItem("token");
-  return (token || omToken) ? element : <Navigate to="/manager-login" replace />;
-};
-
-const ManagementRoute = () => {
-  const { token } = useManagementAuth();
-  const omToken = localStorage.getItem("token");
-  if (token || omToken) {
-    return <Navigate to="/management/dashboard" replace />;
-  }
-  return <ManagementLogin />;
+  const mgmtToken = localStorage.getItem("mgmtToken");
+  return (mgmtToken || omToken || token) ? element : <Navigate to="/management" replace />;
 };
 
 
@@ -358,7 +350,7 @@ function App() {
                   <Route path="/events" element={<Events />} />
 
                   {/* 📊 Management Routes */}
-                  <Route path="/management" element={<ManagementRoute />} />
+                  <Route path="/management" element={<ManagementLogin />} />
                   <Route path="/management/dashboard" element={<ManagementPrivateRoute element={<ManagementDashboard />} />} />
                   <Route path="/management/income" element={<ManagementPrivateRoute element={<IncomeForm />} />} />
                   <Route path="/management/outgo" element={<ManagementPrivateRoute element={<OutgoForm />} />} />

@@ -5,7 +5,7 @@ import { getLedger } from "./Service";
 import "./Management.css";
 
 export default function LedgerReport() {
-  const { token } = useManagementAuth();
+  const { token, logout } = useManagementAuth();
   const navigate = useNavigate();
 
   const today = new Date().toISOString().slice(0, 10);
@@ -38,7 +38,7 @@ export default function LedgerReport() {
     <div className="mgmt-page">
       <div className="mgmt-topbar">
         <h1>Full Ledger Report</h1>
-        <button className="mgmt-btn-secondary" onClick={() => navigate("/manager-stalls")}>Back to OM Dashboard</button>
+        <button className="mgmt-btn-secondary" onClick={() => { logout(); navigate("/management"); }}>Logout</button>
       </div>
 
       <div className="mgmt-nav">

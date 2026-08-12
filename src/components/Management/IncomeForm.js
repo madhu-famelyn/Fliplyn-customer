@@ -9,7 +9,7 @@ import "./Management.css";
 const ACCOUNT_OPTIONS = ["neos", "personal"];
 
 export default function IncomeForm() {
-  const { token } = useManagementAuth();
+  const { token, logout } = useManagementAuth();
   const navigate = useNavigate();
 
   const [sources, setSources] = useState([]);
@@ -67,7 +67,7 @@ export default function IncomeForm() {
     <div className="mgmt-page">
       <div className="mgmt-topbar">
         <h1>Income Entry</h1>
-        <button className="mgmt-btn-secondary" onClick={() => navigate("/manager-stalls")}>Back to OM Dashboard</button>
+        <button className="mgmt-btn-secondary" onClick={() => { logout(); navigate("/management"); }}>Logout</button>
       </div>
 
       <div className="mgmt-nav">

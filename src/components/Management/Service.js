@@ -12,7 +12,10 @@ const BASE = isLocal
   ? `http://${window.location.hostname}:8000`
   : "https://admin-aged-field-2794.fly.dev";
 
-const authHeader = (token) => ({ headers: { Authorization: `Bearer ${token}` } });
+const authHeader = (token) => {
+  const activeToken = token || (typeof window !== "undefined" && (localStorage.getItem("mgmtToken") || localStorage.getItem("token")));
+  return { headers: { Authorization: `Bearer ${activeToken}` } };
+};
 
 // Auth
 export const mgmtLogin = (data) =>
