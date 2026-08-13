@@ -28,6 +28,8 @@ export const ManagementAuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem("mgmtToken");
     localStorage.removeItem("mgmtUser");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   };
 
   return (

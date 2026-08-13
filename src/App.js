@@ -161,9 +161,9 @@ const B2CPrivateRoute = ({ element }) => {
 
 const ManagementPrivateRoute = ({ element }) => {
   const { token } = useManagementAuth();
-  const omToken = localStorage.getItem("token");
   const mgmtToken = localStorage.getItem("mgmtToken");
-  return (mgmtToken || omToken || token) ? element : <Navigate to="/management" replace />;
+  const omToken = localStorage.getItem("token");
+  return (token || mgmtToken || omToken) ? element : <Navigate to="/" replace />;
 };
 
 

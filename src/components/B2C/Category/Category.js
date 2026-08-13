@@ -226,11 +226,28 @@ export default function B2CCategory() {
         </div>
 
         <div className="b2c-category-header-right">
-          <button className="b2c-header-home-btn" onClick={() => navigate("/b2c/stalls")}>
-            <FiHome size={20} color="#1e293b" />
+          <button className="b2c-header-icon-btn" onClick={() => navigate("/b2c/home")}>
+            <FiHome size={22} color="#1e293b" />
           </button>
         </div>
       </div>
+
+      {stallDetails?.name?.toLowerCase().includes("kammani") && (
+        <div style={{
+          background: "linear-gradient(135deg, #10b981, #059669)",
+          color: "#ffffff",
+          padding: "10px 16px",
+          textAlign: "center",
+          fontSize: "14px",
+          fontWeight: "600",
+          boxShadow: "0 2px 6px rgba(16, 185, 129, 0.3)",
+          marginTop: "70px",
+          position: "relative",
+          zIndex: 10
+        }}>
+          🎉 <strong>Special Offer:</strong> Get <strong>₹100 OFF</strong> automatically on orders of ₹399 or more at {stallDetails.name}!
+        </div>
+      )}
 
       <div className="category-wrapper">
         {/* LEFT: CATEGORY SIDEBAR */}

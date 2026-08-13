@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useManagementAuth } from "../AuthContex/ManagementContext";
 import { mgmtLogin } from "./Service";
@@ -9,7 +9,7 @@ import "../Manager_login/Manager_login.css";
 import "./Management.css";
 
 export default function ManagementLogin() {
-  const { login } = useManagementAuth();
+  const { token, login } = useManagementAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -18,6 +18,13 @@ export default function ManagementLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const mgmtToken = token || localStorage.getItem("mgmtToken");
+    if (mgmtToken) {
+      navigate("/management/dashboard", { replace: true });
+    }
+  }, [token, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -25,7 +32,7 @@ export default function ManagementLogin() {
     try {
       const data = await mgmtLogin({ email, password });
       login(data.access_token, data.user);
-      navigate("/management/dashboard");
+      navigate("/management/dashboard", { replace: true });
     } catch (err) {
       setError(err.response?.data?.detail || "Login failed. Please try again.");
     } finally {

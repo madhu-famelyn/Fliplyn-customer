@@ -29,16 +29,38 @@ export default function LedgerReport() {
     }
   };
 
-  useEffect(() => { load(); }, []); // eslint-disable-line
+  useEffect(() => {
+    const activeToken = token || localStorage.getItem("mgmtToken") || localStorage.getItem("token");
+    if (!activeToken) {
+      navigate("/", { replace: true });
+      return;
+    }
+    load();
+  }, [token, navigate]); // eslint-disable-line
 
-  const totalIncome = rows.filter((r) => r.type === "income").reduce((s, r) => s + r.amount, 0);
-  const totalOutgo = rows.filter((r) => r.type === "outgo").reduce((s, r) => s + r.amount, 0);
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
+
+  const incomeRows = rows.filter((r) => r.type === "income");
+  const outgoRows = rows.filter((r) => r.type === "outgo");
+
+  const totalIncomeGross = incomeRows.reduce((s, r) => s + (r.gross_amount ?? r.amount), 0);
+  const totalIncomeGst = incomeRows.reduce((s, r) => s + (r.gst_amount ?? 0), 0);
+  const totalIncomeNet = incomeRows.reduce((s, r) => s + (r.net_amount ?? r.amount), 0);
+
+  const totalOutgoGross = outgoRows.reduce((s, r) => s + (r.gross_amount ?? r.amount), 0);
+  const totalOutgoGst = outgoRows.reduce((s, r) => s + (r.gst_amount ?? 0), 0);
+  const totalOutgoNet = outgoRows.reduce((s, r) => s + (r.net_amount ?? r.amount), 0);
+
+  const netProfitLoss = totalIncomeNet - totalOutgoNet;
 
   return (
     <div className="mgmt-page">
       <div className="mgmt-topbar">
         <h1>Full Ledger Report</h1>
-        <button className="mgmt-btn-secondary" onClick={() => { logout(); navigate("/management"); }}>Logout</button>
+        <button className="mgmt-btn-secondary" onClick={handleLogout}>Logout</button>
       </div>
 
       <div className="mgmt-nav">
@@ -63,18 +85,46 @@ export default function LedgerReport() {
 
       {/* Summary row */}
       <div className="mgmt-kpi-row">
-        <div className="mgmt-kpi-card">
-          <div className="kpi-label">Income</div>
-          <div className="kpi-value kpi-income">₹{totalIncome.toLocaleString("en-IN")}</div>
+        <div className="mgmt-kpi-card mgmt-kpi-3in1">
+          <div className="kpi-label">Income (Sales)</div>
+          <div className="kpi-3in1-grid">
+            <div className="kpi-sub-item">
+              <span className="kpi-sub-label">Gross</span>
+              <span className="kpi-sub-value">₹{totalIncomeGross.toLocaleString("en-IN")}</span>
+            </div>
+            <div className="kpi-sub-item">
+              <span className="kpi-sub-label">GST</span>
+              <span className="kpi-sub-value kpi-gst-text">₹{totalIncomeGst.toLocaleString("en-IN")}</span>
+            </div>
+            <div className="kpi-sub-item kpi-highlight">
+              <span className="kpi-sub-label">Net Sales</span>
+              <span className="kpi-sub-value kpi-income">₹{totalIncomeNet.toLocaleString("en-IN")}</span>
+            </div>
+          </div>
         </div>
-        <div className="mgmt-kpi-card">
-          <div className="kpi-label">Expenses</div>
-          <div className="kpi-value kpi-outgo">₹{totalOutgo.toLocaleString("en-IN")}</div>
+
+        <div className="mgmt-kpi-card mgmt-kpi-3in1">
+          <div className="kpi-label">Expenses (Outgo)</div>
+          <div className="kpi-3in1-grid">
+            <div className="kpi-sub-item">
+              <span className="kpi-sub-label">Gross</span>
+              <span className="kpi-sub-value">₹{totalOutgoGross.toLocaleString("en-IN")}</span>
+            </div>
+            <div className="kpi-sub-item">
+              <span className="kpi-sub-label">GST</span>
+              <span className="kpi-sub-value kpi-gst-text">₹{totalOutgoGst.toLocaleString("en-IN")}</span>
+            </div>
+            <div className="kpi-sub-item kpi-highlight">
+              <span className="kpi-sub-label">Net Outgo</span>
+              <span className="kpi-sub-value kpi-outgo">₹{totalOutgoNet.toLocaleString("en-IN")}</span>
+            </div>
+          </div>
         </div>
+
         <div className="mgmt-kpi-card">
-          <div className="kpi-label">Profit / Loss</div>
-          <div className={`kpi-value ${totalIncome - totalOutgo >= 0 ? "kpi-profit" : "kpi-loss"}`}>
-            ₹{(totalIncome - totalOutgo).toLocaleString("en-IN")}
+          <div className="kpi-label">Profit / Loss (Net)</div>
+          <div className={`kpi-value ${netProfitLoss >= 0 ? "kpi-profit" : "kpi-loss"}`}>
+            ₹{netProfitLoss.toLocaleString("en-IN")}
           </div>
         </div>
       </div>
@@ -85,25 +135,46 @@ export default function LedgerReport() {
           <table className="mgmt-table">
             <thead>
               <tr>
-                <th>Date</th><th>Type</th><th>Party</th><th>Account</th><th>Amount</th><th>Description</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Party</th>
+                <th>Account</th>
+                <th>GST</th>
+                <th>Gross</th>
+                <th>GST Amt</th>
+                <th>Net Amount</th>
+                <th>Description</th>
               </tr>
             </thead>
             <tbody>
               {rows.length === 0 && !loading && (
-                <tr><td colSpan={6} style={{ textAlign: "center", color: "#9ca3af" }}>No transactions for selected period</td></tr>
+                <tr><td colSpan={9} style={{ textAlign: "center", color: "#9ca3af" }}>No transactions for selected period</td></tr>
               )}
-              {rows.map((r, i) => (
-                <tr key={i}>
-                  <td>{r.date}</td>
-                  <td><span className={r.type === "income" ? "badge-income" : "badge-outgo"}>{r.type}</span></td>
-                  <td>{r.party}</td>
-                  <td style={{ textTransform: "capitalize" }}>{r.account_name || "—"}</td>
-                  <td style={{ fontWeight: 700, color: r.type === "income" ? "#16a34a" : "#dc2626" }}>
-                    {r.type === "income" ? "+" : "-"}₹{r.amount.toLocaleString("en-IN")}
-                  </td>
-                  <td>{r.description || "—"}</td>
-                </tr>
-              ))}
+              {rows.map((r, i) => {
+                const gross = Number(r.gross_amount ?? r.amount ?? 0);
+                const gst = Number(r.gst_amount ?? 0);
+                const net = Number(r.net_amount ?? (gross - gst));
+                const isInc = r.type === "income";
+                return (
+                  <tr key={i}>
+                    <td>{r.date}</td>
+                    <td><span className={isInc ? "badge-income" : "badge-outgo"}>{r.type}</span></td>
+                    <td>{r.party}</td>
+                    <td style={{ textTransform: "capitalize" }}>{r.account_name || "—"}</td>
+                    <td>
+                      <span className={`mgmt-badge ${r.is_gst ? "badge-gst-yes" : "badge-gst-no"}`}>
+                        {r.is_gst ? "Yes" : "No"}
+                      </span>
+                    </td>
+                    <td>₹{gross.toLocaleString("en-IN")}</td>
+                    <td>₹{gst.toLocaleString("en-IN")}</td>
+                    <td style={{ fontWeight: 700, color: isInc ? "#16a34a" : "#dc2626" }}>
+                      {isInc ? "+" : "-"}₹{net.toLocaleString("en-IN")}
+                    </td>
+                    <td>{r.description || "—"}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

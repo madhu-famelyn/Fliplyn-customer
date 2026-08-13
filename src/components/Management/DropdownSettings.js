@@ -23,7 +23,19 @@ export default function DropdownSettings() {
     setDests(d);
   };
 
-  useEffect(() => { load(); }, []); // eslint-disable-line
+  useEffect(() => {
+    const activeToken = token || localStorage.getItem("mgmtToken") || localStorage.getItem("token");
+    if (!activeToken) {
+      navigate("/", { replace: true });
+      return;
+    }
+    load();
+  }, [token, navigate]); // eslint-disable-line
+
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
 
   const handleAddSource = async (e) => {
     e.preventDefault();
@@ -67,7 +79,7 @@ export default function DropdownSettings() {
     <div className="mgmt-page">
       <div className="mgmt-topbar">
         <h1>Manage Dropdowns</h1>
-        <button className="mgmt-btn-secondary" onClick={() => { logout(); navigate("/management"); }}>Logout</button>
+        <button className="mgmt-btn-secondary" onClick={handleLogout}>Logout</button>
       </div>
 
       <div className="mgmt-nav">

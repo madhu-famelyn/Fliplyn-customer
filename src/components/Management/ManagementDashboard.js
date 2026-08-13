@@ -33,11 +33,18 @@ export default function ManagementDashboard() {
     }
   };
 
-  useEffect(() => { load(); }, []); // eslint-disable-line
+  useEffect(() => {
+    const activeToken = token || localStorage.getItem("mgmtToken") || localStorage.getItem("token");
+    if (!activeToken) {
+      navigate("/", { replace: true });
+      return;
+    }
+    load();
+  }, [token, navigate]); // eslint-disable-line
 
   const handleLogout = () => {
     logout();
-    navigate("/management");
+    navigate("/", { replace: true });
   };
 
   return (
@@ -76,16 +83,51 @@ export default function ManagementDashboard() {
         <>
           {/* KPI cards */}
           <div className="mgmt-kpi-row">
-            <div className="mgmt-kpi-card">
-              <div className="kpi-label">Total Income</div>
-              <div className={`kpi-value kpi-income`}>{fmt(data.total_income)}</div>
+            {/* Total Income Card: 3-in-1 (Gross Sales, GST, Net Sales) */}
+            <div className="mgmt-kpi-card mgmt-kpi-3in1">
+              <div className="kpi-header">
+                <span className="kpi-label">Total Income</span>
+              </div>
+              <div className="kpi-3in1-grid">
+                <div className="kpi-sub-item">
+                  <span className="kpi-sub-label">Gross Sales</span>
+                  <span className="kpi-sub-value">{fmt(data.total_income_gross ?? data.total_income)}</span>
+                </div>
+                <div className="kpi-sub-item">
+                  <span className="kpi-sub-label">GST</span>
+                  <span className="kpi-sub-value kpi-gst-text">{fmt(data.total_income_gst ?? 0)}</span>
+                </div>
+                <div className="kpi-sub-item kpi-highlight">
+                  <span className="kpi-sub-label">Net Sales</span>
+                  <span className="kpi-sub-value kpi-income">{fmt(data.total_income_net ?? data.total_income)}</span>
+                </div>
+              </div>
             </div>
-            <div className="mgmt-kpi-card">
-              <div className="kpi-label">Total Expenses</div>
-              <div className={`kpi-value kpi-outgo`}>{fmt(data.total_outgo)}</div>
+
+            {/* Total Expenses Card */}
+            <div className="mgmt-kpi-card mgmt-kpi-3in1">
+              <div className="kpi-header">
+                <span className="kpi-label">Total Expenses</span>
+              </div>
+              <div className="kpi-3in1-grid">
+                <div className="kpi-sub-item">
+                  <span className="kpi-sub-label">Gross Outgo</span>
+                  <span className="kpi-sub-value">{fmt(data.total_outgo_gross ?? data.total_outgo)}</span>
+                </div>
+                <div className="kpi-sub-item">
+                  <span className="kpi-sub-label">GST</span>
+                  <span className="kpi-sub-value kpi-gst-text">{fmt(data.total_outgo_gst ?? 0)}</span>
+                </div>
+                <div className="kpi-sub-item kpi-highlight">
+                  <span className="kpi-sub-label">Net Outgo</span>
+                  <span className="kpi-sub-value kpi-outgo">{fmt(data.total_outgo_net ?? data.total_outgo)}</span>
+                </div>
+              </div>
             </div>
+
+            {/* Profit / Loss Card */}
             <div className="mgmt-kpi-card">
-              <div className="kpi-label">Profit / Loss</div>
+              <div className="kpi-label">Profit / Loss (Net)</div>
               <div className={`kpi-value ${data.profit_or_loss >= 0 ? "kpi-profit" : "kpi-loss"}`}>
                 {fmt(data.profit_or_loss)}
               </div>
