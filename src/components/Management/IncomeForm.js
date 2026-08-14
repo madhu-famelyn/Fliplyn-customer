@@ -19,7 +19,7 @@ export default function IncomeForm() {
     source_id: "",
     is_gst: false,
     gross_amount: "",
-    gst_amount: "",
+    gst_percent: "",
     account_name: "neos",
     description: "",
   });
@@ -50,7 +50,8 @@ export default function IncomeForm() {
   const handleChange = (field, value) => setForm((f) => ({ ...f, [field]: value }));
 
   const grossVal = parseFloat(form.gross_amount) || 0;
-  const gstVal = form.is_gst ? (parseFloat(form.gst_amount) || 0) : 0;
+  const gstPercent = form.is_gst ? (parseFloat(form.gst_percent) || 0) : 0;
+  const gstVal = form.is_gst ? Math.round((grossVal * gstPercent / 100) * 100) / 100 : 0;
   const netAmount = Math.max(0, grossVal - gstVal);
 
   const handleSubmit = async (e) => {
@@ -76,7 +77,7 @@ export default function IncomeForm() {
       setForm((f) => ({
         ...f,
         gross_amount: "",
-        gst_amount: "",
+        gst_percent: "",
         description: "",
         source_id: "",
         is_gst: false,
@@ -161,16 +162,26 @@ export default function IncomeForm() {
 
           {form.is_gst && (
             <div className="mgmt-field">
-              <label>GST Amount (₹)</label>
+              <label>GST % (Percentage)</label>
               <input
                 type="number"
                 min="0"
+                max="100"
                 step="0.01"
                 required
-                value={form.gst_amount}
-                onChange={(e) => handleChange("gst_amount", e.target.value)}
-                placeholder="0.00"
+                value={form.gst_percent}
+                onChange={(e) => handleChange("gst_percent", e.target.value)}
+                placeholder="e.g. 18"
               />
+            </div>
+          )}
+
+          {form.is_gst && grossVal > 0 && (
+            <div className="mgmt-field mgmt-net-box" style={{ background: "#fef9c3" }}>
+              <label>GST Amount (Auto-calculated)</label>
+              <div className="mgmt-net-display" style={{ color: "#b45309" }}>
+                ₹{gstVal.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
             </div>
           )}
 
