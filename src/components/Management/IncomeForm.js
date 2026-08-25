@@ -6,7 +6,8 @@ import {
 } from "./Service";
 import "./Management.css";
 
-const ACCOUNT_OPTIONS = ["neos", "personal"];
+const ACCOUNT_OPTIONS = ["neos", "personal", "no_bank", "cash"];
+const ACCOUNT_LABELS = { neos: "Neos", personal: "Personal", no_bank: "No Bank", cash: "Cash" };
 
 export default function IncomeForm() {
   const { token, logout } = useManagementAuth();
@@ -196,7 +197,7 @@ export default function IncomeForm() {
           <div className="mgmt-field">
             <label>Account Name</label>
             <select required value={form.account_name} onChange={(e) => handleChange("account_name", e.target.value)}>
-              {ACCOUNT_OPTIONS.map((a) => <option key={a} value={a}>{a.charAt(0).toUpperCase() + a.slice(1)}</option>)}
+              {ACCOUNT_OPTIONS.map((a) => <option key={a} value={a}>{ACCOUNT_LABELS[a]}</option>)}
             </select>
           </div>
 
@@ -245,7 +246,7 @@ export default function IncomeForm() {
                     <td>₹{gross.toLocaleString("en-IN")}</td>
                     <td>₹{gst.toLocaleString("en-IN")}</td>
                     <td style={{ fontWeight: 700, color: "#16a34a" }}>₹{net.toLocaleString("en-IN")}</td>
-                    <td style={{ textTransform: "capitalize" }}>{e.account_name}</td>
+                    <td>{ACCOUNT_LABELS[e.account_name] || e.account_name}</td>
                     <td>{e.description || "—"}</td>
                     <td><button className="mgmt-btn-danger" onClick={() => handleDelete(e.id)}>Delete</button></td>
                   </tr>

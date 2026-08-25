@@ -6,6 +6,9 @@ import {
 } from "./Service";
 import "./Management.css";
 
+const ACCOUNT_OPTIONS = ["neos", "personal", "no_bank", "cash"];
+const ACCOUNT_LABELS = { neos: "Neos", personal: "Personal", no_bank: "No Bank", cash: "Cash" };
+
 export default function OutgoForm() {
   const { token, logout } = useManagementAuth();
   const navigate = useNavigate();
@@ -18,6 +21,7 @@ export default function OutgoForm() {
     is_gst: false,
     gross_amount: "",
     gst_percent: "",
+    account_name: "neos",
     description: "",
   });
   const [error, setError] = useState("");
@@ -67,6 +71,7 @@ export default function OutgoForm() {
         gst_amount: gstVal,
         net_amount: netAmount,
         amount: netAmount,
+        account_name: form.account_name,
         description: form.description,
       });
       setSuccess("Outgo entry saved.");
@@ -74,6 +79,7 @@ export default function OutgoForm() {
         ...f,
         gross_amount: "",
         gst_percent: "",
+        account_name: "neos",
         description: "",
         destination_id: "",
         is_gst: false,
@@ -190,6 +196,13 @@ export default function OutgoForm() {
           </div>
 
           <div className="mgmt-field">
+            <label>Account Name</label>
+            <select required value={form.account_name} onChange={(e) => handleChange("account_name", e.target.value)}>
+              {ACCOUNT_OPTIONS.map((a) => <option key={a} value={a}>{ACCOUNT_LABELS[a]}</option>)}
+            </select>
+          </div>
+
+          <div className="mgmt-field">
             <label>Description (optional)</label>
             <textarea rows={2} value={form.description} onChange={(e) => handleChange("description", e.target.value)} placeholder="Notes..." />
           </div>
@@ -211,12 +224,13 @@ export default function OutgoForm() {
                 <th>Gross</th>
                 <th>GST Amt</th>
                 <th>Net Expense</th>
+                <th>Account</th>
                 <th>Description</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {entries.length === 0 && <tr><td colSpan={8} style={{ textAlign: "center", color: "#9ca3af" }}>No entries yet</td></tr>}
+              {entries.length === 0 && <tr><td colSpan={9} style={{ textAlign: "center", color: "#9ca3af" }}>No entries yet</td></tr>}
               {entries.map((e) => {
                 const gross = Number(e.gross_amount || e.amount || 0);
                 const gst = Number(e.gst_amount || 0);
@@ -233,6 +247,7 @@ export default function OutgoForm() {
                     <td>₹{gross.toLocaleString("en-IN")}</td>
                     <td>₹{gst.toLocaleString("en-IN")}</td>
                     <td style={{ fontWeight: 700, color: "#dc2626" }}>₹{net.toLocaleString("en-IN")}</td>
+                    <td>{ACCOUNT_LABELS[e.account_name] || e.account_name || "—"}</td>
                     <td>{e.description || "—"}</td>
                     <td><button className="mgmt-btn-danger" onClick={() => handleDelete(e.id)}>Delete</button></td>
                   </tr>
