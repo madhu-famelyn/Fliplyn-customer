@@ -170,8 +170,10 @@ export default function StallSalesReport() {
 
   // Extract company name from email
   const getCompanyName = (email) => {
-    if (!email) return "Unknown";
-    return email.split("@")[1]?.split(".")[0] || "Unknown";
+    if (!email || !email.includes("@")) return "Unknown";
+    const domain = email.split("@")[1].toLowerCase();
+    const parts = domain.split(".");
+    return parts[0] || "Unknown";
   };
 
   // Get all unique companies for dropdown
@@ -184,7 +186,12 @@ export default function StallSalesReport() {
 
   // Apply company + payment filters
   const filteredOrders = orders.filter((order) => {
-    const companyMatch = companyFilter === "all" || getCompanyName(order.user_email) === companyFilter;
+    const orderEmail = (order.user_email || "").toLowerCase();
+    const targetComp = companyFilter.toLowerCase();
+    const companyMatch =
+      companyFilter === "all" ||
+      getCompanyName(order.user_email).toLowerCase() === targetComp ||
+      orderEmail.includes(targetComp);
     const paymentMatch = paymentFilter === "all" || order.paymentType === paymentFilter;
     return companyMatch && paymentMatch;
   });

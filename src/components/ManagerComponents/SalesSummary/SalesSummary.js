@@ -6,7 +6,10 @@ import * as XLSX from "xlsx";
 
 const API_BASE = "https://admin-aged-field-2794.fly.dev";
 
-const formatAmount = (value) => (!value ? 0 : Math.floor(value));
+const formatAmount = (value) => {
+  const num = Number(value || 0);
+  return num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
 
 /* ── DATE FILTER ── */
 const DateRangeFilter = ({ dateFilter, setDateFilter, startDate, setStartDate, endDate, setEndDate }) => (
@@ -65,7 +68,7 @@ const StatsStrip = ({ data, mode }) => {
         <div className="om-summary-stat-card" key={card.label}>
           <div className="om-summary-stat-label">{card.label}</div>
           <div className="om-summary-stat-value">
-            {card.raw ? card.value : `₹${formatAmount(card.value).toLocaleString("en-IN")}`}
+            {card.raw ? card.value : `₹${formatAmount(card.value)}`}
           </div>
           <span className="om-summary-stat-icon">{card.icon}</span>
         </div>
@@ -108,7 +111,7 @@ const SalesTable = ({ data, type }) => {
   const AmountCell = ({ value }) => (
     <span className="om-summary-amount">
       <span className="om-summary-currency">₹</span>
-      {formatAmount(value).toLocaleString("en-IN")}
+      {formatAmount(value)}
     </span>
   );
 
@@ -273,28 +276,30 @@ export default function SalesSummary() {
     const filteredSalesData = salesData.filter(item => (item.outlet || item.stall_name) !== "Total");
     let data;
 
+    const formatExcel = (val) => Number(val || 0).toFixed(2);
+
     if (mode === "stall") {
       data = filteredSalesData.map((s) => ({
         Outlet: s.outlet || s.stall_name,
-        "Prepaid Net": formatAmount(s.prepaid_after_deduction),
-        "Prepaid Total": formatAmount(s.prepaid_total_amount),
-        "Postpaid Net": formatAmount(s.postpaid_net || s.postpaid_net_amount),
-        "Postpaid Total": formatAmount(s.postpaid_total || s.postpaid_total_amount),
+        "Prepaid Net": formatExcel(s.prepaid_after_deduction),
+        "Prepaid Total": formatExcel(s.prepaid_total_amount),
+        "Postpaid Net": formatExcel(s.postpaid_net || s.postpaid_net_amount),
+        "Postpaid Total": formatExcel(s.postpaid_total || s.postpaid_total_amount),
       }));
       const tPrepaidNet = filteredSalesData.reduce((a, s) => a + Number(s.prepaid_after_deduction || 0), 0);
       const tPrepaidTotal = filteredSalesData.reduce((a, s) => a + Number(s.prepaid_total_amount || 0), 0);
       const tPostNet = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_net || s.postpaid_net_amount || 0), 0);
       const tPostTotal = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_total || s.postpaid_total_amount || 0), 0);
-      data.push({ Outlet: "Total", "Prepaid Net": formatAmount(tPrepaidNet), "Prepaid Total": formatAmount(tPrepaidTotal), "Postpaid Net": formatAmount(tPostNet), "Postpaid Total": formatAmount(tPostTotal) });
+      data.push({ Outlet: "Total", "Prepaid Net": formatExcel(tPrepaidNet), "Prepaid Total": formatExcel(tPrepaidTotal), "Postpaid Net": formatExcel(tPostNet), "Postpaid Total": formatExcel(tPostTotal) });
     } else {
       data = filteredSalesData.map((s) => ({
         Outlet: s.outlet || s.stall_name,
-        "Postpaid Net": formatAmount(s.postpaid_net || s.postpaid_net_amount),
-        "Postpaid Total": formatAmount(s.postpaid_total || s.postpaid_total_amount),
+        "Postpaid Net": formatExcel(s.postpaid_net || s.postpaid_net_amount),
+        "Postpaid Total": formatExcel(s.postpaid_total || s.postpaid_total_amount),
       }));
       const tPostNet = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_net || s.postpaid_net_amount || 0), 0);
       const tPostTotal = filteredSalesData.reduce((a, s) => a + Number(s.postpaid_total || s.postpaid_total_amount || 0), 0);
-      data.push({ Outlet: "Total", "Postpaid Net": formatAmount(tPostNet), "Postpaid Total": formatAmount(tPostTotal) });
+      data.push({ Outlet: "Total", "Postpaid Net": formatExcel(tPostNet), "Postpaid Total": formatExcel(tPostTotal) });
     }
 
     const ws = XLSX.utils.json_to_sheet(data);
