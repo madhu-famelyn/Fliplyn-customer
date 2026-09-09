@@ -1,0 +1,715 @@
+.edit-combo-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.edit-combo-modal-card {
+  background: #ffffff;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 580px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 30px -5px rgba(0, 0, 0, 0.25), 0 10px 15px -5px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-combo-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 10;
+}
+
+.edit-combo-modal-header h3 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.edit-combo-modal-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.edit-combo-modal-close {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.edit-combo-modal-close:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.edit-combo-error-banner {
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #b91c1c;
+  padding: 10px 16px;
+  margin: 14px 24px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.edit-combo-modal-body {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.edit-combo-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.edit-combo-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.edit-combo-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.edit-combo-badge-count {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.edit-combo-input,
+.edit-combo-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0f172a;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.edit-combo-input:focus,
+.edit-combo-textarea:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.1);
+}
+
+.edit-combo-textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* Image Uploader */
+.edit-combo-image-uploader {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.edit-combo-image-uploader:hover {
+  border-color: #ff6a00;
+  background: #fffbf7;
+}
+
+.edit-combo-image-uploader.has-image {
+  padding: 0;
+  border-style: solid;
+  border-color: #e2e8f0;
+  height: 160px;
+}
+
+.edit-combo-dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.edit-combo-upload-icon {
+  font-size: 28px;
+}
+
+.edit-combo-upload-text {
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+}
+
+.edit-combo-upload-text strong {
+  color: #ff6a00;
+}
+
+.edit-combo-upload-hint {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.edit-combo-preview-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.edit-combo-preview-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+}
+
+.edit-combo-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.edit-combo-preview-container:hover .edit-combo-preview-overlay {
+  opacity: 1;
+}
+
+.edit-combo-img-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.edit-combo-change-img-btn {
+  background: none;
+  border: none;
+  color: #ff6a00;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.edit-combo-change-img-btn:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   SECTION 1: SELECTED PACKAGE ITEMS
+   ========================================================= */
+.edit-combo-items-empty {
+  background: #fff8f3;
+  border: 1px dashed #fed7aa;
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  color: #c2410c;
+}
+
+.edit-combo-selected-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff7ed;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ffedd5;
+}
+
+.edit-combo-selected-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #fed7aa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.edit-combo-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.edit-combo-veg-indicator {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.edit-combo-veg-indicator.veg {
+  color: #16a34a;
+}
+
+.edit-combo-veg-indicator.non-veg {
+  color: #dc2626;
+}
+
+.edit-combo-item-texts {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.edit-combo-item-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edit-combo-item-unit-price {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.edit-combo-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.edit-combo-qty-stepper {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.edit-combo-qty-btn {
+  background: #ffffff;
+  border: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.edit-combo-qty-btn:hover {
+  background: #fed7aa;
+  color: #c2410c;
+}
+
+.edit-combo-qty-val {
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.edit-combo-item-subtotal {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ff6a00;
+  min-width: 55px;
+  text-align: right;
+}
+
+.edit-combo-remove-btn {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.edit-combo-remove-btn:hover {
+  background: #ef4444;
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+/* =========================================================
+   SECTION 2: MENU BROWSER & SELECTOR
+   ========================================================= */
+.edit-combo-menu-browser {
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.edit-combo-menu-count {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.edit-combo-menu-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.edit-combo-menu-search {
+  flex: 1;
+  min-width: 160px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 12.5px;
+  outline: none;
+}
+
+.edit-combo-menu-search:focus {
+  border-color: #ff6a00;
+}
+
+.edit-combo-menu-filter-chips {
+  display: flex;
+  gap: 4px;
+}
+
+.edit-combo-filter-chip {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 12px;
+  color: #475569;
+  cursor: pointer;
+}
+
+.edit-combo-filter-chip.active {
+  background: #ff6a00;
+  color: #ffffff;
+  border-color: #ff6a00;
+  font-weight: 600;
+}
+
+.edit-combo-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  max-height: 190px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.edit-combo-menu-loading,
+.edit-combo-menu-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.edit-combo-menu-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.edit-combo-menu-card:hover {
+  border-color: #fdba74;
+}
+
+.edit-combo-menu-card.selected {
+  background: #fffbf7;
+  border-color: #fed7aa;
+}
+
+.edit-combo-menu-card-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.edit-combo-menu-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.edit-combo-menu-price {
+  font-size: 11.5px;
+  color: #ff6a00;
+  font-weight: 700;
+}
+
+.edit-combo-menu-card-right {
+  flex-shrink: 0;
+}
+
+.edit-combo-add-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #ff6a00;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.edit-combo-add-btn:hover {
+  background: #ff6a00;
+  color: #ffffff;
+  border-color: #ff6a00;
+}
+
+.edit-combo-menu-added-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edit-combo-added-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.edit-combo-add-more-btn {
+  background: #ff6a00;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.edit-combo-add-more-btn:hover {
+  background: #ea580c;
+}
+
+/* =========================================================
+   SECTION 4: PRICING & DISCOUNTS
+   ========================================================= */
+.edit-combo-pricing-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.edit-combo-pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.edit-combo-readonly-price {
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #475569;
+}
+
+.edit-combo-price-input {
+  font-weight: 800;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.edit-combo-preset-discounts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.edit-combo-preset-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.edit-combo-preset-btn {
+  background: #ffffff;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.edit-combo-preset-btn:hover {
+  background: #ffedd5;
+  border-color: #ff6a00;
+}
+
+.edit-combo-discount-preview {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.edit-combo-discount-preview strong {
+  font-weight: 700;
+}
+
+/* =========================================================
+   FOOTER ACTIONS
+   ========================================================= */
+.edit-combo-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.edit-combo-cancel-btn {
+  padding: 10px 18px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.edit-combo-cancel-btn:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.edit-combo-save-btn {
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #ff6a00 0%, #ea580c 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 106, 0, 0.25);
+  transition: all 0.15s ease;
+}
+
+.edit-combo-save-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 106, 0, 0.35);
+}
+
+.edit-combo-save-btn:disabled,
+.edit-combo-cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 520px) {
+  .edit-combo-menu-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

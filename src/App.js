@@ -86,6 +86,7 @@ import ManagerCategory from "./components/ManagerComponents/AddCategory/Category
 import StallSalesReportOM from "./components/ManagerComponents/SalesSummary/SalesSummary";
 import B2CTransactions from "./components/ManagerComponents/B2CTransactions/B2CTransactions";
 import OMMenuList from "./components/ManagerComponents/MenuList/MenuList";
+import OMComboApprovals from "./components/ManagerComponents/ComboApprovals/OMComboApprovals";
 
 import BuildingManagerLogin from "./components/BuildingManager/BuildingManager";
 // import BuildingSalesReport from "./components/BuildingManager/BuilingMangerReport";
@@ -318,6 +319,7 @@ function App() {
                     <Route path="/sales-summary-om" element={<StallSalesReportOM />} />
                     <Route path="/b2c-transactions" element={<ManagerPrivateRoute element={<B2CTransactions />} />} />
                     <Route path="/om-menu-list" element={<ManagerPrivateRoute element={<OMMenuList />} />} />
+                    <Route path="/om-combo-approvals" element={<ManagerPrivateRoute element={<OMComboApprovals />} />} />
 
 
 

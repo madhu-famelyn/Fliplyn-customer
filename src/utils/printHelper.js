@@ -110,6 +110,13 @@ export const printViaRawBT = (orderDetails) => {
     const priceVal = Number(rawPriceVal ?? 0);
     const price = priceVal.toFixed(2).padStart(10, ' ');
     addText(`${name}${qty}${price}\n`);
+
+    // Print breakdown of component items in the combo for kitchen preparation
+    if (item.is_combo && Array.isArray(item.items_json)) {
+      item.items_json.forEach(sub => {
+        addText(`  * ${sub.quantity}x ${sub.name}\n`);
+      });
+    }
   });
   addText("--------------------------------\n");
 

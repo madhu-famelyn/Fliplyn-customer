@@ -5,6 +5,7 @@ import { useB2CAuth } from "../../AuthContex/B2CContext";
 
 const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
 const FOOD_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' style='background:%23f8fafc;width:100%25;height:100%25;'><rect x='3' y='3' width='18' height='18' rx='2' ry='2'/><circle cx='8.5' cy='8.5' r='1.5'/><polyline points='21 15 16 10 5 21'/></svg>";
+const COMBO_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100%25' height='100%25'><rect width='100' height='100' fill='%23fff7ed'/><circle cx='50' cy='46' r='30' fill='%23ffedd5'/><text x='50' y='52' font-size='28' text-anchor='middle' dominant-baseline='middle'>🍱</text><text x='50' y='82' font-size='9' font-weight='bold' fill='%23ea580c' text-anchor='middle' font-family='sans-serif' letter-spacing='0.5'>COMBO PACK</text></svg>";
 
 export default function B2CItemList({ items, itemsLoaded, searchTerm, setSearchTerm }) {
   const { b2cUser } = useB2CAuth();
@@ -167,10 +168,12 @@ export default function B2CItemList({ items, itemsLoaded, searchTerm, setSearchT
             const cartItem = cartItems.find((c) => c.id === item.id);
             const isInCart = !!cartItem;
 
+            const isCombo = !!item.is_combo || (item.name && item.name.includes("🍱"));
+            const fallbackImg = isCombo ? COMBO_PLACEHOLDER : FOOD_PLACEHOLDER;
             const hasFailed = failedImages[item.id];
             const isInvalidImg = !item.image_url || item.image_url === "None" || item.image_url === "null";
             const imageUrl = (hasFailed || isInvalidImg)
-              ? FOOD_PLACEHOLDER
+              ? fallbackImg
               : (item.image_url.startsWith("http") ? item.image_url : `${S3_BASE_URL}${item.image_url}`);
 
             return (
@@ -195,9 +198,40 @@ export default function B2CItemList({ items, itemsLoaded, searchTerm, setSearchT
 
                 <div className="item-info">
                   <h4 className="item-name">{item.name}</h4>
+                  {isCombo && item.description && (
+                    <p
+                      className="item-desc"
+                      style={{
+                        fontSize: "11px",
+                        color: "#6b7280",
+                        margin: "2px 0 6px",
+                        lineHeight: "1.35",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden"
+                      }}
+                    >
+                      {item.description}
+                    </p>
+                  )}
 
                   <div className="price-add-row">
-                    <span className="price">₹ {item.price}</span>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+                        <span className="price">₹ {item.price}</span>
+                        {item.regular_price && item.regular_price > item.price && (
+                          <span style={{ textDecoration: "line-through", color: "#9ca3af", fontSize: "11px", fontWeight: "500" }}>
+                            ₹{item.regular_price}
+                          </span>
+                        )}
+                      </div>
+                      {item.discount_percentage > 0 && (
+                        <span style={{ fontSize: "10px", color: "#16a34a", fontWeight: "600" }}>
+                          {item.discount_percentage}% OFF
+                        </span>
+                      )}
+                    </div>
 
                     {!isInCart ? (
                       <button

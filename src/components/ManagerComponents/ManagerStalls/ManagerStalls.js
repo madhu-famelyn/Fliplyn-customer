@@ -7,6 +7,7 @@ import "./ManagerStalls.css";
 
 /* ── icon map for action buttons ── */
 const ACTION_BUTTONS = [
+  { label: "Combo Approvals",    route: "/om-combo-approvals",   icon: "🍱" },
   { label: "Add Refund",         route: "/add-refund",           icon: "↩" },
   { label: "View Sales",         route: "/view-sales",           icon: "📊" },
   { label: "Add Stall",          route: "/add-stall",            icon: "＋" },
@@ -42,6 +43,7 @@ export default function ManagerEditStall() {
   const [stallData, setStallData]   = useState([]);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState("");
+  const [pendingCombosCount, setPendingCombosCount] = useState(0);
   const [editingStall, setEditingStall] = useState(null);
   const [formData, setFormData]     = useState({
     name:         "",
@@ -55,7 +57,7 @@ export default function ManagerEditStall() {
 
   const navigate = useNavigate();
 
-  /* ── Fetch stalls ── */
+  /* ── Fetch stalls & pending combos ── */
   useEffect(() => {
     if (!user) return;
 
@@ -81,7 +83,21 @@ export default function ManagerEditStall() {
       }
     };
 
+    const fetchPendingCombos = async () => {
+      if (!user?.building_id) return;
+      try {
+        const apiBase = process.env.REACT_APP_API_URL || "https://admin-aged-field-2794.fly.dev";
+        const res = await axios.get(`${apiBase}/combos/building/${user.building_id}`);
+        const list = Array.isArray(res.data) ? res.data : [];
+        const pending = list.filter((c) => c.approval_status === "PENDING").length;
+        setPendingCombosCount(pending);
+      } catch (err) {
+        console.error("Error fetching pending combos count:", err);
+      }
+    };
+
     fetchStalls();
+    fetchPendingCombos();
   }, [user]);
 
   /* ── Open edit modal ── */
@@ -182,12 +198,81 @@ export default function ManagerEditStall() {
               </span>
               Active
             </div>
+            <div
+              className="mgr-stat-pill"
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/om-combo-approvals")}
+              title="Click to view combo approvals"
+            >
+              <span
+                className="stat-dot"
+                style={{
+                  background: pendingCombosCount > 0 ? "#f59e0b" : "#22c55e",
+                  boxShadow: pendingCombosCount > 0 ? "0 0 6px #f59e0b" : "0 0 6px #22c55e",
+                }}
+              />
+              <span
+                className="stat-num"
+                style={{ color: pendingCombosCount > 0 ? "#f59e0b" : undefined }}
+              >
+                {loading ? "—" : pendingCombosCount}
+              </span>
+              Pending Combos
+            </div>
           </div>
         </div>
       </div>
 
       {/* ── Main Content ── */}
       <div className="mgr-content">
+
+        {/* Pending Combos Alert Banner */}
+        {pendingCombosCount > 0 && (
+          <div
+            className="mgr-pending-combos-alert"
+            onClick={() => navigate("/om-combo-approvals")}
+            style={{
+              background: "linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)",
+              border: "1.5px solid #fde68a",
+              borderRadius: "14px",
+              padding: "14px 20px",
+              marginBottom: "20px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              cursor: "pointer",
+              boxShadow: "0 4px 14px rgba(245, 158, 11, 0.12)",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              <span style={{ fontSize: "28px" }}>⚡</span>
+              <div>
+                <strong style={{ display: "block", color: "#92400e", fontSize: "15px" }}>
+                  {pendingCombosCount} Combo Pack{pendingCombosCount > 1 ? "s" : ""} Awaiting OM Approval
+                </strong>
+                <span style={{ color: "#b45309", fontSize: "13px" }}>
+                  Vendors have submitted combo packs for your building. Approve them to make them live.
+                </span>
+              </div>
+            </div>
+            <button
+              style={{
+                background: "#ea580c",
+                color: "#ffffff",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "8px",
+                fontWeight: "700",
+                fontSize: "13.5px",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Review & Approve →
+            </button>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="mgr-actions-section">

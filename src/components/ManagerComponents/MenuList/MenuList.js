@@ -327,6 +327,13 @@ export default function OMMenuList() {
         </div>
 
         <div className="om-ml-export-buttons">
+          <button
+            className="om-ml-export-btn"
+            style={{ background: "#ea580c", color: "#ffffff", borderColor: "#ea580c" }}
+            onClick={() => navigate("/om-combo-approvals")}
+          >
+            🍱 Combo Approvals
+          </button>
           <button className="om-ml-export-btn pdf" onClick={exportToPDF}>
             📄 Download PDF (Stall Pages)
           </button>
