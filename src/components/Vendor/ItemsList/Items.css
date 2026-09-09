@@ -3,17 +3,19 @@
 }
 
 .vix-header {
-  margin-top: 11vh;
+  margin-top: 75px; /* clears the 65px fixed header */
   margin-bottom: 16px;
   margin-left: 10px;
   margin-right: 10px;
-  padding-top: 1vh;
+  padding-top: 4px;
 }
 
 .vix-title-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  z-index: 1; /* ensures the row sits above any overlapping fixed elements */
 }
 
 .vix-title {
@@ -290,16 +292,28 @@
 
 
 @media (max-width: 640px) {
+  .vix-header {
+    margin-top: 75px; /* slightly tighter on mobile but still clears the 65px fixed header */
+  }
+
   .vix-controls {
     flex-wrap: wrap;
   }
 
   .vix-search {
     width: 100%;
+    min-width: unset;
   }
 
   .vix-filters {
     width: 100%;
     justify-content: flex-end;
+  }
+
+  .vix-report-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    width: auto;
+    min-width: 80px;
   }
 }

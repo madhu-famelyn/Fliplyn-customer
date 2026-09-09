@@ -55,7 +55,7 @@ import VendorLogin from "./components/Vendor/Login/Login";
 import VendorItems from "./components/Vendor/ItemsList/Items";
 import VendorStalls from "./components/Vendor/Stalls/Stalls";
 import StallSalesReportVendor from "./components/Vendor/SalesSummary/SalesSummary";
-// import ReportsPage from "./components/Vendor/ItemsList/Reports";
+import ReportsPage from "./components/Vendor/ItemsList/Reports";
 import OrdersByEmail from "./components/LayOutComponents/GetOrder/GetOrder";
 import WalletUploadAdmin from "./components/LayOutComponents/ManagerWallet/ManagerWallet";
 import ChangePassword from "./components/LayOutComponents/ChangePassword/ChangePassword";
@@ -293,7 +293,7 @@ function App() {
                     <Route path="/user" element={<User />} />
                     <Route path="/vendor-stall" element={<VendorStalls />} />
                     <Route path="/items-vendor/:id" element={<VendorPrivateRoute element={<VendorItems />} />} />
-                    <Route path="/stall/:stallId/reports" element={<StallSalesReportVendor />} />
+                    <Route path="/stall/:stallId/reports" element={<VendorPrivateRoute element={<ReportsPage />} />} />
                     <Route path="/orders-status" element={<OrderStatus />} />
                     <Route path="/sales-report-vendor" element={<StallSalesReportVendor />} />
 

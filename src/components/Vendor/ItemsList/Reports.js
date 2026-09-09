@@ -1,75 +1,91 @@
 // src/pages/vendor/ReportsPage.js
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import * as XLSX from "xlsx";
+import { useVendorAuth } from "../../AuthContex/VendorContext";
+import TokenHeader from "../../LayOutComponents/PrintToken/Header";
+import {
+  FiArrowLeft,
+  FiRefreshCw,
+  FiDownload,
+  FiSearch,
+  FiShoppingBag,
+  FiDollarSign,
+  FiFileText,
+  FiPercent,
+  FiCheckCircle,
+  FiX,
+  FiClock,
+} from "react-icons/fi";
 import "./Reports.css";
 
 const ReportsPage = () => {
   const { stallId } = useParams();
+  const navigate = useNavigate();
+  const { token } = useVendorAuth();
 
   const [orders, setOrders] = useState([]);
-  const [filter, setFilter] = useState("today");
-  const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [stallName, setStallName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Extra filters
-  const [selectedCompany, setSelectedCompany] = useState("all");
-  const [selectedPayment, setSelectedPayment] = useState("all");
+  /* ================= DATE HELPERS (TODAY) ================= */
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
-  /* ================= DATE HELPERS ================= */
-  const formatDate = (date) => date.toISOString().split("T")[0];
-
-  const getDateRange = useCallback(() => {
+  const getTodayRange = useCallback(() => {
     const today = new Date();
-
-    if (filter === "today") {
-      const end = new Date(today);
-      end.setDate(today.getDate() + 1);
-      return { start: formatDate(today), end: formatDate(end) };
-    }
-
-    if (filter === "week") {
-      const start = new Date(today);
-      start.setDate(today.getDate() - today.getDay());
-      const end = new Date(today);
-      end.setDate(today.getDate() + 1);
-      return { start: formatDate(start), end: formatDate(end) };
-    }
-
-    if (filter === "month") {
-      const start = new Date(today.getFullYear(), today.getMonth(), 1);
-      const end = new Date(today);
-      end.setDate(today.getDate() + 1);
-      return { start: formatDate(start), end: formatDate(end) };
-    }
-
-    if (filter === "custom" && customRange.start && customRange.end) {
-      return { start: customRange.start, end: customRange.end };
-    }
-
     const end = new Date(today);
     end.setDate(today.getDate() + 1);
     return { start: formatDate(today), end: formatDate(end) };
-  }, [filter, customRange]);
+  }, []);
+
+  /* ================= FETCH STALL NAME ================= */
+  useEffect(() => {
+    if (!stallId || !token) return;
+
+    const fetchStallInfo = async () => {
+      try {
+        const res = await axios.get(
+          `https://admin-aged-field-2794.fly.dev/stalls/${stallId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (res.data?.name) {
+          setStallName(res.data.name);
+        }
+      } catch (err) {
+        console.error("Error fetching stall info:", err);
+      }
+    };
+
+    fetchStallInfo();
+  }, [stallId, token]);
 
   /* ================= FETCH ORDERS ================= */
   const fetchOrders = useCallback(async () => {
-    if (!stallId) return;
+    if (!stallId || !token) return;
 
-    const { start, end } = getDateRange();
+    const { start, end } = getTodayRange();
     setLoading(true);
 
     try {
       const res = await axios.get(
         `https://admin-aged-field-2794.fly.dev/orders/by-stall/${stallId}/range`,
-        { params: { start_date: start, end_date: end } }
+        {
+          params: { start_date: start, end_date: end },
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       const data = res.data || [];
       setOrders(data);
 
-      if (data.length && data[0].order_details?.length) {
+      if (data.length && data[0].order_details?.length && !stallName) {
         setStallName(data[0].order_details[0].stall_name);
       }
     } catch (err) {
@@ -77,211 +93,330 @@ const ReportsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [stallId, getDateRange]);
+  }, [stallId, token, getTodayRange, stallName]);
 
   useEffect(() => {
-    if (filter === "custom" && (!customRange.start || !customRange.end)) return;
     fetchOrders();
-  }, [stallId, filter, customRange, fetchOrders]);
+  }, [stallId, fetchOrders]);
 
-  /* ================= COMPANY LIST ================= */
-  const companyList = useMemo(() => {
-    const set = new Set();
-    orders.forEach((o) => {
-      const domain = o.user_email?.split("@")[1];
-      if (domain) set.add(domain);
-    });
-    return Array.from(set).sort();
-  }, [orders]);
-
-  /* ================= FILTERED ORDERS ================= */
+  /* ================= FILTERED ORDERS (BY SEARCH) ================= */
   const filteredOrders = useMemo(() => {
+    if (!searchTerm.trim()) return orders;
+    const q = searchTerm.toLowerCase().trim();
+
     return orders.filter((o) => {
-      const company = o.user_email?.split("@")[1];
-      const paymentType = o.paid_with_wallet ? "Postpaid" : "Prepaid";
-
-      if (selectedCompany !== "all" && company !== selectedCompany) return false;
-      if (selectedPayment !== "all" && paymentType !== selectedPayment)
-        return false;
-
-      return true;
+      const matchToken = o.token_number?.toLowerCase().includes(q);
+      const matchItems = o.order_details?.some((i) =>
+        i.name?.toLowerCase().includes(q)
+      );
+      return matchToken || matchItems;
     });
-  }, [orders, selectedCompany, selectedPayment]);
+  }, [orders, searchTerm]);
 
   /* ================= CALCULATIONS ================= */
-
-  // Net amount per order (price × qty)
   const getOrderNetAmount = (order) =>
-    order.order_details.reduce(
-      (sum, i) => sum + i.price * i.quantity,
+    (order.order_details || []).reduce(
+      (sum, i) => sum + (i.price || 0) * (i.quantity || 1),
       0
     );
 
-  const totalNetAmount = filteredOrders.reduce(
-    (sum, o) => sum + getOrderNetAmount(o),
-    0
-  );
+  const totalNetAmount = useMemo(() => {
+    return filteredOrders.reduce((sum, o) => sum + getOrderNetAmount(o), 0);
+  }, [filteredOrders]);
 
-  const totalGST = filteredOrders.reduce(
-    (sum, o) => sum + (o.total_gst || 0),
-    0
-  );
+  const totalGST = useMemo(() => {
+    return filteredOrders.reduce((sum, o) => sum + (o.total_gst || 0), 0);
+  }, [filteredOrders]);
 
-  const totalRoundOff = filteredOrders.reduce(
-    (sum, o) => sum + (o.round_off || 0),
-    0
-  );
+  const totalAmount = useMemo(() => {
+    return filteredOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+  }, [filteredOrders]);
 
-  const totalAmount = filteredOrders.reduce(
-    (sum, o) => sum + (o.total_amount || 0),
-    0
-  );
+  /* ================= EXCEL EXPORT ================= */
+  const handleExportExcel = () => {
+    if (!filteredOrders.length) {
+      alert("No order data to export.");
+      return;
+    }
+
+    const exportRows = filteredOrders.map((o) => {
+      const d = new Date(o.created_datetime);
+      const itemsList = (o.order_details || [])
+        .map((i) => `${i.name} (x${i.quantity}) - ₹${(i.price || 0) * (i.quantity || 1)}`)
+        .join("; ");
+      const net = getOrderNetAmount(o);
+
+      return {
+        "Token No": o.token_number || "-",
+        "Date": d.toLocaleDateString(),
+        "Time": d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+        "Items Ordered": itemsList,
+        "Net Amount (₹)": Number(net.toFixed(2)),
+        "Total GST (₹)": Number((o.total_gst || 0).toFixed(2)),
+        "Total Amount (₹)": Number((o.total_amount || 0).toFixed(2)),
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportRows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Reports");
+
+    const safeStallName = (stallName || "Stall").replace(/[^a-zA-Z0-9]/g, "_");
+    const dateStr = formatDate(new Date());
+    XLSX.writeFile(workbook, `${safeStallName}_Sales_Report_Today_${dateStr}.xlsx`);
+  };
 
   /* ================= UI ================= */
   return (
-    <div className="reports-container">
-      <h1>Reports for Stall: {stallName || "Loading..."}</h1>
+    <div className="reports-page-wrapper">
+      <TokenHeader />
 
-      {/* FILTERS */}
-      <div className="filter-controls">
-        <label>Date:</label>
-        <select
-          value={filter}
-          onChange={(e) => {
-            setFilter(e.target.value);
-            if (e.target.value !== "custom") {
-              setCustomRange({ start: "", end: "" });
-            }
-          }}
-        >
-          <option value="today">Today</option>
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-          <option value="custom">Custom</option>
-        </select>
+      <div className="reports-container">
+        {/* TOP HEADER CARD */}
+        <header className="reports-header-card">
+          <div className="reports-header-left">
+            <button
+              className="reports-back-btn"
+              onClick={() => navigate(stallId ? `/items-vendor/${stallId}` : "/vendor-stall")}
+              title="Back to Stall"
+            >
+              <FiArrowLeft className="btn-icon" />
+              <span>Back to Stall</span>
+            </button>
+            <div className="reports-title-area">
+              <div className="reports-badge">Today's Reports</div>
+              <h1 className="reports-title">{stallName || "Stall"} Reports</h1>
+            </div>
+          </div>
 
-        <label>Company:</label>
-        <select
-          value={selectedCompany}
-          onChange={(e) => setSelectedCompany(e.target.value)}
-        >
-          <option value="all">All Companies</option>
-          {companyList.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+          <div className="reports-header-actions">
+            <button
+              className="reports-btn-secondary"
+              onClick={fetchOrders}
+              disabled={loading}
+              title="Refresh Data"
+            >
+              <FiRefreshCw className={`btn-icon ${loading ? "spinning" : ""}`} />
+              <span>Refresh</span>
+            </button>
 
-        <label>Payment:</label>
-        <select
-          value={selectedPayment}
-          onChange={(e) => setSelectedPayment(e.target.value)}
-        >
-          <option value="all">All</option>
-          <option value="Prepaid">Prepaid</option>
-          <option value="Postpaid">Postpaid</option>
-        </select>
+            <button
+              className="reports-btn-primary"
+              onClick={handleExportExcel}
+              disabled={loading || filteredOrders.length === 0}
+              title="Export report to Excel"
+            >
+              <FiDownload className="btn-icon" />
+              <span>Export Excel</span>
+            </button>
+          </div>
+        </header>
 
-        {filter === "custom" && (
-          <>
+        {/* KPI STAT CARDS */}
+        <section className="reports-stats-grid">
+          <div className="stat-card stat-card-revenue">
+            <div className="stat-icon-wrapper revenue-icon">
+              <FiDollarSign className="stat-icon" />
+            </div>
+            <div className="stat-info">
+              <span className="stat-label">Total Revenue</span>
+              <h3 className="stat-value">₹{totalAmount.toFixed(2)}</h3>
+              <span className="stat-subtext">Total collection after GST</span>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-icon-wrapper net-icon">
+              <FiShoppingBag className="stat-icon" />
+            </div>
+            <div className="stat-info">
+              <span className="stat-label">Net Sales</span>
+              <h3 className="stat-value">₹{totalNetAmount.toFixed(2)}</h3>
+              <span className="stat-subtext">Base item total</span>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-icon-wrapper gst-icon">
+              <FiPercent className="stat-icon" />
+            </div>
+            <div className="stat-info">
+              <span className="stat-label">Total GST</span>
+              <h3 className="stat-value">₹{totalGST.toFixed(2)}</h3>
+              <span className="stat-subtext">Tax collected (5%)</span>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-icon-wrapper orders-icon">
+              <FiCheckCircle className="stat-icon" />
+            </div>
+            <div className="stat-info">
+              <span className="stat-label">Total Orders</span>
+              <h3 className="stat-value">{filteredOrders.length}</h3>
+              <span className="stat-subtext">Today's total orders</span>
+            </div>
+          </div>
+        </section>
+
+        {/* SEARCH BAR SECTION */}
+        <section className="reports-filter-section">
+          <div className="search-input-wrapper">
+            <FiSearch className="search-icon" />
             <input
-              type="date"
-              value={customRange.start}
-              onChange={(e) =>
-                setCustomRange({ ...customRange, start: e.target.value })
-              }
+              type="text"
+              placeholder="Search token number or item name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
             />
-            <input
-              type="date"
-              value={customRange.end}
-              onChange={(e) =>
-                setCustomRange({ ...customRange, end: e.target.value })
-              }
-            />
-            <button onClick={fetchOrders}>Apply</button>
-          </>
-        )}
-      </div>
+            {searchTerm && (
+              <button
+                type="button"
+                className="search-clear-btn"
+                onClick={() => setSearchTerm("")}
+              >
+                <FiX />
+              </button>
+            )}
+          </div>
+        </section>
 
-      {loading ? (
-        <p>Loading reports...</p>
-      ) : (
-        <>
-          <div className="table-wrapper">
-            <table className="orders-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Company</th>
-                  <th>Payment</th>
-                  <th>Token</th>
-                  <th>Items (Price)</th>
-                  <th>Net Amount</th>
-                  <th>Total GST</th>
-                  <th>Round Off</th>
-                  <th>Total Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.length === 0 ? (
+        {/* DATA TABLE / CONTENT */}
+        <section className="reports-table-card">
+          <div className="table-card-header">
+            <div className="table-header-title">
+              <h2>Orders & Transactions</h2>
+              <span className="table-count-badge">
+                {filteredOrders.length} {filteredOrders.length === 1 ? "Order" : "Orders"}
+              </span>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="reports-loading-state">
+              <div className="spinner"></div>
+              <p>Fetching sales records...</p>
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            <div className="reports-empty-state">
+              <div className="empty-icon-circle">
+                <FiFileText className="empty-icon" />
+              </div>
+              <h3>No Orders Found</h3>
+              <p>
+                {searchTerm
+                  ? "No orders match your search query."
+                  : "No orders found for today."}
+              </p>
+              {searchTerm && (
+                <button
+                  type="button"
+                  className="empty-reset-btn"
+                  onClick={() => setSearchTerm("")}
+                >
+                  Clear Search
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="table-scroll-container">
+              <table className="modern-reports-table">
+                <thead>
                   <tr>
-                    <td colSpan="10" style={{ textAlign: "center" }}>
-                      No orders found.
-                    </td>
+                    <th className="col-token">Token</th>
+                    <th className="col-datetime">Date & Time</th>
+                    <th className="col-items">Items & Details</th>
+                    <th className="col-amount text-right">Net Amount</th>
+                    <th className="col-gst text-right">GST</th>
+                    <th className="col-total text-right">Total Amount</th>
                   </tr>
-                ) : (
-                  filteredOrders.map((o) => {
+                </thead>
+                <tbody>
+                  {filteredOrders.map((o) => {
                     const d = new Date(o.created_datetime);
-                    const company =
-                      o.user_email?.split("@")[1] || "-";
-                    const payment = o.paid_with_wallet
-                      ? "Postpaid"
-                      : "Prepaid";
-
                     const netAmount = getOrderNetAmount(o);
 
                     return (
-                      <tr key={o.id}>
-                        <td>{d.toLocaleDateString()}</td>
-                        <td>{d.toLocaleTimeString()}</td>
-                        <td>{company}</td>
-                        <td>{payment}</td>
-                        <td>{o.token_number}</td>
-
-                        {/* ITEMS + PRICE */}
-                        <td>
-                          {o.order_details.map((i) => (
-                            <div key={i.item_id}>
-                              {i.name} × {i.quantity} — ₹
-                              {i.price * i.quantity}
-                            </div>
-                          ))}
+                      <tr key={o.id} className="report-row">
+                        <td className="col-token">
+                          <span className="token-badge">{o.token_number || "-"}</span>
                         </td>
 
-                        <td>₹{netAmount.toFixed(2)}</td>
-                        <td>₹{o.total_gst?.toFixed(2) || "0.00"}</td>
-                        <td>₹{o.round_off?.toFixed(2) || "0.00"}</td>
-                        <td>₹{o.total_amount.toFixed(2)}</td>
+                        <td className="col-datetime">
+                          <div className="datetime-cell">
+                            <span className="cell-date">
+                              {d.toLocaleDateString(undefined, {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </span>
+                            <span className="cell-time">
+                              <FiClock className="time-icon" />
+                              {d.toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        </td>
+
+                        <td className="col-items">
+                          <div className="items-list-cell">
+                            {o.order_details && o.order_details.length > 0 ? (
+                              o.order_details.map((item, idx) => (
+                                <div key={idx} className="item-row-entry">
+                                  <span className="item-name">{item.name}</span>
+                                  <span className="item-qty">× {item.quantity}</span>
+                                  <span className="item-subtotal">
+                                    ₹{((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                                  </span>
+                                </div>
+                              ))
+                            ) : (
+                              <span className="no-items">-</span>
+                            )}
+                          </div>
+                        </td>
+
+                        <td className="col-amount text-right cell-numeric">
+                          ₹{netAmount.toFixed(2)}
+                        </td>
+
+                        <td className="col-gst text-right cell-numeric">
+                          ₹{(o.total_gst || 0).toFixed(2)}
+                        </td>
+
+                        <td className="col-total text-right cell-numeric cell-total">
+                          ₹{(o.total_amount || 0).toFixed(2)}
+                        </td>
                       </tr>
                     );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* TOTAL SUMMARY */}
-          <div className="totals-summary">
-            <h2>Total Summary</h2>
-            <p>Net Amount: ₹{totalNetAmount.toFixed(2)}</p>
-            <p>Total GST: ₹{totalGST.toFixed(2)}</p>
-            <p>Round Off: ₹{totalRoundOff.toFixed(2)}</p>
-            <h2>Total Amount: ₹{totalAmount.toFixed(2)}</h2>
-          </div>
-        </>
-      )}
+                  })}
+                </tbody>
+                <tfoot>
+                  <tr className="table-totals-row">
+                    <td colSpan="3" className="totals-label">
+                      Summary Total ({filteredOrders.length} orders)
+                    </td>
+                    <td className="text-right cell-numeric">
+                      ₹{totalNetAmount.toFixed(2)}
+                    </td>
+                    <td className="text-right cell-numeric">
+                      ₹{totalGST.toFixed(2)}
+                    </td>
+                    <td className="text-right cell-numeric totals-grand-amount">
+                      ₹{totalAmount.toFixed(2)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 };

@@ -10,13 +10,14 @@
   border-bottom: 1px solid #d0d0d0;
   z-index: 9999;          /* keep it above all content */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;       /* prevent ::after from bleeding below and blocking clicks */
 }
 
-/* Optional: create a spacer element inside the header file itself */
+/* This ::after is clipped inside the fixed header by overflow:hidden above */
 .app-header::after {
   content: "";
   display: block;
-  height: 65px;           /* same as header height */
+  height: 65px;
   width: 100%;
 }
 

@@ -160,92 +160,96 @@ export default function StallSalesReportVendor() {
   const todaysSalesTotal = totals.prepaid_net + totals.postpaid_net;
   const todaysOrderCount = sortedSales.length;
 
-  // Calculate sales for different periods
-  const calculatePeriodSales = useCallback(async (startDate, endDate) => {
-    if (!stallIds || stallIds.length === 0) return { net: 0, orders: 0 };
-
-    try {
-      // Fetch individual orders to get accurate order count
-      const allOrders = [];
-
-      for (const stallId of stallIds) {
-        try {
-          const res = await axios.get(
-            `${API_BASE}/orders/by-stall/${stallId}/range`,
-            {
-              params: {
-                start_date: `${startDate}T00:00:00`,
-                end_date: `${endDate}T23:59:59`,
-              },
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          const orders = res.data || [];
-          allOrders.push(...orders);
-        } catch (error) {
-          console.error(`Error fetching orders for stall ${stallId}:`, error);
-        }
-      }
-
-      // Get net amount from sales-summary API
-      const url =
-        `${API_BASE}/orders/sales-summary/updated` +
-        `?stall_ids=${stallIds.join(",")}` +
-        `&start_date=${startDate}T00:00:00` +
-        `&end_date=${endDate}T23:59:59`;
-
-      const res = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const stalls = res.data?.stalls || [];
-      const totalNet = stalls.reduce((sum, s) => sum + (s.prepaid_after_deduction + s.postpaid_net_amount || 0), 0);
-      const totalOrders = allOrders.length;
-
-      console.log("Period Sales - Orders:", totalOrders, "Net:", totalNet);
-      return { net: totalNet, orders: totalOrders };
-    } catch (err) {
-      console.error("Period sales calculation error:", err);
-      return { net: 0, orders: 0 };
-    }
-  }, [stallIds, token]);
-
   const [periodSales, setPeriodSales] = useState({
     today: { net: 0, orders: 0 },
     thisWeek: { net: 0, orders: 0 },
     thisMonth: { net: 0, orders: 0 },
   });
 
+  // Fetch all period sales in a single batch: monthly range covers today + this week.
+  // Filter client-side to derive per-period order counts.
   useEffect(() => {
     const fetchPeriodSales = async () => {
+      if (!stallIds || stallIds.length === 0) return;
+
       const today = new Date();
       const todayStr = formatDate(today);
 
-      // Today
-      const todayData = await calculatePeriodSales(todayStr, todayStr);
-
-      // This Week
       const weekStart = new Date(today);
       weekStart.setDate(today.getDate() - today.getDay());
-      const thisWeekData = await calculatePeriodSales(formatDate(weekStart), todayStr);
+      const weekStartStr = formatDate(weekStart);
 
-      // This Month
       const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-      const thisMonthData = await calculatePeriodSales(formatDate(monthStart), todayStr);
+      const monthStartStr = formatDate(monthStart);
 
-      setPeriodSales({
-        today: todayData,
-        thisWeek: thisWeekData,
-        thisMonth: thisMonthData,
-      });
+      try {
+        // ── Single fetch: all orders for this month ──────────────────────
+        const allMonthOrders = [];
+        for (const stallId of stallIds) {
+          try {
+            const res = await axios.get(
+              `${API_BASE}/orders/by-stall/${stallId}/range`,
+              {
+                params: {
+                  start_date: `${monthStartStr}T00:00:00`,
+                  end_date: `${todayStr}T23:59:59`,
+                },
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
+            allMonthOrders.push(...(res.data || []));
+          } catch (err) {
+            console.error(`Error fetching monthly orders for stall ${stallId}:`, err);
+          }
+        }
+
+        // ── Single sales-summary fetch for the monthly net total ─────────
+        const summaryUrl =
+          `${API_BASE}/orders/sales-summary/updated` +
+          `?stall_ids=${stallIds.join(",")}` +
+          `&start_date=${monthStartStr}T00:00:00` +
+          `&end_date=${todayStr}T23:59:59`;
+
+        const summaryRes = await axios.get(summaryUrl, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const stalls = summaryRes.data?.stalls || [];
+        const monthNet = stalls.reduce(
+          (sum, s) => sum + ((s.prepaid_after_deduction || 0) + (s.postpaid_net_amount || 0)),
+          0
+        );
+
+        // ── Derive today and week counts by filtering client-side ────────
+        const todayOrders = allMonthOrders.filter((o) => {
+          const d = o.created_datetime?.slice(0, 10);
+          return d === todayStr;
+        });
+        const weekOrders = allMonthOrders.filter((o) => {
+          const d = o.created_datetime?.slice(0, 10);
+          return d >= weekStartStr && d <= todayStr;
+        });
+
+        // Net amounts for sub-periods are approximated from the orders' total_amount - total_gst.
+        const calcNet = (orders) =>
+          orders.reduce((sum, o) => {
+            const gross = parseFloat(o.total_amount || 0);
+            const gst = parseFloat(o.total_gst || 0) ||
+              (parseFloat(o.cgst || 0) + parseFloat(o.sgst || 0));
+            return sum + (gross - gst);
+          }, 0);
+
+        setPeriodSales({
+          today: { net: calcNet(todayOrders), orders: todayOrders.length },
+          thisWeek: { net: calcNet(weekOrders), orders: weekOrders.length },
+          thisMonth: { net: monthNet, orders: allMonthOrders.length },
+        });
+      } catch (err) {
+        console.error("Period sales fetch error:", err);
+      }
     };
 
     fetchPeriodSales();
-  }, [calculatePeriodSales, fetchSalesSummary]);
+  }, [stallIds, token]);
 
   // Fetch order history for selected period
   const fetchOrderHistory = useCallback(async (period) => {
@@ -297,12 +301,6 @@ export default function StallSalesReportVendor() {
       }
 
       setOrderHistory(allOrders);
-      console.log("Order history fetched:", allOrders, "Total orders:", allOrders.length);
-      if (allOrders.length > 0) {
-        console.log("First order structure:", allOrders[0]);
-        console.log("First order keys:", Object.keys(allOrders[0]));
-        console.log("First order JSON:", JSON.stringify(allOrders[0], null, 2));
-      }
     } catch (err) {
       console.error("Order history fetch error:", err);
       setOrderHistory([]);
