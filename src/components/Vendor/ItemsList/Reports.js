@@ -11,13 +11,14 @@ import {
   FiDownload,
   FiSearch,
   FiShoppingBag,
-  FiDollarSign,
   FiFileText,
   FiPercent,
   FiCheckCircle,
   FiX,
   FiClock,
+  FiCreditCard,
 } from "react-icons/fi";
+import { FaRupeeSign } from "react-icons/fa";
 import "./Reports.css";
 
 const ReportsPage = () => {
@@ -132,6 +133,19 @@ const ReportsPage = () => {
     return filteredOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
   }, [filteredOrders]);
 
+  /* ================= PREPAID / POSTPAID SPLIT ================= */
+  // Orders paid via wallet are settled later (postpaid); all others are paid upfront (prepaid)
+  const isPostpaidOrder = (order) => !!order.paid_with_wallet;
+
+  const prepaidOrders = useMemo(
+    () => filteredOrders.filter((o) => !isPostpaidOrder(o)),
+    [filteredOrders]
+  );
+  const postpaidOrders = useMemo(
+    () => filteredOrders.filter((o) => isPostpaidOrder(o)),
+    [filteredOrders]
+  );
+
   /* ================= EXCEL EXPORT ================= */
   const handleExportExcel = () => {
     if (!filteredOrders.length) {
@@ -151,6 +165,7 @@ const ReportsPage = () => {
         "Date": d.toLocaleDateString(),
         "Time": d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
         "Items Ordered": itemsList,
+        "Payment Type": isPostpaidOrder(o) ? "Postpaid" : "Prepaid",
         "Net Amount (₹)": Number(net.toFixed(2)),
         "Total GST (₹)": Number((o.total_gst || 0).toFixed(2)),
         "Total Amount (₹)": Number((o.total_amount || 0).toFixed(2)),
@@ -216,7 +231,7 @@ const ReportsPage = () => {
         <section className="reports-stats-grid">
           <div className="stat-card stat-card-revenue">
             <div className="stat-icon-wrapper revenue-icon">
-              <FiDollarSign className="stat-icon" />
+              <FaRupeeSign className="stat-icon" />
             </div>
             <div className="stat-info">
               <span className="stat-label">Total Revenue</span>
@@ -255,6 +270,30 @@ const ReportsPage = () => {
               <span className="stat-label">Total Orders</span>
               <h3 className="stat-value">{filteredOrders.length}</h3>
               <span className="stat-subtext">Today's total orders</span>
+            </div>
+          </div>
+
+          <div className="stat-card stat-card-payment-split">
+            <div className="stat-icon-wrapper prepaid-icon">
+              <FiCreditCard className="stat-icon" />
+            </div>
+            <div className="stat-info stat-info-split">
+              <span className="stat-label">Prepaid &amp; Postpaid</span>
+              <div className="stat-split-row">
+                <div className="stat-split-item">
+                  <span className="stat-split-value payment-prepaid-text">
+                    {prepaidOrders.length}
+                  </span>
+                  <span className="stat-subtext">Prepaid orders</span>
+                </div>
+                <div className="stat-split-divider" />
+                <div className="stat-split-item">
+                  <span className="stat-split-value payment-postpaid-text">
+                    {postpaidOrders.length}
+                  </span>
+                  <span className="stat-subtext">Postpaid orders</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
