@@ -127,6 +127,27 @@
   gap: 12px;
 }
 
+.reports-date-filter-select {
+  background: #ffffff;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-200);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reports-date-filter-select:hover:not(:disabled) {
+  border-color: var(--slate-300);
+}
+
+.reports-date-filter-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .reports-btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -805,7 +826,8 @@
   }
 
   .reports-btn-secondary,
-  .reports-btn-primary {
+  .reports-btn-primary,
+  .reports-date-filter-select {
     justify-content: center;
     width: 100%;
   }

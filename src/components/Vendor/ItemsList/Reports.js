@@ -27,11 +27,13 @@ const ReportsPage = () => {
   const { token } = useVendorAuth();
 
   const [orders, setOrders] = useState([]);
+  const [statsOrders, setStatsOrders] = useState([]);
   const [stallName, setStallName] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [dateFilter, setDateFilter] = useState("TODAY"); // TODAY | WEEK | MONTH — drives KPI cards only
 
-  /* ================= DATE HELPERS (TODAY) ================= */
+  /* ================= DATE HELPERS ================= */
   const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -45,6 +47,29 @@ const ReportsPage = () => {
     end.setDate(today.getDate() + 1);
     return { start: formatDate(today), end: formatDate(end) };
   }, []);
+
+  // End is always tomorrow so today's records are fully included
+  const getDateRange = useCallback((filter) => {
+    const today = new Date();
+    const end = new Date(today);
+    end.setDate(today.getDate() + 1);
+
+    if (filter === "WEEK") {
+      const start = new Date(today);
+      start.setDate(today.getDate() - today.getDay());
+      return { start: formatDate(start), end: formatDate(end) };
+    }
+
+    if (filter === "MONTH") {
+      const start = new Date(today.getFullYear(), today.getMonth(), 1);
+      return { start: formatDate(start), end: formatDate(end) };
+    }
+
+    return { start: formatDate(today), end: formatDate(end) };
+  }, []);
+
+  const dateFilterLabel =
+    dateFilter === "WEEK" ? "This Week's" : dateFilter === "MONTH" ? "This Month's" : "Today's";
 
   /* ================= FETCH STALL NAME ================= */
   useEffect(() => {
@@ -68,39 +93,51 @@ const ReportsPage = () => {
   }, [stallId, token]);
 
   /* ================= FETCH ORDERS ================= */
-  const fetchOrders = useCallback(async () => {
-    if (!stallId || !token) return;
-
-    const { start, end } = getTodayRange();
-    setLoading(true);
-
-    try {
+  // Table always stays on today's orders; KPI cards follow the selected date filter
+  const fetchOrdersInRange = useCallback(
+    async (range) => {
       const res = await axios.get(
         `https://admin-aged-field-2794.fly.dev/orders/by-stall/${stallId}/range`,
         {
-          params: { start_date: start, end_date: end },
+          params: { start_date: range.start, end_date: range.end },
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      return res.data || [];
+    },
+    [stallId, token]
+  );
 
-      const data = res.data || [];
-      setOrders(data);
+  const fetchOrders = useCallback(async () => {
+    if (!stallId || !token) return;
 
-      if (data.length && data[0].order_details?.length && !stallName) {
-        setStallName(data[0].order_details[0].stall_name);
+    setLoading(true);
+
+    try {
+      const [todayData, statsData] = await Promise.all([
+        fetchOrdersInRange(getTodayRange()),
+        fetchOrdersInRange(getDateRange(dateFilter)),
+      ]);
+
+      setOrders(todayData);
+      setStatsOrders(statsData);
+
+      const sample = todayData[0] || statsData[0];
+      if (sample?.order_details?.length && !stallName) {
+        setStallName(sample.order_details[0].stall_name);
       }
     } catch (err) {
       console.error("❌ Error fetching reports:", err.message);
     } finally {
       setLoading(false);
     }
-  }, [stallId, token, getTodayRange, stallName]);
+  }, [stallId, token, dateFilter, getTodayRange, getDateRange, fetchOrdersInRange, stallName]);
 
   useEffect(() => {
     fetchOrders();
-  }, [stallId, fetchOrders]);
+  }, [stallId, dateFilter, fetchOrders]);
 
-  /* ================= FILTERED ORDERS (BY SEARCH) ================= */
+  /* ================= FILTERED ORDERS (TODAY, BY SEARCH) ================= */
   const filteredOrders = useMemo(() => {
     if (!searchTerm.trim()) return orders;
     const q = searchTerm.toLowerCase().trim();
@@ -122,14 +159,27 @@ const ReportsPage = () => {
     );
 
   const totalNetAmount = useMemo(() => {
+    return statsOrders.reduce((sum, o) => sum + getOrderNetAmount(o), 0);
+  }, [statsOrders]);
+
+  const totalGST = useMemo(() => {
+    return statsOrders.reduce((sum, o) => sum + (o.total_gst || 0), 0);
+  }, [statsOrders]);
+
+  const totalAmount = useMemo(() => {
+    return statsOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+  }, [statsOrders]);
+
+  // Table summary row always reflects today's (searched) orders, independent of the KPI date filter
+  const todayNetAmount = useMemo(() => {
     return filteredOrders.reduce((sum, o) => sum + getOrderNetAmount(o), 0);
   }, [filteredOrders]);
 
-  const totalGST = useMemo(() => {
+  const todayGST = useMemo(() => {
     return filteredOrders.reduce((sum, o) => sum + (o.total_gst || 0), 0);
   }, [filteredOrders]);
 
-  const totalAmount = useMemo(() => {
+  const todayTotalAmount = useMemo(() => {
     return filteredOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
   }, [filteredOrders]);
 
@@ -138,12 +188,21 @@ const ReportsPage = () => {
   const isPostpaidOrder = (order) => !!order.paid_with_wallet;
 
   const prepaidOrders = useMemo(
-    () => filteredOrders.filter((o) => !isPostpaidOrder(o)),
-    [filteredOrders]
+    () => statsOrders.filter((o) => !isPostpaidOrder(o)),
+    [statsOrders]
   );
   const postpaidOrders = useMemo(
-    () => filteredOrders.filter((o) => isPostpaidOrder(o)),
-    [filteredOrders]
+    () => statsOrders.filter((o) => isPostpaidOrder(o)),
+    [statsOrders]
+  );
+
+  const prepaidTotal = useMemo(
+    () => prepaidOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0),
+    [prepaidOrders]
+  );
+  const postpaidTotal = useMemo(
+    () => postpaidOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0),
+    [postpaidOrders]
   );
 
   /* ================= EXCEL EXPORT ================= */
@@ -205,6 +264,18 @@ const ReportsPage = () => {
           </div>
 
           <div className="reports-header-actions">
+            <select
+              className="reports-date-filter-select"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              disabled={loading}
+              title="Select KPI period"
+            >
+              <option value="TODAY">Today</option>
+              <option value="WEEK">This Week</option>
+              <option value="MONTH">This Month</option>
+            </select>
+
             <button
               className="reports-btn-secondary"
               onClick={fetchOrders}
@@ -236,7 +307,7 @@ const ReportsPage = () => {
             <div className="stat-info">
               <span className="stat-label">Total Revenue</span>
               <h3 className="stat-value">₹{totalAmount.toFixed(2)}</h3>
-              <span className="stat-subtext">Total collection after GST</span>
+              <span className="stat-subtext">{dateFilterLabel} collection after GST</span>
             </div>
           </div>
 
@@ -268,8 +339,8 @@ const ReportsPage = () => {
             </div>
             <div className="stat-info">
               <span className="stat-label">Total Orders</span>
-              <h3 className="stat-value">{filteredOrders.length}</h3>
-              <span className="stat-subtext">Today's total orders</span>
+              <h3 className="stat-value">{statsOrders.length}</h3>
+              <span className="stat-subtext">{dateFilterLabel} total orders</span>
             </div>
           </div>
 
@@ -282,16 +353,16 @@ const ReportsPage = () => {
               <div className="stat-split-row">
                 <div className="stat-split-item">
                   <span className="stat-split-value payment-prepaid-text">
-                    {prepaidOrders.length}
+                    ₹{prepaidTotal.toFixed(2)}
                   </span>
-                  <span className="stat-subtext">Prepaid orders</span>
+                  <span className="stat-subtext">{prepaidOrders.length} Prepaid orders</span>
                 </div>
                 <div className="stat-split-divider" />
                 <div className="stat-split-item">
                   <span className="stat-split-value payment-postpaid-text">
-                    {postpaidOrders.length}
+                    ₹{postpaidTotal.toFixed(2)}
                   </span>
-                  <span className="stat-subtext">Postpaid orders</span>
+                  <span className="stat-subtext">{postpaidOrders.length} Postpaid orders</span>
                 </div>
               </div>
             </div>
@@ -441,13 +512,13 @@ const ReportsPage = () => {
                       Summary Total ({filteredOrders.length} orders)
                     </td>
                     <td className="text-right cell-numeric">
-                      ₹{totalNetAmount.toFixed(2)}
+                      ₹{todayNetAmount.toFixed(2)}
                     </td>
                     <td className="text-right cell-numeric">
-                      ₹{totalGST.toFixed(2)}
+                      ₹{todayGST.toFixed(2)}
                     </td>
                     <td className="text-right cell-numeric totals-grand-amount">
-                      ₹{totalAmount.toFixed(2)}
+                      ₹{todayTotalAmount.toFixed(2)}
                     </td>
                   </tr>
                 </tfoot>
