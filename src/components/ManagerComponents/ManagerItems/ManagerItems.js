@@ -160,9 +160,13 @@ export default function ItemListByStall() {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       setItems((prev) => prev.filter((item) => item.id !== itemId));
+      showToast(`🗑️ Item "${itemName}" deleted.`, "info");
     } catch (err) {
       console.error("❌ Error deleting item:", err);
-      alert("Failed to delete item. Please try again.");
+      showToast(
+        err.response?.data?.detail || "Failed to delete item. Please try again.",
+        "error"
+      );
     }
   };
 

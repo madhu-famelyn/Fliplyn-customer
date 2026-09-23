@@ -9,6 +9,7 @@ const VendorStalls = () => {
   const { stallIds, token } = useVendorAuth(); // ❌ removed setStallId
   const [stalls, setStalls] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [togglingId, setTogglingId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,6 +42,32 @@ const VendorStalls = () => {
     navigate(`/items-vendor/${id}`); // ✅ ID passed via route
   };
 
+  const toggleStallAvailability = async (stall) => {
+    const nextValue = !stall.is_available;
+    setTogglingId(stall.id);
+
+    // Optimistic update
+    setStalls((prev) =>
+      prev.map((s) => (s.id === stall.id ? { ...s, is_available: nextValue } : s))
+    );
+
+    try {
+      await axios.put(
+        `https://admin-aged-field-2794.fly.dev/stalls/${stall.id}/availability`,
+        { is_available: nextValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error("❌ Failed to update outlet status", err);
+      // Revert on failure
+      setStalls((prev) =>
+        prev.map((s) => (s.id === stall.id ? { ...s, is_available: !nextValue } : s))
+      );
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   if (loading) return <p className="loading-text">Loading outlets...</p>;
   if (!stalls.length) return <p className="loading-text">No outlets found.</p>;
 
@@ -63,7 +90,35 @@ const VendorStalls = () => {
             />
 
             <div className="outlet-content">
-              <h3>{stall.name}</h3>
+              <div className="outlet-title-row">
+                <h3>{stall.name}</h3>
+                <div className="outlet-toggle-block">
+                  <span className="outlet-toggle-caption">Outlet Status</span>
+                  <label
+                    className="outlet-toggle"
+                    title={
+                      stall.is_available
+                        ? "Outlet is ON — tap to turn OFF"
+                        : "Outlet is OFF — tap to turn ON"
+                    }
+                  >
+                    <input
+                      type="checkbox"
+                      checked={!!stall.is_available}
+                      disabled={togglingId === stall.id}
+                      onChange={() => toggleStallAvailability(stall)}
+                    />
+                    <span className="outlet-toggle-slider" />
+                    <span
+                      className={`outlet-toggle-label ${
+                        stall.is_available ? "is-on" : "is-off"
+                      }`}
+                    >
+                      {stall.is_available ? "🟢 ON" : "🔴 OFF"}
+                    </span>
+                  </label>
+                </div>
+              </div>
               <p className="outlet-desc">{stall.description}</p>
 
               <div className="bottom-row">

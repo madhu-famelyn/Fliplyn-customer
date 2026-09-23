@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { FiInbox, FiLoader } from "react-icons/fi";
 import "./AddRefund.css";
 
 export default function RefundHistory({ adminId, refresh }) {
@@ -67,8 +68,24 @@ export default function RefundHistory({ adminId, refresh }) {
     setFilteredRefunds(filtered);
   }, [refunds, filter, customRange]);
 
-  if (loading) return <p className="refund-loading">Loading refund history...</p>;
-  if (!refunds.length) return <p className="refund-empty">No refunds found.</p>;
+  if (loading)
+    return (
+      <div className="refund-container">
+        <div className="refund-loading">
+          <FiLoader className="refund-spin" size={18} />
+          <span>Loading refund history...</span>
+        </div>
+      </div>
+    );
+  if (!refunds.length)
+    return (
+      <div className="refund-container">
+        <div className="refund-empty">
+          <FiInbox size={28} />
+          <span>No refunds found.</span>
+        </div>
+      </div>
+    );
 
   return (
     <div className="refund-container">
@@ -123,11 +140,19 @@ export default function RefundHistory({ adminId, refresh }) {
             {filteredRefunds.length ? (
               filteredRefunds.map((refund) => (
                 <tr key={refund.id}>
-                  <td>{refund.token_number}</td>
-                  <td>₹{refund.refund_amount}</td>
-                  <td>{refund.refund_reason}</td>
-                  <td>{refund.user_email}</td>
-                  <td>{new Date(refund.created_at).toLocaleString()}</td>
+                  <td data-label="Token">
+                    <span className="refund-token-chip">{refund.token_number}</span>
+                  </td>
+                  <td data-label="Amount">
+                    <span className="refund-amount-badge">
+                      ₹{Number(refund.refund_amount).toFixed(2)}
+                    </span>
+                  </td>
+                  <td data-label="Reason">{refund.refund_reason || "—"}</td>
+                  <td data-label="User Email">{refund.user_email}</td>
+                  <td data-label="Date">
+                    {new Date(refund.created_at).toLocaleString()}
+                  </td>
                 </tr>
               ))
             ) : (
