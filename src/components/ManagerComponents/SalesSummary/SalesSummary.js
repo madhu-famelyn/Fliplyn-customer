@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContex/ContextAPI";
+import { useNavigate } from "react-router-dom";
 import "./SalesSummary.css";
 import * as XLSX from "xlsx";
 
@@ -199,6 +200,7 @@ const SalesTable = ({ data, type }) => {
 /* ── MAIN COMPONENT ── */
 export default function SalesSummary() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [stalls, setStalls] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -349,6 +351,16 @@ export default function SalesSummary() {
           {/* Export */}
           <button className="om-summary-export" onClick={exportExcel}>
             📥 Export Excel
+          </button>
+
+          {/* Daily Order Summary Link */}
+          <button
+            className="om-summary-export"
+            onClick={() => navigate("/daily-order-summary")}
+            style={{ background: "#0f172a", color: "#fff", border: "none" }}
+            title="View Daily Order Summary Report"
+          >
+            📑 Daily Order Summary
           </button>
         </div>
 

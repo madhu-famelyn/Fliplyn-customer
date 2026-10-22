@@ -1,36 +1,38 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContex/ContextAPI";
 import { useNavigate } from "react-router-dom";
-import { 
-  FaEdit, 
-  FaPowerOff, 
-  FaBookmark, 
-  FaRegBookmark, 
-  FaCheck, 
-  FaSearch, 
-  FaSlidersH, 
-  FaBolt, 
-  FaCheckSquare, 
+import {
+  FaEdit,
+  FaPowerOff,
+  FaBookmark,
+  FaRegBookmark,
+  FaCheck,
+  FaSearch,
+  FaSlidersH,
+  FaBolt,
+  FaCheckSquare,
   FaSquare,
-  FaSpinner 
+  FaSpinner
 } from "react-icons/fa";
 import "./ManagerStalls.css";
 
 /* ── icon map for action buttons ── */
 const ACTION_BUTTONS = [
-  { label: "Combo Approvals",    route: "/om-combo-approvals",   icon: "🍱" },
-  { label: "Add Refund",         route: "/add-refund",           icon: "↩" },
-  { label: "View Sales",         route: "/view-sales",           icon: "📊" },
-  { label: "Add Stall",          route: "/add-stall",            icon: "＋" },
-  { label: "Add Wallet",         route: "/wallet-add-mng",       icon: "💳" },
-  { label: "Add Vendor",         route: "/manager-view-vendors", icon: "🤝" },
-  { label: "Add Item",           route: "/add-item-manager",     icon: "🍽" },
-  { label: "Add Category",       route: "/add-category",         icon: "🏷" },
-  { label: "Sales Summary",      route: "/sales-summary-om",     icon: "📈" },
-  { label: "B2C Transactions",   route: "/b2c-transactions",     icon: "🛒" },
-  { label: "Menu List",          route: "/om-menu-list",         icon: "📋" },
-  { label: "Account",            route: "/management/dashboard", icon: "💼" },
+  { label: "Combo Approvals", route: "/om-combo-approvals", icon: "🍱" },
+  { label: "Add Refund", route: "/add-refund", icon: "↩" },
+  { label: "View Sales", route: "/view-sales", icon: "📊" },
+  { label: "Add Stall", route: "/add-stall", icon: "＋" },
+  { label: "Add Wallet", route: "/wallet-add-mng", icon: "💳" },
+  { label: "Add Vendor", route: "/manager-view-vendors", icon: "🤝" },
+  { label: "Add Item", route: "/add-item-manager", icon: "🍽" },
+  { label: "Add Category", route: "/add-category", icon: "🏷" },
+  { label: "Sales Summary", route: "/sales-summary-om", icon: "📈" },
+  { label: "Order Summary", route: "/daily-order-summary", icon: "📑" },
+  { label: "Gowra", route: "/gowra-report", icon: "🏢" },
+  { label: "B2C Transactions", route: "/b2c-transactions", icon: "🛒" },
+  { label: "Menu List", route: "/om-menu-list", icon: "📋" },
+  { label: "Account", route: "/management/dashboard", icon: "💼" },
 ];
 
 /* ── Skeleton placeholder cards while loading ── */
@@ -52,12 +54,12 @@ function SkeletonGrid() {
 
 export default function ManagerEditStall() {
   const { user } = useAuth();
-  const [stallData, setStallData]   = useState([]);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState("");
+  const [stallData, setStallData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [pendingCombosCount, setPendingCombosCount] = useState(0);
   const [editingStall, setEditingStall] = useState(null);
-  
+
   /* ── Quick Switch & Saved Stalls State ── */
   const [savedStallIds, setSavedStallIds] = useState([]);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
@@ -67,20 +69,39 @@ export default function ManagerEditStall() {
   const [togglingStallId, setTogglingStallId] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
   const [alertModal, setAlertModal] = useState(null);
+  const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
+  const actionsMenuRef = useRef(null);
 
-  const [formData, setFormData]     = useState({
-    name:         "",
-    description:  "",
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
     opening_time: "",
     closing_time: "",
     is_available: true,
     payment_type: "PREPAID",
-    image:        null,
+    image: null,
   });
 
   const navigate = useNavigate();
 
   const apiBase = process.env.REACT_APP_API_URL || "https://admin-aged-field-2794.fly.dev";
+
+  /* ── Close actions menu when clicking outside ── */
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (actionsMenuRef.current && !actionsMenuRef.current.contains(e.target)) {
+        setIsActionsMenuOpen(false);
+      }
+    }
+    if (isActionsMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [isActionsMenuOpen]);
 
   const storageKey = useMemo(() => {
     return `om_saved_stalls_${user?.id || user?.building_id || 'default'}`;
@@ -339,13 +360,13 @@ export default function ManagerEditStall() {
   const handleEditClick = (stall) => {
     setEditingStall(stall.id);
     setFormData({
-      name:         stall.name         || "",
-      description:  stall.description  || "",
+      name: stall.name || "",
+      description: stall.description || "",
       opening_time: stall.opening_time || "",
       closing_time: stall.closing_time || "",
       is_available: stall.is_available ?? true,
       payment_type: stall.payment_type || "PREPAID",
-      image:        null,
+      image: null,
     });
   };
 
@@ -631,31 +652,44 @@ export default function ManagerEditStall() {
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="mgr-actions-section">
-          <div className="mgr-actions-label">Quick Actions</div>
-          <div className="mgr-btn-row">
-            {/* Quick Switch Shortcut */}
-            <button
-              className="mgr-btn mgr-btn-highlight"
-              onClick={handleOpenConfigModal}
-              title="Configure Saved Outlets Power Switch"
-            >
-              <span>⚡</span>
-              Power Switch Group
-            </button>
+        {/* Action Buttons — Hamburger Menu */}
+        <div className="mgr-actions-hamburger-wrap" ref={actionsMenuRef}>
+          <button
+            className={`mgr-hamburger-btn ${isActionsMenuOpen ? "is-open" : ""}`}
+            onClick={() => setIsActionsMenuOpen(prev => !prev)}
+            title="Quick Actions"
+            aria-label="Quick Actions Menu"
+          >
+            <span className="mgr-hamburger-bar" />
+            <span className="mgr-hamburger-bar" />
+            <span className="mgr-hamburger-bar" />
+          </button>
 
-            {ACTION_BUTTONS.map(({ label, route, icon }) => (
+          {isActionsMenuOpen && (
+            <div className="mgr-actions-dropdown">
+              <div className="mgr-actions-dropdown-header">Quick Actions</div>
+
+              {/* Power Switch Group first */}
               <button
-                key={label}
-                className="mgr-btn"
-                onClick={() => navigate(route)}
+                className="mgr-dropdown-item mgr-dropdown-item-highlight"
+                onClick={() => { handleOpenConfigModal(); setIsActionsMenuOpen(false); }}
               >
-                <span>{icon}</span>
-                {label}
+                <span className="mgr-dropdown-icon">⚡</span>
+                <span className="mgr-dropdown-label">Power Switch Group</span>
               </button>
-            ))}
-          </div>
+
+              {ACTION_BUTTONS.map(({ label, route, icon }) => (
+                <button
+                  key={label}
+                  className="mgr-dropdown-item"
+                  onClick={() => { navigate(route); setIsActionsMenuOpen(false); }}
+                >
+                  <span className="mgr-dropdown-icon">{icon}</span>
+                  <span className="mgr-dropdown-label">{label}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Outlets Section Header */}
@@ -716,9 +750,8 @@ export default function ManagerEditStall() {
                     </button>
 
                     <span
-                      className={`mgr-status-badge ${
-                        stall.is_available ? "mgr-status-active" : "mgr-status-closed"
-                      }`}
+                      className={`mgr-status-badge ${stall.is_available ? "mgr-status-active" : "mgr-status-closed"
+                        }`}
                     >
                       <span className="mgr-status-dot" />
                       {stall.is_available ? "Active" : "Closed"}
@@ -802,7 +835,7 @@ export default function ManagerEditStall() {
           if (e.target === e.currentTarget) setIsConfigModalOpen(false);
         }}>
           <div className="mgr-modal-box mgr-config-modal-box">
-            
+
             {/* Modal Header */}
             <div className="mgr-modal-header">
               <div className="mgr-modal-title-wrap">
@@ -850,7 +883,7 @@ export default function ManagerEditStall() {
                   onClick={handleSelectAllModal}
                 >
                   {filteredModalStalls.length > 0 &&
-                  filteredModalStalls.every((s) => tempSelectedIds.includes(s.id)) ? (
+                    filteredModalStalls.every((s) => tempSelectedIds.includes(s.id)) ? (
                     <>
                       <FaSquare /> Deselect All
                     </>
