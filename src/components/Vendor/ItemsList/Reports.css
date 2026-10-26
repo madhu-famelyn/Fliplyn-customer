@@ -170,6 +170,12 @@
   font-weight: 600;
 }
 
+.reports-date-error {
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .reports-btn-secondary {
   display: inline-flex;
   align-items: center;

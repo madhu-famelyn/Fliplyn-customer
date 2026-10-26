@@ -35,6 +35,9 @@ const ReportsPage = () => {
   const [dateFilter, setDateFilter] = useState("YESTERDAY"); // YESTERDAY | CUSTOM — drives KPI cards only
   const [customStart, setCustomStart] = useState("");
   const [customEnd, setCustomEnd] = useState("");
+  // Range actually used for the report; only updated when the vendor clicks Get Report
+  const [appliedStart, setAppliedStart] = useState("");
+  const [appliedEnd, setAppliedEnd] = useState("");
 
   /* ================= DATE HELPERS ================= */
   const formatDate = (date) => {
@@ -61,25 +64,36 @@ const ReportsPage = () => {
   }, []);
 
   const yesterdayStr = formatDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
-  const isCustomRangeValid = !!customStart && !!customEnd && customStart <= customEnd;
+  const addDays = (dateStr, n) => {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    return formatDate(new Date(y, m - 1, d + n));
+  };
+  // Max one month (31 days inclusive); today and future dates are not allowed
+  const MAX_RANGE_DAYS = 31;
+  const isCustomRangeValid =
+    !!customStart &&
+    !!customEnd &&
+    customStart <= customEnd &&
+    customEnd <= yesterdayStr &&
+    customEnd <= addDays(customStart, MAX_RANGE_DAYS - 1);
 
   const getDateRange = useCallback(
     (filter) => {
       if (filter === "CUSTOM") {
         // API end date is exclusive of that day's orders, so send the day after the chosen end
-        const [y, m, d] = customEnd.split("-").map(Number);
-        return { start: customStart, end: formatDate(new Date(y, m - 1, d + 1)) };
+        const [y, m, d] = appliedEnd.split("-").map(Number);
+        return { start: appliedStart, end: formatDate(new Date(y, m - 1, d + 1)) };
       }
       return getYesterdayRange();
     },
-    [customStart, customEnd, getYesterdayRange]
+    [appliedStart, appliedEnd, getYesterdayRange]
   );
 
   const dateFilterLabel =
     dateFilter === "CUSTOM"
-      ? customStart === customEnd
-        ? `${customStart}'s`
-        : `${customStart} to ${customEnd}`
+      ? appliedStart === appliedEnd
+        ? `${appliedStart}'s`
+        : `${appliedStart} to ${appliedEnd}`
       : "Yesterday's";
 
   /* ================= FETCH STALL NAME ================= */
@@ -121,7 +135,7 @@ const ReportsPage = () => {
 
   const fetchOrders = useCallback(async () => {
     if (!stallId || !token) return;
-    if (dateFilter === "CUSTOM" && !isCustomRangeValid) return;
+    if (dateFilter === "CUSTOM" && (!appliedStart || !appliedEnd)) return;
 
     setLoading(true);
 
@@ -151,7 +165,7 @@ const ReportsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [stallId, token, dateFilter, isCustomRangeValid, getTodayRange, getYesterdayRange, getDateRange, fetchOrdersInRange, stallName]);
+  }, [stallId, token, dateFilter, appliedStart, appliedEnd, getTodayRange, getYesterdayRange, getDateRange, fetchOrdersInRange, stallName]);
 
   useEffect(() => {
     fetchOrders();
@@ -304,6 +318,8 @@ const ReportsPage = () => {
                 if (value === "CUSTOM" && !customStart && !customEnd) {
                   setCustomStart(yesterdayStr);
                   setCustomEnd(yesterdayStr);
+                  setAppliedStart(yesterdayStr);
+                  setAppliedEnd(yesterdayStr);
                 }
                 setDateFilter(value);
               }}
@@ -320,6 +336,7 @@ const ReportsPage = () => {
                   type="date"
                   className="reports-date-input"
                   value={customStart}
+                  min={customEnd ? addDays(customEnd, -(MAX_RANGE_DAYS - 1)) : undefined}
                   max={customEnd || yesterdayStr}
                   onChange={(e) => setCustomStart(e.target.value)}
                   disabled={loading}
@@ -331,11 +348,29 @@ const ReportsPage = () => {
                   className="reports-date-input"
                   value={customEnd}
                   min={customStart || undefined}
-                  max={yesterdayStr}
+                  max={
+                    customStart && addDays(customStart, MAX_RANGE_DAYS - 1) < yesterdayStr
+                      ? addDays(customStart, MAX_RANGE_DAYS - 1)
+                      : yesterdayStr
+                  }
                   onChange={(e) => setCustomEnd(e.target.value)}
                   disabled={loading}
                   title="To date"
                 />
+                {!isCustomRangeValid && customStart && customEnd && (
+                  <span className="reports-date-error">Select up to 31 days, ending yesterday</span>
+                )}
+                <button
+                  className="reports-btn-primary"
+                  onClick={() => {
+                    setAppliedStart(customStart);
+                    setAppliedEnd(customEnd);
+                  }}
+                  disabled={loading || !isCustomRangeValid}
+                  title="Load report for the selected dates"
+                >
+                  <span>Get Report</span>
+                </button>
               </div>
             )}
 
