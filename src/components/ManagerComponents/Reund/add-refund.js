@@ -5,15 +5,19 @@ import {
   FiPlus,
   FiX,
   FiHash,
-  FiDollarSign,
+  FiCalendar,
   FiMessageSquare,
   FiCheckCircle,
   FiAlertCircle,
   FiLoader,
 } from "react-icons/fi";
+import { FaRupeeSign } from "react-icons/fa";
 import { useAuth } from "../../AuthContex/ContextAPI";
 import RefundHistory from "./RefundHistory";
 import "./AddRefund.css";
+
+const toLocalDateString = (d) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 export default function RefundModal() {
   const { user } = useAuth();
@@ -25,6 +29,8 @@ export default function RefundModal() {
     refund_amount: "",
     refund_reason: "",
   });
+  const [dateMode, setDateMode] = useState("TODAY"); // TODAY | CUSTOM
+  const [customDate, setCustomDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [refreshHistory, setRefreshHistory] = useState(false);
@@ -52,6 +58,11 @@ export default function RefundModal() {
       return;
     }
 
+    if (dateMode === "CUSTOM" && !customDate) {
+      setMessage("❌ Please select the order date.");
+      return;
+    }
+
     setLoading(true);
     setMessage("");
 
@@ -59,6 +70,7 @@ export default function RefundModal() {
       admin_id: user.admin_id,
       manager_id: user?.id || null, // optional
       token_number: formData.token_number,
+      order_date: dateMode === "CUSTOM" ? customDate : toLocalDateString(new Date()),
       refund_amount: Number(formData.refund_amount),
       refund_reason: formData.refund_reason,
     };
@@ -152,9 +164,36 @@ export default function RefundModal() {
               </div>
 
               <div className="refund-field">
+                <label>Order Date</label>
+                <div className="refund-input-group">
+                  <FiCalendar className="refund-input-icon" />
+                  <select
+                    className="refund-select"
+                    value={dateMode}
+                    onChange={(e) => setDateMode(e.target.value)}
+                  >
+                    <option value="TODAY">Today</option>
+                    <option value="CUSTOM">Custom Date</option>
+                  </select>
+                </div>
+                {dateMode === "CUSTOM" && (
+                  <div className="refund-input-group">
+                    <FiCalendar className="refund-input-icon" />
+                    <input
+                      type="date"
+                      value={customDate}
+                      max={toLocalDateString(new Date())}
+                      onChange={(e) => setCustomDate(e.target.value)}
+                      required
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="refund-field">
                 <label>Refund Amount</label>
                 <div className="refund-input-group">
-                  <FiDollarSign className="refund-input-icon" />
+                  <FaRupeeSign className="refund-input-icon" />
                   <input
                     type="number"
                     name="refund_amount"

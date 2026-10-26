@@ -148,6 +148,28 @@
   cursor: not-allowed;
 }
 
+.reports-custom-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reports-date-input {
+  background: #ffffff;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-200);
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.reports-date-sep {
+  color: var(--slate-500);
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .reports-btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -515,6 +537,35 @@
   border-bottom: 1px solid var(--slate-100);
   vertical-align: middle;
   color: var(--slate-700);
+}
+
+/* Fixed layout + class selectors override the global `table th:nth-child(n)` rules from PrintToken.css */
+.modern-reports-table {
+  table-layout: fixed;
+  min-width: 900px;
+}
+
+.modern-reports-table .col-token {
+  width: 110px;
+  text-align: left;
+}
+
+.modern-reports-table .col-datetime {
+  width: 150px;
+  text-align: left;
+}
+
+.modern-reports-table .col-items {
+  width: auto;
+  text-align: left;
+}
+
+.modern-reports-table .col-amount,
+.modern-reports-table .col-gst,
+.modern-reports-table .col-total {
+  width: 130px;
+  /* StallsReport.css forces `table td { text-align: left !important }` globally */
+  text-align: right !important;
 }
 
 .report-row {

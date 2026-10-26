@@ -435,6 +435,25 @@
   color: #a8a6a2;
 }
 
+.refund-form .refund-select {
+  width: 100%;
+  border: 1px solid var(--refund-border);
+  border-radius: 10px;
+  padding: 10px 12px 10px 36px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  background: #fafafa;
+  color: var(--refund-ink);
+  cursor: pointer;
+}
+
+.refund-form .refund-select:focus {
+  border-color: var(--refund-accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--refund-accent-light);
+}
+
 .refund-form input:focus,
 .refund-form textarea:focus {
   border-color: var(--refund-accent);

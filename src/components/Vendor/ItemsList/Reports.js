@@ -27,11 +27,14 @@ const ReportsPage = () => {
   const { token } = useVendorAuth();
 
   const [orders, setOrders] = useState([]);
+  const [yesterdayOrders, setYesterdayOrders] = useState([]);
   const [statsOrders, setStatsOrders] = useState([]);
   const [stallName, setStallName] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [dateFilter, setDateFilter] = useState("TODAY"); // TODAY | WEEK | MONTH — drives KPI cards only
+  const [dateFilter, setDateFilter] = useState("YESTERDAY"); // YESTERDAY | CUSTOM — drives KPI cards only
+  const [customStart, setCustomStart] = useState("");
+  const [customEnd, setCustomEnd] = useState("");
 
   /* ================= DATE HELPERS ================= */
   const formatDate = (date) => {
@@ -48,28 +51,36 @@ const ReportsPage = () => {
     return { start: formatDate(today), end: formatDate(end) };
   }, []);
 
-  // End is always tomorrow so today's records are fully included
-  const getDateRange = useCallback((filter) => {
+  // Vendors only see completed days in sales figures: today's sales unlock after midnight.
+  // The API end date is inclusive at 00:00, so end = today covers all of yesterday and none of today.
+  const getYesterdayRange = useCallback(() => {
     const today = new Date();
-    const end = new Date(today);
-    end.setDate(today.getDate() + 1);
-
-    if (filter === "WEEK") {
-      const start = new Date(today);
-      start.setDate(today.getDate() - today.getDay());
-      return { start: formatDate(start), end: formatDate(end) };
-    }
-
-    if (filter === "MONTH") {
-      const start = new Date(today.getFullYear(), today.getMonth(), 1);
-      return { start: formatDate(start), end: formatDate(end) };
-    }
-
-    return { start: formatDate(today), end: formatDate(end) };
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    return { start: formatDate(yesterday), end: formatDate(today) };
   }, []);
 
+  const yesterdayStr = formatDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
+  const isCustomRangeValid = !!customStart && !!customEnd && customStart <= customEnd;
+
+  const getDateRange = useCallback(
+    (filter) => {
+      if (filter === "CUSTOM") {
+        // API end date is exclusive of that day's orders, so send the day after the chosen end
+        const [y, m, d] = customEnd.split("-").map(Number);
+        return { start: customStart, end: formatDate(new Date(y, m - 1, d + 1)) };
+      }
+      return getYesterdayRange();
+    },
+    [customStart, customEnd, getYesterdayRange]
+  );
+
   const dateFilterLabel =
-    dateFilter === "WEEK" ? "This Week's" : dateFilter === "MONTH" ? "This Month's" : "Today's";
+    dateFilter === "CUSTOM"
+      ? customStart === customEnd
+        ? `${customStart}'s`
+        : `${customStart} to ${customEnd}`
+      : "Yesterday's";
 
   /* ================= FETCH STALL NAME ================= */
   useEffect(() => {
@@ -110,17 +121,26 @@ const ReportsPage = () => {
 
   const fetchOrders = useCallback(async () => {
     if (!stallId || !token) return;
+    if (dateFilter === "CUSTOM" && !isCustomRangeValid) return;
 
     setLoading(true);
 
     try {
-      const [todayData, statsData] = await Promise.all([
+      const [todayData, yesterdayData, statsData] = await Promise.all([
         fetchOrdersInRange(getTodayRange()),
+        fetchOrdersInRange(getYesterdayRange()),
         fetchOrdersInRange(getDateRange(dateFilter)),
       ]);
 
+      // The API end date is inclusive at 00:00, so drop anything stamped today
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+      const beforeToday = (list) =>
+        list.filter((o) => new Date(o.created_datetime) < startOfToday);
+
       setOrders(todayData);
-      setStatsOrders(statsData);
+      setYesterdayOrders(beforeToday(yesterdayData));
+      setStatsOrders(beforeToday(statsData));
 
       const sample = todayData[0] || statsData[0];
       if (sample?.order_details?.length && !stallName) {
@@ -131,7 +151,7 @@ const ReportsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [stallId, token, dateFilter, getTodayRange, getDateRange, fetchOrdersInRange, stallName]);
+  }, [stallId, token, dateFilter, isCustomRangeValid, getTodayRange, getYesterdayRange, getDateRange, fetchOrdersInRange, stallName]);
 
   useEffect(() => {
     fetchOrders();
@@ -166,26 +186,9 @@ const ReportsPage = () => {
     return statsOrders.reduce((sum, o) => sum + (o.total_gst || 0), 0);
   }, [statsOrders]);
 
-  const totalAmount = useMemo(() => {
-    return statsOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
-  }, [statsOrders]);
-
-  // Table summary row always reflects today's (searched) orders, independent of the KPI date filter
-  const todayNetAmount = useMemo(() => {
-    return filteredOrders.reduce((sum, o) => sum + getOrderNetAmount(o), 0);
-  }, [filteredOrders]);
-
-  const todayGST = useMemo(() => {
-    return filteredOrders.reduce((sum, o) => sum + (o.total_gst || 0), 0);
-  }, [filteredOrders]);
-
-  const todayTotalAmount = useMemo(() => {
-    return filteredOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
-  }, [filteredOrders]);
-
   /* ================= PREPAID / POSTPAID SPLIT ================= */
-  // Orders paid via wallet are settled later (postpaid); all others are paid upfront (prepaid)
-  const isPostpaidOrder = (order) => !!order.paid_with_wallet;
+  // Same rule as the manager summary: only group-funded wallet orders are postpaid
+  const isPostpaidOrder = (order) => !!order.paid_with_wallet && !order.is_self_funded_wallet;
 
   const prepaidOrders = useMemo(
     () => statsOrders.filter((o) => !isPostpaidOrder(o)),
@@ -205,19 +208,28 @@ const ReportsPage = () => {
     [postpaidOrders]
   );
 
-  /* ================= EXCEL EXPORT ================= */
+  // Total revenue = prepaid after 3% deduction + postpaid
+  const prepaidAfterDeduction = useMemo(
+    () => prepaidTotal - Number((prepaidTotal * 0.03).toFixed(2)),
+    [prepaidTotal]
+  );
+  const totalRevenue = prepaidAfterDeduction + postpaidTotal;
+  const netSalesAfterDeduction = totalRevenue - totalGST;
+
+  /* ================= EXCEL EXPORT (yesterday's completed sales) ================= */
   const handleExportExcel = () => {
-    if (!filteredOrders.length) {
+    if (!yesterdayOrders.length) {
       alert("No order data to export.");
       return;
     }
 
-    const exportRows = filteredOrders.map((o) => {
+    const exportRows = yesterdayOrders.map((o) => {
       const d = new Date(o.created_datetime);
       const itemsList = (o.order_details || [])
         .map((i) => `${i.name} (x${i.quantity}) - ₹${(i.price || 0) * (i.quantity || 1)}`)
         .join("; ");
       const net = getOrderNetAmount(o);
+      const deduction = isPostpaidOrder(o) ? 0 : (o.total_amount || 0) * 0.03;
 
       return {
         "Token No": o.token_number || "-",
@@ -226,9 +238,33 @@ const ReportsPage = () => {
         "Items Ordered": itemsList,
         "Payment Type": isPostpaidOrder(o) ? "Postpaid" : "Prepaid",
         "Net Amount (₹)": Number(net.toFixed(2)),
+        "Deduction 3% (₹)": Number(deduction.toFixed(2)),
+        "Net After Deduction (₹)": Number(((o.total_amount || 0) - deduction - (o.total_gst || 0)).toFixed(2)),
         "Total GST (₹)": Number((o.total_gst || 0).toFixed(2)),
         "Total Amount (₹)": Number((o.total_amount || 0).toFixed(2)),
       };
+    });
+
+    // Totals are computed on the aggregate (not by summing rounded rows) to match the manager summary
+    const prepaidGross = yesterdayOrders
+      .filter((o) => !isPostpaidOrder(o))
+      .reduce((sum, o) => sum + (o.total_amount || 0), 0);
+    const totalDeduction = Number((prepaidGross * 0.03).toFixed(2));
+    const exportNet = yesterdayOrders.reduce((sum, o) => sum + getOrderNetAmount(o), 0);
+    const exportGST = yesterdayOrders.reduce((sum, o) => sum + (o.total_gst || 0), 0);
+    const exportTotal = yesterdayOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+
+    exportRows.push({
+      "Token No": "TOTAL",
+      "Date": "",
+      "Time": "",
+      "Items Ordered": `${yesterdayOrders.length} orders`,
+      "Payment Type": "",
+      "Net Amount (₹)": Number(exportNet.toFixed(2)),
+      "Deduction 3% (₹)": totalDeduction,
+      "Net After Deduction (₹)": Number((exportTotal - totalDeduction - exportGST).toFixed(2)),
+      "Total GST (₹)": Number(exportGST.toFixed(2)),
+      "Total Amount (₹)": Number(exportTotal.toFixed(2)),
     });
 
     const worksheet = XLSX.utils.json_to_sheet(exportRows);
@@ -236,8 +272,8 @@ const ReportsPage = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Reports");
 
     const safeStallName = (stallName || "Stall").replace(/[^a-zA-Z0-9]/g, "_");
-    const dateStr = formatDate(new Date());
-    XLSX.writeFile(workbook, `${safeStallName}_Sales_Report_Today_${dateStr}.xlsx`);
+    const dateStr = getYesterdayRange().start;
+    XLSX.writeFile(workbook, `${safeStallName}_Sales_Report_${dateStr}.xlsx`);
   };
 
   /* ================= UI ================= */
@@ -258,7 +294,7 @@ const ReportsPage = () => {
               <span>Back to Stall</span>
             </button>
             <div className="reports-title-area">
-              <div className="reports-badge">Today's Reports</div>
+              <div className="reports-badge">Reports</div>
               <h1 className="reports-title">{stallName || "Stall"} Reports</h1>
             </div>
           </div>
@@ -267,14 +303,45 @@ const ReportsPage = () => {
             <select
               className="reports-date-filter-select"
               value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "CUSTOM" && !customStart && !customEnd) {
+                  setCustomStart(yesterdayStr);
+                  setCustomEnd(yesterdayStr);
+                }
+                setDateFilter(value);
+              }}
               disabled={loading}
               title="Select KPI period"
             >
-              <option value="TODAY">Today</option>
-              <option value="WEEK">This Week</option>
-              <option value="MONTH">This Month</option>
+              <option value="YESTERDAY">Yesterday</option>
+              <option value="CUSTOM">Custom Date</option>
             </select>
+
+            {dateFilter === "CUSTOM" && (
+              <div className="reports-custom-range">
+                <input
+                  type="date"
+                  className="reports-date-input"
+                  value={customStart}
+                  max={customEnd || yesterdayStr}
+                  onChange={(e) => setCustomStart(e.target.value)}
+                  disabled={loading}
+                  title="From date"
+                />
+                <span className="reports-date-sep">to</span>
+                <input
+                  type="date"
+                  className="reports-date-input"
+                  value={customEnd}
+                  min={customStart || undefined}
+                  max={yesterdayStr}
+                  onChange={(e) => setCustomEnd(e.target.value)}
+                  disabled={loading}
+                  title="To date"
+                />
+              </div>
+            )}
 
             <button
               className="reports-btn-secondary"
@@ -289,7 +356,7 @@ const ReportsPage = () => {
             <button
               className="reports-btn-primary"
               onClick={handleExportExcel}
-              disabled={loading || filteredOrders.length === 0}
+              disabled={loading || yesterdayOrders.length === 0}
               title="Export report to Excel"
             >
               <FiDownload className="btn-icon" />
@@ -306,8 +373,10 @@ const ReportsPage = () => {
             </div>
             <div className="stat-info">
               <span className="stat-label">Total Revenue</span>
-              <h3 className="stat-value">₹{totalAmount.toFixed(2)}</h3>
-              <span className="stat-subtext">{dateFilterLabel} collection after GST</span>
+              <h3 className="stat-value">₹{totalRevenue.toFixed(2)}</h3>
+              <span className="stat-subtext">
+                {dateFilter === "CUSTOM" ? `For ${dateFilterLabel.replace(/'s$/, "")}` : "As on Yesterday"}
+              </span>
             </div>
           </div>
 
@@ -317,8 +386,8 @@ const ReportsPage = () => {
             </div>
             <div className="stat-info">
               <span className="stat-label">Net Sales</span>
-              <h3 className="stat-value">₹{totalNetAmount.toFixed(2)}</h3>
-              <span className="stat-subtext">Base item total</span>
+              <h3 className="stat-value">₹{netSalesAfterDeduction.toFixed(2)}</h3>
+              <span className="stat-subtext"></span>
             </div>
           </div>
 
@@ -353,7 +422,7 @@ const ReportsPage = () => {
               <div className="stat-split-row">
                 <div className="stat-split-item">
                   <span className="stat-split-value payment-prepaid-text">
-                    ₹{prepaidTotal.toFixed(2)}
+                    ₹{prepaidAfterDeduction.toFixed(2)}
                   </span>
                   <span className="stat-subtext">{prepaidOrders.length} Prepaid orders</span>
                 </div>
@@ -480,9 +549,6 @@ const ReportsPage = () => {
                                 <div key={idx} className="item-row-entry">
                                   <span className="item-name">{item.name}</span>
                                   <span className="item-qty">× {item.quantity}</span>
-                                  <span className="item-subtotal">
-                                    ₹{((item.price || 0) * (item.quantity || 1)).toFixed(2)}
-                                  </span>
                                 </div>
                               ))
                             ) : (
@@ -506,22 +572,6 @@ const ReportsPage = () => {
                     );
                   })}
                 </tbody>
-                <tfoot>
-                  <tr className="table-totals-row">
-                    <td colSpan="3" className="totals-label">
-                      Summary Total ({filteredOrders.length} orders)
-                    </td>
-                    <td className="text-right cell-numeric">
-                      ₹{todayNetAmount.toFixed(2)}
-                    </td>
-                    <td className="text-right cell-numeric">
-                      ₹{todayGST.toFixed(2)}
-                    </td>
-                    <td className="text-right cell-numeric totals-grand-amount">
-                      ₹{todayTotalAmount.toFixed(2)}
-                    </td>
-                  </tr>
-                </tfoot>
               </table>
             </div>
           )}
