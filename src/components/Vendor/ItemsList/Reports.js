@@ -178,10 +178,6 @@ const ReportsPage = () => {
       0
     );
 
-  const totalNetAmount = useMemo(() => {
-    return statsOrders.reduce((sum, o) => sum + getOrderNetAmount(o), 0);
-  }, [statsOrders]);
-
   const totalGST = useMemo(() => {
     return statsOrders.reduce((sum, o) => sum + (o.total_gst || 0), 0);
   }, [statsOrders]);
