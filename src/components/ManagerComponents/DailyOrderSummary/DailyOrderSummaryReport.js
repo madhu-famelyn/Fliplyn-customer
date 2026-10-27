@@ -3,8 +3,7 @@ import axios from "axios";
 import { useAuth } from "../../AuthContex/ContextAPI";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import { exportSheetToPdf } from "../../../utils/exportSheetToPdf";
 import "./DailyOrderSummaryReport.css";
 
 const API_BASE =
@@ -149,43 +148,9 @@ export default function DailyOrderSummaryReport() {
 
     setExportingPdf(true);
     try {
-      const element = reportRef.current;
-
-      const canvas = await html2canvas(element, {
-        scale: 2, // High resolution (retina crisp)
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        logging: false,
-        windowWidth: element.scrollWidth,
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
-      const margin = 10; // 10mm margins
-      const printWidth = pdfWidth - margin * 2;
-      const printHeight = (canvas.height * printWidth) / canvas.width;
-
-      let heightLeft = printHeight;
-      let position = margin;
-
-      // First page
-      pdf.addImage(imgData, "PNG", margin, position, printWidth, printHeight);
-      heightLeft -= (pdfHeight - margin * 2);
-
-      // Remaining pages if long report
-      while (heightLeft > 0) {
-        position = position - (pdfHeight - margin * 2);
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", margin, position, printWidth, printHeight);
-        heightLeft -= (pdfHeight - margin * 2);
-      }
-
       const safeName = (reportData.business_name || "Order_Summary")
         .replace(/[^a-zA-Z0-9_-]/g, "_");
-      pdf.save(`${safeName}_Order_Summary_Report.pdf`);
+      await exportSheetToPdf(reportRef.current, `${safeName}_Order_Summary_Report.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);
       alert("Failed to generate PDF. Please try again.");
