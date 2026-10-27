@@ -28,26 +28,12 @@ export default function B2CCart() {
   const [modalError, setModalError] = useState("");
   const [cfOrderId, setCfOrderId] = useState("");
 
-  const [stallDetails, setStallDetails] = useState(null);
-
   // Load from localStorage
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("b2c_cartItems")) || [];
     console.log("🛒 Loaded B2C cart items from localStorage:", stored);
     setCartItems(stored);
   }, []);
-
-  // Fetch stall details when cart items change
-  useEffect(() => {
-    if (cartItems.length > 0 && cartItems[0]?.stall_id) {
-      axios
-        .get(`${API_BASE_URL}/stalls/${cartItems[0].stall_id}`)
-        .then((res) => setStallDetails(res.data))
-        .catch((err) => console.error("Error fetching stall for cart:", err));
-    } else {
-      setStallDetails(null);
-    }
-  }, [cartItems]);
 
   // Update quantity and log the updates
   const updateQuantity = (itemId, newQty) => {
@@ -206,12 +192,8 @@ export default function B2CCart() {
     0
   );
 
-  const isKammaniStall = Boolean(stallDetails?.name?.toLowerCase().includes("kammani"));
-  const isKammaniDiscountApplied = isKammaniStall && subtotal >= 399;
-  const kammaniDiscount = isKammaniDiscountApplied ? 100 : 0;
-
   const total = subtotal + totalGST;
-  const finalTotal = Math.max(0, Math.round(total - kammaniDiscount));
+  const finalTotal = Math.max(0, Math.round(total));
 
 
 
@@ -298,12 +280,6 @@ export default function B2CCart() {
                 <p>
                   <span>GST</span>
                   <span>₹{totalGST.toFixed(0)}</span>
-                </p>
-              )}
-              {isKammaniDiscountApplied && (
-                <p className="kammani-discount-row">
-                  <span>🎉 Kammani Offer Discount</span>
-                  <span style={{ color: "#16a34a", fontWeight: "600" }}>- ₹100</span>
                 </p>
               )}
 
