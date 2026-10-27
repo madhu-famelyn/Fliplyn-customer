@@ -274,6 +274,10 @@
   font-size: 15px;
 }
 
+.pdf-export .daily-summary-report-table th {
+  white-space: nowrap;
+}
+
 .pdf-export .daily-summary-report-table th,
 .pdf-export .daily-summary-report-table td {
   border: 1px solid #9a9a9a;
@@ -289,6 +293,48 @@
   font-weight: 700;
   border-top: 2px solid #000000;
   background-color: #f8fafc;
+}
+
+/* Phones: shrink padding and type so all 8 columns fit without clipping */
+@media (max-width: 768px) {
+  .daily-summary-document-sheet {
+    padding: 20px 10px;
+  }
+
+  .daily-summary-doc-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .daily-summary-meta-block {
+    font-size: 12px;
+  }
+
+  .daily-summary-meta-row {
+    margin-bottom: 6px;
+  }
+
+  .daily-summary-meta-label {
+    width: auto;
+    margin-right: 6px;
+  }
+
+  .daily-summary-table-wrapper {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .daily-summary-report-table {
+    font-size: 11px;
+  }
+
+  .daily-summary-report-table th,
+  .daily-summary-report-table td {
+    padding: 4px 3px;
+  }
+
+  .daily-summary-report-table th {
+    white-space: normal;
+  }
 }
 
 /* Loading & Empty States */

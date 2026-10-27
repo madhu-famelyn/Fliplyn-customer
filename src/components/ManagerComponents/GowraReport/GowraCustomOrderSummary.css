@@ -732,11 +732,61 @@
   font-size: 15px;
 }
 
+.pdf-export .gowra-report-table th {
+  white-space: nowrap;
+}
+
 .pdf-export .gowra-report-table th,
 .pdf-export .gowra-report-table td {
   border: 1px solid #9a9a9a;
   padding: 3px 5px;
   text-align: left;
+}
+
+/* Phones: shrink padding and type so all columns fit without clipping */
+@media (max-width: 768px) {
+  .gowra-document-sheet {
+    padding: 20px 10px;
+  }
+
+  .gowra-doc-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .gowra-meta-block {
+    font-size: 12px;
+  }
+
+  .gowra-meta-row {
+    margin-bottom: 6px;
+  }
+
+  .gowra-meta-label {
+    width: auto;
+    margin-right: 6px;
+  }
+
+  .gowra-table-wrapper {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .gowra-report-table {
+    font-size: 11px;
+  }
+
+  .gowra-report-table th,
+  .gowra-report-table td {
+    padding: 4px 3px;
+  }
+
+  .gowra-report-table th {
+    white-space: normal;
+  }
+
+  .gowra-editable-cell {
+    min-width: 0;
+  }
 }
 
 /* Row Action & Delete TD */
