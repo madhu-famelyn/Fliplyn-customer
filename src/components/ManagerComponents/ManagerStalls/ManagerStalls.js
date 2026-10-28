@@ -29,6 +29,7 @@ const ACTION_BUTTONS = [
   { label: "Add Category", route: "/add-category", icon: "🏷" },
   { label: "Sales Summary", route: "/sales-summary-om", icon: "📈" },
   { label: "Order Summary", route: "/daily-order-summary", icon: "📑" },
+  { label: "Daily Summary Report", route: "/daily-summary-report", icon: "🗓" },
   { label: "Gowra", route: "/gowra-report", icon: "🏢" },
   { label: "B2C Transactions", route: "/b2c-transactions", icon: "🛒" },
   { label: "Menu List", route: "/om-menu-list", icon: "📋" },

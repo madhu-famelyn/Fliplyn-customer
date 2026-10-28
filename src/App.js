@@ -89,6 +89,7 @@ import OMMenuList from "./components/ManagerComponents/MenuList/MenuList";
 import OMComboApprovals from "./components/ManagerComponents/ComboApprovals/OMComboApprovals";
 import DailyOrderSummaryReport from "./components/ManagerComponents/DailyOrderSummary/DailyOrderSummaryReport";
 import GowraCustomOrderSummary from "./components/ManagerComponents/GowraReport/GowraCustomOrderSummary";
+import DailySummaryReport from "./components/ManagerComponents/DailySummaryReport/DailySummaryReport";
 
 import BuildingManagerLogin from "./components/BuildingManager/BuildingManager";
 // import BuildingSalesReport from "./components/BuildingManager/BuilingMangerReport";
@@ -324,6 +325,7 @@ function App() {
                     <Route path="/om-combo-approvals" element={<ManagerPrivateRoute element={<OMComboApprovals />} />} />
                     <Route path="/daily-order-summary" element={<ManagerPrivateRoute element={<DailyOrderSummaryReport />} />} />
                     <Route path="/om-order-summary" element={<ManagerPrivateRoute element={<DailyOrderSummaryReport />} />} />
+                    <Route path="/daily-summary-report" element={<ManagerPrivateRoute element={<DailySummaryReport />} />} />
                     <Route path="/gowra-report" element={<ManagerPrivateRoute element={<GowraCustomOrderSummary />} />} />
                     <Route path="/gwora-report" element={<ManagerPrivateRoute element={<GowraCustomOrderSummary />} />} />
 
