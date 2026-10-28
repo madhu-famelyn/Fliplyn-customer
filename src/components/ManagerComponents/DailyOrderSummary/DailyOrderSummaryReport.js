@@ -106,7 +106,8 @@ export default function DailyOrderSummaryReport() {
       ],
     ];
 
-    reportData.rows.forEach((row) => {
+    reportData.rows.forEach((rawRow) => {
+      const row = deriveRow(rawRow);
       wsData.push([
         row.date,
         row.no_of_orders,
@@ -159,11 +160,28 @@ export default function DailyOrderSummaryReport() {
     }
   };
 
+  // 2 decimal places for money (Total, Tax, Net)
   const formatNumber = (val) => {
+    if (val === null || val === undefined) return "0.00";
+    const num = Number(val);
+    if (isNaN(num)) return "0.00";
+    return num.toFixed(2);
+  };
+
+  // 1 decimal place (Discount, Charges, Round Off) — always shows e.g. 0.0
+  const formatPlain = (val) => {
     if (val === null || val === undefined) return "0.0";
     const num = Number(val);
     if (isNaN(num)) return "0.0";
-    return num % 1 === 0 ? `${num}.0` : num.toFixed(2);
+    return num.toFixed(1);
+  };
+
+  // Derive tax and net from total_amount so the report is always consistent
+  const deriveRow = (row) => {
+    const total = Number(row.total_amount || 0);
+    const tax   = parseFloat((total * 0.05).toFixed(2));
+    const net   = parseFloat((total - tax).toFixed(2));
+    return { ...row, tax, net_amount: net };
   };
 
   return (
@@ -341,18 +359,21 @@ export default function DailyOrderSummaryReport() {
                 </thead>
                 <tbody>
                   {reportData.rows && reportData.rows.length > 0 ? (
-                    reportData.rows.map((row, idx) => (
-                      <tr key={idx}>
-                        <td>{row.date}</td>
-                        <td>{row.no_of_orders}</td>
-                        <td>{formatNumber(row.net_amount)}</td>
-                        <td>{formatNumber(row.discount)}</td>
-                        <td>{formatNumber(row.charges)}</td>
-                        <td>{formatNumber(row.tax)}</td>
-                        <td>{formatNumber(row.round_off)}</td>
-                        <td>{formatNumber(row.total_amount)}</td>
-                      </tr>
-                    ))
+                    reportData.rows.map((rawRow, idx) => {
+                      const row = deriveRow(rawRow);
+                      return (
+                        <tr key={idx}>
+                          <td>{row.date}</td>
+                          <td>{row.no_of_orders}</td>
+                          <td>{formatNumber(row.net_amount)}</td>
+                          <td>{formatPlain(row.discount)}</td>
+                          <td>{formatPlain(row.charges)}</td>
+                          <td>{formatNumber(row.tax)}</td>
+                          <td>{formatPlain(row.round_off)}</td>
+                          <td>{formatNumber(row.total_amount)}</td>
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
                       <td colSpan="8" className="daily-summary-empty-msg">

@@ -18,10 +18,18 @@ const toDateString = (d) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 const formatNumber = (val) => {
-  if (val === null || val === undefined || val === "") return "0.0";
+  if (val === null || val === undefined || val === "") return "0.00";
   const num = Number(val);
   if (isNaN(num)) return String(val);
-  return num % 1 === 0 ? `${num}.0` : num.toFixed(2);
+  return num.toFixed(2);
+};
+
+// 1 decimal place (Discount, Charges, Round Off) — always shows e.g. 0.0
+const formatPlain = (val) => {
+  if (val === null || val === undefined || val === "") return "0.0";
+  const num = Number(val);
+  if (isNaN(num)) return "0.0";
+  return num.toFixed(1);
 };
 
 let keyCounter = 0;
@@ -55,6 +63,7 @@ export default function DailySummaryReport() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const reportRef = useRef(null);
+  const entryTableRef = useRef(null);
 
   const today = new Date();
   const [startDate, setStartDate] = useState(toDateString(new Date(today.getFullYear(), today.getMonth(), 1)));
@@ -155,7 +164,21 @@ export default function DailySummaryReport() {
   }, [buildingId]);
 
   const updateDraft = (key, field, value) => {
-    setDraftRows((prev) => prev.map((r) => (r._key === key ? { ...r, [field]: value } : r)));
+    setDraftRows((prev) =>
+      prev.map((r) => {
+        if (r._key !== key) return r;
+        const updated = { ...r, [field]: value };
+        // Auto-compute tax (5%) and net when total_amount changes
+        if (field === "total_amount") {
+          const total = parseFloat(value) || 0;
+          const tax   = parseFloat((total * 0.05).toFixed(2));
+          const net   = parseFloat((total - tax).toFixed(2));
+          updated.tax        = tax;
+          updated.net_amount = net;
+        }
+        return updated;
+      })
+    );
   };
 
   const removeDraft = (row) => {
@@ -320,7 +343,7 @@ export default function DailySummaryReport() {
           <span>Type the figures for each date and click Save. Saved dates appear in the report below.</span>
         </div>
 
-        <div className="dsr-entry-table-wrapper">
+        <div className="dsr-entry-table-wrapper" ref={entryTableRef}>
           <table className="dsr-entry-table">
             <thead>
               <tr>
@@ -363,7 +386,11 @@ export default function DailySummaryReport() {
         <div className="dsr-entry-actions">
           <button
             className="daily-summary-btn-secondary"
-            onClick={() => setDraftRows((prev) => [...prev, blankRow()])}
+            onClick={() => {
+              setDraftRows((prev) => [blankRow(), ...prev]);
+              // Scroll the entry table to top so the new row is visible
+              if (entryTableRef.current) entryTableRef.current.scrollTop = 0;
+            }}
           >
             + Add Row
           </button>
@@ -440,10 +467,10 @@ export default function DailySummaryReport() {
                         <td>{row.date}</td>
                         <td>{row.no_of_orders}</td>
                         <td>{formatNumber(row.net_amount)}</td>
-                        <td>{formatNumber(row.discount)}</td>
-                        <td>{formatNumber(row.charges)}</td>
+                        <td>{formatPlain(row.discount)}</td>
+                        <td>{formatPlain(row.charges)}</td>
                         <td>{formatNumber(row.tax)}</td>
-                        <td>{formatNumber(row.round_off)}</td>
+                        <td>{formatPlain(row.round_off)}</td>
                         <td>{formatNumber(row.total_amount)}</td>
                       </tr>
                     ))

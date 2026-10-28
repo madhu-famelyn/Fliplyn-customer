@@ -56,7 +56,10 @@
 
 .dsr-entry-table-wrapper {
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 290px; /* ~5 rows visible, then scrolls */
   -webkit-overflow-scrolling: touch;
+  border-radius: 4px;
 }
 
 .dsr-entry-table {
@@ -72,6 +75,10 @@
   color: #475569;
   padding: 4px 6px;
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  background: #f8fafc;
+  z-index: 1;
 }
 
 .dsr-entry-table td {
