@@ -887,5 +887,30 @@
   .reports-date-filter-select {
     justify-content: center;
     width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Custom date range stacks vertically on mobile */
+  .reports-custom-range {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .reports-date-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 16px; /* prevents iOS auto-zoom on focus */
+    min-height: 44px; /* minimum touch target */
+    padding: 10px 12px;
+  }
+
+  .reports-date-sep {
+    text-align: center;
+  }
+
+  .reports-date-error {
+    text-align: center;
   }
 }
