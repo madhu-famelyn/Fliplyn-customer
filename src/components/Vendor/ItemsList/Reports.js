@@ -20,6 +20,7 @@ import {
 } from "react-icons/fi";
 import { FaRupeeSign } from "react-icons/fa";
 import "./Reports.css";
+import ReportsDatePicker from "./ReportsDatePicker";
 
 const ReportsPage = () => {
   const { stallId } = useParams();
@@ -63,11 +64,20 @@ const ReportsPage = () => {
     return { start: formatDate(yesterday), end: formatDate(today) };
   }, []);
 
-  const yesterdayStr = formatDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
+  const yesterdayStr = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return formatDate(d);
+  }, []);
+
   const addDays = (dateStr, n) => {
-    const [y, m, d] = dateStr.split("-").map(Number);
+    if (!dateStr) return "";
+    const parts = dateStr.split("-").map(Number);
+    if (parts.length !== 3 || isNaN(parts[0])) return "";
+    const [y, m, d] = parts;
     return formatDate(new Date(y, m - 1, d + n));
   };
+
   // Max one month (31 days inclusive); today and future dates are not allowed
   const MAX_RANGE_DAYS = 31;
   const isCustomRangeValid =
@@ -77,7 +87,7 @@ const ReportsPage = () => {
     customEnd <= yesterdayStr &&
     customEnd <= addDays(customStart, MAX_RANGE_DAYS - 1);
 
-  // Guard against any today or future date leaking into state (e.g. from hot-reload or mobile picker quirks)
+  // Guard against any today or future date leaking into state
   useEffect(() => {
     if (customStart && customStart > yesterdayStr) {
       setCustomStart(yesterdayStr);
@@ -93,8 +103,7 @@ const ReportsPage = () => {
     }
   }, [customStart, customEnd, appliedStart, appliedEnd, yesterdayStr]);
 
-  const handleStartChange = (e) => {
-    let val = e.target.value;
+  const handleStartChange = (val) => {
     if (!val) {
       setCustomStart("");
       return;
@@ -106,8 +115,7 @@ const ReportsPage = () => {
     setCustomStart(val);
   };
 
-  const handleEndChange = (e) => {
-    let val = e.target.value;
+  const handleEndChange = (val) => {
     if (!val) {
       setCustomEnd("");
       return;
@@ -374,20 +382,17 @@ const ReportsPage = () => {
 
             {dateFilter === "CUSTOM" && (
               <div className="reports-custom-range">
-                <input
-                  type="date"
-                  className="reports-date-input"
+                <ReportsDatePicker
                   value={customStart}
                   min={customEnd ? addDays(customEnd, -(MAX_RANGE_DAYS - 1)) : undefined}
                   max={customEnd && customEnd < yesterdayStr ? customEnd : yesterdayStr}
                   onChange={handleStartChange}
                   disabled={loading}
                   title="From date"
+                  placeholder="From date"
                 />
                 <span className="reports-date-sep">to</span>
-                <input
-                  type="date"
-                  className="reports-date-input"
+                <ReportsDatePicker
                   value={customEnd}
                   min={customStart || undefined}
                   max={
@@ -398,6 +403,7 @@ const ReportsPage = () => {
                   onChange={handleEndChange}
                   disabled={loading}
                   title="To date"
+                  placeholder="To date"
                 />
                 {!isCustomRangeValid && customStart && customEnd && (
                   <span className="reports-date-error">Select up to 31 days, ending yesterday</span>
