@@ -77,6 +77,48 @@ const ReportsPage = () => {
     customEnd <= yesterdayStr &&
     customEnd <= addDays(customStart, MAX_RANGE_DAYS - 1);
 
+  // Guard against any today or future date leaking into state (e.g. from hot-reload or mobile picker quirks)
+  useEffect(() => {
+    if (customStart && customStart > yesterdayStr) {
+      setCustomStart(yesterdayStr);
+    }
+    if (customEnd && customEnd > yesterdayStr) {
+      setCustomEnd(yesterdayStr);
+    }
+    if (appliedStart && appliedStart > yesterdayStr) {
+      setAppliedStart(yesterdayStr);
+    }
+    if (appliedEnd && appliedEnd > yesterdayStr) {
+      setAppliedEnd(yesterdayStr);
+    }
+  }, [customStart, customEnd, appliedStart, appliedEnd, yesterdayStr]);
+
+  const handleStartChange = (e) => {
+    let val = e.target.value;
+    if (!val) {
+      setCustomStart("");
+      return;
+    }
+    // Block today and future dates strictly (cannot exceed yesterday)
+    if (val > yesterdayStr) {
+      val = yesterdayStr;
+    }
+    setCustomStart(val);
+  };
+
+  const handleEndChange = (e) => {
+    let val = e.target.value;
+    if (!val) {
+      setCustomEnd("");
+      return;
+    }
+    // Block today and future dates strictly (cannot exceed yesterday)
+    if (val > yesterdayStr) {
+      val = yesterdayStr;
+    }
+    setCustomEnd(val);
+  };
+
   const getDateRange = useCallback(
     (filter) => {
       if (filter === "CUSTOM") {
@@ -315,7 +357,7 @@ const ReportsPage = () => {
               value={dateFilter}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === "CUSTOM" && !customStart && !customEnd) {
+                if (value === "CUSTOM" && (!customStart || !customEnd || customEnd > yesterdayStr || customStart > yesterdayStr)) {
                   setCustomStart(yesterdayStr);
                   setCustomEnd(yesterdayStr);
                   setAppliedStart(yesterdayStr);
@@ -337,8 +379,8 @@ const ReportsPage = () => {
                   className="reports-date-input"
                   value={customStart}
                   min={customEnd ? addDays(customEnd, -(MAX_RANGE_DAYS - 1)) : undefined}
-                  max={customEnd || yesterdayStr}
-                  onChange={(e) => setCustomStart(e.target.value)}
+                  max={customEnd && customEnd < yesterdayStr ? customEnd : yesterdayStr}
+                  onChange={handleStartChange}
                   disabled={loading}
                   title="From date"
                 />
@@ -353,7 +395,7 @@ const ReportsPage = () => {
                       ? addDays(customStart, MAX_RANGE_DAYS - 1)
                       : yesterdayStr
                   }
-                  onChange={(e) => setCustomEnd(e.target.value)}
+                  onChange={handleEndChange}
                   disabled={loading}
                   title="To date"
                 />
