@@ -21,7 +21,7 @@ export const uploadWalletGroupExcel = (data, token) => {
 
 export const getWalletGroupsByHrId = async (hrId, token) => {
   try {
-    const response = await axios.get(`${API_BASE}hr/get-wallet/${hrId}`, {
+    const response = await axios.get(`${API_BASE}/hr/get-wallet/${hrId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return Array.isArray(response.data) ? response.data : [];
