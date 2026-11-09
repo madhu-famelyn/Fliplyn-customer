@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from "react";
 const ManagementAuthContext = createContext();
 
 export const ManagementAuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem("mgmtToken") || localStorage.getItem("token"));
+  const [token, setToken] = useState(() => localStorage.getItem("mgmtToken"));
   const [user, setUser] = useState(() => {
     try {
       const storedMgmt = localStorage.getItem("mgmtUser");

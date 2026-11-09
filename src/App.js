@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import SignInPage from "./components/SignIn/SignIn";
-import SignUpPage from "./components/SignUp/SignUp";
 
 import icon1 from "./Assets/image1.png";
 import icon2 from "./Assets/image2.png";
@@ -248,7 +247,6 @@ function App() {
                   <Routes>
                     {/* 🔓 Public Routes */}
                     <Route path="/login" element={<SignInPage />} />
-                    <Route path="/signup" element={<SignUpPage />} />
                     <Route path="/manager-login" element={<ManagerLogin />} />
 
                     <Route path="/locations" element={<Locations />} />

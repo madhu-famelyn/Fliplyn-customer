@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './SignIn.css';
 import { login } from './sevice';
 import { useAuth } from '../AuthContex/AdminContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import {jwtDecode} from "jwt-decode";
 
@@ -85,9 +85,6 @@ export default function SignInPage() {
 </form>
 
 
-        <div className="sip-links">
-          <p>Don’t have an account? <Link to="/signup">Sign Up</Link></p>
-        </div>
       </div>
 
       {loading && (

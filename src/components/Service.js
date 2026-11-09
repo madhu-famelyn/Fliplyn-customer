@@ -10,7 +10,7 @@ const API_BASE = "https://admin-aged-field-2794.fly.dev";
  * @returns 
  */
 export const uploadWalletGroupExcel = (data, token) => {
-  return axios.post(`${API_BASE}wallet-group/upload-excel/`, data, {
+  return axios.post(`${API_BASE}/wallet-group/upload-excel/`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
