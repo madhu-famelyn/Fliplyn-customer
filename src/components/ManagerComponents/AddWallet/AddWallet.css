@@ -54,7 +54,8 @@
 
 .form-group input[type="text"],
 .form-group input[type="number"],
-.form-group input[type="file"] {
+.form-group input[type="file"],
+.form-group select {
   padding: 10px;
   border: 1px solid #ffb566;
   border-radius: 0;

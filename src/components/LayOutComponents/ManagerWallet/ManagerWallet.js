@@ -6,6 +6,7 @@ export default function WalletUploadAdmin() {
   const { token, adminId } = useAuth(); // ✅ Extract adminId
   const [walletAmount, setWalletAmount] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("POSTPAID");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetchingWallets, setFetchingWallets] = useState(false);
@@ -90,7 +91,7 @@ export default function WalletUploadAdmin() {
     formData.append("identifier", userEmail);
     formData.append("building_id", buildingId);
     formData.append("is_retainable", true);
-    formData.append("payment_method", "PREPAID");
+    formData.append("payment_method", paymentMethod);
     if (image) formData.append("file", image);
 
     try {
@@ -174,6 +175,17 @@ export default function WalletUploadAdmin() {
               placeholder="Enter user email or phone"
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label>Payment Type</label>
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="POSTPAID">Postpaid (company funded)</option>
+              <option value="PREPAID">Prepaid</option>
+            </select>
           </div>
 
           <div className="form-group">

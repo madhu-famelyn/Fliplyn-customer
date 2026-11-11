@@ -247,25 +247,33 @@ const ReportsPage = () => {
   }, [statsOrders]);
 
   /* ================= PREPAID / POSTPAID SPLIT ================= */
-  // Same rule as the manager summary: only group-funded wallet orders are postpaid
-  const isPostpaidOrder = (order) => !!order.paid_with_wallet && !order.is_self_funded_wallet;
+  // Share of an order paid from group-funded (postpaid) wallet money.
+  // Uses the stored split; older orders fall back to the self-funded flag.
+  const postpaidShare = (order) => {
+    if (!order.paid_with_wallet) return 0;
+    const total = order.total_amount || 0;
+    if (order.wallet_postpaid_amount != null && total > 0) {
+      return Math.min(Math.max(order.wallet_postpaid_amount / total, 0), 1);
+    }
+    return order.is_self_funded_wallet ? 0 : 1;
+  };
 
   const prepaidOrders = useMemo(
-    () => statsOrders.filter((o) => !isPostpaidOrder(o)),
+    () => statsOrders.filter((o) => postpaidShare(o) < 1),
     [statsOrders]
   );
   const postpaidOrders = useMemo(
-    () => statsOrders.filter((o) => isPostpaidOrder(o)),
+    () => statsOrders.filter((o) => postpaidShare(o) > 0),
     [statsOrders]
   );
 
   const prepaidTotal = useMemo(
-    () => prepaidOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0),
-    [prepaidOrders]
+    () => statsOrders.reduce((sum, o) => sum + (o.total_amount || 0) * (1 - postpaidShare(o)), 0),
+    [statsOrders]
   );
   const postpaidTotal = useMemo(
-    () => postpaidOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0),
-    [postpaidOrders]
+    () => statsOrders.reduce((sum, o) => sum + (o.total_amount || 0) * postpaidShare(o), 0),
+    [statsOrders]
   );
 
   // Total revenue = prepaid after 3% deduction + postpaid
@@ -289,14 +297,15 @@ const ReportsPage = () => {
         .map((i) => `${i.name} (x${i.quantity}) - ₹${(i.price || 0) * (i.quantity || 1)}`)
         .join("; ");
       const net = getOrderNetAmount(o);
-      const deduction = isPostpaidOrder(o) ? 0 : (o.total_amount || 0) * 0.03;
+      const share = postpaidShare(o);
+      const deduction = (o.total_amount || 0) * (1 - share) * 0.03;
 
       return {
         "Token No": o.token_number || "-",
         "Date": d.toLocaleDateString(),
         "Time": d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
         "Items Ordered": itemsList,
-        "Payment Type": isPostpaidOrder(o) ? "Postpaid" : "Prepaid",
+        "Payment Type": share === 1 ? "Postpaid" : share === 0 ? "Prepaid" : `Mixed (${Math.round(share * 100)}% postpaid)`,
         "Net Amount (₹)": Number(net.toFixed(2)),
         "Deduction 3% (₹)": Number(deduction.toFixed(2)),
         "Net After Deduction (₹)": Number(((o.total_amount || 0) - deduction - (o.total_gst || 0)).toFixed(2)),
@@ -307,8 +316,7 @@ const ReportsPage = () => {
 
     // Totals are computed on the aggregate (not by summing rounded rows) to match the manager summary
     const prepaidGross = yesterdayOrders
-      .filter((o) => !isPostpaidOrder(o))
-      .reduce((sum, o) => sum + (o.total_amount || 0), 0);
+      .reduce((sum, o) => sum + (o.total_amount || 0) * (1 - postpaidShare(o)), 0);
     const totalDeduction = Number((prepaidGross * 0.03).toFixed(2));
     const exportNet = yesterdayOrders.reduce((sum, o) => sum + getOrderNetAmount(o), 0);
     const exportGST = yesterdayOrders.reduce((sum, o) => sum + (o.total_gst || 0), 0);

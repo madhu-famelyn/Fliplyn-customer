@@ -4,6 +4,21 @@ import { useAuth } from "../../AuthContex/ContextAPI";
 import "./StallsReport.css";
 import * as XLSX from "xlsx-js-style";
 
+// Share of the order paid from group-funded (postpaid) wallet money, as computed by the backend
+const getPostpaidFraction = (order) =>
+  typeof order.postpaid_fraction === "number"
+    ? order.postpaid_fraction
+    : order.paid_with_wallet
+    ? 1
+    : 0;
+
+const getPaymentType = (order) => {
+  const fraction = getPostpaidFraction(order);
+  if (fraction >= 1) return "Postpaid";
+  if (fraction <= 0) return "Prepaid";
+  return "Mixed";
+};
+
 export default function StallSalesReport() {
   const { user } = useAuth();
   const [stalls, setStalls] = useState([]);
@@ -133,7 +148,7 @@ export default function StallSalesReport() {
             return res.data.map((order) => ({
               ...order,
               stall_name: stall.name,
-              paymentType: order.paid_with_wallet ? "Postpaid" : "Prepaid",
+              paymentType: getPaymentType(order),
             }));
           } catch (err) {
             if (err.response?.status === 404) return [];
@@ -192,7 +207,10 @@ export default function StallSalesReport() {
       companyFilter === "all" ||
       getCompanyName(order.user_email).toLowerCase() === targetComp ||
       orderEmail.includes(targetComp);
-    const paymentMatch = paymentFilter === "all" || order.paymentType === paymentFilter;
+    const paymentMatch =
+      paymentFilter === "all" ||
+      order.paymentType === paymentFilter ||
+      order.paymentType === "Mixed";
     return companyMatch && paymentMatch;
   });
 
@@ -204,11 +222,19 @@ export default function StallSalesReport() {
     return 0;
   });
 
+  // When filtered to Postpaid/Prepaid, only that share of a mixed order is counted
+  const shareForFilter = (order) => {
+    const fraction = getPostpaidFraction(order);
+    if (paymentFilter === "Postpaid") return fraction;
+    if (paymentFilter === "Prepaid") return 1 - fraction;
+    return 1;
+  };
+
   const totalSales = sortedOrders.reduce((acc, order) => {
     const totalPaid =
       order.order_details.reduce((sum, d) => sum + d.total, 0) +
       (order.round_off || 0);
-    return acc + totalPaid;
+    return acc + totalPaid * shareForFilter(order);
   }, 0);
 
   const handleSubmit = () => {
@@ -304,9 +330,12 @@ const exportToExcel = () => {
 
   // Calculate additional metrics
   const totalOrders = sortedOrders.length;
-  const prepaidCount = sortedOrders.filter(o => o.paymentType === "Prepaid").length;
-  const postpaidCount = sortedOrders.filter(o => o.paymentType === "Postpaid").length;
-  const totalGST = sortedOrders.reduce((acc, order) => acc + (order.total_gst || 0), 0);
+  const prepaidCount = sortedOrders.filter(o => getPostpaidFraction(o) < 1).length;
+  const postpaidCount = sortedOrders.filter(o => getPostpaidFraction(o) > 0).length;
+  const totalGST = sortedOrders.reduce(
+    (acc, order) => acc + (order.total_gst || 0) * shareForFilter(order),
+    0
+  );
 
   return (
     <div className="stall-report-container-unique">

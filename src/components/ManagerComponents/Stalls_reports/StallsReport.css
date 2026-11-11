@@ -473,6 +473,11 @@
   color: #f57c00;
 }
 
+.payment-badge.mixed {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
 /* === Responsive Design === */
 @media (min-width: 1025px) {
   .stall-report-container-unique {

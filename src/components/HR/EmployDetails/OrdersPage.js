@@ -6,9 +6,10 @@ import "./OrderPage.css";
 const OrdersModal = ({ groupId, onClose }) => {
   const { token } = useHrAuth();
 
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState("");
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   // 🔹 Date filter
   const [dateFilter, setDateFilter] = useState("");
@@ -29,6 +30,7 @@ const OrdersModal = ({ groupId, onClose }) => {
     }
 
     setLoading(true);
+    setFetchError("");
     try {
       let start, end;
       const now = new Date();
@@ -62,6 +64,10 @@ const OrdersModal = ({ groupId, onClose }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      if (!res.ok) {
+        throw new Error(`Failed to load orders (HTTP ${res.status})`);
+      }
+
       const data = await res.json();
       setOrders(data || []);
       setFilteredOrders(data || []);
@@ -69,6 +75,7 @@ const OrdersModal = ({ groupId, onClose }) => {
       console.error("❌ Error fetching orders:", err);
       setOrders([]);
       setFilteredOrders([]);
+      setFetchError(err.message);
     } finally {
       setLoading(false);
     }
@@ -224,7 +231,10 @@ const OrdersModal = ({ groupId, onClose }) => {
         </div>
 
         {loading && <p>Loading orders...</p>}
-        {!loading && submitted && filteredOrders.length === 0 && (
+        {!loading && submitted && fetchError && (
+          <p style={{ color: "red" }}>Could not load orders: {fetchError}</p>
+        )}
+        {!loading && submitted && !fetchError && filteredOrders.length === 0 && (
           <p>No orders found.</p>
         )}
 
