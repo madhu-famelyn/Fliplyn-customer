@@ -257,8 +257,16 @@ export default function SalesSummary() {
         const res = await axios.get(
           `${API_BASE}/company-sales-summary/?company=${selectedCompany}&start_date=${start}&end_date=${end}`
         );
-        setSalesData(res.data || []);
-        setMode("company");
+        // Company rows now carry both shares; map them to the same fields the outlet view uses
+        setSalesData(
+          (res.data || []).map((row) => ({
+            ...row,
+            prepaid_total_amount: row.prepaid_total,
+            postpaid_net_amount: row.postpaid_net,
+            postpaid_total_amount: row.postpaid_total,
+          }))
+        );
+        setMode("stall");
       } else {
         const stallIds = stalls.map(s => s.id || s.stall_id).join(",");
         const res = await axios.get(

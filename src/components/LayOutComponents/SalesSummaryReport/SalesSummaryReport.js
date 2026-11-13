@@ -113,8 +113,18 @@ const SalesSummaryReport = () => {
         const res = await fetch(url);
         const data = await res.json();
 
-        setSalesData(data || []);
-        setFilteredData(data || []);
+        // Company rows carry both shares; map them to the field names this table reads.
+        // The API's own "Total" row is dropped because the table adds its own total.
+        const companyRows = (data || [])
+          .filter((row) => row.outlet !== "Total")
+          .map((row) => ({
+            ...row,
+            prepaid_net_after_deduction: row.prepaid_after_deduction,
+            prepaid_gross_amount: row.prepaid_total,
+          }));
+
+        setSalesData(companyRows);
+        setFilteredData(companyRows);
 
       }
 

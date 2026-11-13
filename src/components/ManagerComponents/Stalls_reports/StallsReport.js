@@ -19,6 +19,12 @@ const getPaymentType = (order) => {
   return "Mixed";
 };
 
+// Splits an order's total paid into its postpaid (group money) and prepaid (self-loaded/gateway) parts
+const getPaymentSplit = (order, totalPaid) => {
+  const postpaid = Math.round(totalPaid * getPostpaidFraction(order) * 100) / 100;
+  return { postpaid, prepaid: Math.round((totalPaid - postpaid) * 100) / 100 };
+};
+
 export default function StallSalesReport() {
   const { user } = useAuth();
   const [stalls, setStalls] = useState([]);
@@ -255,21 +261,34 @@ const exportToExcel = () => {
   let totalGST = 0;
   let totalRoundOff = 0;
   let totalPaidAll = 0;
+  let totalPrepaidAll = 0;
+  let totalPostpaidAll = 0;
 
   const rows = sortedOrders.flatMap((order) =>
     order.order_details.map((item, index) => {
-      const netAmount = item.quantity * item.price;
-      const totalPaid =
+      const fullTotalPaid =
         order.order_details.reduce((sum, d) => sum + d.total, 0) +
         (order.round_off || 0);
+      const split = getPaymentSplit(order, fullTotalPaid);
+
+      // Amounts follow the Prepaid/Postpaid filter (full amounts for "All")
+      const share = shareForFilter(order);
+      const netAmount = item.quantity * item.price * share;
+      const grossTotal = item.total * share;
+      const gst = (order.total_gst || 0) * share;
+      const roundOff = (order.round_off || 0) * share;
+      // Total Paid is always the full order total (prepaid + postpaid)
+      const totalPaid = fullTotalPaid;
 
       totalNetAmount += netAmount;
-      totalGross += item.total;
+      totalGross += grossTotal;
 
       if (index === 0) {
-        totalGST += order.total_gst || 0;
-        totalRoundOff += order.round_off || 0;
+        totalGST += gst;
+        totalRoundOff += roundOff;
         totalPaidAll += totalPaid;
+        totalPrepaidAll += split.prepaid;
+        totalPostpaidAll += split.postpaid;
       }
 
       const row = {
@@ -288,10 +307,12 @@ const exportToExcel = () => {
         Qty: item.quantity,
         Price: item.price,
         "Net Amount": netAmount.toFixed(2),
-        "Gross Total": item.total.toFixed(2),
-        GST: index === 0 ? (order.total_gst || 0).toFixed(2) : "",
-        "Round Off": index === 0 ? (order.round_off || 0).toFixed(2) : "",
+        "Gross Total": grossTotal.toFixed(2),
+        GST: index === 0 ? gst.toFixed(2) : "",
+        "Round Off": index === 0 ? roundOff.toFixed(2) : "",
         "Total Paid": index === 0 ? totalPaid.toFixed(2) : "",
+        "Prepaid Amount": index === 0 ? split.prepaid.toFixed(2) : "",
+        "Postpaid Amount": index === 0 ? split.postpaid.toFixed(2) : "",
       });
 
       return row;
@@ -318,6 +339,8 @@ const exportToExcel = () => {
     GST: totalGST.toFixed(2),
     "Round Off": totalRoundOff.toFixed(2),
     "Total Paid": totalPaidAll.toFixed(2),
+    "Prepaid Amount": totalPrepaidAll.toFixed(2),
+    "Postpaid Amount": totalPostpaidAll.toFixed(2),
   });
 
   rows.push(grandTotalRow);
@@ -574,6 +597,8 @@ const exportToExcel = () => {
                   <th>GST</th>
                   <th>Round Off</th>
                   <th>Total Paid</th>
+                  <th>Prepaid Amount</th>
+                  <th>Postpaid Amount</th>
                 </tr>
               </thead>
 
@@ -582,9 +607,15 @@ const exportToExcel = () => {
 <tbody>
                   {sortedOrders.map((order) =>
                     order.order_details.map((item, index) => {
-                      const totalPaid =
+                      const fullTotalPaid =
                         order.order_details.reduce((sum, d) => sum + d.total, 0) +
                         (order.round_off || 0);
+                      const split = getPaymentSplit(order, fullTotalPaid);
+
+                      // Amounts follow the Prepaid/Postpaid filter (full amounts for "All")
+                      const share = shareForFilter(order);
+                      // Total Paid is always the full order total (prepaid + postpaid)
+                      const totalPaid = fullTotalPaid;
 
                       return (
                         <tr key={`${order.id}-${item.item_id}`}>
@@ -608,17 +639,21 @@ const exportToExcel = () => {
                           <td>{item.name}</td>
                           <td className="qty-cell">{item.quantity}</td>
                           <td>₹{item.price}</td>
-                          <td>₹{(item.quantity * item.price).toFixed(2)}</td>
-                          <td>₹{item.total.toFixed(2)}</td>
+                          <td>₹{(item.quantity * item.price * share).toFixed(2)}</td>
+                          <td>₹{(item.total * share).toFixed(2)}</td>
 
                           {/* GST ONLY ON FIRST ITEM */}
-                          <td>{index === 0 ? `₹${order.total_gst?.toFixed(2)}` : ""}</td>
+                          <td>{index === 0 ? `₹${((order.total_gst || 0) * share).toFixed(2)}` : ""}</td>
 
                           {/* ROUND OFF ONLY ON FIRST ITEM */}
-                          <td>{index === 0 ? `₹${order.round_off?.toFixed(2)}` : ""}</td>
+                          <td>{index === 0 ? `₹${((order.round_off || 0) * share).toFixed(2)}` : ""}</td>
 
                           {/* TOTAL PAID ONLY ON FIRST ITEM */}
                           <td className="total-paid-cell">{index === 0 ? `₹${totalPaid.toFixed(2)}` : ""}</td>
+
+                          {/* PREPAID / POSTPAID SPLIT ONLY ON FIRST ITEM */}
+                          <td>{index === 0 ? `₹${split.prepaid.toFixed(2)}` : ""}</td>
+                          <td>{index === 0 ? `₹${split.postpaid.toFixed(2)}` : ""}</td>
                         </tr>
                       );
                     })
