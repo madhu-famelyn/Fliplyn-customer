@@ -419,6 +419,13 @@
   background-color: #f8faff;
 }
 
+.stall-report-table-unique tfoot td {
+  font-weight: 700;
+  background: #f4f6fb;
+  border-top: 2px solid #667eea;
+  border-bottom: none;
+}
+
 /* === Special Cell Styling === */
 .token-cell {
   font-weight: 600;

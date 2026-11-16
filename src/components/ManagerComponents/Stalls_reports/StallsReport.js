@@ -243,6 +243,21 @@ export default function StallSalesReport() {
     return acc + totalPaid * shareForFilter(order);
   }, 0);
 
+  // Table footer totals: Total Paid is the sum of the Prepaid and Postpaid totals
+  const tableTotals = sortedOrders.reduce(
+    (acc, order) => {
+      const fullTotalPaid =
+        order.order_details.reduce((sum, d) => sum + d.total, 0) +
+        (order.round_off || 0);
+      const split = getPaymentSplit(order, fullTotalPaid);
+      acc.prepaid += split.prepaid;
+      acc.postpaid += split.postpaid;
+      return acc;
+    },
+    { prepaid: 0, postpaid: 0 }
+  );
+  const totalPaidFooter = tableTotals.prepaid + tableTotals.postpaid;
+
   const handleSubmit = () => {
     if (!filter) {
       alert("Please select a date filter (Today, Week, Month, or Custom)");
@@ -659,6 +674,15 @@ const exportToExcel = () => {
                     })
                   )}
                 </tbody>
+
+                <tfoot>
+                  <tr className="stall-report-table-total-row">
+                    <td colSpan={includeEmail ? 12 : 11}>Total</td>
+                    <td className="total-paid-cell">₹{totalPaidFooter.toFixed(2)}</td>
+                    <td>₹{tableTotals.prepaid.toFixed(2)}</td>
+                    <td>₹{tableTotals.postpaid.toFixed(2)}</td>
+                  </tr>
+                </tfoot>
 
 
             </table>
