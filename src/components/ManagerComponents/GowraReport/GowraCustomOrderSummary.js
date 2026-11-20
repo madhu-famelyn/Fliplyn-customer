@@ -31,7 +31,7 @@ export default function GowraCustomOrderSummary() {
 
   // Fully Editable Metadata fields
   const [reportTitle, setReportTitle] = useState("Order Summary");
-  const [businessName, setBusinessName] = useState("Gowra (Parent)");
+  const [businessName, setBusinessName] = useState("");
   const [summaryByLabel, setSummaryByLabel] = useState("DAY");
   const [periodLabel, setPeriodLabel] = useState("6 Months");
   const [generatedOn, setGeneratedOn] = useState("");
@@ -177,7 +177,7 @@ export default function GowraCustomOrderSummary() {
       const data = res.data;
 
       // Populate metadata
-      setBusinessName(data.business_name || "Gowra (Parent)");
+      setBusinessName(data.business_name || "");
       setSummaryByLabel(data.summary_by || (groupBy === "stall" ? "OUTLET" : "DAY"));
       setPeriodLabel(data.period || "6 Months");
       setGeneratedOn(data.report_generated_on || new Date().toLocaleString());
@@ -305,7 +305,7 @@ export default function GowraCustomOrderSummary() {
 
   /* ── 12. Save Report Functionality ── */
   const openSaveModal = () => {
-    const defaultName = `${businessName || "Gowra"} - ${reportTitle || "Order Summary"} (${new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })})`;
+    const defaultName = `${businessName ? businessName + " - " : ""}${reportTitle || "Order Summary"} (${new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })})`;
     setSaveReportName(defaultName);
     setShowSaveModal(true);
   };
@@ -373,7 +373,7 @@ export default function GowraCustomOrderSummary() {
   const handleLoadSavedReport = (report) => {
     setActiveSavedReport(report);
     setReportTitle(report.report_title || "Order Summary");
-    setBusinessName(report.business_name || "Gowra (Parent)");
+    setBusinessName(report.business_name || "");
     setSummaryByLabel(report.summary_by || "DAY");
     setPeriodLabel(report.period || "6 Months");
     setGeneratedOn(report.generated_on || "");
@@ -442,7 +442,7 @@ export default function GowraCustomOrderSummary() {
     const wsData = [
       [reportTitle || "Order Summary"],
       [],
-      ["Business Name:", businessName || "Gowra (Parent)"],
+      ["Business Name:", businessName || ""],
       ["Summary By:", summaryByLabel || (groupBy === "stall" ? "OUTLET" : "DAY")],
       ["Period:", periodLabel || "6 Months"],
       ["Report Generated On:", generatedOn],
@@ -474,9 +474,9 @@ export default function GowraCustomOrderSummary() {
     ws["!cols"] = activeCols.map(() => ({ wch: 16 }));
 
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Gowra Summary");
+    XLSX.utils.book_append_sheet(wb, ws, "Order Summary");
 
-    const safeName = (businessName || "Gowra_Order_Summary").replace(/[^a-zA-Z0-9_-]/g, "_");
+    const safeName = (businessName || "Order_Summary").replace(/[^a-zA-Z0-9_-]/g, "_");
     XLSX.writeFile(wb, `${safeName}_Custom_Report.xlsx`);
   };
 
@@ -495,7 +495,7 @@ export default function GowraCustomOrderSummary() {
     try {
       // Let the blur above commit any in-progress cell edit before the sheet is copied
       await new Promise((resolve) => setTimeout(resolve, 50));
-      const safeName = (businessName || "Gowra_Order_Summary").replace(/[^a-zA-Z0-9_-]/g, "_");
+      const safeName = (businessName || "Order_Summary").replace(/[^a-zA-Z0-9_-]/g, "_");
       await exportSheetToPdf(reportRef.current, `${safeName}_Custom_Order_Summary.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);
@@ -522,7 +522,7 @@ export default function GowraCustomOrderSummary() {
           </button>
           <div className="gowra-report-header-title">
             <span className="gowra-badge">OM</span>
-            <h2>Gowra Order Summary</h2>
+            <h2>Order Summary</h2>
           </div>
         </div>
 
@@ -706,7 +706,7 @@ export default function GowraCustomOrderSummary() {
                 className="gowra-input"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                placeholder="Gowra (Parent)"
+                placeholder="Business Name"
               />
             </div>
             <div className="gowra-field-group">
@@ -829,7 +829,7 @@ export default function GowraCustomOrderSummary() {
                   onBlur={(e) => setBusinessName(e.currentTarget.innerText.trim())}
                   title="Click to edit business name"
                 >
-                  {businessName || "Gowra (Parent)"}
+                  {businessName || ""}
                 </span>
               </div>
               <div className="gowra-meta-row">
@@ -1032,7 +1032,7 @@ export default function GowraCustomOrderSummary() {
                   className="gowra-modal-input"
                   value={saveReportName}
                   onChange={(e) => setSaveReportName(e.target.value)}
-                  placeholder="e.g. Gowra Summary - 14 Oct 2026"
+                  placeholder="e.g. Order Summary - 14 Oct 2026"
                   autoFocus
                 />
               </div>
@@ -1098,7 +1098,7 @@ export default function GowraCustomOrderSummary() {
                           )}
                         </div>
                         <div className="gowra-saved-meta-row">
-                          <span>🏢 {r.business_name || "Gowra"}</span>
+                          <span>🏢 {r.business_name || ""}</span>
                           <span>•</span>
                           <span>📅 {r.period || "Period"}</span>
                           <span>•</span>

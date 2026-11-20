@@ -88,7 +88,7 @@ export default function DailyOrderSummaryReport() {
     const wsData = [
       ["Order Summary"],
       [],
-      ["Business Name:", reportData.business_name || "Gowra (Parent)"],
+      ["Business Name:", reportData.business_name || ""],
       ["Summary By:", reportData.summary_by || "DAY"],
       ["Period:", reportData.period || "6 Months"],
       ["Report Generated On:", reportData.report_generated_on],
@@ -309,7 +309,7 @@ export default function DailyOrderSummaryReport() {
               <div className="daily-summary-meta-row">
                 <span className="daily-summary-meta-label">Business Name:</span>
                 <span className="daily-summary-meta-value">
-                  {reportData.business_name || "Gowra (Parent)"}
+                  {reportData.business_name || ""}
                 </span>
               </div>
               <div className="daily-summary-meta-row">
