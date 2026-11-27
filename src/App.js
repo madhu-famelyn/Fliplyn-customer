@@ -86,6 +86,8 @@ import StallSalesReportOM from "./components/ManagerComponents/SalesSummary/Sale
 import B2CTransactions from "./components/ManagerComponents/B2CTransactions/B2CTransactions";
 import OMMenuList from "./components/ManagerComponents/MenuList/MenuList";
 import OMComboApprovals from "./components/ManagerComponents/ComboApprovals/OMComboApprovals";
+import OMWalletGroups from "./components/ManagerComponents/WalletGroups/WalletGroups";
+import OMWalletGroupMembers from "./components/ManagerComponents/WalletGroups/WalletGroupMembers";
 import DailyOrderSummaryReport from "./components/ManagerComponents/DailyOrderSummary/DailyOrderSummaryReport";
 import GowraCustomOrderSummary from "./components/ManagerComponents/GowraReport/GowraCustomOrderSummary";
 import DailySummaryReport from "./components/ManagerComponents/DailySummaryReport/DailySummaryReport";
@@ -321,6 +323,8 @@ function App() {
                     <Route path="/b2c-transactions" element={<ManagerPrivateRoute element={<B2CTransactions />} />} />
                     <Route path="/om-menu-list" element={<ManagerPrivateRoute element={<OMMenuList />} />} />
                     <Route path="/om-combo-approvals" element={<ManagerPrivateRoute element={<OMComboApprovals />} />} />
+                    <Route path="/om-wallet-groups" element={<ManagerPrivateRoute element={<OMWalletGroups />} />} />
+                    <Route path="/om-wallet-groups/:groupId" element={<ManagerPrivateRoute element={<OMWalletGroupMembers />} />} />
                     <Route path="/daily-order-summary" element={<ManagerPrivateRoute element={<DailyOrderSummaryReport />} />} />
                     <Route path="/om-order-summary" element={<ManagerPrivateRoute element={<DailyOrderSummaryReport />} />} />
                     <Route path="/daily-summary-report" element={<ManagerPrivateRoute element={<DailySummaryReport />} />} />

@@ -197,3 +197,32 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Group balance summary on wallet cards */
+.wallet-card .group-balance {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.wallet-card .group-balance-remaining {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.wallet-card .group-balance-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+}
+
+.wallet-card .group-balance-meta {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}

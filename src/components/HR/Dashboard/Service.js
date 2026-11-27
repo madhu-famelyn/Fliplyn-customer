@@ -23,3 +23,29 @@ export const getWalletGroupsByHrId = async (hrId, token) => {
     return [];
   }
 };
+
+// ✅ Read-only balance summary for the logged-in HR's wallet groups
+export const getHrGroupBalances = async (token) => {
+  try {
+    const response = await axios.get(`${API_BASE}wallet-group-balance/hr`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data?.groups || [];
+  } catch (error) {
+    console.error("❌ Failed to fetch wallet group balances:", error);
+    return [];
+  }
+};
+
+// ✅ Individual member wallets for one of the HR's wallet groups
+export const getHrGroupMemberBalances = async (groupId, token) => {
+  try {
+    const response = await axios.get(`${API_BASE}wallet-group-balance/hr/${groupId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data?.members || [];
+  } catch (error) {
+    console.error("❌ Failed to fetch member balances:", error);
+    return [];
+  }
+};

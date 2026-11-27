@@ -3,13 +3,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../SideBar/Layout";
 import { useHrAuth } from "../../AuthContex/HrContext";
-import { getWalletGroupsByHrId } from "./Service";
+import { getWalletGroupsByHrId, getHrGroupBalances } from "./Service";
 import CreateWalletGroupModal from "../AddWalletGroup/AddWalletGroup";
 import "./Dashboard.css";
+
+const formatMoney = (value) =>
+  `₹${Number(value || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 
 const Dashboard = () => {
   const { hr, token } = useHrAuth();
   const [walletGroups, setWalletGroups] = useState([]);
+  const [balances, setBalances] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true); // ✅ Loader state
   const navigate = useNavigate();
@@ -22,6 +26,11 @@ const Dashboard = () => {
           setLoading(true);
           const groups = await getWalletGroupsByHrId(hr.id, token);
           setWalletGroups(groups);
+
+          const balanceList = await getHrGroupBalances(token);
+          setBalances(
+            balanceList.reduce((acc, b) => ({ ...acc, [b.group_id]: b }), {})
+          );
         } catch (err) {
           console.error("❌ Failed to load wallet groups:", err);
         } finally {
@@ -76,6 +85,18 @@ const Dashboard = () => {
                 <span className="users-count">
                   {group.users?.length || 0} Users
                 </span>
+                {balances[group.id] && (
+                  <div className="group-balance">
+                    <p className="group-balance-remaining">
+                      <span className="group-balance-label">Remaining</span>
+                      {formatMoney(balances[group.id].remaining)}
+                    </p>
+                    <p className="group-balance-meta">
+                      Loaded {formatMoney(balances[group.id].loaded)} · Spent{" "}
+                      {formatMoney(balances[group.id].spent)}
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>

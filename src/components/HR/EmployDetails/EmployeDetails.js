@@ -5,7 +5,7 @@ import { updateUserStatus } from "../../Service";
 import Layout from "../SideBar/Layout";
 import AddMemberModal from "./AddMemberModel";
 import UpdateExcelModal from "./UpdateExcelModal";
-import { getWalletGroupsByHrId } from "../Dashboard/Service";
+import { getWalletGroupsByHrId, getHrGroupMemberBalances } from "../Dashboard/Service";
 import OrdersModal from "./OrdersPage";
 import {
   AiOutlineHistory,
@@ -15,10 +15,14 @@ import {
 } from "react-icons/ai";
 import "./EmployeDetails.css";
 
+const formatMoney = (value) =>
+  `₹${Number(value || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+
 const EmployeesPage = () => {
   const { groupId } = useParams();
   const { hr, token } = useHrAuth();
   const [employees, setEmployees] = useState([]);
+  const [balances, setBalances] = useState({});
   const [group, setGroup] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showExcelModal, setShowExcelModal] = useState(false);
@@ -41,6 +45,13 @@ const EmployeesPage = () => {
           );
           setGroup(foundGroup || null);
           setEmployees(normalizeUsers(foundGroup?.users || []));
+
+          if (foundGroup) {
+            const members = await getHrGroupMemberBalances(groupId, token);
+            setBalances(
+              members.reduce((acc, m) => (m.user_id ? { ...acc, [m.user_id]: m } : acc), {})
+            );
+          }
         } catch (err) {
           console.error("❌ Failed to fetch employees:", err);
         } finally {
@@ -166,6 +177,8 @@ const EmployeesPage = () => {
                           <th>Email</th>
                           <th>Phone</th>
                           <th>Status</th>
+                          <th>Group Balance</th>
+                          <th>Own Balance</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -184,6 +197,16 @@ const EmployeesPage = () => {
                               >
                                 {emp.is_active ? "Active" : "Inactive"}
                               </span>
+                            </td>
+                            <td>
+                              {balances[emp.user_id]?.has_wallet
+                                ? formatMoney(balances[emp.user_id].group_balance)
+                                : "—"}
+                            </td>
+                            <td>
+                              {balances[emp.user_id]?.has_wallet
+                                ? formatMoney(balances[emp.user_id].own_balance)
+                                : "—"}
                             </td>
                             <td>
                               <button

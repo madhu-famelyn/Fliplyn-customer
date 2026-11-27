@@ -24,6 +24,7 @@ const ACTION_BUTTONS = [
   { label: "View Sales", route: "/view-sales", icon: "📊" },
   { label: "Add Stall", route: "/add-stall", icon: "＋" },
   { label: "Add Wallet", route: "/wallet-add-mng", icon: "💳" },
+  { label: "Wallet Groups", route: "/om-wallet-groups", icon: "💼" },
   { label: "Add Vendor", route: "/manager-view-vendors", icon: "🤝" },
   { label: "Add Item", route: "/add-item-manager", icon: "🍽" },
   { label: "Add Category", route: "/add-category", icon: "🏷" },
@@ -34,6 +35,8 @@ const ACTION_BUTTONS = [
   { label: "Menu List", route: "/om-menu-list", icon: "📋" },
   { label: "Account", route: "/management/dashboard", icon: "💼" },
 ];
+
+const formatFloor = (floor) => (/^\d+$/.test(floor.trim()) ? `Floor ${floor.trim()}` : floor);
 
 /* ── Skeleton placeholder cards while loading ── */
 function SkeletonGrid() {
@@ -53,7 +56,8 @@ function SkeletonGrid() {
 }
 
 export default function ManagerEditStall() {
-  const { user } = useAuth();
+  const { user, token, role } = useAuth();
+  const canEditFloor = role === "manager";
   const [stallData, setStallData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -79,6 +83,7 @@ export default function ManagerEditStall() {
     closing_time: "",
     is_available: true,
     payment_type: "PREPAID",
+    floor: "",
     image: null,
   });
 
@@ -366,6 +371,7 @@ export default function ManagerEditStall() {
       closing_time: stall.closing_time || "",
       is_available: stall.is_available ?? true,
       payment_type: stall.payment_type || "PREPAID",
+      floor: stall.floor || "",
       image: null,
     });
   };
@@ -391,6 +397,7 @@ export default function ManagerEditStall() {
 
     const form = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
+      if (key === "floor") return; // floor is saved through its own manager-only endpoint
       if (value !== "" && value !== null && value !== undefined) {
         if (key === "image" && value) form.append("file", value);
         else form.append(key, value);
@@ -404,7 +411,24 @@ export default function ManagerEditStall() {
         form,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      showToast("✅ Stall updated successfully!");
+
+      let floorFailed = false;
+      const originalFloor = stallData.find((s) => s.id === editingStall)?.floor || "";
+      if (canEditFloor && formData.floor.trim() !== originalFloor) {
+        try {
+          await axios.patch(
+            `${apiBase}/stalls/${editingStall}/floor`,
+            { floor: formData.floor },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+        } catch (floorErr) {
+          console.error("Error updating floor:", floorErr.response?.data || floorErr.message);
+          floorFailed = true;
+        }
+      }
+
+      if (floorFailed) showToast("⚠️ Stall updated, but the floor could not be saved.", "error");
+      else showToast("✅ Stall updated successfully!");
       setEditingStall(null);
       // Refresh list
       const res = await axios.get(`${apiBase}/stalls/building/${user.building_id}`);
@@ -790,6 +814,12 @@ export default function ManagerEditStall() {
                             <span className="mgr-stat-active-items">{stall.payment_type}</span>
                           </>
                         )}
+                        {stall.floor && (
+                          <>
+                            <span className="mgr-stat-divider">•</span>
+                            <span className="mgr-stat-active-items">{formatFloor(stall.floor)}</span>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -1054,6 +1084,21 @@ export default function ManagerEditStall() {
                     <option value="POSTPAID">POSTPAID</option>
                   </select>
                 </div>
+
+                {/* Floor (Operations Manager only) */}
+                {canEditFloor && (
+                  <div className="mgr-form-group">
+                    <label>Floor</label>
+                    <input
+                      type="text"
+                      name="floor"
+                      value={formData.floor}
+                      onChange={handleInputChange}
+                      maxLength={50}
+                      placeholder="e.g. Ground, 1, 2, Basement"
+                    />
+                  </div>
+                )}
 
                 {/* Availability Toggle */}
                 <div className="toggle-wrapper">

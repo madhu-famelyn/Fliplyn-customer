@@ -1,0 +1,524 @@
+.om-wg-wrapper {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  padding-bottom: 60px;
+}
+
+.om-wg-hero {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  padding: 32px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.om-wg-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.om-wg-back-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.om-wg-back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.om-wg-heading {
+  margin: 0 0 6px;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.om-wg-subheading {
+  margin: 0;
+  max-width: 560px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.om-wg-refresh-btn {
+  background: #f84d25;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.om-wg-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.om-wg-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+}
+
+.om-wg-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.om-wg-total-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.om-wg-total-card.remaining {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.om-wg-total-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.om-wg-total-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.om-wg-search {
+  width: 100%;
+  max-width: 360px;
+  height: 42px;
+  padding: 0 14px;
+  margin-bottom: 18px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.om-wg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.om-wg-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.om-wg-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.om-wg-card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.om-wg-badge {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.om-wg-remaining {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.om-wg-remaining-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.om-wg-remaining-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.om-wg-bar {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.om-wg-bar-fill {
+  height: 100%;
+  background: #f84d25;
+  border-radius: 999px;
+}
+
+.om-wg-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.om-wg-meta.muted {
+  color: #64748b;
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+.om-wg-error {
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+.om-wg-empty {
+  text-align: center;
+  color: #64748b;
+  padding: 40px 0;
+}
+
+/* Clickable group cards */
+.om-wg-card.clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.om-wg-card.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1);
+}
+
+.om-wg-card-link {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #f84d25;
+}
+
+/* Members table */
+.om-wg-table-wrapper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+
+.om-wg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.om-wg-table th,
+.om-wg-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #f1f5f9;
+  white-space: nowrap;
+}
+
+.om-wg-table th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  background: #f8fafc;
+}
+
+.om-wg-table .num {
+  text-align: right;
+}
+
+.om-wg-table .strong {
+  font-weight: 700;
+}
+
+.om-wg-table .muted {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.om-wg-table tr.inactive td {
+  color: #94a3b8;
+}
+
+.om-wg-status {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.om-wg-status.active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.om-wg-status.off {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ── OM Group Wallet Load Actions ── */
+.om-wg-hero-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.om-wg-load-all-btn {
+  background: #10b981;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.om-wg-load-all-btn:hover {
+  background: #059669;
+}
+
+.om-wg-load-all-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.om-wg-success-banner {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.om-wg-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.om-wg-card-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.om-wg-btn-load {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.om-wg-btn-load:hover {
+  background: #0369a1;
+}
+
+.om-wg-btn-load:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.om-wg-btn-clear {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.om-wg-btn-clear:hover {
+  background: #fca5a5;
+  color: #7f1d1d;
+}
+
+.om-wg-btn-clear:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.om-wg-btn-view {
+  width: 100%;
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.om-wg-btn-view:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.om-wg-btn-clear-hero {
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.om-wg-btn-clear-hero:hover {
+  background: #dc2626;
+}
+
+.om-wg-btn-clear-hero:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.om-wg-card-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.om-wg-member-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.om-wg-member-load-btn {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.om-wg-member-load-btn:hover {
+  background: #bbf7d0;
+}
+
+.om-wg-member-load-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.om-wg-member-clear-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.om-wg-member-clear-btn:hover {
+  background: #fecaca;
+}
+
+.om-wg-member-clear-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
